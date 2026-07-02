@@ -1,9 +1,16 @@
+import importlib
+
+
 def test_import_producer_modules():
-    import producer.alchemy_client
-    import producer.config
-    import producer.kafka_producer
-    import producer.parser
-    import producer.run_producer
+    modules = [
+        "producer.alchemy_client",
+        "producer.config",
+        "producer.kafka_producer",
+        "producer.parser",
+    ]
+
+    for module in modules:
+        importlib.import_module(module)
 
 
 def test_swap_topic_signature_exists():

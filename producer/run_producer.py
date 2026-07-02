@@ -1,7 +1,6 @@
 import json
 
 from producer.alchemy_client import AlchemyClient
-from producer.config import ALCHEMY_WEBSOCKET_URL, CHAIN
 from producer.parser import UNISWAP_V3_SWAP_TOPIC, parse_swap_log
 from producer.kafka_producer import KafkaEventProducer
 from producer.config import (
