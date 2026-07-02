@@ -1690,6 +1690,12 @@ dependencies = [
     { name = "websocket-client" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "pytest" },
+    { name = "ruff" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "confluent-kafka", specifier = ">=2.14.2" },
@@ -1702,6 +1708,12 @@ requires-dist = [
     { name = "streamlit", specifier = ">=1.58.0" },
     { name = "web3", specifier = ">=7.16.0" },
     { name = "websocket-client", specifier = ">=1.9.0" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "pytest", specifier = ">=9.1.1" },
+    { name = "ruff", specifier = ">=0.15.20" },
 ]
 
 [[package]]
