@@ -1,4 +1,4 @@
-.PHONY: kafka-up kafka-down producer bronze silver gold dashboard test lint check clean-data
+.PHONY: kafka-up kafka-down producer bronze silver gold dashboard quality test lint check clean-data
 
 kafka-up:
 	docker compose up -d
@@ -23,6 +23,9 @@ dashboard:
 
 lint:
 	uv run ruff check .
+
+quality:
+	uv run python tests/data_quality_check.py
 
 test:
 	uv run pytest

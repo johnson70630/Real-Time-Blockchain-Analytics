@@ -5,6 +5,8 @@ from confluent_kafka import Producer
 
 
 class KafkaEventProducer:
+    """Kafka producer wrapper for blockchain event messages."""
+
     def __init__(self, bootstrap_servers: str, topic: str) -> None:
         self.topic = topic
         self.producer = Producer(
@@ -15,6 +17,7 @@ class KafkaEventProducer:
         )
 
     def send(self, event: dict[str, Any]) -> None:
+        """Publish a blockchain event to Kafka as JSON."""
         key = event.get("transaction_hash", "")
 
         self.producer.produce(
@@ -25,4 +28,5 @@ class KafkaEventProducer:
         self.producer.poll(0)
 
     def flush(self) -> None:
+        """Flush buffered Kafka messages."""
         self.producer.flush()

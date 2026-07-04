@@ -8,6 +8,7 @@ UNISWAP_V3_SWAP_TOPIC = "0x" + Web3.keccak(
 
 
 def parse_swap_log(log: dict[str, Any], chain: str = "arbitrum") -> dict[str, Any]:
+    """Parse a raw Uniswap V3 Swap log into a normalized event dictionary."""
     return {
         "chain": chain,
         "event_type": "uniswap_v3_swap",
