@@ -39,13 +39,14 @@ def build_swaps_per_minute() -> None:
         f"""
         SELECT
             DATE_TRUNC('minute', kafka_timestamp) AS minute_ts,
+            protocol,
             chain,
             COUNT(*) AS swap_count,
             COUNT(DISTINCT pool_address) AS unique_pools,
             MIN(block_number) AS min_block_number,
             MAX(block_number) AS max_block_number
         FROM read_parquet('{SILVER_PATH}')
-        GROUP BY 1, 2
+        GROUP BY 1, 2, 3
         ORDER BY minute_ts
         """,
         GOLD_SWAPS_PER_MINUTE,
@@ -56,6 +57,7 @@ def build_top_pools() -> None:
     write_parquet(
         f"""
         SELECT
+            protocol,
             chain,
             pool_address,
             COUNT(*) AS swap_count,
@@ -64,7 +66,7 @@ def build_top_pools() -> None:
             MIN(kafka_timestamp) AS first_seen_at,
             MAX(kafka_timestamp) AS latest_seen_at
         FROM read_parquet('{SILVER_PATH}')
-        GROUP BY 1, 2
+        GROUP BY 1, 2, 3
         ORDER BY swap_count DESC
         LIMIT 50
         """,
@@ -76,6 +78,7 @@ def build_pipeline_summary() -> None:
     write_parquet(
         f"""
         SELECT
+            protocol,
             chain,
             COUNT(*) AS total_swaps,
             COUNT(DISTINCT transaction_hash) AS unique_transactions,
@@ -87,7 +90,7 @@ def build_pipeline_summary() -> None:
             MIN(ingested_at) AS first_ingested_at,
             MAX(ingested_at) AS latest_ingested_at
         FROM read_parquet('{SILVER_PATH}')
-        GROUP BY 1
+        GROUP BY 1, 2
         """,
         GOLD_PIPELINE_SUMMARY,
     )

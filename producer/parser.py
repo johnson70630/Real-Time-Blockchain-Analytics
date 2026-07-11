@@ -7,11 +7,16 @@ UNISWAP_V3_SWAP_TOPIC = "0x" + Web3.keccak(
 ).hex()
 
 
-def parse_swap_log(log: dict[str, Any], chain: str = "arbitrum") -> dict[str, Any]:
+def parse_swap_log(
+    log: dict[str, Any],
+    chain: str = "arbitrum",
+    protocol: str = "uniswap_v3",
+) -> dict[str, Any]:
     """Parse a raw Uniswap V3 Swap log into a normalized event dictionary."""
     return {
+        "protocol": protocol,
         "chain": chain,
-        "event_type": "uniswap_v3_swap",
+        "event_type": "swap",
         "block_number": int(log["blockNumber"], 16),
         "transaction_hash": log["transactionHash"],
         "pool_address": log["address"].lower(),

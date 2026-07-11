@@ -30,7 +30,9 @@ def main() -> None:
     run_check(
         "Silver event_id uniqueness",
         f"""
-        SELECT COUNT(*) - COUNT(DISTINCT event_id)
+        SELECT COUNT(*) - COUNT(
+            DISTINCT chain || '-' || transaction_hash || '-' || CAST(log_index AS VARCHAR)
+        )
         FROM read_parquet('{SILVER_PATH}')
         """,
         expected_value=0,
@@ -42,10 +44,13 @@ def main() -> None:
         SELECT COUNT(*)
         FROM read_parquet('{SILVER_PATH}')
         WHERE event_id IS NULL
-           OR transaction_hash IS NULL
-           OR pool_address IS NULL
-           OR block_number IS NULL
-           OR log_index IS NULL
+            OR protocol IS NULL
+            OR chain IS NULL
+            OR event_date IS NULL
+            OR transaction_hash IS NULL
+            OR pool_address IS NULL
+            OR block_number IS NULL
+            OR log_index IS NULL
         """,
         expected_value=0,
     )

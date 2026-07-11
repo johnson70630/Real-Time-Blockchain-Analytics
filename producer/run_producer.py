@@ -6,6 +6,7 @@ from producer.config import (
     CHAIN,
     KAFKA_BOOTSTRAP_SERVERS,
     KAFKA_TOPIC,
+    PROTOCOL,
     get_alchemy_websocket_url,
 )
 from producer.kafka_producer import KafkaEventProducer
@@ -29,6 +30,7 @@ def run_producer() -> None:
     logger.info("Kafka bootstrap servers: %s", KAFKA_BOOTSTRAP_SERVERS)
     logger.info("Kafka topic: %s", KAFKA_TOPIC)
     logger.info("Alchemy subscription topic: %s", UNISWAP_V3_SWAP_TOPIC)
+    logger.info("Protocol: %s", PROTOCOL)
 
     client.subscribe_logs([UNISWAP_V3_SWAP_TOPIC])
 
@@ -45,7 +47,11 @@ def run_producer() -> None:
 
             if message.get("method") == "eth_subscription":
                 log = message["params"]["result"]
-                event = parse_swap_log(log, chain=CHAIN)
+                event = parse_swap_log(
+                    log,
+                    chain=CHAIN,
+                    protocol=PROTOCOL,
+                )
 
                 kafka.send(event)
                 logger.info("Published event: %s", json.dumps(event, sort_keys=True))

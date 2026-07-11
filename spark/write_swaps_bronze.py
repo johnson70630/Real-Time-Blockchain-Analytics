@@ -2,7 +2,12 @@ import logging
 from pathlib import Path
 
 from pyspark.sql import DataFrame, SparkSession
-from pyspark.sql.functions import col, current_timestamp, from_json
+from pyspark.sql.functions import (
+    col,
+    current_timestamp,
+    from_json,
+    to_date,
+)
 from pyspark.sql.types import ArrayType, IntegerType, StringType, StructField, StructType
 
 logging.basicConfig(
@@ -25,6 +30,7 @@ def get_swap_schema() -> StructType:
     return StructType(
         [
             StructField("chain", StringType()),
+            StructField("protocol", StringType()),
             StructField("event_type", StringType()),
             StructField("block_number", IntegerType()),
             StructField("transaction_hash", StringType()),
@@ -75,18 +81,20 @@ def build_bronze_df(raw_df: DataFrame) -> DataFrame:
         )
         .select(
             "kafka_timestamp",
+            to_date(col("kafka_timestamp")).alias("event_date"),
             "kafka_partition",
             "kafka_offset",
             "kafka_key",
             "json_value",
-            col("event.chain"),
-            col("event.event_type"),
-            col("event.block_number"),
-            col("event.transaction_hash"),
-            col("event.pool_address"),
-            col("event.log_index"),
-            col("event.raw_data"),
-            col("event.raw_topics"),
+            col("event.protocol").alias("protocol"),
+            col("event.chain").alias("chain"),
+            col("event.event_type").alias("event_type"),
+            col("event.block_number").alias("block_number"),
+            col("event.transaction_hash").alias("transaction_hash"),
+            col("event.pool_address").alias("pool_address"),
+            col("event.log_index").alias("log_index"),
+            col("event.raw_data").alias("raw_data"),
+            col("event.raw_topics").alias("raw_topics"),
             current_timestamp().alias("ingested_at"),
         )
     )
@@ -104,6 +112,7 @@ def write_bronze_stream(bronze_df: DataFrame) -> None:
         .format("parquet")
         .option("path", BRONZE_OUTPUT_PATH)
         .option("checkpointLocation", CHECKPOINT_PATH)
+        .partitionBy("protocol", "chain", "event_date")
         .trigger(processingTime="10 seconds")
         .start()
     )

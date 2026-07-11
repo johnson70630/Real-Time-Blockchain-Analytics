@@ -10,7 +10,7 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-BRONZE_PATH = "data/bronze/swaps/*.parquet"
+BRONZE_PATH = "data/bronze/swaps/**/*.parquet"
 SILVER_DIR = "data/silver/swaps"
 SILVER_FILE = f"{SILVER_DIR}/swaps_silver.parquet"
 
@@ -22,7 +22,9 @@ def build_silver_swaps() -> None:
         COPY (
             SELECT
                 transaction_hash || '-' || CAST(log_index AS VARCHAR) AS event_id,
+                protocol,
                 chain,
+                event_date,
                 event_type,
                 block_number,
                 transaction_hash,
@@ -36,11 +38,17 @@ def build_silver_swaps() -> None:
                 SELECT
                     *,
                     ROW_NUMBER() OVER (
-                        PARTITION BY transaction_hash, log_index
+                        PARTITION BY chain, transaction_hash, log_index
                         ORDER BY kafka_timestamp DESC, ingested_at DESC
                     ) AS row_num
-                FROM read_parquet('{BRONZE_PATH}')
-                WHERE transaction_hash IS NOT NULL
+                FROM read_parquet(
+                    '{BRONZE_PATH}',
+                    hive_partitioning = true
+                )
+                WHERE protocol IS NOT NULL
+                  AND chain IS NOT NULL
+                  AND event_date IS NOT NULL
+                  AND transaction_hash IS NOT NULL
                   AND pool_address IS NOT NULL
                   AND block_number IS NOT NULL
                   AND log_index IS NOT NULL
