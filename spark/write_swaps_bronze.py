@@ -1,5 +1,4 @@
 import logging
-from pathlib import Path
 
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.functions import (
@@ -10,20 +9,20 @@ from pyspark.sql.functions import (
 )
 from pyspark.sql.types import ArrayType, IntegerType, StringType, StructField, StructType
 
+from config.settings import (
+    BRONZE_OUTPUT_PATH,
+    KAFKA_BOOTSTRAP_SERVERS,
+    KAFKA_TOPIC,
+    SPARK_CHECKPOINT_PATH,
+    SPARK_KAFKA_CONNECTOR_PACKAGE,
+)
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(levelname)s | %(message)s",
 )
 
 logger = logging.getLogger(__name__)
-
-KAFKA_BOOTSTRAP_SERVERS = "localhost:9092"
-KAFKA_TOPIC = "uniswap_v3_swaps"
-
-BRONZE_OUTPUT_PATH = "data/bronze/swaps"
-CHECKPOINT_PATH = "data/checkpoints/swaps_bronze"
-
-SPARK_KAFKA_PACKAGE = "org.apache.spark:spark-sql-kafka-0-10_2.13:4.0.1"
 
 
 def get_swap_schema() -> StructType:
@@ -45,7 +44,7 @@ def get_swap_schema() -> StructType:
 def create_spark_session() -> SparkSession:
     return (
         SparkSession.builder.appName("WriteUniswapSwapsBronze")
-        .config("spark.jars.packages", SPARK_KAFKA_PACKAGE)
+        .config("spark.jars.packages", SPARK_KAFKA_CONNECTOR_PACKAGE)
         .getOrCreate()
     )
 
@@ -101,17 +100,17 @@ def build_bronze_df(raw_df: DataFrame) -> DataFrame:
 
 
 def write_bronze_stream(bronze_df: DataFrame) -> None:
-    Path(BRONZE_OUTPUT_PATH).mkdir(parents=True, exist_ok=True)
-    Path(CHECKPOINT_PATH).mkdir(parents=True, exist_ok=True)
+    BRONZE_OUTPUT_PATH.mkdir(parents=True, exist_ok=True)
+    SPARK_CHECKPOINT_PATH.mkdir(parents=True, exist_ok=True)
 
     logger.info("Writing bronze swap events to: %s", BRONZE_OUTPUT_PATH)
-    logger.info("Using checkpoint path: %s", CHECKPOINT_PATH)
+    logger.info("Using checkpoint path: %s", SPARK_CHECKPOINT_PATH)
 
     query = (
         bronze_df.writeStream.outputMode("append")
         .format("parquet")
-        .option("path", BRONZE_OUTPUT_PATH)
-        .option("checkpointLocation", CHECKPOINT_PATH)
+        .option("path", str(BRONZE_OUTPUT_PATH))
+        .option("checkpointLocation", str(SPARK_CHECKPOINT_PATH))
         .partitionBy("protocol", "chain", "event_date")
         .trigger(processingTime="10 seconds")
         .start()

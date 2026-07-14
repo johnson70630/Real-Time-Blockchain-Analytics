@@ -4,12 +4,14 @@ import duckdb
 import pandas as pd
 import streamlit as st
 
-GOLD_DIR = Path("data/gold")
-
-PIPELINE_SUMMARY_PATH = GOLD_DIR / "pipeline_summary" / "*.parquet"
-SWAPS_PER_MINUTE_PATH = GOLD_DIR / "swaps_per_minute" / "*.parquet"
-TOP_POOLS_PATH = GOLD_DIR / "top_pools" / "*.parquet"
-RECENT_SWAPS_PATH = GOLD_DIR / "recent_swaps" / "*.parquet"
+from config.settings import (
+    CHAIN,
+    GOLD_PIPELINE_SUMMARY_GLOB,
+    GOLD_RECENT_SWAPS_GLOB,
+    GOLD_SWAPS_PER_MINUTE_GLOB,
+    GOLD_TOP_POOLS_GLOB,
+    PROTOCOL,
+)
 
 
 def read_parquet(path: Path) -> pd.DataFrame:
@@ -78,14 +80,14 @@ def main() -> None:
 
     st.title("Real-Time Blockchain Analytics")
     st.caption(
-        "Live Uniswap V3 swap analytics from Arbitrum using "
-        "Alchemy, Kafka, Spark, DuckDB, and Parquet"
+        f"Live {PROTOCOL.replace('_', ' ').title()} swap analytics from "
+        f"{CHAIN.title()} using Alchemy, Kafka, Spark, DuckDB, and Parquet"
     )
 
-    summary_df = read_parquet(PIPELINE_SUMMARY_PATH)
-    swaps_per_minute_df = read_parquet(SWAPS_PER_MINUTE_PATH)
-    top_pools_df = read_parquet(TOP_POOLS_PATH)
-    recent_swaps_df = read_parquet(RECENT_SWAPS_PATH)
+    summary_df = read_parquet(GOLD_PIPELINE_SUMMARY_GLOB)
+    swaps_per_minute_df = read_parquet(GOLD_SWAPS_PER_MINUTE_GLOB)
+    top_pools_df = read_parquet(GOLD_TOP_POOLS_GLOB)
+    recent_swaps_df = read_parquet(GOLD_RECENT_SWAPS_GLOB)
 
     render_kpis(summary_df)
 

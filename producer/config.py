@@ -1,34 +1,21 @@
-import os
-from pathlib import Path
+"""Compatibility wrapper for the shared project settings."""
 
-from dotenv import load_dotenv
+from config.settings import (
+    CHAIN,
+    KAFKA_BOOTSTRAP_SERVERS,
+    KAFKA_TOPIC,
+    PROJECT_ROOT,
+    PROTOCOL,
+    get_alchemy_websocket_url,
+    get_required_env,
+)
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-load_dotenv(PROJECT_ROOT / ".env")
-
-
-def get_required_env(name: str) -> str:
-    """Read a required environment variable or raise a clear error."""
-    value = os.getenv(name)
-
-    if not value:
-        raise ValueError(f"Missing required environment variable: {name}")
-
-    return value
-
-
-def get_alchemy_websocket_url() -> str:
-    """Return the Alchemy WebSocket URL required by the producer."""
-    return get_required_env("ALCHEMY_WEBSOCKET_URL")
-
-
-PROTOCOL = os.getenv("PROTOCOL", "uniswap_v3")
-CHAIN = os.getenv("CHAIN", "arbitrum")
-KAFKA_BOOTSTRAP_SERVERS = os.getenv(
+__all__ = [
+    "CHAIN",
     "KAFKA_BOOTSTRAP_SERVERS",
-    "localhost:9092",
-)
-KAFKA_TOPIC = os.getenv(
     "KAFKA_TOPIC",
-    "uniswap_v3_swaps",
-)
+    "PROJECT_ROOT",
+    "PROTOCOL",
+    "get_alchemy_websocket_url",
+    "get_required_env",
+]

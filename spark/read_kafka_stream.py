@@ -4,6 +4,12 @@ from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.functions import col, from_json
 from pyspark.sql.types import ArrayType, IntegerType, StringType, StructField, StructType
 
+from config.settings import (
+    KAFKA_BOOTSTRAP_SERVERS,
+    KAFKA_TOPIC,
+    SPARK_KAFKA_CONNECTOR_PACKAGE,
+)
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(levelname)s | %(message)s",
@@ -11,14 +17,11 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-KAFKA_BOOTSTRAP_SERVERS = "localhost:9092"
-KAFKA_TOPIC = "uniswap_v3_swaps"
-SPARK_KAFKA_PACKAGE = "org.apache.spark:spark-sql-kafka-0-10_2.13:4.0.1"
-
 
 def get_swap_schema() -> StructType:
     return StructType(
         [
+            StructField("protocol", StringType()),
             StructField("chain", StringType()),
             StructField("event_type", StringType()),
             StructField("block_number", IntegerType()),
@@ -34,7 +37,7 @@ def get_swap_schema() -> StructType:
 def create_spark_session() -> SparkSession:
     return (
         SparkSession.builder.appName("ReadKafkaSwapStream")
-        .config("spark.jars.packages", SPARK_KAFKA_PACKAGE)
+        .config("spark.jars.packages", SPARK_KAFKA_CONNECTOR_PACKAGE)
         .getOrCreate()
     )
 

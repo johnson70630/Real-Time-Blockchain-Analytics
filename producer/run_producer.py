@@ -1,14 +1,14 @@
 import json
 import logging
 
-from producer.alchemy_client import AlchemyClient
-from producer.config import (
+from config.settings import (
     CHAIN,
     KAFKA_BOOTSTRAP_SERVERS,
     KAFKA_TOPIC,
     PROTOCOL,
     get_alchemy_websocket_url,
 )
+from producer.alchemy_client import AlchemyClient
 from producer.kafka_producer import KafkaEventProducer
 from producer.parser import UNISWAP_V3_SWAP_TOPIC, parse_swap_log
 

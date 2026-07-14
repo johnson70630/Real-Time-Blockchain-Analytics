@@ -2,6 +2,8 @@ from typing import Any
 
 from web3 import Web3
 
+from config.settings import CHAIN, PROTOCOL
+
 UNISWAP_V3_SWAP_TOPIC = "0x" + Web3.keccak(
     text="Swap(address,address,int256,int256,uint160,uint128,int24)"
 ).hex()
@@ -9,8 +11,8 @@ UNISWAP_V3_SWAP_TOPIC = "0x" + Web3.keccak(
 
 def parse_swap_log(
     log: dict[str, Any],
-    chain: str = "arbitrum",
-    protocol: str = "uniswap_v3",
+    chain: str = CHAIN,
+    protocol: str = PROTOCOL,
 ) -> dict[str, Any]:
     """Parse a raw Uniswap V3 Swap log into a normalized event dictionary."""
     return {

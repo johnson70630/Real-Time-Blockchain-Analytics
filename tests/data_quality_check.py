@@ -2,15 +2,14 @@ import logging
 
 import duckdb
 
+from config.settings import GOLD_PIPELINE_SUMMARY_GLOB, SILVER_PARQUET_GLOB
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(levelname)s | %(message)s",
 )
 
 logger = logging.getLogger(__name__)
-
-SILVER_PATH = "data/silver/swaps/*.parquet"
-GOLD_SUMMARY_PATH = "data/gold/pipeline_summary/*.parquet"
 
 
 def run_check(name: str, query: str, expected_value: int | None = None) -> None:
@@ -30,10 +29,8 @@ def main() -> None:
     run_check(
         "Silver event_id uniqueness",
         f"""
-        SELECT COUNT(*) - COUNT(
-            DISTINCT chain || '-' || transaction_hash || '-' || CAST(log_index AS VARCHAR)
-        )
-        FROM read_parquet('{SILVER_PATH}')
+        SELECT COUNT(*) - COUNT(DISTINCT event_id)
+        FROM read_parquet('{SILVER_PARQUET_GLOB}')
         """,
         expected_value=0,
     )
@@ -42,7 +39,7 @@ def main() -> None:
         "Silver required fields not null",
         f"""
         SELECT COUNT(*)
-        FROM read_parquet('{SILVER_PATH}')
+        FROM read_parquet('{SILVER_PARQUET_GLOB}')
         WHERE event_id IS NULL
             OR protocol IS NULL
             OR chain IS NULL
@@ -59,7 +56,7 @@ def main() -> None:
         "Gold summary has swaps",
         f"""
         SELECT total_swaps
-        FROM read_parquet('{GOLD_SUMMARY_PATH}')
+        FROM read_parquet('{GOLD_PIPELINE_SUMMARY_GLOB}')
         """,
     )
 

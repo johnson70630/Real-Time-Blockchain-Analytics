@@ -1,7 +1,8 @@
 import logging
-from pathlib import Path
 
 import duckdb
+
+from config.settings import BRONZE_PARQUET_GLOB, SILVER_DIR, SILVER_OUTPUT_FILE
 
 logging.basicConfig(
     level=logging.INFO,
@@ -10,18 +11,15 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-BRONZE_PATH = "data/bronze/swaps/**/*.parquet"
-SILVER_DIR = "data/silver/swaps"
-SILVER_FILE = f"{SILVER_DIR}/swaps_silver.parquet"
-
 
 def build_silver_swaps() -> None:
-    Path(SILVER_DIR).mkdir(parents=True, exist_ok=True)
+    SILVER_DIR.mkdir(parents=True, exist_ok=True)
 
     query = f"""
         COPY (
             SELECT
-                transaction_hash || '-' || CAST(log_index AS VARCHAR) AS event_id,
+                chain || '-' || transaction_hash || '-'
+                    || CAST(log_index AS VARCHAR) AS event_id,
                 protocol,
                 chain,
                 event_date,
@@ -42,7 +40,7 @@ def build_silver_swaps() -> None:
                         ORDER BY kafka_timestamp DESC, ingested_at DESC
                     ) AS row_num
                 FROM read_parquet(
-                    '{BRONZE_PATH}',
+                    '{BRONZE_PARQUET_GLOB}',
                     hive_partitioning = true
                 )
                 WHERE protocol IS NOT NULL
@@ -55,12 +53,12 @@ def build_silver_swaps() -> None:
             )
             WHERE row_num = 1
         )
-        TO '{SILVER_FILE}'
+        TO '{SILVER_OUTPUT_FILE}'
         (FORMAT PARQUET, OVERWRITE true)
     """
 
     duckdb.sql(query)
-    logger.info("Silver swaps written to: %s", SILVER_FILE)
+    logger.info("Silver swaps written to: %s", SILVER_OUTPUT_FILE)
 
 
 def main() -> None:

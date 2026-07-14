@@ -10,22 +10,22 @@ producer:
 	uv run python -m producer.run_producer
 
 bronze:
-	uv run python spark/write_swaps_bronze.py
+	uv run python -m spark.write_swaps_bronze
 
 silver:
-	uv run python spark/build_swaps_silver.py
+	uv run python -m spark.build_swaps_silver
 
 gold:
-	uv run python spark/build_swaps_gold.py
+	uv run python -m spark.build_swaps_gold
 
 dashboard:
-	uv run streamlit run dashboard/app.py
+	uv run python -m streamlit run dashboard/app.py
 
 lint:
 	uv run ruff check .
 
 quality:
-	uv run python tests/data_quality_check.py
+	uv run python -m tests.data_quality_check
 
 test:
 	uv run pytest
