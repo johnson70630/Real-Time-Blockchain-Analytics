@@ -33,4 +33,4 @@ test:
 check: lint test
 
 clean-data:
-	rm -rf data/bronze data/silver data/gold data/checkpoints
+	rm -rf data/bronze data/silver data/gold data/checkpoints data/state

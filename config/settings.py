@@ -49,6 +49,12 @@ SILVER_OUTPUT_FILE = _project_path(
 )
 SILVER_PARQUET_GLOB = SILVER_DIR / "*.parquet"
 
+STATE_DIR = _project_path("STATE_DIR", "data/state")
+SILVER_PROCESSED_FILES_MANIFEST = _project_path(
+    "SILVER_PROCESSED_FILES_MANIFEST",
+    STATE_DIR / "silver_processed_files.json",
+)
+
 GOLD_DIR = _project_path("GOLD_DIR", "data/gold")
 GOLD_SWAPS_PER_MINUTE_FILE = _project_path(
     "GOLD_SWAPS_PER_MINUTE_FILE",
