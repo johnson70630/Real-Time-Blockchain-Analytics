@@ -136,7 +136,8 @@ def _silver_merge_query(include_existing_silver: bool) -> str:
                 SELECT
                     {columns}
                 FROM new_bronze
-                WHERE protocol IS NOT NULL
+                WHERE event_type = 'swap'
+                  AND protocol IS NOT NULL
                   AND chain IS NOT NULL
                   AND event_date IS NOT NULL
                   AND transaction_hash IS NOT NULL
@@ -189,6 +190,7 @@ def merge_silver_swaps(new_bronze_files: list[Path]) -> tuple[int, int]:
         connection.read_parquet(
             [str(path) for path in new_bronze_files],
             hive_partitioning=True,
+            union_by_name=True,
         ).create_view("new_bronze")
 
         if silver_exists:

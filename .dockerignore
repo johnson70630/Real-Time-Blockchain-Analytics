@@ -1,0 +1,17 @@
+.git
+.gitignore
+.venv
+__pycache__
+**/__pycache__
+*.py[cod]
+.pytest_cache
+.ruff_cache
+data
+.env
+.env.*
+.DS_Store
+.vscode
+.idea
+*.log
+spark-warehouse
+.streamlit

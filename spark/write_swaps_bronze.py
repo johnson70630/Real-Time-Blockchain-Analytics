@@ -3,11 +3,11 @@ import logging
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.functions import (
     col,
+    coalesce,
     current_timestamp,
     from_json,
     to_date,
 )
-from pyspark.sql.types import ArrayType, IntegerType, StringType, StructField, StructType
 
 from config.settings import (
     BRONZE_OUTPUT_PATH,
@@ -16,6 +16,7 @@ from config.settings import (
     SPARK_CHECKPOINT_PATH,
     SPARK_KAFKA_CONNECTOR_PACKAGE,
 )
+from spark.event_schema import get_event_schema
 
 logging.basicConfig(
     level=logging.INFO,
@@ -23,22 +24,6 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
-
-
-def get_swap_schema() -> StructType:
-    return StructType(
-        [
-            StructField("chain", StringType()),
-            StructField("protocol", StringType()),
-            StructField("event_type", StringType()),
-            StructField("block_number", IntegerType()),
-            StructField("transaction_hash", StringType()),
-            StructField("pool_address", StringType()),
-            StructField("log_index", IntegerType()),
-            StructField("raw_data", StringType()),
-            StructField("raw_topics", ArrayType(StringType())),
-        ]
-    )
 
 
 def create_spark_session() -> SparkSession:
@@ -60,7 +45,7 @@ def read_kafka_stream(spark: SparkSession) -> DataFrame:
 
 
 def build_bronze_df(raw_df: DataFrame) -> DataFrame:
-    schema = get_swap_schema()
+    schema = get_event_schema()
 
     return (
         raw_df.select(
@@ -80,7 +65,9 @@ def build_bronze_df(raw_df: DataFrame) -> DataFrame:
         )
         .select(
             "kafka_timestamp",
-            to_date(col("kafka_timestamp")).alias("event_date"),
+            to_date(
+                coalesce(col("event.block_timestamp"), col("kafka_timestamp"))
+            ).alias("event_date"),
             "kafka_partition",
             "kafka_offset",
             "kafka_key",
@@ -90,11 +77,15 @@ def build_bronze_df(raw_df: DataFrame) -> DataFrame:
             col("event.event_type").alias("event_type"),
             col("event.block_number").alias("block_number"),
             col("event.transaction_hash").alias("transaction_hash"),
-            col("event.pool_address").alias("pool_address"),
             col("event.log_index").alias("log_index"),
-            col("event.raw_data").alias("raw_data"),
-            col("event.raw_topics").alias("raw_topics"),
-            current_timestamp().alias("ingested_at"),
+            col("event.block_timestamp").alias("block_timestamp"),
+            col("event.payload").alias("payload"),
+            col("event.payload.pool_address").alias("pool_address"),
+            col("event.payload.raw_data").alias("raw_data"),
+            col("event.payload.raw_topics").alias("raw_topics"),
+            coalesce(col("event.ingested_at"), current_timestamp()).alias(
+                "ingested_at"
+            ),
         )
     )
 
@@ -111,7 +102,7 @@ def write_bronze_stream(bronze_df: DataFrame) -> None:
         .format("parquet")
         .option("path", str(BRONZE_OUTPUT_PATH))
         .option("checkpointLocation", str(SPARK_CHECKPOINT_PATH))
-        .partitionBy("protocol", "chain", "event_date")
+        .partitionBy("protocol", "chain", "event_type", "event_date")
         .trigger(processingTime="10 seconds")
         .start()
     )

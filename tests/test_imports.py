@@ -7,6 +7,7 @@ PRODUCER_MODULES = [
     "config.settings",
     "producer.alchemy_client",
     "producer.config",
+    "producer.event_handlers",
     "producer.kafka_producer",
     "producer.parser",
 ]

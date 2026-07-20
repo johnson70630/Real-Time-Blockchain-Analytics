@@ -2,13 +2,13 @@ import logging
 
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.functions import col, from_json
-from pyspark.sql.types import ArrayType, IntegerType, StringType, StructField, StructType
 
 from config.settings import (
     KAFKA_BOOTSTRAP_SERVERS,
     KAFKA_TOPIC,
     SPARK_KAFKA_CONNECTOR_PACKAGE,
 )
+from spark.event_schema import get_event_schema
 
 logging.basicConfig(
     level=logging.INFO,
@@ -16,22 +16,6 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
-
-
-def get_swap_schema() -> StructType:
-    return StructType(
-        [
-            StructField("protocol", StringType()),
-            StructField("chain", StringType()),
-            StructField("event_type", StringType()),
-            StructField("block_number", IntegerType()),
-            StructField("transaction_hash", StringType()),
-            StructField("pool_address", StringType()),
-            StructField("log_index", IntegerType()),
-            StructField("raw_data", StringType()),
-            StructField("raw_topics", ArrayType(StringType())),
-        ]
-    )
 
 
 def create_spark_session() -> SparkSession:
@@ -53,7 +37,7 @@ def read_kafka_stream(spark: SparkSession) -> DataFrame:
 
 
 def parse_events(raw_df: DataFrame) -> DataFrame:
-    schema = get_swap_schema()
+    schema = get_event_schema()
 
     return (
         raw_df.selectExpr("CAST(value AS STRING) AS json_value")

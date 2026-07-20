@@ -1,5 +1,7 @@
-import json
 import logging
+import signal
+from collections import Counter
+from types import FrameType
 
 from config.settings import (
     CHAIN,
@@ -9,8 +11,12 @@ from config.settings import (
     get_alchemy_websocket_url,
 )
 from producer.alchemy_client import AlchemyClient
+from producer.event_handlers import (
+    EVENT_HANDLERS,
+    SUPPORTED_EVENT_TOPICS,
+    get_event_handler,
+)
 from producer.kafka_producer import KafkaEventProducer
-from producer.parser import UNISWAP_V3_SWAP_TOPIC, parse_swap_log
 
 logging.basicConfig(
     level=logging.INFO,
@@ -20,21 +26,31 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+def handle_shutdown_signal(_signum: int, _frame: FrameType | None) -> None:
+    """Convert SIGTERM into the producer's existing graceful shutdown path."""
+    logger.info("Producer shutdown signal received")
+    raise KeyboardInterrupt
+
+
 def run_producer() -> None:
-    """Stream Uniswap V3 swap logs from Alchemy and publish them to Kafka."""
+    """Stream supported Uniswap V3 logs from Alchemy and publish them to Kafka."""
     client = AlchemyClient(get_alchemy_websocket_url())
     kafka = KafkaEventProducer(KAFKA_BOOTSTRAP_SERVERS, KAFKA_TOPIC)
-
-    logger.info("Starting blockchain event producer")
-    logger.info("Chain: %s", CHAIN)
-    logger.info("Kafka bootstrap servers: %s", KAFKA_BOOTSTRAP_SERVERS)
-    logger.info("Kafka topic: %s", KAFKA_TOPIC)
-    logger.info("Alchemy subscription topic: %s", UNISWAP_V3_SWAP_TOPIC)
-    logger.info("Protocol: %s", PROTOCOL)
-
-    client.subscribe_logs([UNISWAP_V3_SWAP_TOPIC])
+    processed_counts: Counter[str] = Counter()
 
     try:
+        logger.info("Starting blockchain event producer")
+        logger.info("Chain: %s", CHAIN)
+        logger.info("Kafka bootstrap servers: %s", KAFKA_BOOTSTRAP_SERVERS)
+        logger.info("Kafka topic: %s", KAFKA_TOPIC)
+        logger.info("Protocol: %s", PROTOCOL)
+        logger.info(
+            "Enabled event types: %s",
+            ", ".join(handler.event_type for handler in EVENT_HANDLERS),
+        )
+
+        client.subscribe_logs(SUPPORTED_EVENT_TOPICS)
+
         while True:
             message = client.receive()
 
@@ -47,14 +63,24 @@ def run_producer() -> None:
 
             if message.get("method") == "eth_subscription":
                 log = message["params"]["result"]
-                event = parse_swap_log(
+                handler = get_event_handler(log)
+                block_timestamp = client.get_block_timestamp(log["blockNumber"])
+                event = handler.build_event(
                     log,
+                    block_timestamp,
                     chain=CHAIN,
                     protocol=PROTOCOL,
                 )
 
                 kafka.send(event)
-                logger.info("Published event: %s", json.dumps(event, sort_keys=True))
+                processed_counts[handler.event_type] += 1
+                event_count = processed_counts[handler.event_type]
+                if event_count == 1 or event_count % 100 == 0:
+                    logger.info(
+                        "Processed %s events: %s",
+                        handler.event_type,
+                        event_count,
+                    )
 
     except KeyboardInterrupt:
         logger.info("Producer stopped by user")
@@ -66,6 +92,7 @@ def run_producer() -> None:
 
 
 def main() -> None:
+    signal.signal(signal.SIGTERM, handle_shutdown_signal)
     run_producer()
 
 
