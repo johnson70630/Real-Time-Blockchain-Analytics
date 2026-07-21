@@ -28,7 +28,7 @@ silver:
 	uv run python -m spark.build_swaps_silver
 
 gold:
-	uv run python -m spark.build_swaps_gold
+	uv run python -m spark.build_gold
 
 dashboard:
 	uv run python -m streamlit run dashboard/app.py

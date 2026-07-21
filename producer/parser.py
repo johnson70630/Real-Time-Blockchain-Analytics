@@ -1,23 +1,8 @@
-from typing import Any
+"""Compatibility exports for the Uniswap V3 Swap parser."""
 
-from config.settings import CHAIN, PROTOCOL
-from producer.event_handlers import SwapEventHandler
+from producer.protocols.uniswap_v3.parser import (
+    UNISWAP_V3_SWAP_TOPIC,
+    parse_swap_log,
+)
 
-UNISWAP_V3_SWAP_TOPIC = SwapEventHandler.topic
-
-
-def parse_swap_log(
-    log: dict[str, Any],
-    chain: str = CHAIN,
-    protocol: str = PROTOCOL,
-    block_timestamp: str | None = None,
-    ingested_at: str | None = None,
-) -> dict[str, Any]:
-    """Compatibility wrapper around the Swap event handler."""
-    return SwapEventHandler().build_event(
-        log,
-        block_timestamp,
-        chain=chain,
-        protocol=protocol,
-        ingested_at=ingested_at,
-    )
+__all__ = ["UNISWAP_V3_SWAP_TOPIC", "parse_swap_log"]

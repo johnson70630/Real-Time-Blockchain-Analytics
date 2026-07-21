@@ -130,11 +130,12 @@ def test_handler_selection(log: dict, handler_type: type) -> None:
     ],
 )
 def test_common_envelope_and_event_type(handler, log: dict, event_type: str) -> None:
-    event = handler.build_event(
+    envelope = handler.build_event(
         log,
         "2026-07-20T00:00:00+00:00",
         ingested_at="2026-07-20T00:00:01+00:00",
     )
+    event = envelope.to_dict()
 
     assert set(event) == {
         "protocol",

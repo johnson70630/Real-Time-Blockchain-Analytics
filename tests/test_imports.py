@@ -9,9 +9,14 @@ PRODUCER_MODULES = [
     "config.versions",
     "producer.alchemy_client",
     "producer.config",
+    "producer.dispatcher",
     "producer.event_handlers",
     "producer.kafka_producer",
+    "producer.models",
+    "producer.protocols.aave_v3",
     "producer.parser",
+    "producer.protocols.uniswap_v3",
+    "producer.registry",
 ]
 
 

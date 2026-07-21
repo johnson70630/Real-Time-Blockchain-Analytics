@@ -44,6 +44,8 @@ services:
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       KAFKA_TOPIC: ${KAFKA_TOPIC:-uniswap_v3_swaps}
       PROTOCOL: ${PROTOCOL:-uniswap_v3}
+      ENABLED_PROTOCOLS: ${ENABLED_PROTOCOLS:-}
+      AAVE_V3_POOL_ADDRESS: ${AAVE_V3_POOL_ADDRESS:-}
       CHAIN: ${CHAIN:-arbitrum}
 
     depends_on:

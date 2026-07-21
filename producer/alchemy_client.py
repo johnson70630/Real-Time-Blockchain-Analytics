@@ -14,25 +14,34 @@ class AlchemyClient:
         self.websocket_url = websocket_url
         self.timeout = timeout
         self.ws: WebSocket = create_connection(websocket_url, timeout=timeout)
-        self._request_ids = count(2)
+        self._request_ids = count(1)
         self._pending_messages: deque[dict[str, Any]] = deque()
         self._block_timestamps: OrderedDict[str, str] = OrderedDict()
 
-    def subscribe_logs(self, topics: list[str]) -> None:
+    def subscribe_logs(
+        self,
+        topics: tuple[str, ...] | list[str],
+        addresses: tuple[str, ...] | list[str] = (),
+    ) -> int:
         """Subscribe to Ethereum logs matching the given topic filters."""
+        request_id = next(self._request_ids)
+        log_filter: dict[str, Any] = {"topics": [list(topics)]}
+        if addresses:
+            log_filter["address"] = (
+                addresses[0] if len(addresses) == 1 else list(addresses)
+            )
         request = {
             "jsonrpc": "2.0",
-            "id": 1,
+            "id": request_id,
             "method": "eth_subscribe",
             "params": [
                 "logs",
-                {
-                    "topics": [topics],
-                },
+                log_filter,
             ],
         }
 
         self.ws.send(json.dumps(request))
+        return request_id
 
     def receive(self) -> dict[str, Any]:
         """Receive and decode one WebSocket message."""

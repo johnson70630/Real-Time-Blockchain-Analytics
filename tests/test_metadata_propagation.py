@@ -95,7 +95,7 @@ def test_producer_generates_versions_and_utc_ingestion_timestamp(
             "logIndex": "0x0",
         },
         "2026-07-20T00:00:00+00:00",
-    )
+    ).to_dict()
 
     assert event["producer_version"] == PRODUCER_VERSION
     assert event["schema_version"] == SCHEMA_VERSION

@@ -1,5 +1,6 @@
 from pyspark.sql.types import (
     ArrayType,
+    BooleanType,
     IntegerType,
     StringType,
     StructField,
@@ -26,6 +27,25 @@ def get_event_schema() -> StructType:
             StructField("tick", IntegerType()),
             StructField("raw_data", StringType()),
             StructField("raw_topics", ArrayType(StringType())),
+            StructField("contract_address", StringType()),
+            StructField("reserve", StringType()),
+            StructField("user", StringType()),
+            StructField("on_behalf_of", StringType()),
+            StructField("amount_raw", StringType()),
+            StructField("interest_rate_mode", IntegerType()),
+            StructField("borrow_rate_raw", StringType()),
+            StructField("referral_code", IntegerType()),
+            StructField("repayer", StringType()),
+            StructField("use_atokens", BooleanType()),
+            StructField("collateral_asset", StringType()),
+            StructField("debt_asset", StringType()),
+            StructField("debt_to_cover_raw", StringType()),
+            StructField(
+                "liquidated_collateral_amount_raw",
+                StringType(),
+            ),
+            StructField("liquidator", StringType()),
+            StructField("receive_atoken", BooleanType()),
         ]
     )
 
