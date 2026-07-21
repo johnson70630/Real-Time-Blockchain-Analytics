@@ -4,11 +4,14 @@ from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.functions import (
     col,
     coalesce,
+    concat,
     current_timestamp,
     from_json,
+    lit,
     to_date,
 )
 
+from config.metadata import PRODUCER_VERSION_FIELDS
 from config.settings import (
     BRONZE_OUTPUT_PATH,
     KAFKA_BOOTSTRAP_SERVERS,
@@ -79,6 +82,11 @@ def build_bronze_df(raw_df: DataFrame) -> DataFrame:
             col("event.transaction_hash").alias("transaction_hash"),
             col("event.log_index").alias("log_index"),
             col("event.block_timestamp").alias("block_timestamp"),
+            # Keep producer provenance unchanged in the Bronze record.
+            *(
+                col(f"event.{field}").alias(field)
+                for field in PRODUCER_VERSION_FIELDS
+            ),
             col("event.payload").alias("payload"),
             col("event.payload.pool_address").alias("pool_address"),
             col("event.payload.raw_data").alias("raw_data"),
@@ -86,6 +94,24 @@ def build_bronze_df(raw_df: DataFrame) -> DataFrame:
             coalesce(col("event.ingested_at"), current_timestamp()).alias(
                 "ingested_at"
             ),
+            # Records when Spark parsed and accepted the Kafka message.
+            current_timestamp().alias("bronze_processed_at"),
+            # Spark assigns part filenames during the write, so retain the
+            # deterministic output partition path for physical traceability.
+            concat(
+                lit(f"{BRONZE_OUTPUT_PATH.as_posix()}/protocol="),
+                col("event.protocol"),
+                lit("/chain="),
+                col("event.chain"),
+                lit("/event_type="),
+                col("event.event_type"),
+                lit("/event_date="),
+                to_date(
+                    coalesce(
+                        col("event.block_timestamp"), col("kafka_timestamp")
+                    )
+                ).cast("string"),
+            ).alias("bronze_file"),
         )
     )
 

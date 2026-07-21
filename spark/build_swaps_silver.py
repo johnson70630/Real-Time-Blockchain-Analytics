@@ -5,6 +5,10 @@ from uuid import uuid4
 
 import duckdb
 
+from config.metadata import (
+    BRONZE_OUTPUT_METADATA_FIELDS,
+    SILVER_METADATA_FIELDS,
+)
 from config.settings import (
     BRONZE_OUTPUT_PATH,
     PROJECT_ROOT,
@@ -12,6 +16,7 @@ from config.settings import (
     SILVER_OUTPUT_FILE,
     SILVER_PROCESSED_FILES_MANIFEST,
 )
+from config.versions import SILVER_JOB_VERSION
 
 logging.basicConfig(
     level=logging.INFO,
@@ -20,7 +25,7 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-SILVER_COLUMNS = (
+SILVER_UPSTREAM_COLUMNS = (
     "protocol",
     "chain",
     "event_date",
@@ -32,8 +37,24 @@ SILVER_COLUMNS = (
     "raw_data",
     "raw_topics",
     "kafka_timestamp",
-    "ingested_at",
+    *BRONZE_OUTPUT_METADATA_FIELDS,
 )
+
+SILVER_COLUMNS = (
+    *SILVER_UPSTREAM_COLUMNS,
+    *SILVER_METADATA_FIELDS,
+)
+
+SILVER_OUTPUT_COLUMNS = ("event_id", *SILVER_COLUMNS)
+
+LEGACY_METADATA_FALLBACKS = {
+    "producer_version": "'legacy'",
+    "schema_version": "'legacy'",
+    "bronze_processed_at": "ingested_at",
+    "bronze_file": "'legacy'",
+    "silver_processed_at": "ingested_at",
+    "silver_job_version": "'legacy'",
+}
 
 
 def discover_bronze_files(bronze_root: Path = BRONZE_OUTPUT_PATH) -> list[Path]:
@@ -130,11 +151,45 @@ def select_unprocessed_files(
     ]
 
 
+def create_compatible_view(
+    connection: duckdb.DuckDBPyConnection,
+    source_view: str,
+    target_view: str,
+    required_columns: tuple[str, ...],
+) -> None:
+    """Project a stable metadata schema, including pre-milestone local files."""
+    available_columns = {
+        row[0] for row in connection.sql(f"DESCRIBE {source_view}").fetchall()
+    }
+    projections = []
+
+    for column in required_columns:
+        if column in available_columns:
+            projections.append(column)
+        elif column in LEGACY_METADATA_FALLBACKS:
+            projections.append(
+                f"{LEGACY_METADATA_FALLBACKS[column]} AS {column}"
+            )
+        else:
+            raise ValueError(
+                f"Required column '{column}' is missing from {source_view}"
+            )
+
+    connection.sql(
+        f"CREATE TEMP VIEW {target_view} AS "
+        f"SELECT {', '.join(projections)} FROM {source_view}"
+    )
+
+
 def _silver_merge_query(include_existing_silver: bool) -> str:
     columns = ",\n                    ".join(SILVER_COLUMNS)
+    upstream_columns = ",\n                    ".join(SILVER_UPSTREAM_COLUMNS)
     new_bronze_source = f"""
                 SELECT
-                    {columns}
+                    {upstream_columns},
+                    -- Processing time and job version identify this Silver run.
+                    CURRENT_TIMESTAMP AS silver_processed_at,
+                    '{SILVER_JOB_VERSION}' AS silver_job_version
                 FROM new_bronze
                 WHERE event_type = 'swap'
                   AND protocol IS NOT NULL
@@ -191,11 +246,23 @@ def merge_silver_swaps(new_bronze_files: list[Path]) -> tuple[int, int]:
             [str(path) for path in new_bronze_files],
             hive_partitioning=True,
             union_by_name=True,
-        ).create_view("new_bronze")
+        ).create_view("new_bronze_raw")
+        create_compatible_view(
+            connection,
+            "new_bronze_raw",
+            "new_bronze",
+            SILVER_UPSTREAM_COLUMNS,
+        )
 
         if silver_exists:
             connection.read_parquet(str(SILVER_OUTPUT_FILE)).create_view(
-                "existing_silver"
+                "existing_silver_raw"
+            )
+            create_compatible_view(
+                connection,
+                "existing_silver_raw",
+                "existing_silver",
+                SILVER_COLUMNS,
             )
             row_count_before = connection.sql(
                 "SELECT COUNT(*) FROM existing_silver"

@@ -38,6 +38,8 @@ def get_event_schema() -> StructType:
             StructField("transaction_hash", StringType()),
             StructField("log_index", IntegerType()),
             StructField("block_timestamp", TimestampType()),
+            StructField("producer_version", StringType()),
+            StructField("schema_version", StringType()),
             StructField("ingested_at", TimestampType()),
             StructField("payload", payload_schema),
         ]

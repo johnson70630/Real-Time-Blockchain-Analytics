@@ -3,6 +3,7 @@ import json
 import pytest
 from web3 import Web3
 
+from config.versions import PRODUCER_VERSION, SCHEMA_VERSION
 from producer.event_handlers import (
     BurnEventHandler,
     MintEventHandler,
@@ -143,11 +144,16 @@ def test_common_envelope_and_event_type(handler, log: dict, event_type: str) -> 
         "transaction_hash",
         "log_index",
         "block_timestamp",
+        "producer_version",
+        "schema_version",
         "ingested_at",
         "payload",
     }
     assert event["event_type"] == event_type
     assert event["block_number"] == 16
     assert event["log_index"] == 2
+    assert event["producer_version"] == PRODUCER_VERSION
+    assert event["schema_version"] == SCHEMA_VERSION
+    assert event["ingested_at"].endswith("+00:00")
     assert event["payload"]["pool_address"] == POOL.lower()
     json.dumps(event)

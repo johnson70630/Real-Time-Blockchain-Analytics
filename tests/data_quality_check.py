@@ -48,6 +48,29 @@ def main() -> None:
             OR pool_address IS NULL
             OR block_number IS NULL
             OR log_index IS NULL
+            OR producer_version IS NULL
+            OR schema_version IS NULL
+            OR ingested_at IS NULL
+            OR bronze_processed_at IS NULL
+            OR bronze_file IS NULL
+            OR silver_processed_at IS NULL
+            OR silver_job_version IS NULL
+        """,
+        expected_value=0,
+    )
+
+    run_check(
+        "Gold operational metadata not null",
+        f"""
+        SELECT COUNT(*)
+        FROM read_parquet('{GOLD_PIPELINE_SUMMARY_GLOB}')
+        WHERE producer_version IS NULL
+            OR schema_version IS NULL
+            OR bronze_processed_at IS NULL
+            OR silver_processed_at IS NULL
+            OR silver_job_version IS NULL
+            OR gold_processed_at IS NULL
+            OR aggregation_version IS NULL
         """,
         expected_value=0,
     )

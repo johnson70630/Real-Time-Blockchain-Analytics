@@ -6,6 +6,7 @@ from web3 import Web3
 from web3._utils.events import get_event_data
 
 from config.settings import CHAIN, PROTOCOL
+from config.versions import PRODUCER_VERSION, SCHEMA_VERSION
 
 SWAP_EVENT_ABI = {
     "anonymous": False,
@@ -106,6 +107,10 @@ class UniswapV3EventHandler(ABC):
             "transaction_hash": _hex_string(log["transactionHash"]),
             "log_index": _hex_int(log["logIndex"]),
             "block_timestamp": block_timestamp,
+            # Producer and schema versions make emitted events reproducible.
+            "producer_version": PRODUCER_VERSION,
+            "schema_version": SCHEMA_VERSION,
+            # UTC ingestion time measures when the producer observed the log.
             "ingested_at": ingested_at or datetime.now(UTC).isoformat(),
             "payload": self.decode_payload(log),
         }

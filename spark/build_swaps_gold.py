@@ -10,6 +10,11 @@ from config.settings import (
     GOLD_TOP_POOLS_FILE,
     SILVER_PARQUET_GLOB,
 )
+from config.versions import GOLD_JOB_VERSION
+from spark.build_swaps_silver import (
+    SILVER_OUTPUT_COLUMNS,
+    create_compatible_view,
+)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -19,10 +24,28 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def write_parquet(query: str, output_path: Path) -> None:
+AGGREGATE_METADATA_SQL = f"""
+            -- Aggregate outputs retain representative upstream provenance.
+            MAX(producer_version) AS producer_version,
+            MAX(schema_version) AS schema_version,
+            MAX(bronze_processed_at) AS bronze_processed_at,
+            MAX(bronze_file) AS bronze_file,
+            MAX(silver_processed_at) AS silver_processed_at,
+            MAX(silver_job_version) AS silver_job_version,
+            -- Gold processing time and version identify this aggregation run.
+            CURRENT_TIMESTAMP AS gold_processed_at,
+            '{GOLD_JOB_VERSION}' AS aggregation_version
+"""
+
+
+def write_parquet(
+    connection: duckdb.DuckDBPyConnection,
+    query: str,
+    output_path: Path,
+) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    duckdb.sql(
+    connection.sql(
         f"""
         COPY (
             {query}
@@ -35,9 +58,29 @@ def write_parquet(query: str, output_path: Path) -> None:
     logger.info("Wrote %s", output_path)
 
 
-def build_swaps_per_minute() -> None:
-    write_parquet(
-        f"""
+def _create_silver_source(
+    connection: duckdb.DuckDBPyConnection,
+    silver_path: Path,
+) -> None:
+    connection.read_parquet(str(silver_path)).create_view("silver_raw")
+    create_compatible_view(
+        connection,
+        "silver_raw",
+        "silver",
+        SILVER_OUTPUT_COLUMNS,
+    )
+
+
+def build_swaps_per_minute(
+    silver_path: Path = SILVER_PARQUET_GLOB,
+    output_path: Path = GOLD_SWAPS_PER_MINUTE_FILE,
+) -> None:
+    connection = duckdb.connect()
+    try:
+        _create_silver_source(connection, silver_path)
+        write_parquet(
+            connection,
+            f"""
         SELECT
             DATE_TRUNC('minute', kafka_timestamp) AS minute_ts,
             protocol,
@@ -45,18 +88,28 @@ def build_swaps_per_minute() -> None:
             COUNT(*) AS swap_count,
             COUNT(DISTINCT pool_address) AS unique_pools,
             MIN(block_number) AS min_block_number,
-            MAX(block_number) AS max_block_number
-        FROM read_parquet('{SILVER_PARQUET_GLOB}')
+            MAX(block_number) AS max_block_number,
+            {AGGREGATE_METADATA_SQL}
+        FROM silver
         GROUP BY 1, 2, 3
         ORDER BY minute_ts
         """,
-        GOLD_SWAPS_PER_MINUTE_FILE,
-    )
+            output_path,
+        )
+    finally:
+        connection.close()
 
 
-def build_top_pools() -> None:
-    write_parquet(
-        f"""
+def build_top_pools(
+    silver_path: Path = SILVER_PARQUET_GLOB,
+    output_path: Path = GOLD_TOP_POOLS_FILE,
+) -> None:
+    connection = duckdb.connect()
+    try:
+        _create_silver_source(connection, silver_path)
+        write_parquet(
+            connection,
+            f"""
         SELECT
             protocol,
             chain,
@@ -65,19 +118,29 @@ def build_top_pools() -> None:
             MIN(block_number) AS first_block_seen,
             MAX(block_number) AS latest_block_seen,
             MIN(kafka_timestamp) AS first_seen_at,
-            MAX(kafka_timestamp) AS latest_seen_at
-        FROM read_parquet('{SILVER_PARQUET_GLOB}')
+            MAX(kafka_timestamp) AS latest_seen_at,
+            {AGGREGATE_METADATA_SQL}
+        FROM silver
         GROUP BY 1, 2, 3
         ORDER BY swap_count DESC
         LIMIT 50
         """,
-        GOLD_TOP_POOLS_FILE,
-    )
+            output_path,
+        )
+    finally:
+        connection.close()
 
 
-def build_pipeline_summary() -> None:
-    write_parquet(
-        f"""
+def build_pipeline_summary(
+    silver_path: Path = SILVER_PARQUET_GLOB,
+    output_path: Path = GOLD_PIPELINE_SUMMARY_FILE,
+) -> None:
+    connection = duckdb.connect()
+    try:
+        _create_silver_source(connection, silver_path)
+        write_parquet(
+            connection,
+            f"""
         SELECT
             protocol,
             chain,
@@ -89,19 +152,30 @@ def build_pipeline_summary() -> None:
             MIN(kafka_timestamp) AS first_event_time,
             MAX(kafka_timestamp) AS latest_event_time,
             MIN(ingested_at) AS first_ingested_at,
-            MAX(ingested_at) AS latest_ingested_at
-        FROM read_parquet('{SILVER_PARQUET_GLOB}')
+            MAX(ingested_at) AS latest_ingested_at,
+            {AGGREGATE_METADATA_SQL}
+        FROM silver
         GROUP BY 1, 2
         """,
-        GOLD_PIPELINE_SUMMARY_FILE,
-    )
+            output_path,
+        )
+    finally:
+        connection.close()
 
 
-def build_recent_swaps() -> None:
-    write_parquet(
-        f"""
+def build_recent_swaps(
+    silver_path: Path = SILVER_PARQUET_GLOB,
+    output_path: Path = GOLD_RECENT_SWAPS_FILE,
+) -> None:
+    connection = duckdb.connect()
+    try:
+        _create_silver_source(connection, silver_path)
+        write_parquet(
+            connection,
+            f"""
         SELECT
             event_id,
+            protocol,
             chain,
             event_type,
             block_number,
@@ -109,13 +183,23 @@ def build_recent_swaps() -> None:
             pool_address,
             log_index,
             kafka_timestamp,
-            ingested_at
-        FROM read_parquet('{SILVER_PARQUET_GLOB}')
+            producer_version,
+            schema_version,
+            ingested_at,
+            bronze_processed_at,
+            bronze_file,
+            silver_processed_at,
+            silver_job_version,
+            CURRENT_TIMESTAMP AS gold_processed_at,
+            '{GOLD_JOB_VERSION}' AS aggregation_version
+        FROM silver
         ORDER BY kafka_timestamp DESC, block_number DESC
         LIMIT 100
         """,
-        GOLD_RECENT_SWAPS_FILE,
-    )
+            output_path,
+        )
+    finally:
+        connection.close()
 
 
 def main() -> None:

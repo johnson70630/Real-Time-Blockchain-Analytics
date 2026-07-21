@@ -4,7 +4,9 @@ import pytest
 
 
 PRODUCER_MODULES = [
+    "config.metadata",
     "config.settings",
+    "config.versions",
     "producer.alchemy_client",
     "producer.config",
     "producer.event_handlers",
