@@ -2,6 +2,7 @@ import logging
 
 import duckdb
 
+from config.logging import configure_logging
 from config.settings import (
     AAVE_DAILY_BORROW_ACTIVITY_FILE,
     AAVE_DAILY_LENDING_SUMMARY_FILE,
@@ -11,23 +12,23 @@ from config.settings import (
     SILVER_PARQUET_GLOB,
 )
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s | %(levelname)s | %(message)s",
-)
-
 logger = logging.getLogger(__name__)
+
+
+class DataQualityError(RuntimeError):
+    """Raised when an operational data-quality invariant fails."""
 
 
 def run_check(name: str, query: str, expected_value: int | None = None) -> None:
     result = duckdb.sql(query).fetchone()[0]
 
     if expected_value is not None:
-        assert result == expected_value, (
-            f"{name} failed: got {result}, expected {expected_value}"
-        )
-    else:
-        assert result > 0, f"{name} failed: got {result}"
+        if result != expected_value:
+            raise DataQualityError(
+                f"{name} failed: got {result}, expected {expected_value}"
+            )
+    elif result <= 0:
+        raise DataQualityError(f"{name} failed: got {result}")
 
     logger.info("Passed: %s", name)
 
@@ -44,7 +45,10 @@ def run_aave_gold_checks() -> None:
     if not any(existing):
         logger.info("Aave Gold outputs not found; skipping Aave quality checks")
         return
-    assert all(existing), "Aave Gold quality checks require all four outputs"
+    if not all(existing):
+        raise DataQualityError(
+            "Aave Gold quality checks require all four outputs"
+        )
 
     checks = (
         (
@@ -147,6 +151,7 @@ def run_aave_gold_checks() -> None:
 
 
 def main() -> None:
+    configure_logging()
     run_check(
         "Silver event_id uniqueness",
         f"""

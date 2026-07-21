@@ -3,10 +3,10 @@
 import logging
 from dataclasses import dataclass
 from pathlib import Path
-from uuid import uuid4
 
 import duckdb
 
+from config.logging import configure_logging
 from config.settings import (
     AAVE_BORROW_EVENTS_FILE,
     AAVE_LIQUIDATION_EVENTS_FILE,
@@ -14,11 +14,7 @@ from config.settings import (
     BRONZE_OUTPUT_PATH,
 )
 from config.versions import SILVER_JOB_VERSION
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s | %(levelname)s | %(message)s",
-)
+from spark.parquet import discover_parquet_files, write_relation_atomic
 
 logger = logging.getLogger(__name__)
 
@@ -107,15 +103,12 @@ AAVE_SILVER_MODELS = (
 def discover_bronze_files(
     bronze_root: Path = BRONZE_OUTPUT_PATH,
 ) -> list[Path]:
-    """Return sorted Bronze Parquet files without touching generated data."""
-    if not bronze_root.exists():
-        return []
-
-    return sorted(
-        path
-        for path in bronze_root.rglob("*.parquet")
-        if path.is_file() and not path.name.startswith((".", "_"))
+    """Return sorted Aave Bronze files, using partition pruning when available."""
+    aave_partition_root = bronze_root / "protocol=aave_v3"
+    search_root = (
+        aave_partition_root if aave_partition_root.exists() else bronze_root
     )
+    return discover_parquet_files(search_root)
 
 
 def silver_query(model: AaveSilverModel) -> str:
@@ -161,19 +154,11 @@ def write_silver_model(
     model: AaveSilverModel,
 ) -> int:
     """Atomically write one normalized Aave Silver dataset."""
-    model.output_path.parent.mkdir(parents=True, exist_ok=True)
-    temporary_output = model.output_path.with_name(
-        f".{model.output_path.stem}.{uuid4().hex}.tmp.parquet"
+    row_count = write_relation_atomic(
+        connection,
+        connection.sql(silver_query(model)),
+        model.output_path,
     )
-
-    try:
-        relation = connection.sql(silver_query(model))
-        row_count = relation.count("*").fetchone()[0]
-        relation.write_parquet(str(temporary_output), overwrite=True)
-        temporary_output.replace(model.output_path)
-    except Exception:
-        temporary_output.unlink(missing_ok=True)
-        raise
 
     logger.info(
         "Wrote %s Aave %s events to: %s",
@@ -212,6 +197,7 @@ def build_aave_silver(
 
 
 def main() -> None:
+    configure_logging()
     build_aave_silver()
 
 

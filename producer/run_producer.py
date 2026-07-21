@@ -3,6 +3,7 @@ import signal
 from collections import Counter
 from types import FrameType
 
+from config.logging import configure_logging
 from config.settings import (
     CHAIN,
     ENABLED_PROTOCOLS,
@@ -15,11 +16,6 @@ from producer.dispatcher import EventDispatcher, EventParsingError
 from producer.kafka_producer import KafkaEventProducer
 from producer.registry import UnsupportedEventError, protocol_registry
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s | %(levelname)s | %(message)s",
-)
-
 logger = logging.getLogger(__name__)
 
 
@@ -31,12 +27,15 @@ def handle_shutdown_signal(_signum: int, _frame: FrameType | None) -> None:
 
 def run_producer() -> None:
     """Receive blockchain logs, normalize them, and publish them to Kafka."""
-    client = AlchemyClient(get_alchemy_websocket_url())
-    kafka = KafkaEventProducer(KAFKA_BOOTSTRAP_SERVERS, KAFKA_TOPIC)
     dispatcher = EventDispatcher(protocol_registry, ENABLED_PROTOCOLS)
+    subscriptions = dispatcher.subscriptions
+    websocket_url = get_alchemy_websocket_url()
     processed_counts: Counter[str] = Counter()
 
-    try:
+    with (
+        AlchemyClient(websocket_url) as client,
+        KafkaEventProducer(KAFKA_BOOTSTRAP_SERVERS, KAFKA_TOPIC) as kafka,
+    ):
         logger.info("Starting blockchain event producer")
         logger.info("Chain: %s", CHAIN)
         logger.info("Kafka bootstrap servers: %s", KAFKA_BOOTSTRAP_SERVERS)
@@ -52,63 +51,64 @@ def run_producer() -> None:
                 subscription.topics,
                 subscription.addresses,
             )
-            for subscription in dispatcher.subscriptions
+            for subscription in subscriptions
         }
 
-        while True:
-            message = client.receive()
+        try:
+            while True:
+                message = client.receive()
 
-            if "error" in message:
-                raise RuntimeError(f"Alchemy subscription error: {message['error']}")
+                if "error" in message:
+                    raise RuntimeError(
+                        f"Alchemy subscription error: {message['error']}"
+                    )
 
-            if (
-                "result" in message
-                and message.get("id") in subscription_request_ids
-            ):
-                logger.info("Subscription confirmed: %s", message["result"])
-                continue
+                if (
+                    "result" in message
+                    and message.get("id") in subscription_request_ids
+                ):
+                    logger.info("Subscription confirmed: %s", message["result"])
+                    continue
 
-            if message.get("method") == "eth_subscription":
-                log = message["params"]["result"]
-                try:
-                    block_number = log.get("blockNumber")
-                    if block_number is None:
-                        raise EventParsingError(
-                            "Event is missing required blockNumber"
+                if message.get("method") == "eth_subscription":
+                    log = message["params"]["result"]
+                    try:
+                        block_number = log.get("blockNumber")
+                        if block_number is None:
+                            raise EventParsingError(
+                                "Event is missing required blockNumber"
+                            )
+                        block_timestamp = client.get_block_timestamp(block_number)
+                        event = dispatcher.dispatch(
+                            log,
+                            block_timestamp,
+                            chain=CHAIN,
                         )
-                    block_timestamp = client.get_block_timestamp(block_number)
-                    event = dispatcher.dispatch(
-                        log,
-                        block_timestamp,
-                        chain=CHAIN,
-                    )
-                except UnsupportedEventError as error:
-                    logger.warning("Ignoring unsupported event: %s", error)
-                    continue
-                except EventParsingError as error:
-                    logger.error("Ignoring malformed event: %s", error)
-                    continue
+                    except UnsupportedEventError as error:
+                        logger.warning("Ignoring unsupported event: %s", error)
+                        continue
+                    except EventParsingError as error:
+                        logger.error("Ignoring malformed event: %s", error)
+                        continue
 
-                kafka.send(event.to_dict())
-                processed_counts[event.event_type] += 1
-                event_count = processed_counts[event.event_type]
-                if event_count == 1 or event_count % 100 == 0:
-                    logger.info(
-                        "Processed %s events: %s",
-                        event.event_type,
-                        event_count,
-                    )
+                    kafka.send(event.to_dict())
+                    processed_counts[event.event_type] += 1
+                    event_count = processed_counts[event.event_type]
+                    if event_count == 1 or event_count % 100 == 0:
+                        logger.info(
+                            "Processed %s events: %s",
+                            event.event_type,
+                            event_count,
+                        )
 
-    except KeyboardInterrupt:
-        logger.info("Producer stopped by user")
+        except KeyboardInterrupt:
+            logger.info("Producer stopped by user")
 
-    finally:
-        kafka.flush()
-        client.close()
-        logger.info("Producer shutdown complete")
+    logger.info("Producer shutdown complete")
 
 
 def main() -> None:
+    configure_logging()
     signal.signal(signal.SIGTERM, handle_shutdown_signal)
     run_producer()
 

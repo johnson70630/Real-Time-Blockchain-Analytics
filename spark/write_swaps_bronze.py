@@ -1,6 +1,6 @@
 import logging
 
-from pyspark.sql import DataFrame, SparkSession
+from pyspark.sql import DataFrame
 from pyspark.sql.functions import (
     col,
     coalesce,
@@ -11,40 +11,13 @@ from pyspark.sql.functions import (
     to_date,
 )
 
+from config.logging import configure_logging
 from config.metadata import PRODUCER_VERSION_FIELDS
-from config.settings import (
-    BRONZE_OUTPUT_PATH,
-    KAFKA_BOOTSTRAP_SERVERS,
-    KAFKA_TOPIC,
-    SPARK_CHECKPOINT_PATH,
-    SPARK_KAFKA_CONNECTOR_PACKAGE,
-)
+from config.settings import BRONZE_OUTPUT_PATH, SPARK_CHECKPOINT_PATH
 from spark.event_schema import get_event_schema
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s | %(levelname)s | %(message)s",
-)
+from spark.kafka_stream import create_spark_session, read_kafka_stream
 
 logger = logging.getLogger(__name__)
-
-
-def create_spark_session() -> SparkSession:
-    return (
-        SparkSession.builder.appName("WriteUniswapSwapsBronze")
-        .config("spark.jars.packages", SPARK_KAFKA_CONNECTOR_PACKAGE)
-        .getOrCreate()
-    )
-
-
-def read_kafka_stream(spark: SparkSession) -> DataFrame:
-    return (
-        spark.readStream.format("kafka")
-        .option("kafka.bootstrap.servers", KAFKA_BOOTSTRAP_SERVERS)
-        .option("subscribe", KAFKA_TOPIC)
-        .option("startingOffsets", "latest")
-        .load()
-    )
 
 
 def build_bronze_df(raw_df: DataFrame) -> DataFrame:
@@ -120,7 +93,7 @@ def write_bronze_stream(bronze_df: DataFrame) -> None:
     BRONZE_OUTPUT_PATH.mkdir(parents=True, exist_ok=True)
     SPARK_CHECKPOINT_PATH.mkdir(parents=True, exist_ok=True)
 
-    logger.info("Writing bronze swap events to: %s", BRONZE_OUTPUT_PATH)
+    logger.info("Writing Bronze blockchain events to: %s", BRONZE_OUTPUT_PATH)
     logger.info("Using checkpoint path: %s", SPARK_CHECKPOINT_PATH)
 
     query = (
@@ -137,7 +110,8 @@ def write_bronze_stream(bronze_df: DataFrame) -> None:
 
 
 def main() -> None:
-    spark = create_spark_session()
+    configure_logging()
+    spark = create_spark_session("WriteBlockchainEventsBronze")
     spark.sparkContext.setLogLevel("WARN")
 
     raw_df = read_kafka_stream(spark)

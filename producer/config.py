@@ -1,4 +1,7 @@
-"""Compatibility wrapper for the shared project settings."""
+"""Compatibility wrapper for legacy imports.
+
+New code should import configuration from :mod:`config.settings` directly.
+"""
 
 from config.settings import (
     CHAIN,

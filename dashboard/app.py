@@ -10,15 +10,25 @@ from config.settings import (
     GOLD_RECENT_SWAPS_GLOB,
     GOLD_SWAPS_PER_MINUTE_GLOB,
     GOLD_TOP_POOLS_GLOB,
-    PROTOCOL,
 )
 
 
+@st.cache_data(ttl=10)
 def read_parquet(path: Path) -> pd.DataFrame:
-    return duckdb.sql(f"SELECT * FROM read_parquet('{path}')").df()
+    """Load a Gold dataset with a clear error when output is unavailable."""
+    if not any(path.parent.glob(path.name)):
+        raise FileNotFoundError(f"Gold dataset not found: {path}")
+
+    connection = duckdb.connect()
+    try:
+        return connection.read_parquet(str(path)).df()
+    finally:
+        connection.close()
 
 
 def render_kpis(summary_df: pd.DataFrame) -> None:
+    if summary_df.empty:
+        raise ValueError("The pipeline summary dataset is empty")
     summary = summary_df.iloc[0]
 
     col1, col2, col3, col4 = st.columns(4)
@@ -80,16 +90,20 @@ def main() -> None:
 
     st.title("Real-Time Blockchain Analytics")
     st.caption(
-        f"Live {PROTOCOL.replace('_', ' ').title()} swap analytics from "
-        f"{CHAIN.title()} using Alchemy, Kafka, Spark, DuckDB, and Parquet"
+        f"Live Uniswap V3 swap analytics from {CHAIN.title()} using Alchemy, "
+        "Kafka, Spark, DuckDB, and Parquet"
     )
 
-    summary_df = read_parquet(GOLD_PIPELINE_SUMMARY_GLOB)
-    swaps_per_minute_df = read_parquet(GOLD_SWAPS_PER_MINUTE_GLOB)
-    top_pools_df = read_parquet(GOLD_TOP_POOLS_GLOB)
-    recent_swaps_df = read_parquet(GOLD_RECENT_SWAPS_GLOB)
-
-    render_kpis(summary_df)
+    try:
+        summary_df = read_parquet(GOLD_PIPELINE_SUMMARY_GLOB)
+        swaps_per_minute_df = read_parquet(GOLD_SWAPS_PER_MINUTE_GLOB)
+        top_pools_df = read_parquet(GOLD_TOP_POOLS_GLOB)
+        recent_swaps_df = read_parquet(GOLD_RECENT_SWAPS_GLOB)
+        render_kpis(summary_df)
+    except (FileNotFoundError, ValueError, duckdb.Error) as error:
+        st.error("Dashboard data is unavailable. Run `make gold` and try again.")
+        st.caption(str(error))
+        st.stop()
 
     st.divider()
 

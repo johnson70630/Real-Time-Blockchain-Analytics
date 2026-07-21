@@ -97,3 +97,9 @@ class AlchemyClient:
     def close(self) -> None:
         """Close the WebSocket connection."""
         self.ws.close()
+
+    def __enter__(self) -> "AlchemyClient":
+        return self
+
+    def __exit__(self, _exc_type, _exc_value, _traceback) -> None:
+        self.close()

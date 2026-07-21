@@ -14,6 +14,7 @@ from producer.protocols.aave_v3.handlers import (
     get_event_handler,
 )
 from producer.protocols.base import LogSubscription, ProtocolPlugin
+from producer.protocols.evm import first_log_topic
 
 
 class AaveV3Plugin(ProtocolPlugin):
@@ -46,15 +47,8 @@ class AaveV3Plugin(ProtocolPlugin):
         return tuple(handler.event_type for handler in EVENT_HANDLERS)
 
     def can_handle(self, raw_event: dict[str, Any]) -> bool:
-        topics = raw_event.get("topics") or []
-        if not topics:
-            return False
-
-        topic = topics[0]
-        if not isinstance(topic, str) and hasattr(topic, "hex"):
-            topic = topic.hex()
-            topic = topic if topic.startswith("0x") else f"0x{topic}"
-        if not isinstance(topic, str):
+        topic = first_log_topic(raw_event)
+        if topic is None:
             return False
         return topic.lower() in EVENT_HANDLERS_BY_TOPIC
 

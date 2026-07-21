@@ -3,6 +3,7 @@ from pathlib import Path
 
 import duckdb
 
+from config.logging import configure_logging
 from config.settings import (
     GOLD_PIPELINE_SUMMARY_FILE,
     GOLD_RECENT_SWAPS_FILE,
@@ -15,11 +16,7 @@ from spark.build_swaps_silver import (
     SILVER_OUTPUT_COLUMNS,
     create_compatible_view,
 )
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s | %(levelname)s | %(message)s",
-)
+from spark.parquet import write_relation_atomic
 
 logger = logging.getLogger(__name__)
 
@@ -43,17 +40,7 @@ def write_parquet(
     query: str,
     output_path: Path,
 ) -> None:
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-
-    connection.sql(
-        f"""
-        COPY (
-            {query}
-        )
-        TO '{output_path}'
-        (FORMAT PARQUET, OVERWRITE true)
-        """
-    )
+    write_relation_atomic(connection, connection.sql(query), output_path)
 
     logger.info("Wrote %s", output_path)
 
@@ -203,6 +190,7 @@ def build_recent_swaps(
 
 
 def main() -> None:
+    configure_logging()
     build_swaps_per_minute()
     build_top_pools()
     build_pipeline_summary()

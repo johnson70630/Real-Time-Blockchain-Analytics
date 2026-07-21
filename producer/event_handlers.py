@@ -1,4 +1,7 @@
-"""Compatibility exports for the Uniswap V3 plugin event handlers."""
+"""Compatibility exports for legacy Uniswap V3 handler imports.
+
+New code should import handlers from :mod:`producer.protocols.uniswap_v3`.
+"""
 
 from producer.protocols.uniswap_v3.abi import (
     BURN_EVENT_ABI,

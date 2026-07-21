@@ -5,6 +5,7 @@ from uuid import uuid4
 
 import duckdb
 
+from config.logging import configure_logging
 from config.metadata import (
     BRONZE_OUTPUT_METADATA_FIELDS,
     SILVER_METADATA_FIELDS,
@@ -17,11 +18,7 @@ from config.settings import (
     SILVER_PROCESSED_FILES_MANIFEST,
 )
 from config.versions import SILVER_JOB_VERSION
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s | %(levelname)s | %(message)s",
-)
+from spark.parquet import discover_parquet_files, write_relation_atomic
 
 logger = logging.getLogger(__name__)
 
@@ -59,19 +56,7 @@ LEGACY_METADATA_FALLBACKS = {
 
 def discover_bronze_files(bronze_root: Path = BRONZE_OUTPUT_PATH) -> list[Path]:
     """Return deterministically sorted Bronze Parquet data files."""
-    if not bronze_root.exists():
-        return []
-
-    return sorted(
-        (
-            path
-            for path in bronze_root.rglob("*.parquet")
-            if path.is_file()
-            and path.suffix.lower() == ".parquet"
-            and not path.name.startswith((".", "_"))
-        ),
-        key=lambda path: path.as_posix(),
-    )
+    return discover_parquet_files(bronze_root)
 
 
 def to_manifest_entry(path: Path, project_root: Path = PROJECT_ROOT) -> str:
@@ -235,9 +220,6 @@ def _silver_merge_query(include_existing_silver: bool) -> str:
 def merge_silver_swaps(new_bronze_files: list[Path]) -> tuple[int, int]:
     """Merge new Bronze files into Silver using an atomic output replacement."""
     SILVER_DIR.mkdir(parents=True, exist_ok=True)
-    temporary_output = SILVER_OUTPUT_FILE.with_name(
-        f".{SILVER_OUTPUT_FILE.stem}.{uuid4().hex}.tmp.parquet"
-    )
     silver_exists = SILVER_OUTPUT_FILE.exists()
     connection = duckdb.connect()
 
@@ -271,13 +253,11 @@ def merge_silver_swaps(new_bronze_files: list[Path]) -> tuple[int, int]:
             row_count_before = 0
 
         merged_silver = connection.sql(_silver_merge_query(silver_exists))
-        merged_silver.write_parquet(str(temporary_output), overwrite=True)
-        temporary_silver = connection.read_parquet(str(temporary_output))
-        row_count_after = temporary_silver.count("*").fetchone()[0]
-        temporary_output.replace(SILVER_OUTPUT_FILE)
-    except Exception:
-        temporary_output.unlink(missing_ok=True)
-        raise
+        row_count_after = write_relation_atomic(
+            connection,
+            merged_silver,
+            SILVER_OUTPUT_FILE,
+        )
     finally:
         connection.close()
 
@@ -313,6 +293,7 @@ def build_silver_swaps() -> None:
 
 
 def main() -> None:
+    configure_logging()
     build_silver_swaps()
 
 

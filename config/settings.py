@@ -64,7 +64,6 @@ KAFKA_BOOTSTRAP_SERVERS = os.getenv(
 KAFKA_TOPIC = os.getenv("KAFKA_TOPIC", "uniswap_v3_swaps")
 
 BRONZE_OUTPUT_PATH = _project_path("BRONZE_OUTPUT_PATH", "data/bronze/swaps")
-BRONZE_PARQUET_GLOB = BRONZE_OUTPUT_PATH / "**" / "*.parquet"
 
 SILVER_DIR = _project_path("SILVER_DIR", "data/silver/swaps")
 SILVER_OUTPUT_FILE = _project_path(

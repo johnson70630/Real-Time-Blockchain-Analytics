@@ -30,3 +30,9 @@ class KafkaEventProducer:
     def flush(self) -> None:
         """Flush buffered Kafka messages."""
         self.producer.flush()
+
+    def __enter__(self) -> "KafkaEventProducer":
+        return self
+
+    def __exit__(self, _exc_type, _exc_value, _traceback) -> None:
+        self.flush()
