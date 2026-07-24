@@ -8,6 +8,12 @@ PRODUCER_MODULES = [
     "config.logging",
     "config.settings",
     "config.versions",
+    "market_data.feeds",
+    "market_data.models",
+    "market_data.poller",
+    "market_data.rpc",
+    "market_data.run_poller",
+    "market_data.validation",
     "producer.alchemy_client",
     "producer.config",
     "producer.dispatcher",
@@ -20,7 +26,10 @@ PRODUCER_MODULES = [
     "producer.protocols.uniswap_v3",
     "producer.registry",
     "spark.kafka_stream",
+    "spark.bronze",
     "spark.parquet",
+    "spark.market_data_schema",
+    "spark.write_market_data_bronze",
 ]
 
 EXAMPLE_MODULES = [

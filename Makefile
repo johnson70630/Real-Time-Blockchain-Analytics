@@ -1,4 +1,4 @@
-.PHONY: kafka-up kafka-down producer producer-build producer-up producer-logs producer-down bronze silver gold dashboard quality test lint check clean-data
+.PHONY: kafka-up kafka-down producer producer-build producer-up producer-logs producer-down market-data market-data-build market-data-up market-data-logs market-data-down bronze market-data-bronze silver gold dashboard quality test lint check clean-data
 
 kafka-up:
 	docker compose up -d kafka
@@ -21,8 +21,26 @@ producer-logs:
 producer-down:
 	docker compose stop producer
 
+market-data:
+	uv run python -m market_data.run_poller
+
+market-data-build:
+	docker compose build market-data-poller
+
+market-data-up:
+	docker compose up -d market-data-poller
+
+market-data-logs:
+	docker compose logs -f market-data-poller
+
+market-data-down:
+	docker compose stop market-data-poller
+
 bronze:
 	uv run python -m spark.write_swaps_bronze
+
+market-data-bronze:
+	uv run python -m spark.write_market_data_bronze
 
 silver:
 	uv run python -m spark.build_swaps_silver

@@ -30,9 +30,30 @@ def get_alchemy_websocket_url() -> str:
     return get_required_env("ALCHEMY_WEBSOCKET_URL")
 
 
+def get_alchemy_rpc_url() -> str:
+    """Return the HTTP RPC URL required when starting the market-data poller."""
+    return get_required_env("ALCHEMY_RPC_URL")
+
+
 def get_aave_v3_pool_address() -> str:
     """Return the Pool address required only when Aave V3 is enabled."""
     return get_required_env("AAVE_V3_POOL_ADDRESS")
+
+
+def get_chainlink_poll_interval_seconds() -> float:
+    """Return the positive polling interval configured for Chainlink feeds."""
+    raw_interval = os.getenv("CHAINLINK_POLL_INTERVAL_SECONDS", "30")
+    try:
+        interval = float(raw_interval)
+    except ValueError as error:
+        raise ValueError(
+            "CHAINLINK_POLL_INTERVAL_SECONDS must be a number"
+        ) from error
+    if interval <= 0:
+        raise ValueError(
+            "CHAINLINK_POLL_INTERVAL_SECONDS must be greater than zero"
+        )
+    return interval
 
 
 def get_enabled_protocols() -> tuple[str, ...]:
@@ -62,8 +83,25 @@ KAFKA_BOOTSTRAP_SERVERS = os.getenv(
     "localhost:9092",
 )
 KAFKA_TOPIC = os.getenv("KAFKA_TOPIC", "uniswap_v3_swaps")
+MARKET_DATA_KAFKA_TOPIC = os.getenv(
+    "MARKET_DATA_KAFKA_TOPIC",
+    "market_data_observations",
+)
+
+CHAINLINK_FEEDS_CONFIG = _project_path(
+    "CHAINLINK_FEEDS_CONFIG",
+    "config/chainlink_feeds.json",
+)
 
 BRONZE_OUTPUT_PATH = _project_path("BRONZE_OUTPUT_PATH", "data/bronze/swaps")
+MARKET_DATA_BRONZE_OUTPUT_PATH = _project_path(
+    "MARKET_DATA_BRONZE_OUTPUT_PATH",
+    "data/bronze/market_data",
+)
+MARKET_DATA_QUARANTINE_PATH = _project_path(
+    "MARKET_DATA_QUARANTINE_PATH",
+    "data/quarantine/market_data",
+)
 
 SILVER_DIR = _project_path("SILVER_DIR", "data/silver/swaps")
 SILVER_OUTPUT_FILE = _project_path(
@@ -134,6 +172,10 @@ GOLD_RECENT_SWAPS_GLOB = GOLD_RECENT_SWAPS_FILE.parent / "*.parquet"
 SPARK_CHECKPOINT_PATH = _project_path(
     "SPARK_CHECKPOINT_PATH",
     "data/checkpoints/swaps_bronze",
+)
+MARKET_DATA_BRONZE_CHECKPOINT_PATH = _project_path(
+    "MARKET_DATA_BRONZE_CHECKPOINT_PATH",
+    "data/checkpoints/market_data_bronze",
 )
 SPARK_KAFKA_CONNECTOR_PACKAGE = os.getenv(
     "SPARK_KAFKA_CONNECTOR_PACKAGE",

@@ -5,20 +5,26 @@ from confluent_kafka import Producer
 
 
 class KafkaEventProducer:
-    """Kafka producer wrapper for blockchain event messages."""
+    """Kafka producer wrapper for normalized pipeline messages."""
 
-    def __init__(self, bootstrap_servers: str, topic: str) -> None:
+    def __init__(
+        self,
+        bootstrap_servers: str,
+        topic: str,
+        *,
+        client_id: str = "blockchain-event-producer",
+    ) -> None:
         self.topic = topic
         self.producer = Producer(
             {
                 "bootstrap.servers": bootstrap_servers,
-                "client.id": "blockchain-event-producer",
+                "client.id": client_id,
             }
         )
 
     def send(self, event: dict[str, Any]) -> None:
-        """Publish a blockchain event to Kafka as JSON."""
-        key = event.get("transaction_hash", "")
+        """Publish a normalized message to Kafka as JSON."""
+        key = event.get("transaction_hash") or event.get("observation_id", "")
 
         self.producer.produce(
             topic=self.topic,

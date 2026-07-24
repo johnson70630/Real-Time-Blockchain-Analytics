@@ -18,12 +18,15 @@ def create_spark_session(app_name: str) -> SparkSession:
     )
 
 
-def read_kafka_stream(spark: SparkSession) -> DataFrame:
-    """Subscribe to the configured Kafka event topic from latest offsets."""
+def read_kafka_stream(
+    spark: SparkSession,
+    topic: str = KAFKA_TOPIC,
+) -> DataFrame:
+    """Subscribe to a configured Kafka topic from latest offsets."""
     return (
         spark.readStream.format("kafka")
         .option("kafka.bootstrap.servers", KAFKA_BOOTSTRAP_SERVERS)
-        .option("subscribe", KAFKA_TOPIC)
+        .option("subscribe", topic)
         .option("startingOffsets", "latest")
         .load()
     )

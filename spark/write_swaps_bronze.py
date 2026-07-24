@@ -4,16 +4,19 @@ from pyspark.sql import DataFrame
 from pyspark.sql.functions import (
     col,
     coalesce,
-    concat,
     current_timestamp,
     from_json,
-    lit,
     to_date,
 )
 
 from config.logging import configure_logging
 from config.metadata import PRODUCER_VERSION_FIELDS
 from config.settings import BRONZE_OUTPUT_PATH, SPARK_CHECKPOINT_PATH
+from spark.bronze import (
+    ensure_directories,
+    hive_partition_path_column,
+    select_kafka_records,
+)
 from spark.event_schema import get_event_schema
 from spark.kafka_stream import create_spark_session, read_kafka_stream
 
@@ -24,13 +27,7 @@ def build_bronze_df(raw_df: DataFrame) -> DataFrame:
     schema = get_event_schema()
 
     return (
-        raw_df.select(
-            col("timestamp").alias("kafka_timestamp"),
-            col("partition").alias("kafka_partition"),
-            col("offset").alias("kafka_offset"),
-            col("key").cast("string").alias("kafka_key"),
-            col("value").cast("string").alias("json_value"),
-        )
+        select_kafka_records(raw_df)
         .select(
             "kafka_timestamp",
             "kafka_partition",
@@ -71,27 +68,29 @@ def build_bronze_df(raw_df: DataFrame) -> DataFrame:
             current_timestamp().alias("bronze_processed_at"),
             # Spark assigns part filenames during the write, so retain the
             # deterministic output partition path for physical traceability.
-            concat(
-                lit(f"{BRONZE_OUTPUT_PATH.as_posix()}/protocol="),
-                col("event.protocol"),
-                lit("/chain="),
-                col("event.chain"),
-                lit("/event_type="),
-                col("event.event_type"),
-                lit("/event_date="),
-                to_date(
-                    coalesce(
-                        col("event.block_timestamp"), col("kafka_timestamp")
-                    )
-                ).cast("string"),
+            hive_partition_path_column(
+                BRONZE_OUTPUT_PATH,
+                (
+                    ("protocol", col("event.protocol")),
+                    ("chain", col("event.chain")),
+                    ("event_type", col("event.event_type")),
+                    (
+                        "event_date",
+                        to_date(
+                            coalesce(
+                                col("event.block_timestamp"),
+                                col("kafka_timestamp"),
+                            )
+                        ),
+                    ),
+                ),
             ).alias("bronze_file"),
         )
     )
 
 
 def write_bronze_stream(bronze_df: DataFrame) -> None:
-    BRONZE_OUTPUT_PATH.mkdir(parents=True, exist_ok=True)
-    SPARK_CHECKPOINT_PATH.mkdir(parents=True, exist_ok=True)
+    ensure_directories(BRONZE_OUTPUT_PATH, SPARK_CHECKPOINT_PATH)
 
     logger.info("Writing Bronze blockchain events to: %s", BRONZE_OUTPUT_PATH)
     logger.info("Using checkpoint path: %s", SPARK_CHECKPOINT_PATH)

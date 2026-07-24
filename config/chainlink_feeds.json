@@ -1,0 +1,36 @@
+{
+  "feeds": [
+    {
+      "name": "ETH/USD",
+      "chain": "arbitrum",
+      "base_asset": "ETH",
+      "quote_asset": "USD",
+      "address": "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612",
+      "source": "https://data.chain.link/feeds/arbitrum/mainnet/eth-usd"
+    },
+    {
+      "name": "USDC/USD",
+      "chain": "arbitrum",
+      "base_asset": "USDC",
+      "quote_asset": "USD",
+      "address": "0x50834F3163758fcC1Df9973b6e91f0F0F0434aD3",
+      "source": "https://data.chain.link/feeds/arbitrum/mainnet/usdc-usd"
+    },
+    {
+      "name": "USDT/USD",
+      "chain": "arbitrum",
+      "base_asset": "USDT",
+      "quote_asset": "USD",
+      "address": "0x3f3f5dF88dC9F13eac63DF89EC16ef6e7E25DdE7",
+      "source": "https://data.chain.link/feeds/arbitrum/mainnet/usdt-usd"
+    },
+    {
+      "name": "WBTC/USD",
+      "chain": "arbitrum",
+      "base_asset": "WBTC",
+      "quote_asset": "USD",
+      "address": "0xd0C7101eACbB49F3deCcCc166d238410D6D46d57",
+      "source": "https://data.chain.link/feeds/arbitrum/mainnet/wbtc-usd"
+    }
+  ]
+}
