@@ -1,4 +1,4 @@
-.PHONY: kafka-up kafka-down producer producer-build producer-up producer-logs producer-down market-data market-data-build market-data-up market-data-logs market-data-down bronze market-data-bronze silver gold dashboard quality test lint check clean-data
+.PHONY: kafka-up kafka-down producer producer-build producer-up producer-logs producer-down market-data market-data-build market-data-up market-data-logs market-data-down bronze market-data-bronze market-data-silver silver aave-silver price-enrichment gold snowflake-sql dashboard quality test lint check clean-data
 
 kafka-up:
 	docker compose up -d kafka
@@ -42,11 +42,23 @@ bronze:
 market-data-bronze:
 	uv run python -m spark.write_market_data_bronze
 
+market-data-silver:
+	uv run python -m spark.build_market_data_silver
+
 silver:
 	uv run python -m spark.build_swaps_silver
 
+aave-silver:
+	uv run python -m spark.build_aave_silver
+
+price-enrichment:
+	uv run python -m spark.build_price_enriched_silver
+
 gold:
 	uv run python -m spark.build_gold
+
+snowflake-sql:
+	uv run python -m warehouse.generate_sql
 
 dashboard:
 	uv run python -m streamlit run dashboard/app.py

@@ -7,6 +7,7 @@ PRODUCER_MODULES = [
     "config.metadata",
     "config.logging",
     "config.settings",
+    "config.storage",
     "config.versions",
     "market_data.feeds",
     "market_data.models",
@@ -26,10 +27,16 @@ PRODUCER_MODULES = [
     "producer.protocols.uniswap_v3",
     "producer.registry",
     "spark.kafka_stream",
+    "spark.session",
     "spark.bronze",
+    "spark.build_cloud_silver",
     "spark.parquet",
+    "spark.price_enrichment",
     "spark.market_data_schema",
+    "spark.build_market_data_silver",
+    "spark.build_price_enriched_silver",
     "spark.write_market_data_bronze",
+    "warehouse.snowflake",
 ]
 
 EXAMPLE_MODULES = [
