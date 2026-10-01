@@ -9,5 +9,8 @@ SCHEMA_VERSION = "1.0.0"
 # Identifies the Silver normalization and deduplication logic.
 SILVER_JOB_VERSION = "1.0.0"
 
+# Identifies point-in-time asset mapping, price matching, and USD calculations.
+PRICE_ENRICHMENT_JOB_VERSION = "1.0.0"
+
 # Identifies the current Gold aggregation logic.
 GOLD_JOB_VERSION = "1.0.0"

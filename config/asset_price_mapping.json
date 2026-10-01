@@ -1,0 +1,45 @@
+{
+  "mappings": [
+    {
+      "chain": "arbitrum",
+      "event_asset": "ETH",
+      "event_asset_address": null,
+      "price_asset": "ETH",
+      "quote_asset": "USD",
+      "token_decimals": 18
+    },
+    {
+      "chain": "arbitrum",
+      "event_asset": "WETH",
+      "event_asset_address": "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
+      "price_asset": "ETH",
+      "quote_asset": "USD",
+      "token_decimals": 18
+    },
+    {
+      "chain": "arbitrum",
+      "event_asset": "WBTC",
+      "event_asset_address": "0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f",
+      "price_asset": "WBTC",
+      "quote_asset": "USD",
+      "token_decimals": 8
+    },
+    {
+      "chain": "arbitrum",
+      "event_asset": "USDC",
+      "event_asset_address": "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
+      "price_asset": "USDC",
+      "quote_asset": "USD",
+      "token_decimals": 6
+    },
+    {
+      "chain": "arbitrum",
+      "event_asset": "USDT",
+      "event_asset_address": "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
+      "price_asset": "USDT",
+      "quote_asset": "USD",
+      "token_decimals": 6
+    }
+  ],
+  "uniswap_v3_pools": []
+}

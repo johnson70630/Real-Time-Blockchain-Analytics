@@ -37,6 +37,7 @@ def _write_bronze_fixture(output_path) -> None:
                     'uniswap_v3'::VARCHAR AS protocol,
                     'arbitrum'::VARCHAR AS chain,
                     DATE '2026-07-20' AS event_date,
+                    TIMESTAMP '2026-07-20 00:00:00' AS block_timestamp,
                     'swap'::VARCHAR AS event_type,
                     123::INTEGER AS block_number,
                     '0xabc'::VARCHAR AS transaction_hash,
@@ -44,6 +45,10 @@ def _write_bronze_fixture(output_path) -> None:
                     2::INTEGER AS log_index,
                     '0xdata'::VARCHAR AS raw_data,
                     ['0xtopic']::VARCHAR[] AS raw_topics,
+                    struct_pack(
+                        amount0 := '-1000000000000000000'::VARCHAR,
+                        amount1 := '3000000000'::VARCHAR
+                    ) AS payload,
                     TIMESTAMP '2026-07-20 00:00:02' AS kafka_timestamp,
                     '{PRODUCER_VERSION}'::VARCHAR AS producer_version,
                     '{SCHEMA_VERSION}'::VARCHAR AS schema_version,
@@ -141,6 +146,9 @@ def test_metadata_propagates_from_bronze_through_silver_and_gold(
     assert "event_date=2026-07-20" in silver["bronze_file"]
     assert silver["silver_processed_at"] is not None
     assert silver["silver_job_version"] == SILVER_JOB_VERSION
+    assert silver["block_timestamp"] is not None
+    assert silver["amount0_raw"] == "-1000000000000000000"
+    assert silver["amount1_raw"] == "3000000000"
 
     gold_outputs = {
         "per_minute": tmp_path / "gold" / "per_minute.parquet",
