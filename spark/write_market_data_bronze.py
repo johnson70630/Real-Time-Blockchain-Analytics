@@ -21,10 +21,8 @@ from pyspark.sql.functions import (
 
 from config.logging import configure_logging
 from config.settings import (
-    MARKET_DATA_BRONZE_CHECKPOINT_PATH,
-    MARKET_DATA_BRONZE_OUTPUT_PATH,
+    DATA_LAKE,
     MARKET_DATA_KAFKA_TOPIC,
-    MARKET_DATA_QUARANTINE_PATH,
 )
 from market_data.validation import REQUIRED_MARKET_DATA_FIELDS
 from spark.kafka_stream import create_spark_session, read_kafka_stream
@@ -37,6 +35,12 @@ from spark.bronze import (
 )
 
 logger = logging.getLogger(__name__)
+
+MARKET_DATA_BRONZE_OUTPUT_PATH = DATA_LAKE.get("bronze_market_data")
+MARKET_DATA_QUARANTINE_PATH = DATA_LAKE.get("quarantine_market_data")
+MARKET_DATA_BRONZE_CHECKPOINT_PATH = DATA_LAKE.get(
+    "checkpoint_market_data_bronze"
+)
 
 
 def _missing_or_empty(field: str):
@@ -142,8 +146,8 @@ def write_market_data_batch(
     batch_df: DataFrame,
     batch_id: int,
     *,
-    bronze_path: Path = MARKET_DATA_BRONZE_OUTPUT_PATH,
-    quarantine_path: Path = MARKET_DATA_QUARANTINE_PATH,
+    bronze_path: str | Path = MARKET_DATA_BRONZE_OUTPUT_PATH,
+    quarantine_path: str | Path = MARKET_DATA_QUARANTINE_PATH,
 ) -> None:
     """Write one micro-batch to Bronze and quarantine without deduplication."""
     valid_df = batch_df.filter(size("validation_errors") == 0).drop(

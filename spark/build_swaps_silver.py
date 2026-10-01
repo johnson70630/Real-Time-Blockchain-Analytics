@@ -16,6 +16,7 @@ from config.settings import (
     SILVER_DIR,
     SILVER_OUTPUT_FILE,
     SILVER_PROCESSED_FILES_MANIFEST,
+    STORAGE,
 )
 from config.versions import SILVER_JOB_VERSION
 from spark.parquet import discover_parquet_files, write_relation_atomic
@@ -26,10 +27,13 @@ SILVER_UPSTREAM_COLUMNS = (
     "protocol",
     "chain",
     "event_date",
+    "block_timestamp",
     "event_type",
     "block_number",
     "transaction_hash",
     "pool_address",
+    "amount0_raw",
+    "amount1_raw",
     "log_index",
     "raw_data",
     "raw_topics",
@@ -45,6 +49,9 @@ SILVER_COLUMNS = (
 SILVER_OUTPUT_COLUMNS = ("event_id", *SILVER_COLUMNS)
 
 LEGACY_METADATA_FALLBACKS = {
+    "block_timestamp": "NULL::TIMESTAMP",
+    "amount0_raw": "NULL::VARCHAR",
+    "amount1_raw": "NULL::VARCHAR",
     "producer_version": "'legacy'",
     "schema_version": "'legacy'",
     "bronze_processed_at": "ingested_at",
@@ -141,8 +148,10 @@ def create_compatible_view(
     source_view: str,
     target_view: str,
     required_columns: tuple[str, ...],
+    fallbacks: dict[str, str] | None = None,
 ) -> None:
     """Project a stable metadata schema, including pre-milestone local files."""
+    compatible_fallbacks = fallbacks or LEGACY_METADATA_FALLBACKS
     available_columns = {
         row[0] for row in connection.sql(f"DESCRIBE {source_view}").fetchall()
     }
@@ -151,9 +160,9 @@ def create_compatible_view(
     for column in required_columns:
         if column in available_columns:
             projections.append(column)
-        elif column in LEGACY_METADATA_FALLBACKS:
+        elif column in compatible_fallbacks:
             projections.append(
-                f"{LEGACY_METADATA_FALLBACKS[column]} AS {column}"
+                f"{compatible_fallbacks[column]} AS {column}"
             )
         else:
             raise ValueError(
@@ -229,11 +238,32 @@ def merge_silver_swaps(new_bronze_files: list[Path]) -> tuple[int, int]:
             hive_partitioning=True,
             union_by_name=True,
         ).create_view("new_bronze_raw")
+        bronze_columns = {
+            row[0]
+            for row in connection.sql(
+                "DESCRIBE new_bronze_raw"
+            ).fetchall()
+        }
+        bronze_fallbacks = dict(LEGACY_METADATA_FALLBACKS)
+        if "payload" in bronze_columns:
+            bronze_fallbacks.update(
+                {
+                    "amount0_raw": (
+                        "json_extract_string("
+                        "to_json(payload), '$.amount0')"
+                    ),
+                    "amount1_raw": (
+                        "json_extract_string("
+                        "to_json(payload), '$.amount1')"
+                    ),
+                }
+            )
         create_compatible_view(
             connection,
             "new_bronze_raw",
             "new_bronze",
             SILVER_UPSTREAM_COLUMNS,
+            bronze_fallbacks,
         )
 
         if silver_exists:
@@ -294,6 +324,18 @@ def build_silver_swaps() -> None:
 
 def main() -> None:
     configure_logging()
+    if STORAGE.is_s3:
+        from spark.build_cloud_silver import build_uniswap_silver
+        from spark.session import create_spark_session
+
+        spark = create_spark_session("BuildUniswapSilver")
+        spark.sparkContext.setLogLevel("WARN")
+        try:
+            count = build_uniswap_silver(spark)
+            logger.info("Cloud Silver swaps written: %s", count)
+        finally:
+            spark.stop()
+        return
     build_silver_swaps()
 
 

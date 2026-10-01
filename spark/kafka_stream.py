@@ -5,17 +5,13 @@ from pyspark.sql import DataFrame, SparkSession
 from config.settings import (
     KAFKA_BOOTSTRAP_SERVERS,
     KAFKA_TOPIC,
-    SPARK_KAFKA_CONNECTOR_PACKAGE,
 )
+from spark.session import create_spark_session as _create_spark_session
 
 
 def create_spark_session(app_name: str) -> SparkSession:
-    """Create a Spark session with the configured Kafka connector."""
-    return (
-        SparkSession.builder.appName(app_name)
-        .config("spark.jars.packages", SPARK_KAFKA_CONNECTOR_PACKAGE)
-        .getOrCreate()
-    )
+    """Create the shared Spark session with Kafka support enabled."""
+    return _create_spark_session(app_name, include_kafka=True)
 
 
 def read_kafka_stream(

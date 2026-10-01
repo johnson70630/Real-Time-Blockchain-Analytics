@@ -12,6 +12,7 @@ from config.settings import (
     AAVE_LIQUIDATION_EVENTS_FILE,
     AAVE_REPAY_EVENTS_FILE,
     BRONZE_OUTPUT_PATH,
+    STORAGE,
 )
 from config.versions import SILVER_JOB_VERSION
 from spark.parquet import discover_parquet_files, write_relation_atomic
@@ -198,6 +199,18 @@ def build_aave_silver(
 
 def main() -> None:
     configure_logging()
+    if STORAGE.is_s3:
+        from spark.build_cloud_silver import build_aave_silver as build_cloud
+        from spark.session import create_spark_session
+
+        spark = create_spark_session("BuildAaveSilver")
+        spark.sparkContext.setLogLevel("WARN")
+        try:
+            counts = build_cloud(spark)
+            logger.info("Cloud Aave Silver rows written: %s", counts)
+        finally:
+            spark.stop()
+        return
     build_aave_silver()
 
 

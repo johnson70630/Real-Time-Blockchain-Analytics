@@ -29,22 +29,22 @@ def select_kafka_records(raw_df: DataFrame) -> DataFrame:
 
 
 def hive_partition_path(
-    output_root: Path,
+    output_root: str | Path,
     partitions: tuple[tuple[str, Any], ...],
-) -> Path:
+) -> str | Path:
     """Return a deterministic Hive partition path for concrete values."""
-    path = output_root
+    path = str(output_root).rstrip("/")
     for name, value in partitions:
-        path /= f"{name}={value}"
-    return path
+        path = f"{path}/{name}={value}"
+    return Path(path) if isinstance(output_root, Path) else path
 
 
 def hive_partition_path_column(
-    output_root: Path,
+    output_root: str | Path,
     partitions: tuple[tuple[str, Column], ...],
 ) -> Column:
     """Build a Spark expression for a deterministic Hive partition path."""
-    parts: list[Column] = [lit(output_root.as_posix())]
+    parts: list[Column] = [lit(str(output_root).rstrip("/"))]
     for name, value in partitions:
         parts.extend((lit(f"/{name}="), value.cast("string")))
     return concat(*parts)
@@ -52,7 +52,7 @@ def hive_partition_path_column(
 
 def append_partitioned_parquet(
     frame: DataFrame,
-    output_path: Path,
+    output_path: str | Path,
     partition_columns: tuple[str, ...],
 ) -> None:
     """Append a frame to a partitioned Parquet dataset."""
@@ -63,7 +63,9 @@ def append_partitioned_parquet(
     )
 
 
-def ensure_directories(*paths: Path) -> None:
+def ensure_directories(*paths: str | Path) -> None:
     """Create storage and checkpoint directories used by a Bronze job."""
     for path in paths:
-        path.mkdir(parents=True, exist_ok=True)
+        value = str(path)
+        if not value.startswith("s3a://"):
+            Path(value).mkdir(parents=True, exist_ok=True)

@@ -11,7 +11,7 @@ from pyspark.sql.functions import (
 
 from config.logging import configure_logging
 from config.metadata import PRODUCER_VERSION_FIELDS
-from config.settings import BRONZE_OUTPUT_PATH, SPARK_CHECKPOINT_PATH
+from config.settings import DATA_LAKE
 from spark.bronze import (
     ensure_directories,
     hive_partition_path_column,
@@ -21,6 +21,9 @@ from spark.event_schema import get_event_schema
 from spark.kafka_stream import create_spark_session, read_kafka_stream
 
 logger = logging.getLogger(__name__)
+
+BRONZE_OUTPUT_PATH = DATA_LAKE.get("bronze_events")
+SPARK_CHECKPOINT_PATH = DATA_LAKE.get("checkpoint_events_bronze")
 
 
 def build_bronze_df(raw_df: DataFrame) -> DataFrame:

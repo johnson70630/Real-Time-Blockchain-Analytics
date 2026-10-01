@@ -5,8 +5,13 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+from config.storage import DataLakeLocations, StorageConfig
+
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 load_dotenv(PROJECT_ROOT / ".env")
+
+STORAGE = StorageConfig.from_env(PROJECT_ROOT)
+DATA_LAKE = DataLakeLocations.from_storage(STORAGE)
 
 
 def _project_path(env_name: str, default: str | Path) -> Path:
@@ -56,6 +61,18 @@ def get_chainlink_poll_interval_seconds() -> float:
     return interval
 
 
+def get_max_price_age_seconds() -> int:
+    """Return the maximum age accepted for point-in-time price enrichment."""
+    raw_age = os.getenv("MAX_PRICE_AGE_SECONDS", "300")
+    try:
+        max_age = int(raw_age)
+    except ValueError as error:
+        raise ValueError("MAX_PRICE_AGE_SECONDS must be an integer") from error
+    if max_age <= 0:
+        raise ValueError("MAX_PRICE_AGE_SECONDS must be greater than zero")
+    return max_age
+
+
 def get_enabled_protocols() -> tuple[str, ...]:
     """Return enabled plugin names, preserving the legacy PROTOCOL setting."""
     configured = os.getenv("ENABLED_PROTOCOLS", "").strip()
@@ -92,6 +109,10 @@ CHAINLINK_FEEDS_CONFIG = _project_path(
     "CHAINLINK_FEEDS_CONFIG",
     "config/chainlink_feeds.json",
 )
+ASSET_PRICE_MAPPING_CONFIG = _project_path(
+    "ASSET_PRICE_MAPPING_CONFIG",
+    "config/asset_price_mapping.json",
+)
 
 BRONZE_OUTPUT_PATH = _project_path("BRONZE_OUTPUT_PATH", "data/bronze/swaps")
 MARKET_DATA_BRONZE_OUTPUT_PATH = _project_path(
@@ -101,6 +122,14 @@ MARKET_DATA_BRONZE_OUTPUT_PATH = _project_path(
 MARKET_DATA_QUARANTINE_PATH = _project_path(
     "MARKET_DATA_QUARANTINE_PATH",
     "data/quarantine/market_data",
+)
+MARKET_DATA_SILVER_DIR = _project_path(
+    "MARKET_DATA_SILVER_DIR",
+    "data/silver/market_prices",
+)
+MARKET_DATA_SILVER_QUARANTINE_PATH = _project_path(
+    "MARKET_DATA_SILVER_QUARANTINE_PATH",
+    "data/quarantine/market_data_silver",
 )
 
 SILVER_DIR = _project_path("SILVER_DIR", "data/silver/swaps")
@@ -122,6 +151,38 @@ AAVE_REPAY_EVENTS_FILE = _project_path(
 AAVE_LIQUIDATION_EVENTS_FILE = _project_path(
     "AAVE_LIQUIDATION_EVENTS_FILE",
     AAVE_SILVER_DIR / "liquidation_events.parquet",
+)
+PRICE_ENRICHED_SILVER_DIR = _project_path(
+    "PRICE_ENRICHED_SILVER_DIR",
+    "data/silver/enriched",
+)
+UNISWAP_ENRICHED_SWAPS_FILE = _project_path(
+    "UNISWAP_ENRICHED_SWAPS_FILE",
+    PRICE_ENRICHED_SILVER_DIR
+    / "uniswap_v3"
+    / "swaps_enriched.parquet",
+)
+AAVE_ENRICHED_BORROW_EVENTS_FILE = _project_path(
+    "AAVE_ENRICHED_BORROW_EVENTS_FILE",
+    PRICE_ENRICHED_SILVER_DIR
+    / "aave_v3"
+    / "borrow_events_enriched.parquet",
+)
+AAVE_ENRICHED_REPAY_EVENTS_FILE = _project_path(
+    "AAVE_ENRICHED_REPAY_EVENTS_FILE",
+    PRICE_ENRICHED_SILVER_DIR
+    / "aave_v3"
+    / "repay_events_enriched.parquet",
+)
+AAVE_ENRICHED_LIQUIDATION_EVENTS_FILE = _project_path(
+    "AAVE_ENRICHED_LIQUIDATION_EVENTS_FILE",
+    PRICE_ENRICHED_SILVER_DIR
+    / "aave_v3"
+    / "liquidation_events_enriched.parquet",
+)
+PRICE_ENRICHMENT_QUARANTINE_DIR = _project_path(
+    "PRICE_ENRICHMENT_QUARANTINE_DIR",
+    "data/quarantine/price_enrichment",
 )
 
 STATE_DIR = _project_path("STATE_DIR", "data/state")
@@ -180,4 +241,8 @@ MARKET_DATA_BRONZE_CHECKPOINT_PATH = _project_path(
 SPARK_KAFKA_CONNECTOR_PACKAGE = os.getenv(
     "SPARK_KAFKA_CONNECTOR_PACKAGE",
     "org.apache.spark:spark-sql-kafka-0-10_2.13:4.0.1",
+)
+SPARK_S3_CONNECTOR_PACKAGE = os.getenv(
+    "SPARK_S3_CONNECTOR_PACKAGE",
+    "org.apache.hadoop:hadoop-aws:3.4.1",
 )
