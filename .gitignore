@@ -23,6 +23,11 @@ data/
 # Logs
 *.log
 
+# dbt generated artifacts
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+
 # Spark
 spark-warehouse/
 

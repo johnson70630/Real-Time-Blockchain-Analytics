@@ -1,0 +1,33 @@
+version: 2
+
+models:
+  - name: stg_uniswap_swaps
+    description: >-
+      Typed, one-to-one staging view over RAW Uniswap V3 swaps. Raw token amounts
+      remain exact strings and duplicate event IDs are surfaced by tests.
+    columns:
+      - name: event_id
+        description: Stable identifier for the blockchain event.
+        data_tests:
+          - not_null
+          - unique
+      - name: chain
+        description: Blockchain network where the event occurred.
+        data_tests:
+          - not_null
+      - name: protocol
+        description: Protocol that emitted the event.
+        data_tests:
+          - not_null
+      - name: block_timestamp
+        description: Timestamp of the block containing the event.
+        data_tests:
+          - not_null
+      - name: transaction_hash
+        description: Transaction hash containing the swap log.
+        data_tests:
+          - not_null
+      - name: event_type
+        description: Normalized event type from the common event envelope.
+        data_tests:
+          - not_null

@@ -19,6 +19,8 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "dbt-core>=1.12.5",
+    "dbt-snowflake>=1.12.1",
     "pytest>=9.1.1",
     "ruff>=0.15.20",
 ]

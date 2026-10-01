@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: blockchain_raw
+    description: Canonical blockchain events loaded from Silver Parquet into Snowflake RAW.
+    database: BLOCKCHAIN_ANALYTICS
+    schema: RAW
+    tables:
+      - name: uniswap_swaps
+        identifier: UNISWAP_SWAPS
+        description: One canonical RAW record for each ingested Uniswap V3 swap event.
