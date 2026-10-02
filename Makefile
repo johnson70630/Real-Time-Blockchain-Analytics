@@ -1,4 +1,4 @@
-.PHONY: kafka-up kafka-down producer producer-build producer-up producer-logs producer-down market-data market-data-build market-data-up market-data-logs market-data-down bronze market-data-bronze market-data-silver silver aave-silver price-enrichment gold snowflake-sql dashboard quality test lint check clean-data
+.PHONY: kafka-up kafka-down producer producer-build producer-up producer-logs producer-down market-data market-data-build market-data-up market-data-logs market-data-down uniswap-pools uniswap-pools-bootstrap bronze market-data-bronze market-data-silver silver aave-silver price-enrichment gold snowflake-sql dashboard quality test lint check clean-data
 
 kafka-up:
 	docker compose up -d kafka
@@ -35,6 +35,12 @@ market-data-logs:
 
 market-data-down:
 	docker compose stop market-data-poller
+
+uniswap-pools:
+	uv run python -m reference_data.run_uniswap_v3_pools
+
+uniswap-pools-bootstrap:
+	uv run python -m reference_data.run_uniswap_v3_pool_bootstrap
 
 bronze:
 	uv run python -m spark.write_swaps_bronze

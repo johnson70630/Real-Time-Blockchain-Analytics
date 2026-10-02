@@ -19,6 +19,9 @@ def test_local_storage_uses_project_data_directory(tmp_path: Path) -> None:
     assert locations.get("enriched_uniswap_swaps").endswith(
         "data/silver/enriched/uniswap_v3/swaps_enriched.parquet"
     )
+    assert locations.get("reference_uniswap_v3_pools").endswith(
+        "data/reference/uniswap_v3/pools"
+    )
 
 
 def test_s3_storage_generates_canonical_s3a_locations(tmp_path: Path) -> None:
@@ -38,6 +41,14 @@ def test_s3_storage_generates_canonical_s3a_locations(tmp_path: Path) -> None:
     )
     assert storage.s3_url("silver") == (
         "s3://analytics-lake-123/production/blockchain/silver"
+    )
+    assert locations.get("state_uniswap_v3_pools") == (
+        "s3a://analytics-lake-123/production/blockchain/"
+        "state/uniswap_v3/pools_watermark"
+    )
+    assert locations.get("quarantine_uniswap_v3_pools") == (
+        "s3a://analytics-lake-123/production/blockchain/"
+        "quarantine/reference/uniswap_v3/pools"
     )
 
 

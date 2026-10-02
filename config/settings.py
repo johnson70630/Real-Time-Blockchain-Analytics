@@ -45,6 +45,22 @@ def get_aave_v3_pool_address() -> str:
     return get_required_env("AAVE_V3_POOL_ADDRESS")
 
 
+def get_uniswap_v3_factory_start_block() -> int:
+    """Return the authoritative first block for Factory log extraction."""
+    raw_block = os.getenv("UNISWAP_V3_FACTORY_START_BLOCK", "165")
+    try:
+        block = int(raw_block)
+    except ValueError as error:
+        raise ValueError(
+            "UNISWAP_V3_FACTORY_START_BLOCK must be an integer"
+        ) from error
+    if block < 0:
+        raise ValueError(
+            "UNISWAP_V3_FACTORY_START_BLOCK must not be negative"
+        )
+    return block
+
+
 def get_chainlink_poll_interval_seconds() -> float:
     """Return the positive polling interval configured for Chainlink feeds."""
     raw_interval = os.getenv("CHAINLINK_POLL_INTERVAL_SECONDS", "30")
@@ -94,6 +110,11 @@ def get_enabled_protocols() -> tuple[str, ...]:
 PROTOCOL = os.getenv("PROTOCOL", "uniswap_v3")
 ENABLED_PROTOCOLS = get_enabled_protocols()
 CHAIN = os.getenv("CHAIN", "arbitrum")
+UNISWAP_V3_FACTORY_ADDRESS = os.getenv(
+    "UNISWAP_V3_FACTORY_ADDRESS",
+    "0x1F98431c8aD98523631AE4a59f267346ea31F984",
+)
+UNISWAP_V3_FACTORY_START_BLOCK = get_uniswap_v3_factory_start_block()
 
 KAFKA_BOOTSTRAP_SERVERS = os.getenv(
     "KAFKA_BOOTSTRAP_SERVERS",

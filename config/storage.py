@@ -19,6 +19,9 @@ DATASET_PATHS: dict[str, str] = {
     "silver_aave_repays": "silver/aave_v3/repay_events.parquet",
     "silver_aave_liquidations": "silver/aave_v3/liquidation_events.parquet",
     "silver_chainlink_market_prices": "silver/market_prices",
+    "reference_uniswap_v3_pools": "reference/uniswap_v3/pools",
+    "state_uniswap_v3_pools": "state/uniswap_v3/pools_watermark",
+    "quarantine_uniswap_v3_pools": "quarantine/reference/uniswap_v3/pools",
     "enriched_uniswap_swaps": (
         "silver/enriched/uniswap_v3/swaps_enriched.parquet"
     ),

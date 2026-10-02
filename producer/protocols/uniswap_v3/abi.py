@@ -43,3 +43,38 @@ BURN_EVENT_ABI = {
     "name": "Burn",
     "type": "event",
 }
+
+POOL_CREATED_EVENT_ABI = {
+    "anonymous": False,
+    "inputs": [
+        {"indexed": True, "name": "token0", "type": "address"},
+        {"indexed": True, "name": "token1", "type": "address"},
+        {"indexed": True, "name": "fee", "type": "uint24"},
+        {"indexed": False, "name": "tickSpacing", "type": "int24"},
+        {"indexed": False, "name": "pool", "type": "address"},
+    ],
+    "name": "PoolCreated",
+    "type": "event",
+}
+
+POOL_CREATED_EVENT_SIGNATURE = (
+    "PoolCreated(address,address,uint24,int24,address)"
+)
+
+# Minimal read-only interface used to verify observed pool contracts.
+POOL_REFERENCE_ABI = [
+    {
+        "inputs": [],
+        "name": name,
+        "outputs": [{"name": "", "type": output_type}],
+        "stateMutability": "view",
+        "type": "function",
+    }
+    for name, output_type in (
+        ("token0", "address"),
+        ("token1", "address"),
+        ("fee", "uint24"),
+        ("tickSpacing", "int24"),
+        ("factory", "address"),
+    )
+]
