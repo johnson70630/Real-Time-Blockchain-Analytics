@@ -22,6 +22,11 @@ from reference_data.uniswap_v3_pools import (
     UniswapV3Pool,
     merge_pool_records,
 )
+from reference_data.token_metadata import (
+    TokenMetadata,
+    TokenMetadataIssue,
+    merge_token_records,
+)
 from spark.parquet import write_partitioned_dataset_atomic
 
 StoragePath = str | Path
@@ -61,6 +66,29 @@ QUARANTINE_SCHEMA = StructType(
 WATERMARK_SCHEMA = StructType(
     [
         StructField("processed_through_block", LongType(), False),
+        StructField("processed_at", TimestampType(), False),
+    ]
+)
+
+TOKEN_SCHEMA = StructType(
+    [
+        StructField("chain", StringType(), False),
+        StructField("token_address", StringType(), False),
+        StructField("symbol", StringType(), False),
+        StructField("name", StringType(), False),
+        StructField("decimals", IntegerType(), False),
+        StructField("metadata_source", StringType(), False),
+        StructField("metadata_block_number", LongType(), False),
+        StructField("ingested_at", TimestampType(), False),
+        StructField("processed_at", TimestampType(), False),
+    ]
+)
+
+TOKEN_QUARANTINE_SCHEMA = StructType(
+    [
+        StructField("token_address", StringType(), False),
+        StructField("reason", StringType(), False),
+        StructField("metadata_block_number", LongType(), False),
         StructField("processed_at", TimestampType(), False),
     ]
 )
@@ -169,6 +197,83 @@ class PoolMetadataStore:
         write_partitioned_dataset_atomic(frame, self.quarantine_path, ())
 
 
+class TokenMetadataStore:
+    """Persist the shared canonical token registry and rejected contracts."""
+
+    def __init__(
+        self,
+        spark: SparkSession,
+        *,
+        registry_path: StoragePath,
+        quarantine_path: StoragePath,
+    ) -> None:
+        self.spark = spark
+        self.registry_path = registry_path
+        self.quarantine_path = quarantine_path
+
+    def load_records(self) -> tuple[TokenMetadata, ...]:
+        if not path_exists(self.spark, self.registry_path):
+            return ()
+        rows = self.spark.read.schema(TOKEN_SCHEMA).parquet(
+            str(self.registry_path)
+        )
+        records = tuple(
+            TokenMetadata(
+                **{
+                    **row.asDict(recursive=True),
+                    "ingested_at": _as_utc(row.ingested_at),
+                    "processed_at": _as_utc(row.processed_at),
+                }
+            )
+            for row in rows.orderBy("chain", "token_address").collect()
+        )
+        canonical = merge_token_records((), records)
+        if len(canonical) != len(records):
+            raise ValueError("Canonical token registry contains duplicate rows")
+        return canonical
+
+    def write_records(self, records: tuple[TokenMetadata, ...]) -> None:
+        rows = [
+            tuple(getattr(record, field.name) for field in TOKEN_SCHEMA.fields)
+            for record in records
+        ]
+        frame = self.spark.createDataFrame(rows, TOKEN_SCHEMA).orderBy(
+            "chain",
+            "token_address",
+        )
+        write_partitioned_dataset_atomic(frame, self.registry_path, ())
+
+    def load_issues(self) -> tuple[TokenMetadataIssue, ...]:
+        if not path_exists(self.spark, self.quarantine_path):
+            return ()
+        rows = self.spark.read.schema(TOKEN_QUARANTINE_SCHEMA).parquet(
+            str(self.quarantine_path)
+        )
+        return tuple(
+            TokenMetadataIssue(
+                **{
+                    **row.asDict(recursive=True),
+                    "processed_at": _as_utc(row.processed_at),
+                }
+            )
+            for row in rows.orderBy("token_address").collect()
+        )
+
+    def write_issues(self, issues: tuple[TokenMetadataIssue, ...]) -> None:
+        rows = [
+            tuple(
+                getattr(issue, field.name)
+                for field in TOKEN_QUARANTINE_SCHEMA.fields
+            )
+            for issue in sorted(issues, key=lambda issue: issue.token_address)
+        ]
+        frame = self.spark.createDataFrame(
+            rows,
+            TOKEN_QUARANTINE_SCHEMA,
+        ).orderBy("token_address")
+        write_partitioned_dataset_atomic(frame, self.quarantine_path, ())
+
+
 def _as_utc(value: datetime | None) -> datetime | None:
     """Restore PySpark timestamps to timezone-aware UTC values."""
     return value.astimezone(UTC) if value is not None else None
@@ -190,3 +295,34 @@ def observed_swap_pools(
         .collect()
     )
     return tuple(row.pool_address for row in rows)
+
+
+def observed_token_source_values(
+    spark: SparkSession,
+    *,
+    pool_registry_path: StoragePath,
+    aave_sources: tuple[tuple[StoragePath, tuple[str, ...]], ...],
+) -> tuple[tuple[str | None, ...], tuple[str | None, ...]]:
+    """Read raw token-address values from canonical pools and Aave datasets."""
+    uniswap_values: list[str | None] = []
+    if path_exists(spark, pool_registry_path):
+        rows = spark.read.parquet(str(pool_registry_path)).select(
+            "token0_address",
+            "token1_address",
+        )
+        for row in rows.collect():
+            uniswap_values.extend((row.token0_address, row.token1_address))
+
+    aave_values: list[str | None] = []
+    for path, columns in aave_sources:
+        if not path_exists(spark, path):
+            continue
+        frame = spark.read.parquet(str(path))
+        missing = sorted(set(columns) - set(frame.columns))
+        if missing:
+            names = ", ".join(missing)
+            raise ValueError(f"Aave source {path} is missing columns: {names}")
+        for row in frame.select(*columns).collect():
+            aave_values.extend(row[column] for column in columns)
+
+    return tuple(uniswap_values), tuple(aave_values)

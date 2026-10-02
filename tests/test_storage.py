@@ -50,6 +50,13 @@ def test_s3_storage_generates_canonical_s3a_locations(tmp_path: Path) -> None:
         "s3a://analytics-lake-123/production/blockchain/"
         "quarantine/reference/uniswap_v3/pools"
     )
+    assert locations.get("reference_tokens") == (
+        "s3a://analytics-lake-123/production/blockchain/reference/tokens"
+    )
+    assert locations.get("quarantine_tokens") == (
+        "s3a://analytics-lake-123/production/blockchain/"
+        "quarantine/reference/tokens"
+    )
 
 
 @pytest.mark.parametrize(

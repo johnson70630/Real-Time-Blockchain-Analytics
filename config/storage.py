@@ -22,6 +22,8 @@ DATASET_PATHS: dict[str, str] = {
     "reference_uniswap_v3_pools": "reference/uniswap_v3/pools",
     "state_uniswap_v3_pools": "state/uniswap_v3/pools_watermark",
     "quarantine_uniswap_v3_pools": "quarantine/reference/uniswap_v3/pools",
+    "reference_tokens": "reference/tokens",
+    "quarantine_tokens": "quarantine/reference/tokens",
     "enriched_uniswap_swaps": (
         "silver/enriched/uniswap_v3/swaps_enriched.parquet"
     ),

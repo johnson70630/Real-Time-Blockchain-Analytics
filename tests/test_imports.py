@@ -28,6 +28,8 @@ PRODUCER_MODULES = [
     "producer.registry",
     "reference_data.storage",
     "reference_data.run_uniswap_v3_pool_bootstrap",
+    "reference_data.run_token_metadata",
+    "reference_data.token_metadata",
     "reference_data.uniswap_v3_pools",
     "spark.kafka_stream",
     "spark.session",
