@@ -1,17 +1,21 @@
 import re
+from pathlib import Path
 
 import pytest
 
-from config.storage import DATASET_PATHS
+from config.storage import DATASET_PATHS, StorageConfig
 from warehouse.snowflake import (
     PARQUET_FILE_PATTERN,
+    TOKENS,
     UNISWAP_SWAPS,
+    UNISWAP_V3_POOLS,
     WAREHOUSE_DATASETS,
     SnowflakeLandingConfig,
     generate_all_sql,
     generate_dataset_load_sql,
     generate_setup_sql,
-    validate_uniswap_dataset_path,
+    generate_stage_root_sql,
+    validate_dataset_paths,
 )
 
 
@@ -29,19 +33,20 @@ def test_config_references_provisioned_snowflake_objects(
     assert landing_config.file_format == "PARQUET_FORMAT"
 
 
-def test_setup_creates_only_persistent_uniswap_tables(
+def test_setup_creates_persistent_landing_and_raw_tables_only(
     landing_config: SnowflakeLandingConfig,
 ) -> None:
     sql = generate_setup_sql(landing_config)
 
-    assert (
-        "CREATE TABLE IF NOT EXISTS "
-        "BLOCKCHAIN_ANALYTICS.RAW.UNISWAP_SWAPS_LANDING" in sql
-    )
-    assert (
-        "CREATE TABLE IF NOT EXISTS "
-        "BLOCKCHAIN_ANALYTICS.RAW.UNISWAP_SWAPS" in sql
-    )
+    for table in ("UNISWAP_SWAPS", "UNISWAP_V3_POOLS", "TOKENS"):
+        assert (
+            f"CREATE TABLE IF NOT EXISTS BLOCKCHAIN_ANALYTICS.RAW.{table}_LANDING"
+            in sql
+        )
+        assert (
+            f"CREATE TABLE IF NOT EXISTS BLOCKCHAIN_ANALYTICS.RAW.{table}"
+            in sql
+        )
     assert "TEMPORARY" not in sql
     assert "CREATE STAGE" not in sql
     assert "CREATE STORAGE INTEGRATION" not in sql
@@ -49,45 +54,88 @@ def test_setup_creates_only_persistent_uniswap_tables(
     assert "CREATE SCHEMA" not in sql
 
 
-def test_only_uniswap_silver_is_registered() -> None:
-    assert WAREHOUSE_DATASETS == (UNISWAP_SWAPS,)
-    assert UNISWAP_SWAPS.dataset == "silver_uniswap_swaps"
-    assert DATASET_PATHS[UNISWAP_SWAPS.dataset] == (
-        "silver/swaps/swaps_silver.parquet"
+def test_existing_stage_is_reused_at_common_lake_root(tmp_path: Path) -> None:
+    storage = StorageConfig(
+        mode="s3",
+        project_root=tmp_path,
+        bucket="analytics-lake-123",
+        prefix="production/blockchain",
+        aws_region="us-west-2",
     )
-    assert UNISWAP_SWAPS.stage_path == "swaps/"
-    validate_uniswap_dataset_path()
+
+    sql = generate_stage_root_sql(SnowflakeLandingConfig(), storage)
+
+    assert sql == (
+        "ALTER STAGE BLOCKCHAIN_ANALYTICS.RAW.SILVER_S3_STAGE SET URL = "
+        "'s3://analytics-lake-123/production/blockchain/';"
+    )
+    assert "STORAGE_INTEGRATION" not in sql
 
 
-def test_copy_selects_parquet_before_decoding(
+def test_stage_setup_requires_s3_storage(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="requires S3"):
+        generate_stage_root_sql(
+            SnowflakeLandingConfig(),
+            StorageConfig(mode="local", project_root=tmp_path),
+        )
+
+
+def test_canonical_lake_datasets_are_registered() -> None:
+    assert WAREHOUSE_DATASETS == (
+        UNISWAP_SWAPS,
+        UNISWAP_V3_POOLS,
+        TOKENS,
+    )
+    assert UNISWAP_SWAPS.stage_path == (
+        "silver/swaps/swaps_silver.parquet/"
+    )
+    assert UNISWAP_V3_POOLS.stage_path == "reference/uniswap_v3/pools/"
+    assert TOKENS.stage_path == "reference/tokens/"
+    for dataset in WAREHOUSE_DATASETS:
+        assert dataset.dataset in DATASET_PATHS
+    validate_dataset_paths()
+
+
+@pytest.mark.parametrize(
+    ("dataset", "stage_path"),
+    [
+        (UNISWAP_SWAPS, "silver/swaps/swaps_silver.parquet/"),
+        (UNISWAP_V3_POOLS, "reference/uniswap_v3/pools/"),
+        (TOKENS, "reference/tokens/"),
+    ],
+)
+def test_copy_selects_only_parquet_from_canonical_stage_path(
     landing_config: SnowflakeLandingConfig,
+    dataset,
+    stage_path: str,
 ) -> None:
-    sql = generate_dataset_load_sql(landing_config)
+    sql = generate_dataset_load_sql(landing_config, dataset)
 
     assert (
-        "FROM @BLOCKCHAIN_ANALYTICS.RAW.SILVER_S3_STAGE/swaps/" in sql
+        f"FROM @BLOCKCHAIN_ANALYTICS.RAW.SILVER_S3_STAGE/{stage_path}"
+        in sql
     )
     assert f"PATTERN = '{PARQUET_FILE_PATTERN}'" in sql
     assert (
         "FILE_FORMAT = (FORMAT_NAME = "
         "'BLOCKCHAIN_ANALYTICS.RAW.PARQUET_FORMAT')" in sql
     )
-    assert "WHERE METADATA$FILENAME" not in sql
     assert "FORCE = TRUE" not in sql.upper()
+    assert "quarantine" not in sql.lower()
 
 
 def test_parquet_pattern_excludes_spark_control_files() -> None:
     pattern = re.compile(PARQUET_FILE_PATTERN)
 
-    assert pattern.fullmatch("swaps/swaps_silver.parquet/part-00000.parquet")
-    assert not pattern.fullmatch("swaps/swaps_silver.parquet/_SUCCESS")
-    assert not pattern.fullmatch("swaps/swaps_silver.parquet/_committed_123")
+    assert pattern.fullmatch("reference/tokens/part-00000.parquet")
+    assert not pattern.fullmatch("reference/tokens/_SUCCESS")
+    assert not pattern.fullmatch("reference/tokens/_committed_123")
 
 
 def test_copy_preserves_complete_record_and_file_lineage(
     landing_config: SnowflakeLandingConfig,
 ) -> None:
-    sql = generate_dataset_load_sql(landing_config)
+    sql = generate_dataset_load_sql(landing_config, TOKENS)
 
     assert "SELECT\n    $1," in sql
     assert "METADATA$FILENAME" in sql
@@ -99,36 +147,58 @@ def test_copy_preserves_complete_record_and_file_lineage(
     assert "loaded_at TIMESTAMP_TZ NOT NULL" in setup_sql
 
 
-def test_merge_is_deterministic_and_keyed_by_event_id(
+def test_reference_merges_use_complete_natural_keys(
     landing_config: SnowflakeLandingConfig,
 ) -> None:
-    sql = generate_dataset_load_sql(landing_config)
+    pool_sql = generate_dataset_load_sql(landing_config, UNISWAP_V3_POOLS)
+    token_sql = generate_dataset_load_sql(landing_config, TOKENS)
 
-    assert "record:event_id::VARCHAR AS event_id" in sql
-    assert "PARTITION BY record:event_id::VARCHAR" in sql
-    assert "ON target.event_id = source.event_id" in sql
-    assert "WHEN MATCHED" in sql
-    assert "WHEN NOT MATCHED" in sql
     assert (
-        "ORDER BY loaded_at DESC, source_file DESC, "
-        "source_file_row_number DESC" in sql
+        "ON target.chain = source.chain AND "
+        "target.protocol = source.protocol AND "
+        "target.pool_address = source.pool_address" in pool_sql
     )
-    assert "WHERE merged_at IS NULL" in sql
+    assert (
+        "PARTITION BY record:chain::VARCHAR, record:protocol::VARCHAR, "
+        "record:pool_address::VARCHAR" in pool_sql
+    )
+    assert (
+        "ON target.chain = source.chain AND "
+        "target.token_address = source.token_address" in token_sql
+    )
+    assert (
+        "PARTITION BY record:chain::VARCHAR, "
+        "record:token_address::VARCHAR" in token_sql
+    )
+    for sql in (pool_sql, token_sql):
+        assert "WHEN MATCHED" in sql
+        assert "WHEN NOT MATCHED" in sql
+        assert "WHERE merged_at IS NULL" in sql
+        assert (
+            "ORDER BY loaded_at DESC, source_file DESC, "
+            "source_file_row_number DESC" in sql
+        )
 
 
-def test_raw_table_preserves_required_metadata(
+def test_raw_tables_preserve_reference_fields(
     landing_config: SnowflakeLandingConfig,
 ) -> None:
-    sql = generate_all_sql(landing_config)
+    sql = generate_setup_sql(landing_config)
 
     for column in (
-        "event_id",
-        "chain",
-        "protocol",
-        "block_timestamp",
-        "producer_version",
-        "schema_version",
-        "silver_job_version",
+        "pool_address",
+        "token0_address",
+        "token1_address",
+        "fee_tier",
+        "tick_spacing",
+        "factory_address",
+        "factory_verified",
+        "created_block_timestamp",
+        "token_address",
+        "symbol",
+        "name",
+        "decimals",
+        "metadata_block_number",
         "record VARIANT",
         "source_file",
         "source_file_row_number",

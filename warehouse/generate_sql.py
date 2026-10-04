@@ -2,12 +2,14 @@
 
 import argparse
 
+from config.settings import STORAGE
 from warehouse.snowflake import (
     WAREHOUSE_DATASETS,
     SnowflakeLandingConfig,
     generate_dataset_load_sql,
     generate_setup_sql,
-    validate_uniswap_dataset_path,
+    generate_stage_root_sql,
+    validate_dataset_paths,
 )
 
 
@@ -17,12 +19,12 @@ def _parse_args() -> argparse.Namespace:
     mode.add_argument(
         "--setup-only",
         action="store_true",
-        help="print persistent Uniswap landing and RAW table DDL only",
+        help="print external-stage alignment and persistent table DDL only",
     )
     mode.add_argument(
         "--loads-only",
         action="store_true",
-        help="print the Uniswap incremental COPY and MERGE statements only",
+        help="print incremental COPY and MERGE statements only",
     )
     parser.add_argument(
         "--dataset",
@@ -40,10 +42,13 @@ def main() -> None:
     """Validate cloud configuration and print executable Snowflake SQL."""
     args = _parse_args()
     config = SnowflakeLandingConfig.from_env()
-    validate_uniswap_dataset_path()
+    validate_dataset_paths()
     sections: list[str] = []
     if not args.loads_only:
-        sections.append("-- Persistent Uniswap RAW and landing tables")
+        if STORAGE.is_s3:
+            sections.append("-- Reuse the external stage at the data-lake root")
+            sections.append(generate_stage_root_sql(config, STORAGE))
+        sections.append("-- Persistent RAW and landing tables")
         sections.append(generate_setup_sql(config))
     if not args.setup_only:
         selected = set(args.dataset or ())

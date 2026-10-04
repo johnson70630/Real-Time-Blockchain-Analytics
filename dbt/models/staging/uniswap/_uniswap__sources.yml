@@ -2,10 +2,16 @@ version: 2
 
 sources:
   - name: blockchain_raw
-    description: Canonical blockchain events loaded from Silver Parquet into Snowflake RAW.
+    description: Canonical blockchain and reference datasets loaded from S3 Parquet into Snowflake RAW.
     database: BLOCKCHAIN_ANALYTICS
     schema: RAW
     tables:
       - name: uniswap_swaps
         identifier: UNISWAP_SWAPS
         description: One canonical RAW record for each ingested Uniswap V3 swap event.
+      - name: uniswap_v3_pools
+        identifier: UNISWAP_V3_POOLS
+        description: One canonical RAW record per official Uniswap V3 pool.
+      - name: tokens
+        identifier: TOKENS
+        description: One canonical ERC-20 metadata record per chain and address.

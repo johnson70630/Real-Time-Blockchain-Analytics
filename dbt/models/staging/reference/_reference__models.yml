@@ -1,0 +1,40 @@
+version: 2
+
+models:
+  - name: stg_uniswap_v3_pools
+    description: Typed canonical staging view for official Uniswap V3 pools.
+    columns:
+      - name: chain
+        data_tests:
+          - not_null
+      - name: protocol
+        data_tests:
+          - not_null
+      - name: pool_address
+        data_tests:
+          - not_null
+      - name: token0_address
+        data_tests:
+          - not_null
+      - name: token1_address
+        data_tests:
+          - not_null
+      - name: factory_address
+        data_tests:
+          - not_null
+
+  - name: stg_tokens
+    description: Typed canonical staging view for shared ERC-20 token metadata.
+    columns:
+      - name: chain
+        data_tests:
+          - not_null
+      - name: token_address
+        data_tests:
+          - not_null
+      - name: symbol
+        data_tests:
+          - not_null
+      - name: decimals
+        data_tests:
+          - not_null
