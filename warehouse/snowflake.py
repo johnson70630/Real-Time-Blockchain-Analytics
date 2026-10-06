@@ -52,6 +52,38 @@ def _number(name: str, *, required: bool = False) -> WarehouseColumn:
     )
 
 
+def _decimal(
+    name: str,
+    precision: int,
+    scale: int,
+    *,
+    required: bool = False,
+) -> WarehouseColumn:
+    sql_type = f"NUMBER({precision}, {scale})"
+    return WarehouseColumn(
+        name,
+        sql_type,
+        f"TRY_TO_DECIMAL(record:{name}::VARCHAR, {precision}, {scale})",
+        required,
+    )
+
+
+def _boolean(name: str) -> WarehouseColumn:
+    return WarehouseColumn(
+        name,
+        "BOOLEAN",
+        f"TRY_TO_BOOLEAN(record:{name}::VARCHAR)",
+    )
+
+
+def _date(name: str) -> WarehouseColumn:
+    return WarehouseColumn(name, "DATE", f"TRY_TO_DATE(record:{name}::VARCHAR)")
+
+
+def _variant(name: str) -> WarehouseColumn:
+    return WarehouseColumn(name, "VARIANT", f"record:{name}")
+
+
 def _timestamp(name: str) -> WarehouseColumn:
     return WarehouseColumn(
         name,
@@ -125,10 +157,132 @@ TOKENS = WarehouseDataset(
     ),
 )
 
+
+def _aave_common_columns() -> tuple[WarehouseColumn, ...]:
+    return (
+        _text("event_id", required=True),
+        _text("protocol"),
+        _text("chain"),
+        _text("event_type"),
+        _date("event_date"),
+        _timestamp("block_timestamp"),
+        _text("transaction_hash"),
+        _number("block_number"),
+        _number("log_index"),
+        _timestamp("kafka_timestamp"),
+        _timestamp("ingested_at"),
+        _text("producer_version"),
+        _text("schema_version"),
+        _timestamp("bronze_processed_at"),
+        _text("bronze_file"),
+        _text("contract_address"),
+        _text("raw_data"),
+        _variant("raw_topics"),
+    )
+
+
+AAVE_BORROWS = WarehouseDataset(
+    dataset="silver_aave_borrows",
+    table="AAVE_BORROWS",
+    stage_path="silver/aave_v3/borrow_events.parquet/",
+    natural_key=("event_id",),
+    columns=(
+        *_aave_common_columns(),
+        _text("reserve"),
+        _text("user"),
+        _text("on_behalf_of"),
+        _text("amount_raw"),
+        _number("interest_rate_mode"),
+        _text("borrow_rate_raw"),
+        _number("referral_code"),
+        _timestamp("silver_processed_at"),
+        _text("silver_job_version"),
+    ),
+)
+
+AAVE_REPAYS = WarehouseDataset(
+    dataset="silver_aave_repays",
+    table="AAVE_REPAYS",
+    stage_path="silver/aave_v3/repay_events.parquet/",
+    natural_key=("event_id",),
+    columns=(
+        *_aave_common_columns(),
+        _text("reserve"),
+        _text("user"),
+        _text("repayer"),
+        _text("amount_raw"),
+        _boolean("use_atokens"),
+        _timestamp("silver_processed_at"),
+        _text("silver_job_version"),
+    ),
+)
+
+AAVE_LIQUIDATIONS = WarehouseDataset(
+    dataset="silver_aave_liquidations",
+    table="AAVE_LIQUIDATIONS",
+    stage_path="silver/aave_v3/liquidation_events.parquet/",
+    natural_key=("event_id",),
+    columns=(
+        *_aave_common_columns(),
+        _text("collateral_asset"),
+        _text("debt_asset"),
+        _text("user"),
+        _text("debt_to_cover_raw"),
+        _text("liquidated_collateral_amount_raw"),
+        _text("liquidator"),
+        _boolean("receive_atoken"),
+        _timestamp("silver_processed_at"),
+        _text("silver_job_version"),
+    ),
+)
+
+CHAINLINK_PRICES = WarehouseDataset(
+    dataset="silver_chainlink_market_prices",
+    table="CHAINLINK_PRICES",
+    stage_path="silver/market_prices/",
+    natural_key=("observation_id",),
+    columns=(
+        _text("observation_id", required=True),
+        _text("snapshot_id"),
+        _text("protocol"),
+        _text("event_type"),
+        _text("chain"),
+        _text("feed_address"),
+        _text("base_asset"),
+        _text("quote_asset"),
+        _text("round_id"),
+        _text("answer_raw"),
+        _number("feed_decimals"),
+        _decimal("price", 38, 18),
+        _timestamp("feed_updated_at"),
+        _timestamp("observed_at"),
+        _number("block_number"),
+        _timestamp("block_timestamp"),
+        _timestamp("ingested_at"),
+        _text("producer_version"),
+        _text("schema_version"),
+        _text("source_topic"),
+        _timestamp("kafka_timestamp"),
+        _number("kafka_partition"),
+        _number("kafka_offset"),
+        _text("kafka_key"),
+        _text("json_value"),
+        _timestamp("bronze_processed_at"),
+        _text("bronze_file"),
+        _timestamp("silver_processed_at"),
+        _text("silver_job_version"),
+        _date("price_date"),
+    ),
+)
+
 WAREHOUSE_DATASETS: tuple[WarehouseDataset, ...] = (
     UNISWAP_SWAPS,
     UNISWAP_V3_POOLS,
     TOKENS,
+    AAVE_BORROWS,
+    AAVE_REPAYS,
+    AAVE_LIQUIDATIONS,
+    CHAINLINK_PRICES,
 )
 
 

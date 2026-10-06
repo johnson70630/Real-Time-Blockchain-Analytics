@@ -9,6 +9,7 @@ from spark.bronze import (
     hive_partition_path,
 )
 from spark.market_data_schema import get_market_data_observation_schema
+from spark.write_market_data_bronze import validation_error_values
 
 FEED_ADDRESS = "0x" + "10" * 20
 
@@ -70,6 +71,15 @@ def test_incomplete_and_malformed_messages_receive_quarantine_reasons() -> None:
     assert "invalid:observation_id" in errors
     assert invalid_json is None
     assert invalid_json_errors == ("invalid_json",)
+
+
+def test_spark_validation_adapter_reuses_canonical_message_rules() -> None:
+    valid = json.dumps(_observation())
+    invalid = _observation()
+    invalid["round_id"] = "not-an-integer"
+
+    assert validation_error_values(valid) == []
+    assert "invalid:round_id" in validation_error_values(json.dumps(invalid))
 
 
 def test_partition_generation_uses_chain_and_observation_date(

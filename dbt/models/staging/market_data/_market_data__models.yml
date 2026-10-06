@@ -1,0 +1,16 @@
+version: 2
+
+models:
+  - name: stg_chainlink_prices
+    description: Typed staging view at one row per canonical Chainlink observation.
+    columns:
+      - name: observation_id
+        data_tests: [not_null, unique]
+      - name: feed_address
+        data_tests: [not_null]
+      - name: round_id
+        data_tests: [not_null]
+      - name: feed_updated_at
+        data_tests: [not_null]
+      - name: price
+        data_tests: [not_null]

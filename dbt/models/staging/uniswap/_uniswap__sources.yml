@@ -15,3 +15,15 @@ sources:
       - name: tokens
         identifier: TOKENS
         description: One canonical ERC-20 metadata record per chain and address.
+      - name: aave_borrows
+        identifier: AAVE_BORROWS
+        description: One canonical RAW record for each Aave V3 Borrow event.
+      - name: aave_repays
+        identifier: AAVE_REPAYS
+        description: One canonical RAW record for each Aave V3 Repay event.
+      - name: aave_liquidations
+        identifier: AAVE_LIQUIDATIONS
+        description: One canonical RAW record for each Aave V3 LiquidationCall event.
+      - name: chainlink_prices
+        identifier: CHAINLINK_PRICES
+        description: One canonical RAW record for each Chainlink market-price observation.

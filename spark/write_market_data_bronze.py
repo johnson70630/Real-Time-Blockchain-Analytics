@@ -5,26 +5,21 @@ from pathlib import Path
 
 from pyspark.sql import DataFrame
 from pyspark.sql.functions import (
-    array,
-    array_compact,
     col,
-    concat,
     current_timestamp,
     from_json,
-    lit,
-    lower,
     size,
     to_date,
-    trim,
-    when,
+    udf,
 )
+from pyspark.sql.types import ArrayType, StringType
 
 from config.logging import configure_logging
 from config.settings import (
     DATA_LAKE,
     MARKET_DATA_KAFKA_TOPIC,
 )
-from market_data.validation import REQUIRED_MARKET_DATA_FIELDS
+from market_data.validation import validate_observation_message
 from spark.kafka_stream import create_spark_session, read_kafka_stream
 from spark.market_data_schema import get_market_data_observation_schema
 from spark.bronze import (
@@ -43,12 +38,16 @@ MARKET_DATA_BRONZE_CHECKPOINT_PATH = DATA_LAKE.get(
 )
 
 
-def _missing_or_empty(field: str):
-    value = col(f"observation.{field}")
-    return value.isNull() | (
-        (value.cast("string").isNotNull())
-        & (trim(value.cast("string")) == "")
-    )
+def validation_error_values(raw_value: str) -> list[str]:
+    """Return canonical message errors without expanding a large Spark plan."""
+    _, errors = validate_observation_message(raw_value)
+    return list(errors)
+
+
+_validation_errors = udf(
+    validation_error_values,
+    returnType=ArrayType(StringType(), containsNull=False),
+)
 
 
 def build_market_data_records(raw_df: DataFrame) -> DataFrame:
@@ -62,58 +61,7 @@ def build_market_data_records(raw_df: DataFrame) -> DataFrame:
         )
         .withColumn(
             "validation_errors",
-            array_compact(
-                array(
-                    *(
-                        when(
-                            _missing_or_empty(field),
-                            lit(f"missing_or_empty:{field}"),
-                        )
-                        for field in REQUIRED_MARKET_DATA_FIELDS
-                    ),
-                    when(
-                        col("observation.protocol") != "chainlink",
-                        lit("invalid:protocol"),
-                    ),
-                    when(
-                        col("observation.event_type") != "price_update",
-                        lit("invalid:event_type"),
-                    ),
-                    when(
-                        ~col("observation.feed_address").rlike(
-                            r"^0x[0-9a-fA-F]{40}$"
-                        ),
-                        lit("invalid:feed_address"),
-                    ),
-                    when(
-                        ~col("observation.round_id").rlike(r"^[0-9]+$"),
-                        lit("invalid:round_id"),
-                    ),
-                    when(
-                        ~col("observation.answer_raw").rlike(r"^-?[0-9]+$"),
-                        lit("invalid:answer_raw"),
-                    ),
-                    when(
-                        ~col("observation.feed_decimals").between(0, 255),
-                        lit("invalid:feed_decimals"),
-                    ),
-                    when(
-                        col("observation.block_number") < 0,
-                        lit("invalid:block_number"),
-                    ),
-                    when(
-                        col("observation.observation_id")
-                        != concat(
-                            col("observation.chain"),
-                            lit(":"),
-                            lower(col("observation.feed_address")),
-                            lit(":"),
-                            col("observation.round_id"),
-                        ),
-                        lit("invalid:observation_id"),
-                    ),
-                )
-            ),
+            _validation_errors(col("json_value")),
         )
     )
 

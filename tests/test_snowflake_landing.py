@@ -5,6 +5,10 @@ import pytest
 
 from config.storage import DATASET_PATHS, StorageConfig
 from warehouse.snowflake import (
+    AAVE_BORROWS,
+    AAVE_LIQUIDATIONS,
+    AAVE_REPAYS,
+    CHAINLINK_PRICES,
     PARQUET_FILE_PATTERN,
     TOKENS,
     UNISWAP_SWAPS,
@@ -38,7 +42,15 @@ def test_setup_creates_persistent_landing_and_raw_tables_only(
 ) -> None:
     sql = generate_setup_sql(landing_config)
 
-    for table in ("UNISWAP_SWAPS", "UNISWAP_V3_POOLS", "TOKENS"):
+    for table in (
+        "UNISWAP_SWAPS",
+        "UNISWAP_V3_POOLS",
+        "TOKENS",
+        "AAVE_BORROWS",
+        "AAVE_REPAYS",
+        "AAVE_LIQUIDATIONS",
+        "CHAINLINK_PRICES",
+    ):
         assert (
             f"CREATE TABLE IF NOT EXISTS BLOCKCHAIN_ANALYTICS.RAW.{table}_LANDING"
             in sql
@@ -85,6 +97,10 @@ def test_canonical_lake_datasets_are_registered() -> None:
         UNISWAP_SWAPS,
         UNISWAP_V3_POOLS,
         TOKENS,
+        AAVE_BORROWS,
+        AAVE_REPAYS,
+        AAVE_LIQUIDATIONS,
+        CHAINLINK_PRICES,
     )
     assert UNISWAP_SWAPS.stage_path == (
         "silver/swaps/swaps_silver.parquet/"
@@ -102,6 +118,13 @@ def test_canonical_lake_datasets_are_registered() -> None:
         (UNISWAP_SWAPS, "silver/swaps/swaps_silver.parquet/"),
         (UNISWAP_V3_POOLS, "reference/uniswap_v3/pools/"),
         (TOKENS, "reference/tokens/"),
+        (AAVE_BORROWS, "silver/aave_v3/borrow_events.parquet/"),
+        (AAVE_REPAYS, "silver/aave_v3/repay_events.parquet/"),
+        (
+            AAVE_LIQUIDATIONS,
+            "silver/aave_v3/liquidation_events.parquet/",
+        ),
+        (CHAINLINK_PRICES, "silver/market_prices/"),
     ],
 )
 def test_copy_selects_only_parquet_from_canonical_stage_path(
@@ -205,6 +228,38 @@ def test_raw_tables_preserve_reference_fields(
         "loaded_at",
     ):
         assert column in sql
+
+
+def test_aave_landing_preserves_exact_raw_amounts(
+    landing_config: SnowflakeLandingConfig,
+) -> None:
+    sql = generate_setup_sql(landing_config)
+
+    for column in (
+        "amount_raw VARCHAR",
+        "borrow_rate_raw VARCHAR",
+        "debt_to_cover_raw VARCHAR",
+        "liquidated_collateral_amount_raw VARCHAR",
+    ):
+        assert column in sql
+    for dataset in (AAVE_BORROWS, AAVE_REPAYS, AAVE_LIQUIDATIONS):
+        load_sql = generate_dataset_load_sql(landing_config, dataset)
+        assert "ON target.event_id = source.event_id" in load_sql
+        assert "PARTITION BY record:event_id::VARCHAR" in load_sql
+
+
+def test_chainlink_landing_preserves_raw_and_precise_price_fields(
+    landing_config: SnowflakeLandingConfig,
+) -> None:
+    setup_sql = generate_setup_sql(landing_config)
+    load_sql = generate_dataset_load_sql(landing_config, CHAINLINK_PRICES)
+
+    assert "round_id VARCHAR" in setup_sql
+    assert "answer_raw VARCHAR" in setup_sql
+    assert "price NUMBER(38, 18)" in setup_sql
+    assert "TRY_TO_DECIMAL(record:price::VARCHAR, 38, 18)" in load_sql
+    assert "ON target.observation_id = source.observation_id" in load_sql
+    assert "PARTITION BY record:observation_id::VARCHAR" in load_sql
 
 
 def test_generated_sql_contains_no_credentials(

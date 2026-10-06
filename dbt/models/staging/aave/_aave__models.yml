@@ -1,0 +1,40 @@
+version: 2
+
+models:
+  - name: stg_aave_borrows
+    description: Typed staging view at one row per canonical Aave V3 Borrow event.
+    columns:
+      - name: event_id
+        data_tests: [not_null, unique]
+      - name: block_timestamp
+        data_tests: [not_null]
+      - name: transaction_hash
+        data_tests: [not_null]
+      - name: reserve
+        data_tests: [not_null]
+
+  - name: stg_aave_repays
+    description: Typed staging view at one row per canonical Aave V3 Repay event.
+    columns:
+      - name: event_id
+        data_tests: [not_null, unique]
+      - name: block_timestamp
+        data_tests: [not_null]
+      - name: transaction_hash
+        data_tests: [not_null]
+      - name: reserve
+        data_tests: [not_null]
+
+  - name: stg_aave_liquidations
+    description: Typed staging view at one row per canonical Aave V3 LiquidationCall event.
+    columns:
+      - name: event_id
+        data_tests: [not_null, unique]
+      - name: block_timestamp
+        data_tests: [not_null]
+      - name: transaction_hash
+        data_tests: [not_null]
+      - name: collateral_asset
+        data_tests: [not_null]
+      - name: debt_asset
+        data_tests: [not_null]

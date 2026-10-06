@@ -15,17 +15,27 @@ from pyspark.sql.functions import (
 
 from config.settings import DATA_LAKE
 from config.versions import SILVER_JOB_VERSION
+from reference_data.storage import path_exists
 from spark.parquet import write_partitioned_dataset_atomic
 
 
 def read_bronze_events(spark: SparkSession) -> DataFrame:
-    """Read all Hive-partitioned blockchain Bronze events from the lake."""
+    """Read live and historical Hive-partitioned blockchain Bronze events."""
     path = DATA_LAKE.get("bronze_events")
-    return (
+    live = (
         spark.read.option("basePath", path)
         .option("mergeSchema", "true")
         .parquet(path)
     )
+    backfill_path = DATA_LAKE.get("bronze_aave_backfill")
+    if not path_exists(spark, backfill_path):
+        return live
+    historical = (
+        spark.read.option("basePath", backfill_path)
+        .option("mergeSchema", "true")
+        .parquet(backfill_path)
+    )
+    return live.unionByName(historical, allowMissingColumns=True)
 
 
 def _event_id() -> Column:

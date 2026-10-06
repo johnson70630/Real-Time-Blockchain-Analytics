@@ -12,6 +12,7 @@ from config.settings import (
     AAVE_LIQUIDATION_EVENTS_FILE,
     AAVE_REPAY_EVENTS_FILE,
     BRONZE_OUTPUT_PATH,
+    DATA_LAKE,
     STORAGE,
 )
 from config.versions import SILVER_JOB_VERSION
@@ -104,12 +105,16 @@ AAVE_SILVER_MODELS = (
 def discover_bronze_files(
     bronze_root: Path = BRONZE_OUTPUT_PATH,
 ) -> list[Path]:
-    """Return sorted Aave Bronze files, using partition pruning when available."""
+    """Return sorted live and historical Aave Bronze files."""
     aave_partition_root = bronze_root / "protocol=aave_v3"
     search_root = (
         aave_partition_root if aave_partition_root.exists() else bronze_root
     )
-    return discover_parquet_files(search_root)
+    historical_root = Path(DATA_LAKE.get("bronze_aave_backfill"))
+    return sorted(
+        (*discover_parquet_files(search_root), *discover_parquet_files(historical_root)),
+        key=lambda path: path.as_posix(),
+    )
 
 
 def silver_query(model: AaveSilverModel) -> str:
