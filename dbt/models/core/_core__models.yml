@@ -1,0 +1,79 @@
+version: 2
+
+models:
+  - name: dim_date
+    description: Calendar dimension at one row per calendar date.
+    columns:
+      - name: date_key
+        data_tests: [not_null, unique]
+      - name: date
+        data_tests: [not_null, unique]
+
+  - name: dim_chain
+    description: Blockchain dimension at one row per observed chain.
+    columns:
+      - name: chain_key
+        data_tests: [not_null, unique]
+      - name: chain
+        data_tests: [not_null, unique]
+
+  - name: dim_protocol
+    description: Protocol dimension at one row per observed protocol and version.
+    columns:
+      - name: protocol_key
+        data_tests: [not_null, unique]
+      - name: protocol
+        data_tests: [not_null, unique]
+
+  - name: dim_token
+    description: Canonical token dimension at one row per chain and token address.
+    columns:
+      - name: token_key
+        data_tests: [not_null, unique]
+      - name: chain_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_chain')
+                field: chain_key
+      - name: token_address
+        data_tests: [not_null]
+      - name: decimals
+        data_tests: [not_null]
+
+  - name: dim_pool
+    description: Canonical pool dimension at one row per chain, protocol, and pool identifier.
+    columns:
+      - name: pool_key
+        data_tests: [not_null, unique]
+      - name: pool_identifier
+        data_tests: [not_null]
+      - name: chain_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_chain')
+                field: chain_key
+      - name: protocol_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_protocol')
+                field: protocol_key
+      - name: token0_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_token')
+                field: token_key
+      - name: token1_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_token')
+                field: token_key
