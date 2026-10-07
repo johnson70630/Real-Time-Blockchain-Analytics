@@ -18,9 +18,13 @@ def test_fact_models_are_defined_at_canonical_grains() -> None:
 
     assert set(models) == {
         "fact_uniswap_swap",
+        "fact_uniswap_swap_valued",
         "fact_aave_borrow",
+        "fact_aave_borrow_valued",
         "fact_aave_repay",
+        "fact_aave_repay_valued",
         "fact_aave_liquidation",
+        "fact_aave_liquidation_valued",
         "fact_market_price",
     }
     for model in models.values():

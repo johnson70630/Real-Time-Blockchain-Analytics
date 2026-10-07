@@ -7,6 +7,10 @@ profile: "blockchain_analytics"
 model-paths: ["models"]
 test-paths: ["tests"]
 macro-paths: ["macros"]
+seed-paths: ["seeds"]
+
+vars:
+  max_price_age_seconds: "{{ env_var('MAX_PRICE_AGE_SECONDS', '300') | int }}"
 
 target-path: "target"
 clean-targets:
@@ -27,3 +31,15 @@ models:
     marts:
       +materialized: table
       +schema: MARTS
+
+seeds:
+  blockchain_analytics:
+    +schema: STAGING
+    token_price_feed_mapping:
+      +column_types:
+        chain: varchar
+        token_address: varchar
+        token_asset: varchar
+        feed_address: varchar
+        base_asset: varchar
+        quote_asset: varchar

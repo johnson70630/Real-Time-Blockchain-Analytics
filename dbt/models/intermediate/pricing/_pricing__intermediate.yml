@@ -1,0 +1,31 @@
+version: 2
+
+models:
+  - name: int_defi_event_token_amounts
+    description: One row per independently priceable token amount in a canonical event fact.
+    columns:
+      - name: event_id
+        data_tests: [not_null]
+      - name: token_side
+        data_tests: [not_null]
+      - name: token_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_token'), field: token_key}
+      - name: normalized_amount
+        data_tests: [not_null]
+
+  - name: int_defi_event_token_prices
+    description: Deterministic latest non-future Chainlink match for every event token side.
+    columns:
+      - name: event_id
+        data_tests: [not_null]
+      - name: token_side
+        data_tests: [not_null]
+      - name: price_status
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [priced, stale, unmapped, no_prior_price]

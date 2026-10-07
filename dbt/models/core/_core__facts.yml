@@ -142,3 +142,35 @@ models:
               arguments: {to: ref('dim_protocol'), field: protocol_key}
       - name: price
         data_tests: [not_null]
+
+  - name: fact_uniswap_swap_valued
+    description: Canonical Uniswap swaps at one row per event with independent point-in-time valuation for both token sides.
+    columns:
+      - name: event_id
+        data_tests: [not_null, unique]
+      - name: token0_price_status
+        data_tests: [not_null]
+      - name: token1_price_status
+        data_tests: [not_null]
+
+  - name: fact_aave_borrow_valued
+    description: Canonical Aave borrows at one row per event with point-in-time reserve-token valuation.
+    columns:
+      - name: event_id
+        data_tests: [not_null, unique]
+      - name: price_status
+        data_tests: [not_null]
+
+  - name: fact_aave_repay_valued
+    description: Canonical Aave repays at one row per event with point-in-time reserve-token valuation.
+    columns:
+      - name: event_id
+        data_tests: [not_null, unique]
+      - name: price_status
+        data_tests: [not_null]
+
+  - name: fact_aave_liquidation_valued
+    description: Canonical Aave liquidations at one row per event with independent debt and collateral valuation.
+    columns:
+      - name: event_id
+        data_tests: [not_null, unique]

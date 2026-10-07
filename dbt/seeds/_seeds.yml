@@ -1,0 +1,16 @@
+version: 2
+
+seeds:
+  - name: token_price_feed_mapping
+    description: Resolved dbt copy of the authoritative token and Chainlink feed catalogs.
+    columns:
+      - name: chain
+        data_tests: [not_null]
+      - name: token_address
+        data_tests: [not_null]
+      - name: feed_address
+        data_tests: [not_null]
+      - name: base_asset
+        data_tests: [not_null]
+      - name: quote_asset
+        data_tests: [not_null]
