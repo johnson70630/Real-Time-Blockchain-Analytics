@@ -1,0 +1,39 @@
+version: 2
+
+models:
+  - name: int_uniswap_swap_classification
+    description: >-
+      Audit classification at one row per staged swap-like event, based on
+      membership in the verified official Uniswap V3 pool registry.
+    columns:
+      - name: event_id
+        data_tests: [not_null, unique]
+      - name: pool_address
+        data_tests: [not_null]
+      - name: swap_classification
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - CANONICAL_UNISWAP_V3
+                  - NONCANONICAL_OR_INCOMPATIBLE
+      - name: classification_reason
+        data_tests: [not_null]
+
+  - name: int_uniswap_swap_exclusions
+    description: >-
+      Explicit audit population at one row per staged swap-like event excluded
+      from the canonical Uniswap V3 fact.
+    columns:
+      - name: event_id
+        data_tests: [not_null, unique]
+      - name: pool_address
+        data_tests: [not_null]
+      - name: swap_classification
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [NONCANONICAL_OR_INCOMPATIBLE]
+      - name: classification_reason
+        data_tests: [not_null]

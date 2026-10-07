@@ -1,0 +1,144 @@
+version: 2
+
+models:
+  - name: fact_uniswap_swap
+    description: Canonical Uniswap swap fact at one row per Swap event.
+    columns:
+      - name: event_id
+        data_tests: [not_null, unique]
+      - name: date_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_date'), field: date_key}
+      - name: chain_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_chain'), field: chain_key}
+      - name: protocol_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_protocol'), field: protocol_key}
+      - name: pool_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_pool'), field: pool_key}
+      - name: token0_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_token'), field: token_key}
+      - name: token1_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_token'), field: token_key}
+
+  - name: fact_aave_borrow
+    description: Canonical Aave borrow fact at one row per Borrow event.
+    columns:
+      - name: event_id
+        data_tests: [not_null, unique]
+      - name: date_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_date'), field: date_key}
+      - name: chain_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_chain'), field: chain_key}
+      - name: protocol_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_protocol'), field: protocol_key}
+      - name: reserve_token_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_token'), field: token_key}
+
+  - name: fact_aave_repay
+    description: Canonical Aave repay fact at one row per Repay event.
+    columns:
+      - name: event_id
+        data_tests: [not_null, unique]
+      - name: date_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_date'), field: date_key}
+      - name: chain_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_chain'), field: chain_key}
+      - name: protocol_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_protocol'), field: protocol_key}
+      - name: reserve_token_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_token'), field: token_key}
+
+  - name: fact_aave_liquidation
+    description: Canonical Aave liquidation fact at one row per LiquidationCall event.
+    columns:
+      - name: event_id
+        data_tests: [not_null, unique]
+      - name: date_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_date'), field: date_key}
+      - name: chain_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_chain'), field: chain_key}
+      - name: protocol_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_protocol'), field: protocol_key}
+      - name: collateral_token_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_token'), field: token_key}
+      - name: debt_token_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_token'), field: token_key}
+
+  - name: fact_market_price
+    description: Canonical Chainlink price fact at one row per observation_id.
+    columns:
+      - name: observation_id
+        data_tests: [not_null, unique]
+      - name: date_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_date'), field: date_key}
+      - name: chain_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_chain'), field: chain_key}
+      - name: protocol_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_protocol'), field: protocol_key}
+      - name: price
+        data_tests: [not_null]
