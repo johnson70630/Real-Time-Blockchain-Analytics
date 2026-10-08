@@ -1,0 +1,45 @@
+version: 2
+
+models:
+  - name: mart_aave_lending_tutorial
+    description: >-
+      Tutorial-ready canonical Aave lending activity at one row per Borrow or
+      Repay event, with resolved token context and point-in-time valuation.
+    columns:
+      - name: event_id
+        data_tests: [not_null, unique]
+      - name: activity_type
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [BORROW, REPAY]
+      - name: block_timestamp
+        data_tests: [not_null]
+      - name: token_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_token'), field: token_key}
+      - name: token_address
+        data_tests: [not_null]
+      - name: token_symbol
+        data_tests: [not_null]
+      - name: token_name
+        data_tests: [not_null]
+      - name: token_decimals
+        data_tests: [not_null]
+      - name: amount_raw
+        data_tests: [not_null]
+      - name: amount
+        data_tests: [not_null]
+      - name: price_status
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [priced, stale, unmapped, no_prior_price]
+      - name: has_valid_usd_valuation
+        data_tests: [not_null]
+      - name: user
+        data_tests: [not_null]
