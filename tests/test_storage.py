@@ -39,6 +39,10 @@ def test_s3_storage_generates_canonical_s3a_locations(tmp_path: Path) -> None:
     assert locations.get("bronze_market_data") == (
         "s3a://analytics-lake-123/production/blockchain/bronze/market_data"
     )
+    assert locations.get("bronze_chainlink_backfill") == (
+        "s3a://analytics-lake-123/production/blockchain/"
+        "bronze_backfill/market_data/observations"
+    )
     assert storage.s3_url("silver") == (
         "s3://analytics-lake-123/production/blockchain/silver"
     )

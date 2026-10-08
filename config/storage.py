@@ -14,6 +14,7 @@ STORAGE_MODES = frozenset({"local", "s3"})
 DATASET_PATHS: dict[str, str] = {
     "bronze_events": "bronze/swaps",
     "bronze_market_data": "bronze/market_data",
+    "bronze_chainlink_backfill": "bronze_backfill/market_data/observations",
     "bronze_aave_backfill": "bronze_backfill/aave_v3/events",
     "silver_uniswap_swaps": "silver/swaps/swaps_silver.parquet",
     "silver_aave_borrows": "silver/aave_v3/borrow_events.parquet",
@@ -23,7 +24,9 @@ DATASET_PATHS: dict[str, str] = {
     "reference_uniswap_v3_pools": "reference/uniswap_v3/pools",
     "state_uniswap_v3_pools": "state/uniswap_v3/pools_watermark",
     "state_aave_backfill": "state/aave_v3/backfill",
+    "state_chainlink_backfill": "state/chainlink/backfill",
     "quarantine_aave_backfill": "quarantine/aave_v3/backfill",
+    "quarantine_chainlink_backfill": "quarantine/chainlink/backfill",
     "quarantine_uniswap_v3_pools": "quarantine/reference/uniswap_v3/pools",
     "reference_tokens": "reference/tokens",
     "quarantine_tokens": "quarantine/reference/tokens",

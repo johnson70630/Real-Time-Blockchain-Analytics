@@ -233,12 +233,14 @@ def test_repeated_build_is_idempotent_and_writes_date_partition(
     first = build_market_data_silver(
         spark,
         bronze_root=bronze_root,
+        historical_root=None,
         silver_path=silver_path,
         quarantine_path=quarantine_path,
     )
     second = build_market_data_silver(
         spark,
         bronze_root=bronze_root,
+        historical_root=None,
         silver_path=silver_path,
         quarantine_path=quarantine_path,
     )
@@ -249,3 +251,46 @@ def test_repeated_build_is_idempotent_and_writes_date_partition(
     assert second == first
     assert spark.read.parquet(str(silver_path)).count() == 1
     assert (silver_path / "price_date=2026-07-23").is_dir()
+
+
+def test_build_unions_live_and_historical_bronze(
+    spark: SparkSession,
+    tmp_path,
+) -> None:
+    live_root = tmp_path / "bronze" / "market_data"
+    historical_root = tmp_path / "bronze_backfill" / "market_data"
+    silver_path = tmp_path / "silver" / "market_prices"
+    quarantine_path = tmp_path / "quarantine" / "market_data_silver"
+    live = spark.createDataFrame([_row()], BRONZE_SCHEMA).withColumn(
+        "observation_date", to_date(lit("2026-07-23"))
+    )
+    historical = spark.createDataFrame(
+        [
+            _row(source_topic="historical_chainlink_rpc"),
+            _row(
+                round_id="43",
+                source_topic="historical_chainlink_rpc",
+                kafka_partition=None,
+                kafka_offset=None,
+            ),
+        ],
+        BRONZE_SCHEMA,
+    ).withColumn("observation_date", to_date(lit("2026-07-23")))
+    live.write.mode("overwrite").partitionBy(
+        "chain", "observation_date"
+    ).parquet(str(live_root))
+    historical.write.mode("overwrite").partitionBy(
+        "chain", "observation_date"
+    ).parquet(str(historical_root))
+
+    stats = build_market_data_silver(
+        spark,
+        bronze_root=live_root,
+        historical_root=historical_root,
+        silver_path=silver_path,
+        quarantine_path=quarantine_path,
+    )
+
+    assert stats.bronze_records_read == 3
+    assert stats.duplicate_records_removed == 1
+    assert stats.silver_records_written == 2

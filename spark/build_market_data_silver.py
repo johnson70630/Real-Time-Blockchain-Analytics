@@ -42,6 +42,7 @@ from config.settings import (
     DATA_LAKE,
 )
 from config.versions import SILVER_JOB_VERSION
+from reference_data.storage import path_exists
 from spark.parquet import (
     discover_parquet_files,
     is_remote_path,
@@ -52,6 +53,7 @@ from spark.session import create_spark_session as create_shared_spark_session
 logger = logging.getLogger(__name__)
 
 MARKET_DATA_BRONZE_OUTPUT_PATH = DATA_LAKE.get("bronze_market_data")
+MARKET_DATA_BACKFILL_OUTPUT_PATH = DATA_LAKE.get("bronze_chainlink_backfill")
 MARKET_DATA_SILVER_DIR = DATA_LAKE.get("silver_chainlink_market_prices")
 MARKET_DATA_SILVER_QUARANTINE_PATH = DATA_LAKE.get(
     "quarantine_market_data_silver"
@@ -417,33 +419,56 @@ def transform_market_data(
 def read_market_data_bronze(
     spark: SparkSession,
     bronze_root: str | Path = MARKET_DATA_BRONZE_OUTPUT_PATH,
+    historical_root: str | Path | None = MARKET_DATA_BACKFILL_OUTPUT_PATH,
 ) -> DataFrame:
-    """Read the Hive-partitioned market-data Bronze dataset from Parquet."""
-    return (
-        spark.read.option("basePath", str(bronze_root))
+    """Read live and historical market-data Bronze with one compatible schema."""
+    roots = (bronze_root, historical_root)
+    frames = [
+        spark.read.option("basePath", str(root))
         .option("mergeSchema", "true")
-        .parquet(str(bronze_root))
-    )
+        .parquet(str(root))
+        for root in roots
+        if root is not None and path_exists(spark, root)
+    ]
+    if not frames:
+        raise FileNotFoundError("No live or historical market-data Bronze found")
+    combined = frames[0]
+    for frame in frames[1:]:
+        combined = combined.unionByName(frame, allowMissingColumns=True)
+    return combined
 
 
 def build_market_data_silver(
     spark: SparkSession,
     *,
     bronze_root: str | Path = MARKET_DATA_BRONZE_OUTPUT_PATH,
+    historical_root: str | Path | None = MARKET_DATA_BACKFILL_OUTPUT_PATH,
     silver_path: str | Path = MARKET_DATA_SILVER_DIR,
     quarantine_path: str | Path = MARKET_DATA_SILVER_QUARANTINE_PATH,
 ) -> MarketDataSilverStats:
     """Rebuild Silver prices and rejected records atomically from Bronze."""
-    bronze_files = (
-        None
-        if is_remote_path(bronze_root)
-        else discover_parquet_files(Path(bronze_root))
+    roots = tuple(
+        root for root in (bronze_root, historical_root) if root is not None
     )
-    if bronze_files == []:
+    local_files = [
+        discover_parquet_files(Path(root))
+        for root in roots
+        if not is_remote_path(root)
+    ]
+    remote_roots = tuple(root for root in roots if is_remote_path(root))
+    if not remote_roots and not any(local_files):
         logger.info("No market-data Bronze files found; Silver is unchanged")
         return MarketDataSilverStats(0, 0, 0, 0, 0)
 
-    bronze = read_market_data_bronze(spark, bronze_root).cache()
+    try:
+        bronze = read_market_data_bronze(
+            spark,
+            bronze_root,
+            historical_root,
+        ).cache()
+    except FileNotFoundError:
+        logger.info("No market-data Bronze files found; Silver is unchanged")
+        return MarketDataSilverStats(0, 0, 0, 0, 0)
     silver, quarantine = transform_market_data(bronze)
     silver = silver.cache()
     quarantine = quarantine.cache()
