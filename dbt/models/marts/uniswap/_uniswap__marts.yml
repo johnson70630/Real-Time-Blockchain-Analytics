@@ -1,0 +1,67 @@
+version: 2
+
+models:
+  - name: mart_uniswap_swap_tutorial
+    description: >-
+      Tutorial-ready canonical Uniswap V3 swaps at one row per event, with
+      resolved pool and token context plus existing point-in-time valuations.
+    columns:
+      - name: event_id
+        data_tests: [not_null, unique]
+      - name: block_timestamp
+        data_tests: [not_null]
+      - name: pool_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_pool'), field: pool_key}
+      - name: pool_address
+        data_tests: [not_null]
+      - name: token0_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_token'), field: token_key}
+      - name: token0_address
+        data_tests: [not_null]
+      - name: token0_symbol
+        data_tests: [not_null]
+      - name: token0_name
+        data_tests: [not_null]
+      - name: token0_decimals
+        data_tests: [not_null]
+      - name: token0_price_status
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [priced, stale, unmapped, no_prior_price]
+      - name: token1_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_token'), field: token_key}
+      - name: token1_address
+        data_tests: [not_null]
+      - name: token1_symbol
+        data_tests: [not_null]
+      - name: token1_name
+        data_tests: [not_null]
+      - name: token1_decimals
+        data_tests: [not_null]
+      - name: token1_price_status
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [priced, stale, unmapped, no_prior_price]
+      - name: pool_pair
+        data_tests: [not_null]
+      - name: has_complete_usd_valuation
+        data_tests: [not_null]
+      - name: pricing_coverage_status
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [FULLY_PRICED, PARTIALLY_PRICED, UNPRICED]
