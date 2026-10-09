@@ -1,0 +1,69 @@
+version: 2
+
+models:
+  - name: mart_chainlink_oracle_tutorial
+    description: >-
+      Canonical Chainlink observations at one row per observation, with exact
+      previous-round context for oracle education.
+    columns:
+      - name: observation_id
+        data_tests: [not_null, unique]
+      - name: chain
+        data_tests: [not_null]
+      - name: protocol
+        data_tests: [not_null]
+      - name: feed_address
+        data_tests: [not_null]
+      - name: round_id
+        data_tests: [not_null]
+      - name: price
+        data_tests: [not_null]
+      - name: feed_updated_at
+        data_tests: [not_null]
+
+  - name: mart_point_in_time_pricing_tutorial
+    description: >-
+      One row per canonical event-token side, preserving the selected
+      point-in-time price result and an educational next-round comparison.
+    columns:
+      - name: event_id
+        data_tests: [not_null]
+      - name: event_domain
+        data_tests: [not_null]
+      - name: token_side
+        data_tests: [not_null]
+      - name: protocol
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [uniswap_v3, aave_v3]
+      - name: event_type
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [swap, borrow, repay, liquidation]
+      - name: event_timestamp
+        data_tests: [not_null]
+      - name: token_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_token'), field: token_key}
+      - name: token_address
+        data_tests: [not_null]
+      - name: token_symbol
+        data_tests: [not_null]
+      - name: normalized_amount
+        data_tests: [not_null]
+      - name: price_status
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [priced, stale, unmapped, no_prior_price]
+      - name: selected_price_is_non_future
+        data_tests: [not_null]
+      - name: next_price_occurs_after_event
+        data_tests: [not_null]
