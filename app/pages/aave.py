@@ -7,6 +7,7 @@ from typing import Any
 import streamlit as st
 
 from app.components.aave_lesson import render_aave_lesson
+from app.components.shared import format_timestamp, render_page_intro
 from app.config import AppConfig
 from app.data import SnowflakeTutorialRepository
 
@@ -41,7 +42,7 @@ def load_aave_activity(
 
 def aave_activity_label(activity: dict[str, Any]) -> str:
     """Build a unique, useful event selector label."""
-    timestamp = activity["block_timestamp"].isoformat()
+    timestamp = format_timestamp(activity["block_timestamp"])
     transaction_suffix = activity["transaction_hash"][-10:]
     return (
         f"{timestamp} | {activity['token_symbol']} | "
@@ -51,12 +52,20 @@ def aave_activity_label(activity: dict[str, Any]) -> str:
 
 def render_aave(config: AppConfig) -> None:
     """Select and teach one canonical Borrow or Repay event."""
-    st.title("Aave V3 Lending")
-    st.caption("Choose a real Borrow or Repay event from Snowflake MARTS.")
+    render_page_intro(
+        "Aave V3 Lending",
+        "Follow a real Borrow or Repay event through token normalization, "
+        "actor roles, and historical valuation.",
+    )
 
-    activity_type = st.selectbox("Activity type", _ACTIVITY_TYPES)
+    st.subheader("1. Choose a real example")
+    activity_type = st.selectbox(
+        "Activity type", _ACTIVITY_TYPES, key="aave_activity_type"
+    )
     tokens = load_aave_tokens(config, activity_type)
-    selected_token = st.selectbox("Token", ["All tokens", *tokens])
+    selected_token = st.selectbox(
+        "Token", ["All tokens", *tokens], key="aave_token"
+    )
     token_filter = None if selected_token == "All tokens" else selected_token
 
     activities = load_aave_activities(
@@ -71,6 +80,7 @@ def render_aave(config: AppConfig) -> None:
         "Event timestamp and identifier",
         list(by_event_id),
         format_func=lambda value: aave_activity_label(by_event_id[value]),
+        key="aave_event",
     )
     selected = load_aave_activity(config, event_id)
     if selected is None:

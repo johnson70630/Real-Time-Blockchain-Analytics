@@ -10,20 +10,14 @@ from app.components.aave_lesson import (
     valid_amount_usd_display,
     valid_price_display,
 )
-from app.components.swap_lesson import display_value
-
-_PIT_STATUS_EXPLANATIONS = {
-    "priced": "A valid prior Chainlink observation was available.",
-    "stale": (
-        "A prior observation exists, but it is older than the accepted "
-        "300-second threshold and is rejected for valuation."
-    ),
-    "unmapped": "This token has no approved project price-feed mapping.",
-    "no_prior_price": (
-        "The token is mapped to a feed, but no observation existed at or "
-        "before the event."
-    ),
-}
+from app.components.shared import (
+    display_value,
+    format_decimal,
+    price_status_explanation,
+    render_identifier,
+    render_lesson_link,
+    render_price_status,
+)
 
 
 def as_of_timeline(row: dict[str, Any]) -> str:
@@ -36,10 +30,38 @@ def as_of_timeline(row: dict[str, Any]) -> str:
 
 def pit_status_explanation(status: str, reason: str | None = None) -> str:
     """Explain a canonical PIT status without implying a valid valuation."""
-    explanation = _PIT_STATUS_EXPLANATIONS.get(
-        status, "The warehouse returned an unknown price status."
-    )
-    return f"{explanation} Warehouse reason: {reason}." if reason else explanation
+    return price_status_explanation(status, reason)
+
+
+def timeline_points(row: dict[str, Any]) -> tuple[tuple[str, Any, str], ...]:
+    """Prepare the mart-provided selected/event/next timeline for display."""
+    points: list[tuple[str, Any, str]] = []
+    if row["feed_updated_at"] is not None:
+        points.append(
+            (
+                "Selected observation",
+                row["feed_updated_at"],
+                "Latest known price at or before the event",
+            )
+        )
+    points.append(("Event", row["event_timestamp"], "Valuation timestamp"))
+    if row["next_feed_updated_at"] is not None:
+        points.append(
+            (
+                "Next observation",
+                row["next_feed_updated_at"],
+                "Future comparison only — never used for valuation",
+            )
+        )
+    return tuple(points)
+
+
+def _render_timeline(row: dict[str, Any]) -> None:
+    points = timeline_points(row)
+    for index, (label, timestamp, detail) in enumerate(points):
+        st.markdown(f"**{label}**  \n`{display_value(timestamp)}`  \n{detail}")
+        if index < len(points) - 1:
+            st.markdown("↓")
 
 
 def render_pit_lesson(row: dict[str, Any]) -> None:
@@ -49,7 +71,7 @@ def render_pit_lesson(row: dict[str, Any]) -> None:
         f"Event ID: {row['event_id']} | token side: {row['token_side']}"
     )
 
-    st.subheader("1. Event-token side")
+    st.subheader("2. Inspect the event-token side")
     st.json(
         {
             "protocol": row["protocol"],
@@ -58,21 +80,20 @@ def render_pit_lesson(row: dict[str, Any]) -> None:
             "event_id": row["event_id"],
             "event_timestamp": display_value(row["event_timestamp"]),
             "token_symbol": row["token_symbol"],
-            "normalized_amount": display_value(row["normalized_amount"]),
+            "normalized_amount": format_decimal(row["normalized_amount"]),
         }
     )
+    render_identifier("Token contract", row["token_address"])
 
-    st.subheader("2. Token-to-feed mapping")
-    st.json(
-        {
-            "feed_address": row["feed_address"],
-            "base_asset": row["base_asset"],
-            "quote_asset": row["quote_asset"],
-        }
-    )
+    st.subheader("3. Understand the token-to-feed mapping")
+    render_identifier("Feed contract", row["feed_address"])
+    if row["feed_address"] is None:
+        st.info("No approved Chainlink mapping exists for this token.")
+    else:
+        st.write(f"Feed pair: **{row['base_asset']}/{row['quote_asset']}**")
 
-    st.subheader("3. Selected historical observation")
-    st.markdown(f"**Price status:** `{row['price_status']}`")
+    st.subheader("4. Inspect the selected historical observation")
+    render_price_status(row["price_status"], row["price_status_reason"])
     st.json(
         {
             "observation_id": row["observation_id"],
@@ -81,11 +102,6 @@ def render_pit_lesson(row: dict[str, Any]) -> None:
             "feed_updated_at": display_value(row["feed_updated_at"]),
             "price_age_seconds": row["price_age_seconds"],
         }
-    )
-    st.caption(
-        pit_status_explanation(
-            row["price_status"], row["price_status_reason"]
-        )
     )
     price, amount = st.columns(2)
     price.metric(
@@ -97,31 +113,36 @@ def render_pit_lesson(row: dict[str, Any]) -> None:
         valid_amount_usd_display(row["price_status"], row["amount_usd"]),
     )
 
-    st.subheader("4. The as-of join")
-    st.code(as_of_timeline(row))
+    st.subheader("5. Understand the as-of join")
+    _render_timeline(row)
     st.write("Core rule: `feed_updated_at <= event_timestamp`")
     st.caption(
         "The selected round is the latest known observation at or before "
         "the event. This result comes from the mart and is not recomputed here."
     )
 
-    st.subheader("5. Next observation — comparison only")
+    st.subheader("6. Compare with the next observation")
     if row["next_observation_id"] is None:
         st.info("No later observation is available in the current dataset.")
-        return
-
-    st.json(
-        {
-            "next_observation_id": row["next_observation_id"],
-            "next_round_id": row["next_round_id"],
-            "next_price": display_value(row["next_price"]),
-            "next_feed_updated_at": display_value(
-                row["next_feed_updated_at"]
-            ),
-            "seconds_until_next_round": row["seconds_until_next_round"],
-        }
-    )
-    st.warning(
-        "The next oracle update happened after the transaction, so using it "
-        "would introduce future information. It is never used for valuation."
+    else:
+        st.json(
+            {
+                "next_observation_id": row["next_observation_id"],
+                "next_round_id": row["next_round_id"],
+                "next_price": display_value(row["next_price"]),
+                "next_feed_updated_at": display_value(
+                    row["next_feed_updated_at"]
+                ),
+                "seconds_until_next_round": row["seconds_until_next_round"],
+            }
+        )
+        st.warning(
+            "The next oracle update happened after the transaction, so using "
+            "it would introduce future information. It is comparison-only "
+            "and is never used for valuation."
+        )
+    render_lesson_link(
+        "Understand the oracle observations themselves",
+        "Chainlink Oracle",
+        key="pit_to_chainlink",
     )

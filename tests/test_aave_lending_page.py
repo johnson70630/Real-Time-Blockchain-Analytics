@@ -151,7 +151,7 @@ def test_repay_actor_roles_remain_distinct() -> None:
 
 def test_priced_aave_value_is_displayed() -> None:
     assert valid_price_display("priced", Decimal("0.9999")) == "$0.99990000"
-    assert valid_amount_usd_display("priced", Decimal("10")) == "$10.00000000"
+    assert valid_amount_usd_display("priced", Decimal("10")) == "$10.00"
 
 
 @pytest.mark.parametrize("status", ["stale", "unmapped", "no_prior_price"])

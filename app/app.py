@@ -24,7 +24,9 @@ _PAGES = (
 def main() -> None:
     """Render navigation and delegate to the selected tutorial page."""
     st.set_page_config(page_title="DeFi Data Lab", page_icon="🧪", layout="wide")
-    page = st.sidebar.radio("Tutorial", _PAGES)
+    st.sidebar.title("DeFi Data Lab")
+    st.sidebar.caption("Real data. Reproducible transformations.")
+    page = st.sidebar.radio("Lesson", _PAGES, key="tutorial_page")
 
     try:
         config = AppConfig.from_env()
@@ -38,9 +40,12 @@ def main() -> None:
             render_chainlink(config)
         else:
             render_pit(config)
-    except (SnowflakeError, ValueError, RuntimeError) as error:
+    except (SnowflakeError, ValueError, RuntimeError):
         st.error("Snowflake tutorial data is unavailable.")
-        st.caption(str(error))
+        st.caption(
+            "The application could not retrieve its trusted tutorial data. "
+            "Verify the configured Snowflake connection and try again."
+        )
         st.stop()
 
 

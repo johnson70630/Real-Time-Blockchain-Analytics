@@ -121,15 +121,15 @@ def test_selected_swap_retrieval_uses_event_id_parameter() -> None:
 
 def test_unknown_usd_value_is_not_displayed_as_zero() -> None:
     assert display_usd(None) == "Unavailable"
-    assert display_usd(Decimal("0")) == "$0.00000000"
+    assert display_usd(Decimal("0")) == "$0.00"
 
 
 @pytest.mark.parametrize(
     ("status", "expected"),
     [
-        ("stale", "exceeded"),
-        ("unmapped", "no approved"),
-        ("no_prior_price", "No Chainlink observation"),
+        ("stale", "300-second threshold"),
+        ("unmapped", "no approved Chainlink feed mapping"),
+        ("no_prior_price", "no observation was available"),
     ],
 )
 def test_unavailable_price_statuses_have_specific_explanations(

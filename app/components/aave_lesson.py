@@ -7,11 +7,17 @@ from typing import Any
 
 import streamlit as st
 
-from app.components.swap_lesson import (
-    display_usd,
+from app.components.shared import (
     display_value,
+    format_decimal,
+    format_price,
+    format_usd,
+    render_identifier,
+    render_lesson_link,
+    render_price_status,
+)
+from app.components.swap_lesson import (
     normalization_equation,
-    price_status_explanation,
 )
 
 
@@ -30,16 +36,16 @@ def actor_roles(activity: dict[str, Any]) -> tuple[tuple[str, str], ...]:
 
 def valid_price_display(status: str, price: Decimal | None) -> str:
     """Display a price only when the warehouse marks it as valid."""
-    return display_usd(price) if status == "priced" else "Unavailable"
+    return format_price(price) if status == "priced" else "Unavailable"
 
 
 def valid_amount_usd_display(status: str, amount: Decimal | None) -> str:
     """Display USD value only for an accepted point-in-time price."""
-    return display_usd(amount) if status == "priced" else "Unavailable"
+    return format_usd(amount) if status == "priced" else "Unavailable"
 
 
 def _render_actors(activity: dict[str, Any]) -> None:
-    st.subheader("3. Actor roles")
+    st.subheader("4. Understand the actor roles")
     columns = st.columns(2)
     for column, (label, value) in zip(
         columns, actor_roles(activity), strict=True
@@ -61,7 +67,7 @@ def _render_actors(activity: dict[str, Any]) -> None:
 
 def _render_activity_details(activity: dict[str, Any]) -> None:
     if activity["activity_type"] == "BORROW":
-        st.subheader("4. Borrow-specific details")
+        st.subheader("5. Inspect Borrow metadata")
         mode, rate, referral = st.columns(3)
         mode.metric(
             "Interest-rate mode",
@@ -79,7 +85,7 @@ def _render_activity_details(activity: dict[str, Any]) -> None:
             "converted into APR or APY in the frontend."
         )
     else:
-        st.subheader("5. Repay-specific details")
+        st.subheader("5. Inspect Repay metadata")
         st.metric("Used aTokens", display_value(activity["use_atokens"]))
         st.caption(
             "This source protocol field indicates whether aTokens were used "
@@ -93,7 +99,7 @@ def render_aave_lesson(activity: dict[str, Any]) -> None:
     st.header(f"{activity_type.title()} {activity['token_symbol']}")
     st.caption(f"Event ID: {activity['event_id']}")
 
-    st.subheader("1. What happened?")
+    st.subheader("2. Inspect the source event")
     if activity_type == "BORROW":
         st.write(
             "A user receives an asset from the Aave lending pool and debt is "
@@ -101,19 +107,15 @@ def render_aave_lesson(activity: dict[str, Any]) -> None:
         )
     else:
         st.write("Assets are returned to Aave to reduce outstanding debt.")
-    st.json(
-        {
-            "activity_type": activity_type,
-            "block_timestamp": display_value(activity["block_timestamp"]),
-            "block_number": activity["block_number"],
-            "transaction_hash": activity["transaction_hash"],
-            "log_index": activity["log_index"],
-            "token_symbol": activity["token_symbol"],
-            "token_name": activity["token_name"],
-        }
+    render_identifier("Transaction", activity["transaction_hash"])
+    st.write(
+        f"Block `{activity['block_number']}` · log `{activity['log_index']}` · "
+        f"{display_value(activity['block_timestamp'])}"
     )
+    st.write(f"Token: **{activity['token_symbol']} — {activity['token_name']}**")
+    render_identifier("Token contract", activity["token_address"])
 
-    st.subheader("2. Raw token amount")
+    st.subheader("3. Transform the raw token amount")
     st.write("raw integer → token decimals → human-readable token amount")
     st.code(
         normalization_equation(
@@ -130,12 +132,14 @@ def render_aave_lesson(activity: dict[str, Any]) -> None:
     _render_actors(activity)
     _render_activity_details(activity)
 
-    st.subheader("6. Historical price")
+    st.subheader("6. Apply the historical price")
     st.write(
         "Pricing uses the latest Chainlink observation known before the "
         "event, subject to the established 300-second staleness rule."
     )
-    st.markdown(f"**Price status:** `{activity['price_status']}`")
+    render_price_status(
+        activity["price_status"], activity["price_status_reason"]
+    )
     price, timestamp, age = st.columns(3)
     price.metric(
         "Historical price",
@@ -149,15 +153,9 @@ def render_aave_lesson(activity: dict[str, Any]) -> None:
         "Price age (seconds)",
         display_value(activity["price_age_seconds"]),
     )
-    st.caption(
-        price_status_explanation(
-            activity["price_status"], activity["price_status_reason"]
-        )
-    )
-
-    st.subheader("7. USD value")
+    st.subheader("7. Interpret the analytical value")
     amount, price_value, usd_value = st.columns(3)
-    amount.metric("Normalized amount", display_value(activity["amount"]))
+    amount.metric("Normalized amount", format_decimal(activity["amount"]))
     price_value.metric(
         "Valid historical price",
         valid_price_display(activity["price_status"], activity["price_usd"]),
@@ -171,4 +169,9 @@ def render_aave_lesson(activity: dict[str, Any]) -> None:
     st.caption(
         "Unavailable valuations remain unavailable; NULL is never displayed "
         "as $0. Values retain the mart's original sign and precision."
+    )
+    render_lesson_link(
+        "See how this historical price was selected",
+        "Point-in-Time Pricing",
+        key="aave_to_pit",
     )

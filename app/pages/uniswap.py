@@ -7,6 +7,7 @@ from typing import Any
 import streamlit as st
 
 from app.components.swap_lesson import render_swap_lesson
+from app.components.shared import format_timestamp, render_page_intro
 from app.config import AppConfig
 from app.data import SnowflakeTutorialRepository
 
@@ -32,7 +33,7 @@ def load_swap(config: AppConfig, event_id: str) -> dict[str, Any] | None:
 
 
 def _swap_label(swap: dict[str, Any]) -> str:
-    timestamp = swap["block_timestamp"].isoformat()
+    timestamp = format_timestamp(swap["block_timestamp"])
     return (
         f"{timestamp} | tx {swap['transaction_hash'][:12]}… | "
         f"log {swap['log_index']}"
@@ -41,12 +42,19 @@ def _swap_label(swap: dict[str, Any]) -> str:
 
 def render_uniswap(config: AppConfig) -> None:
     """Select and teach one canonical swap from the tutorial mart."""
-    st.title("Uniswap V3 Swap")
-    st.caption("Choose a real canonical swap from Snowflake MARTS.")
+    render_page_intro(
+        "Uniswap V3 Swap",
+        "Follow a real canonical swap from raw token amounts to historical "
+        "USD interpretation.",
+    )
 
+    st.subheader("1. Choose a real example")
     pairs = load_pool_pairs(config)
+    if not pairs:
+        st.info("No canonical swaps are currently available.")
+        return
     pair_options = ["All pool pairs", *pairs]
-    selected_pair = st.selectbox("Pool pair", pair_options)
+    selected_pair = st.selectbox("Pool pair", pair_options, key="swap_pair")
     pair_filter = None if selected_pair == "All pool pairs" else selected_pair
 
     swaps = load_swaps(config, pair_filter)
@@ -59,6 +67,7 @@ def render_uniswap(config: AppConfig) -> None:
         "Swap timestamp and identifier",
         list(by_event_id),
         format_func=lambda value: _swap_label(by_event_id[value]),
+        key="swap_event",
     )
     selected = load_swap(config, event_id)
     if selected is None:

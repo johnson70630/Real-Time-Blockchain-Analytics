@@ -115,7 +115,7 @@ def test_oracle_equation_uses_canonical_mart_price() -> None:
         }
     )
 
-    assert equation == "123456789 ÷ 10^8 = 1.234567890000000000"
+    assert equation == "123456789 ÷ 10^8 = 1.23456789"
 
 
 def test_observation_label_distinguishes_rounds() -> None:
@@ -193,7 +193,7 @@ def test_nonpriced_pit_status_never_displays_valuation(status: str) -> None:
 
 def test_pit_status_explanations_preserve_canonical_semantics() -> None:
     assert "300-second threshold" in pit_status_explanation("stale")
-    assert "mapped to a feed" in pit_status_explanation("no_prior_price")
+    assert "approved feed mapping" in pit_status_explanation("no_prior_price")
     assert "at or before the event" in pit_status_explanation("no_prior_price")
 
 

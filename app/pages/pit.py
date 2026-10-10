@@ -7,6 +7,11 @@ from typing import Any
 import streamlit as st
 
 from app.components.pit_lesson import render_pit_lesson
+from app.components.shared import (
+    format_timestamp,
+    price_status_label,
+    render_page_intro,
+)
 from app.config import AppConfig
 from app.data import SnowflakeTutorialRepository
 
@@ -58,7 +63,7 @@ def load_pit_row(
 
 def pit_row_label(row: dict[str, Any]) -> str:
     """Build a unique event-token selector label."""
-    timestamp = row["event_timestamp"].isoformat()
+    timestamp = format_timestamp(row["event_timestamp"])
     event_suffix = row["event_id"][-12:]
     return (
         f"{timestamp} | {row['event_type']} | {row['token_symbol']} "
@@ -68,17 +73,31 @@ def pit_row_label(row: dict[str, Any]) -> str:
 
 def render_pit(config: AppConfig) -> None:
     """Select and teach one canonical event-token price decision."""
-    st.title("Point-in-Time Pricing")
-    st.caption("Inspect how a real DeFi event was matched to prior price data.")
+    render_page_intro(
+        "Point-in-Time Pricing",
+        "See how a real DeFi event is matched to the latest eligible oracle "
+        "observation without using future information.",
+    )
 
-    protocol = st.selectbox("Protocol", load_pit_protocols(config))
+    st.subheader("1. Choose a real example")
+    protocols = load_pit_protocols(config)
+    if not protocols:
+        st.info("No point-in-time pricing rows are currently available.")
+        return
+    protocol = st.selectbox("Protocol", protocols, key="pit_protocol")
     token_choice = st.selectbox(
-        "Token", ["All tokens", *load_pit_tokens(config, protocol)]
+        "Token",
+        ["All tokens", *load_pit_tokens(config, protocol)],
+        key="pit_token",
     )
     token_symbol = None if token_choice == "All tokens" else token_choice
     status_choice = st.selectbox(
         "Price status",
         ["All statuses", *load_pit_statuses(config, protocol, token_symbol)],
+        format_func=lambda status: (
+            status if status == "All statuses" else price_status_label(status)
+        ),
+        key="pit_status",
     )
     price_status = None if status_choice == "All statuses" else status_choice
 
@@ -95,6 +114,7 @@ def render_pit(config: AppConfig) -> None:
         "Event-token timestamp and identifier",
         list(by_identity),
         format_func=lambda value: pit_row_label(by_identity[value]),
+        key="pit_event_token",
     )
     selected = load_pit_row(config, *identity)
     if selected is None:
