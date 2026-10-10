@@ -1,4 +1,4 @@
-.PHONY: kafka-up kafka-down producer producer-build producer-up producer-logs producer-down market-data market-data-build market-data-up market-data-logs market-data-down uniswap-pools uniswap-pools-bootstrap token-metadata aave-backfill chainlink-backfill bronze market-data-bronze market-data-silver silver aave-silver price-enrichment gold snowflake-sql dashboard quality test lint check clean-data
+.PHONY: kafka-up kafka-down producer producer-build producer-up producer-logs producer-down market-data market-data-build market-data-up market-data-logs market-data-down uniswap-pools uniswap-pools-bootstrap token-metadata aave-backfill chainlink-backfill bronze market-data-bronze market-data-silver silver aave-silver price-enrichment gold snowflake-sql dashboard data-lab quality test lint check clean-data
 
 kafka-up:
 	docker compose up -d kafka
@@ -77,6 +77,9 @@ snowflake-sql:
 
 dashboard:
 	uv run python -m streamlit run dashboard/app.py
+
+data-lab:
+	uv run python -m streamlit run app/app.py
 
 lint:
 	uv run ruff check .
