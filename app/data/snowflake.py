@@ -79,6 +79,48 @@ _SWAP_TUTORIAL_COLUMNS = """
     PRICING_COVERAGE_STATUS
 """
 
+_AAVE_ACTIVITY_TYPES = frozenset({"BORROW", "REPAY"})
+
+_AAVE_LIST_COLUMNS = """
+    EVENT_ID,
+    ACTIVITY_TYPE,
+    BLOCK_TIMESTAMP,
+    TRANSACTION_HASH,
+    LOG_INDEX,
+    TOKEN_SYMBOL,
+    TOKEN_NAME,
+    TOKEN_ADDRESS,
+    PRICE_STATUS
+"""
+
+_AAVE_TUTORIAL_COLUMNS = """
+    EVENT_ID,
+    ACTIVITY_TYPE,
+    BLOCK_TIMESTAMP,
+    BLOCK_NUMBER,
+    TRANSACTION_HASH,
+    LOG_INDEX,
+    TOKEN_ADDRESS,
+    TOKEN_SYMBOL,
+    TOKEN_NAME,
+    TOKEN_DECIMALS,
+    AMOUNT_RAW,
+    AMOUNT,
+    PRICE_USD,
+    AMOUNT_USD,
+    PRICE_FEED_UPDATED_AT,
+    PRICE_AGE_SECONDS,
+    PRICE_STATUS,
+    PRICE_STATUS_REASON,
+    USER,
+    ON_BEHALF_OF,
+    INTEREST_RATE_MODE,
+    BORROW_RATE_RAW,
+    REFERRAL_CODE,
+    REPAYER,
+    USE_ATOKENS
+"""
+
 
 def _lowercase_keys(row: Mapping[str, Any]) -> dict[str, Any]:
     return {str(key).lower(): value for key, value in row.items()}
@@ -165,6 +207,72 @@ class SnowflakeTutorialRepository:
         if len(rows) > 1:
             raise RuntimeError(f"Duplicate tutorial event_id: {event_id}")
         return rows[0] if rows else None
+
+    def list_aave_tokens(self, activity_type: str) -> list[str]:
+        """Return token symbols represented for one lending activity type."""
+        activity_type = self._aave_activity_type(activity_type)
+        query = f"""
+            SELECT DISTINCT TOKEN_SYMBOL
+            FROM {self.config.aave_lending_mart}
+            WHERE ACTIVITY_TYPE = %(activity_type)s
+                AND TOKEN_SYMBOL IS NOT NULL
+            ORDER BY TOKEN_SYMBOL
+        """
+        rows = self._fetch_all(query, {"activity_type": activity_type})
+        return [str(row["token_symbol"]) for row in rows]
+
+    def list_aave_activities(
+        self,
+        activity_type: str,
+        *,
+        token_symbol: str | None = None,
+        limit: int = 500,
+    ) -> list[dict[str, Any]]:
+        """List Borrow or Repay events, optionally filtered by token."""
+        activity_type = self._aave_activity_type(activity_type)
+        if not 1 <= limit <= 1_000:
+            raise ValueError("limit must be between 1 and 1000")
+
+        token_filter = ""
+        params: dict[str, Any] = {
+            "activity_type": activity_type,
+            "limit": limit,
+        }
+        if token_symbol is not None:
+            token_filter = "AND TOKEN_SYMBOL = %(token_symbol)s"
+            params["token_symbol"] = token_symbol
+
+        query = f"""
+            SELECT {_AAVE_LIST_COLUMNS}
+            FROM {self.config.aave_lending_mart}
+            WHERE ACTIVITY_TYPE = %(activity_type)s
+                {token_filter}
+            ORDER BY BLOCK_TIMESTAMP DESC, EVENT_ID
+            LIMIT %(limit)s
+        """
+        return self._fetch_all(query, params)
+
+    def get_aave_activity(self, event_id: str) -> dict[str, Any] | None:
+        """Retrieve one tutorial-ready Aave event by immutable event ID."""
+        if not event_id.strip():
+            raise ValueError("event_id must not be empty")
+
+        query = f"""
+            SELECT {_AAVE_TUTORIAL_COLUMNS}
+            FROM {self.config.aave_lending_mart}
+            WHERE EVENT_ID = %(event_id)s
+        """
+        rows = self._fetch_all(query, {"event_id": event_id})
+        if len(rows) > 1:
+            raise RuntimeError(f"Duplicate tutorial event_id: {event_id}")
+        return rows[0] if rows else None
+
+    @staticmethod
+    def _aave_activity_type(activity_type: str) -> str:
+        normalized = activity_type.strip().upper()
+        if normalized not in _AAVE_ACTIVITY_TYPES:
+            raise ValueError("activity_type must be BORROW or REPAY")
+        return normalized
 
     def _fetch_all(
         self,

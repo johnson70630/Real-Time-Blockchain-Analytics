@@ -6,6 +6,7 @@ import streamlit as st
 from snowflake.connector.errors import Error as SnowflakeError
 
 from app.config import AppConfig
+from app.pages.aave import render_aave
 from app.pages.home import render_home
 from app.pages.placeholders import render_placeholder
 from app.pages.uniswap import render_uniswap
@@ -30,9 +31,10 @@ def main() -> None:
             render_home()
         elif page == "Uniswap Swap":
             render_uniswap(config)
+        elif page == "Aave Lending":
+            render_aave(config)
         else:
             milestone = {
-                "Aave Lending": "a later frontend milestone",
                 "Chainlink Oracle": "a later frontend milestone",
                 "Point-in-Time Pricing": "a later frontend milestone",
             }[page]

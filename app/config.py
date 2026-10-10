@@ -79,3 +79,11 @@ class AppConfig:
             f"{self.database.upper()}.{self.schema.upper()}."
             "MART_UNISWAP_SWAP_TUTORIAL"
         )
+
+    @property
+    def aave_lending_mart(self) -> str:
+        """Return the validated fully qualified Aave tutorial mart."""
+        return (
+            f"{self.database.upper()}.{self.schema.upper()}."
+            "MART_AAVE_LENDING_TUTORIAL"
+        )
