@@ -7,8 +7,9 @@ from snowflake.connector.errors import Error as SnowflakeError
 
 from app.config import AppConfig
 from app.pages.aave import render_aave
+from app.pages.chainlink import render_chainlink
 from app.pages.home import render_home
-from app.pages.placeholders import render_placeholder
+from app.pages.pit import render_pit
 from app.pages.uniswap import render_uniswap
 
 _PAGES = (
@@ -33,12 +34,10 @@ def main() -> None:
             render_uniswap(config)
         elif page == "Aave Lending":
             render_aave(config)
+        elif page == "Chainlink Oracle":
+            render_chainlink(config)
         else:
-            milestone = {
-                "Chainlink Oracle": "a later frontend milestone",
-                "Point-in-Time Pricing": "a later frontend milestone",
-            }[page]
-            render_placeholder(page, milestone)
+            render_pit(config)
     except (SnowflakeError, ValueError, RuntimeError) as error:
         st.error("Snowflake tutorial data is unavailable.")
         st.caption(str(error))

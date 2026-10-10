@@ -87,3 +87,19 @@ class AppConfig:
             f"{self.database.upper()}.{self.schema.upper()}."
             "MART_AAVE_LENDING_TUTORIAL"
         )
+
+    @property
+    def chainlink_oracle_mart(self) -> str:
+        """Return the validated fully qualified Chainlink tutorial mart."""
+        return (
+            f"{self.database.upper()}.{self.schema.upper()}."
+            "MART_CHAINLINK_ORACLE_TUTORIAL"
+        )
+
+    @property
+    def point_in_time_pricing_mart(self) -> str:
+        """Return the validated fully qualified PIT tutorial mart."""
+        return (
+            f"{self.database.upper()}.{self.schema.upper()}."
+            "MART_POINT_IN_TIME_PRICING_TUTORIAL"
+        )
