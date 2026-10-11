@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import json
 from collections.abc import Callable, Mapping
 from contextlib import closing
 from typing import Any, Protocol
 
 import snowflake.connector
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
 from snowflake.connector import DictCursor
 
 from app.config import AppConfig
@@ -197,6 +200,63 @@ def _lowercase_keys(row: Mapping[str, Any]) -> dict[str, Any]:
     return {str(key).lower(): value for key, value in row.items()}
 
 
+def load_hosted_private_key(
+    encrypted_pem: str, passphrase: str
+) -> RSAPrivateKey:
+    """Decrypt a hosted RSA key in memory without exposing key material."""
+    try:
+        key = serialization.load_pem_private_key(
+            encrypted_pem.encode("utf-8"),
+            password=passphrase.encode("utf-8"),
+        )
+    except (TypeError, ValueError):
+        raise ValueError(
+            "Hosted Snowflake private key could not be decrypted"
+        ) from None
+    if not isinstance(key, RSAPrivateKey):
+        raise ValueError("Hosted Snowflake private key must be an RSA key")
+    return key
+
+
+def _secondary_roles_disabled(value: Any) -> bool:
+    if value is None:
+        return True
+    if isinstance(value, str):
+        stripped = value.strip()
+        if stripped.upper() in {"", "NONE"}:
+            return True
+        try:
+            value = json.loads(stripped)
+        except json.JSONDecodeError:
+            return False
+    if isinstance(value, Mapping):
+        return not value.get("roles") and not value.get("value")
+    return False
+
+
+def _connection_parameters(config: AppConfig) -> dict[str, Any]:
+    common = {
+        "role": config.role,
+        "warehouse": config.warehouse,
+        "database": config.database,
+        "schema": config.schema,
+    }
+    if not config.is_hosted:
+        return {"connection_name": config.connection_name, **common}
+
+    assert config.private_key_pem is not None
+    assert config.private_key_passphrase is not None
+    return {
+        "account": config.account,
+        "user": config.user,
+        "authenticator": "SNOWFLAKE_JWT",
+        "private_key": load_hosted_private_key(
+            config.private_key_pem, config.private_key_passphrase
+        ),
+        **common,
+    }
+
+
 class SnowflakeTutorialRepository:
     """Read trusted tutorial rows through the analyst role only."""
 
@@ -212,17 +272,29 @@ class SnowflakeTutorialRepository:
 
     def _connect(self) -> Connection:
         connection = self._connection_factory(
-            connection_name=self.config.connection_name,
-            role=self.config.role,
-            warehouse=self.config.warehouse,
-            database=self.config.database,
-            schema=self.config.schema,
+            **_connection_parameters(self.config)
         )
         try:
             # Named connections can activate every role granted to a user.
             # Disable them so the app is constrained to its analyst role.
             with closing(connection.cursor()) as cursor:
                 cursor.execute("USE SECONDARY ROLES NONE")
+                if self.config.is_hosted:
+                    identity = cursor.execute(
+                        "SELECT CURRENT_USER(), CURRENT_ROLE(), "
+                        "CURRENT_SECONDARY_ROLES()"
+                    ).fetchone()
+                    current_user, current_role, secondary_roles = identity
+                    if (
+                        str(current_user).upper() != "BLOCKCHAIN_APP_USER"
+                        or str(current_role).upper()
+                        != "BLOCKCHAIN_ANALYST_ROLE"
+                        or not _secondary_roles_disabled(secondary_roles)
+                    ):
+                        raise RuntimeError(
+                            "Hosted Snowflake session identity validation "
+                            "failed"
+                        )
         except Exception:
             connection.close()
             raise

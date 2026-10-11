@@ -79,7 +79,7 @@ dashboard:
 	uv run python -m streamlit run dashboard/app.py
 
 data-lab:
-	uv run python -m streamlit run app/app.py
+	uv run python -m streamlit run streamlit_app.py
 
 lint:
 	uv run ruff check .

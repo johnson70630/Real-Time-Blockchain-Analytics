@@ -32,4 +32,4 @@ dbt/logs/
 spark-warehouse/
 
 # Streamlit
-.streamlit/secrets.toml
+.streamlit/secrets*.toml

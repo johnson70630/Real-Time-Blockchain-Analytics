@@ -1,4 +1,4 @@
-"""Streamlit entry point for the DeFi Data Lab."""
+"""Application renderer for the DeFi Data Lab."""
 
 from __future__ import annotations
 
@@ -29,7 +29,7 @@ def main() -> None:
     page = st.sidebar.radio("Lesson", _PAGES, key="tutorial_page")
 
     try:
-        config = AppConfig.from_env()
+        config = AppConfig.from_runtime()
         if page == "Home":
             render_home()
         elif page == "Uniswap Swap":
