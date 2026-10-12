@@ -33,3 +33,7 @@ spark-warehouse/
 
 # Streamlit
 .streamlit/secrets*.toml
+
+# Airflow local runtime state
+airflow/logs/
+airflow/config/

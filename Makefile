@@ -1,4 +1,4 @@
-.PHONY: kafka-up kafka-down producer producer-build producer-up producer-logs producer-down market-data market-data-build market-data-up market-data-logs market-data-down uniswap-pools uniswap-pools-bootstrap token-metadata aave-backfill chainlink-backfill bronze market-data-bronze market-data-silver silver aave-silver price-enrichment gold snowflake-sql dashboard data-lab quality test lint check clean-data
+.PHONY: kafka-up kafka-down producer producer-build producer-up producer-logs producer-down market-data market-data-build market-data-up market-data-logs market-data-down uniswap-pools uniswap-pools-bootstrap token-metadata aave-backfill chainlink-backfill bronze market-data-bronze market-data-silver silver aave-silver price-enrichment gold snowflake-sql dashboard data-lab airflow-init airflow-up airflow-down airflow-logs airflow-test quality test lint check clean-data
 
 kafka-up:
 	docker compose up -d kafka
@@ -80,6 +80,21 @@ dashboard:
 
 data-lab:
 	uv run python -m streamlit run streamlit_app.py
+
+airflow-init:
+	docker compose -f airflow/docker-compose.yaml up airflow-init
+
+airflow-up:
+	docker compose -f airflow/docker-compose.yaml up -d
+
+airflow-down:
+	docker compose -f airflow/docker-compose.yaml down
+
+airflow-logs:
+	docker compose -f airflow/docker-compose.yaml logs -f airflow-api-server airflow-scheduler airflow-dag-processor
+
+airflow-test:
+	docker compose -f airflow/docker-compose.yaml run --rm --entrypoint python airflow-cli -m unittest discover -s /opt/airflow/tests -v
 
 lint:
 	uv run ruff check .
