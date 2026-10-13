@@ -9,6 +9,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 AIRFLOW_ROOT = PROJECT_ROOT / "airflow"
 COMPOSE_FILE = AIRFLOW_ROOT / "docker-compose.yaml"
+DOCKERFILE = AIRFLOW_ROOT / "Dockerfile"
 DAG_FILE = AIRFLOW_ROOT / "dags" / "airflow_smoke_test.py"
 
 
@@ -26,8 +27,10 @@ def _dag_decorator_keywords() -> dict[str, ast.expr]:
 
 def test_airflow_runtime_is_pinned_and_isolated() -> None:
     compose = COMPOSE_FILE.read_text(encoding="utf-8")
+    dockerfile = DOCKERFILE.read_text(encoding="utf-8")
     assert "name: blockchain-analytics-airflow" in compose
-    assert "apache/airflow:3.1.8-python3.12" in compose
+    assert "FROM apache/airflow:3.1.8-python3.12" in dockerfile
+    assert "python -m venv /opt/warehouse-venv" in dockerfile
     assert "AIRFLOW__CORE__EXECUTOR: LocalExecutor" in compose
     assert "AIRFLOW__CORE__EXECUTION_API_SERVER_URL: http://airflow-api-server:8080/execution/" in compose
     assert "postgres:16-alpine" in compose
