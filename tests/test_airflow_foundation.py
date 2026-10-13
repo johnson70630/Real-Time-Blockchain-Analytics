@@ -31,12 +31,24 @@ def test_airflow_runtime_is_pinned_and_isolated() -> None:
     assert "name: blockchain-analytics-airflow" in compose
     assert "FROM apache/airflow:3.1.8-python3.12" in dockerfile
     assert "python -m venv /opt/warehouse-venv" in dockerfile
+    assert "python -m venv /opt/project-venv" in dockerfile
+    assert "openjdk-17-jre-headless" in dockerfile
     assert "AIRFLOW__CORE__EXECUTOR: LocalExecutor" in compose
     assert "AIRFLOW__CORE__EXECUTION_API_SERVER_URL: http://airflow-api-server:8080/execution/" in compose
     assert "postgres:16-alpine" in compose
     assert '"127.0.0.1:${AIRFLOW_API_PORT:-8081}:8080"' in compose
     assert "redis" not in compose.lower()
     assert "celery" not in compose.lower()
+    assert "airflow-ivy:/home/airflow/.ivy2.5.2" in compose
+
+
+def test_operational_backfill_runtime_uses_existing_local_configuration() -> None:
+    compose = COMPOSE_FILE.read_text(encoding="utf-8")
+    assert "env_file:" in compose
+    assert "path: ../.env" in compose
+    assert "${HOME}/.aws:/home/airflow/.aws:ro" in compose
+    assert "AAVE_V3_POOL_ADDRESS:" in compose
+    assert "airflow pools set warehouse_writes 4" in compose
 
 
 def test_smoke_dag_is_manual_and_disables_catchup() -> None:

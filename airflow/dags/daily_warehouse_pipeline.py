@@ -12,14 +12,18 @@ PROJECT_ROOT = "/opt/project"
 PYTHON = "/opt/warehouse-venv/bin/python"
 DBT = "/opt/warehouse-venv/bin/dbt"
 DBT_PROJECT_ARGS = f"--project-dir {PROJECT_ROOT}/dbt"
+WAREHOUSE_POOL = "warehouse_writes"
+EXCLUSIVE_WAREHOUSE_SLOTS = 4
 
 
 with DAG(
     dag_id="daily_warehouse_pipeline",
     description="Load canonical RAW data and build the dbt warehouse layers",
-    schedule=None,
+    schedule="0 6 * * *",
     start_date=datetime(2025, 1, 1, tzinfo=timezone.utc),
     catchup=False,
+    max_active_runs=1,
+    dagrun_timeout=timedelta(minutes=30),
     default_args={"retries": 0},
     tags=["warehouse", "snowflake", "dbt"],
 ) as daily_warehouse_pipeline:
@@ -28,12 +32,14 @@ with DAG(
     validate_environment = BashOperator(
         task_id="validate_environment",
         bash_command=f"{PYTHON} -m orchestration.validate_environment",
+        execution_timeout=timedelta(minutes=5),
     )
     validate_silver_inputs = BashOperator(
         task_id="validate_silver_inputs",
         bash_command=f"{PYTHON} -m warehouse.load_raw --validate-inputs",
         retries=1,
         retry_delay=timedelta(seconds=30),
+        execution_timeout=timedelta(minutes=10),
     )
 
     load_uniswap_raw = BashOperator(
@@ -44,6 +50,9 @@ with DAG(
         ),
         retries=1,
         retry_delay=timedelta(seconds=30),
+        execution_timeout=timedelta(minutes=10),
+        pool=WAREHOUSE_POOL,
+        pool_slots=1,
     )
     load_reference_raw = BashOperator(
         task_id="load_reference_raw",
@@ -54,6 +63,9 @@ with DAG(
         ),
         retries=1,
         retry_delay=timedelta(seconds=30),
+        execution_timeout=timedelta(minutes=10),
+        pool=WAREHOUSE_POOL,
+        pool_slots=1,
     )
     load_aave_raw = BashOperator(
         task_id="load_aave_raw",
@@ -65,6 +77,9 @@ with DAG(
         ),
         retries=1,
         retry_delay=timedelta(seconds=30),
+        execution_timeout=timedelta(minutes=10),
+        pool=WAREHOUSE_POOL,
+        pool_slots=1,
     )
     load_chainlink_raw = BashOperator(
         task_id="load_chainlink_raw",
@@ -74,6 +89,9 @@ with DAG(
         ),
         retries=1,
         retry_delay=timedelta(seconds=30),
+        execution_timeout=timedelta(minutes=10),
+        pool=WAREHOUSE_POOL,
+        pool_slots=1,
     )
 
     dbt_seed = BashOperator(
@@ -83,6 +101,9 @@ with DAG(
         ),
         retries=1,
         retry_delay=timedelta(seconds=30),
+        execution_timeout=timedelta(minutes=15),
+        pool=WAREHOUSE_POOL,
+        pool_slots=EXCLUSIVE_WAREHOUSE_SLOTS,
     )
     dbt_staging = BashOperator(
         task_id="dbt_staging",
@@ -91,6 +112,9 @@ with DAG(
         ),
         retries=1,
         retry_delay=timedelta(seconds=30),
+        execution_timeout=timedelta(minutes=15),
+        pool=WAREHOUSE_POOL,
+        pool_slots=EXCLUSIVE_WAREHOUSE_SLOTS,
     )
     dbt_test_staging = BashOperator(
         task_id="dbt_test_staging",
@@ -98,6 +122,7 @@ with DAG(
             f"{DBT} test {DBT_PROJECT_ARGS} --select path:models/staging "
             "--exclude test_type:singular"
         ),
+        execution_timeout=timedelta(minutes=15),
     )
     dbt_core = BashOperator(
         task_id="dbt_core",
@@ -107,6 +132,9 @@ with DAG(
         ),
         retries=1,
         retry_delay=timedelta(seconds=30),
+        execution_timeout=timedelta(minutes=15),
+        pool=WAREHOUSE_POOL,
+        pool_slots=EXCLUSIVE_WAREHOUSE_SLOTS,
     )
     dbt_test_core = BashOperator(
         task_id="dbt_test_core",
@@ -115,12 +143,16 @@ with DAG(
             "--select path:models/intermediate path:models/core "
             "--exclude test_type:singular"
         ),
+        execution_timeout=timedelta(minutes=15),
     )
     dbt_marts = BashOperator(
         task_id="dbt_marts",
         bash_command=f"{DBT} run {DBT_PROJECT_ARGS} --select path:models/marts",
         retries=1,
         retry_delay=timedelta(seconds=30),
+        execution_timeout=timedelta(minutes=15),
+        pool=WAREHOUSE_POOL,
+        pool_slots=EXCLUSIVE_WAREHOUSE_SLOTS,
     )
     dbt_test_marts = BashOperator(
         task_id="dbt_test_marts",
@@ -128,10 +160,12 @@ with DAG(
             f"{DBT} test {DBT_PROJECT_ARGS} --select path:models/marts "
             "--exclude test_type:singular"
         ),
+        execution_timeout=timedelta(minutes=15),
     )
     reconciliation_checks = BashOperator(
         task_id="reconciliation_checks",
         bash_command=f"{DBT} test {DBT_PROJECT_ARGS} --select test_type:singular",
+        execution_timeout=timedelta(minutes=15),
     )
     complete = EmptyOperator(task_id="complete")
 

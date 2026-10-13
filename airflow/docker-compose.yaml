@@ -2,8 +2,8 @@ name: blockchain-analytics-airflow
 
 x-airflow-common: &airflow-common
   build:
-    context: .
-    dockerfile: Dockerfile
+    context: ..
+    dockerfile: airflow/Dockerfile
   image: ${AIRFLOW_IMAGE_NAME:-blockchain-analytics-airflow:3.1.8}
   environment:
     AIRFLOW__API__SECRET_KEY_CMD: cat /opt/airflow/config/runtime_secret
@@ -15,23 +15,37 @@ x-airflow-common: &airflow-common
     AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_ALL_ADMINS: "true"
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow@postgres/airflow
     AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: "true"
+    AAVE_V3_POOL_ADDRESS: ${AAVE_V3_POOL_ADDRESS:-0x794a61358D6845594F94dc1DB02A252b5b4814aD}
     DBT_PROFILES_DIR: /home/airflow/.dbt
+    PROJECT_PYTHON: /opt/project-venv/bin/python
     PROJECT_ROOT: /opt/project
     PYTHONPATH: /opt/project
     SNOWFLAKE_CONNECTION_NAME: ${SNOWFLAKE_CONNECTION_NAME:-blockchain-dev}
     SNOWFLAKE_WAREHOUSE: ${SNOWFLAKE_WAREHOUSE:-BLOCKCHAIN_TRANSFORM_WH}
+    SPARK_LOCAL_IP: 127.0.0.1
+    WAREHOUSE_PYTHON: /opt/warehouse-venv/bin/python
+  env_file:
+    - path: ../.env
+      required: false
   volumes:
     - ./dags:/opt/airflow/dags:ro
     - ./tests:/opt/airflow/tests:ro
     - ../config:/opt/project/config:ro
+    - ../backfill:/opt/project/backfill:ro
+    - ../market_data:/opt/project/market_data:ro
+    - ../producer:/opt/project/producer:ro
+    - ../reference_data:/opt/project/reference_data:ro
+    - ../spark:/opt/project/spark:ro
     - ../warehouse:/opt/project/warehouse:ro
     - ../orchestration:/opt/project/orchestration:ro
     - ../dbt:/opt/project/dbt:ro
+    - ${HOME}/.aws:/home/airflow/.aws:ro
     - ${HOME}/.dbt:/home/airflow/.dbt:ro
     - ${HOME}/.snowflake:/home/airflow/.snowflake:ro
     # Preserve absolute private-key paths already used by the local dbt profile.
     - ${HOME}/.snowflake:${HOME}/.snowflake:ro
     - airflow-config:/opt/airflow/config
+    - airflow-ivy:/home/airflow/.ivy2.5.2
     - airflow-dbt-logs:/opt/project/dbt/logs
     - airflow-dbt-target:/opt/project/dbt/target
     - airflow-logs:/opt/airflow/logs
@@ -70,9 +84,12 @@ services:
         chown -R 50000:0 \
           /opt/airflow/config \
           /opt/airflow/logs \
+          /home/airflow/.ivy2.5.2 \
           /opt/project/dbt/logs \
           /opt/project/dbt/target
         runuser -u airflow -- airflow db migrate
+        runuser -u airflow -- airflow pools set warehouse_writes 4 \
+          "Serializes exclusive warehouse and S3 backfill writes"
     restart: "no"
 
   airflow-api-server:
@@ -128,6 +145,7 @@ services:
 
 volumes:
   airflow-config:
+  airflow-ivy:
   airflow-dbt-logs:
   airflow-dbt-target:
   airflow-logs:

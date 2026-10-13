@@ -80,9 +80,14 @@ class WarehouseDagTests(unittest.TestCase):
                 {downstream},
             )
 
-    def test_manual_schedule_and_retry_policy(self) -> None:
-        self.assertIsNone(self.dag.schedule)
+    def test_daily_schedule_and_run_limits(self) -> None:
+        self.assertEqual(self.dag.schedule, "0 6 * * *")
         self.assertFalse(self.dag.catchup)
+        self.assertEqual(self.dag.max_active_runs, 1)
+        self.assertEqual(self.dag.dagrun_timeout.total_seconds(), 30 * 60)
+        self.assertEqual(str(self.dag.timezone), "UTC")
+
+    def test_retry_and_timeout_policy(self) -> None:
         retry_tasks = {
             "validate_silver_inputs",
             "load_uniswap_raw",
@@ -96,6 +101,25 @@ class WarehouseDagTests(unittest.TestCase):
         }
         for task in self.dag.tasks:
             self.assertEqual(task.retries, int(task.task_id in retry_tasks))
+            if task.task_id not in {"start", "complete"}:
+                self.assertIsNotNone(task.execution_timeout)
+
+    def test_shared_warehouse_pool(self) -> None:
+        raw_tasks = {
+            "load_uniswap_raw",
+            "load_reference_raw",
+            "load_aave_raw",
+            "load_chainlink_raw",
+        }
+        exclusive_tasks = {"dbt_seed", "dbt_staging", "dbt_core", "dbt_marts"}
+        for task_id in raw_tasks:
+            task = self.dag.get_task(task_id)
+            self.assertEqual(task.pool, "warehouse_writes")
+            self.assertEqual(task.pool_slots, 1)
+        for task_id in exclusive_tasks:
+            task = self.dag.get_task(task_id)
+            self.assertEqual(task.pool, "warehouse_writes")
+            self.assertEqual(task.pool_slots, 4)
 
     def test_commands_keep_logic_outside_dag(self) -> None:
         commands = "\n".join(
