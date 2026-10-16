@@ -9,6 +9,9 @@ PRODUCER_MODULES = [
     "config.settings",
     "config.storage",
     "config.versions",
+    "backfill.block_search",
+    "backfill.run_aave_forward",
+    "backfill.run_aave_incremental",
     "backfill.chainlink",
     "backfill.chainlink_storage",
     "backfill.run_chainlink",
@@ -29,6 +32,7 @@ PRODUCER_MODULES = [
     "producer.parser",
     "producer.protocols.uniswap_v3",
     "producer.registry",
+    "orchestration.aave_forward",
     "reference_data.storage",
     "reference_data.run_uniswap_v3_pool_bootstrap",
     "reference_data.run_token_metadata",
@@ -38,6 +42,7 @@ PRODUCER_MODULES = [
     "spark.session",
     "spark.bronze",
     "spark.build_cloud_silver",
+    "spark.build_aave_silver_increment",
     "spark.parquet",
     "spark.price_enrichment",
     "spark.market_data_schema",
@@ -45,6 +50,7 @@ PRODUCER_MODULES = [
     "spark.build_price_enriched_silver",
     "spark.write_market_data_bronze",
     "warehouse.snowflake",
+    "warehouse.completed_ranges",
 ]
 
 EXAMPLE_MODULES = [
@@ -86,3 +92,16 @@ def test_alchemy_websocket_url_is_validated_lazily(monkeypatch) -> None:
         match="Missing required environment variable: ALCHEMY_WEBSOCKET_URL",
     ):
         get_alchemy_websocket_url()
+
+
+def test_aave_backfill_rpc_url_is_validated_lazily(monkeypatch) -> None:
+    """Require the dedicated endpoint only for bounded Aave processing."""
+    from config.settings import get_aave_backfill_rpc_url
+
+    monkeypatch.delenv("AAVE_BACKFILL_RPC_URL", raising=False)
+
+    with pytest.raises(
+        ValueError,
+        match="Missing required environment variable: AAVE_BACKFILL_RPC_URL",
+    ):
+        get_aave_backfill_rpc_url()

@@ -71,6 +71,78 @@ class SearchResult:
     targets_met: bool
 
 
+@dataclass(frozen=True, slots=True)
+class RpcBlockRange:
+    """One inclusive block interval attempted against ``eth_getLogs``."""
+
+    start_block: int
+    end_block: int
+
+    def __post_init__(self) -> None:
+        if self.start_block < 0 or self.end_block < self.start_block:
+            raise ValueError("RPC block range is invalid")
+
+    @property
+    def size(self) -> int:
+        """Return the inclusive number of blocks in this interval."""
+        return self.end_block - self.start_block + 1
+
+
+@dataclass(frozen=True, slots=True)
+class AdaptiveRangePolicy:
+    """Finite limits for splitting provider-rejected RPC ranges."""
+
+    minimum_range_size: int
+    maximum_range_size: int
+    max_range_attempts: int
+
+    def __post_init__(self) -> None:
+        if self.minimum_range_size <= 0:
+            raise ValueError("minimum_range_size must be greater than zero")
+        if self.maximum_range_size < self.minimum_range_size:
+            raise ValueError(
+                "maximum_range_size must not be below minimum_range_size"
+            )
+        if self.max_range_attempts <= 0:
+            raise ValueError("max_range_attempts must be greater than zero")
+
+
+@dataclass(frozen=True, slots=True)
+class AdaptiveFetchResult:
+    """Logs and gap-free successful leaves for one requested parent range."""
+
+    requested_range: RpcBlockRange
+    completed_ranges: tuple[RpcBlockRange, ...]
+    logs: tuple[dict[str, Any], ...]
+    range_attempts: int
+    split_count: int
+
+
+class AdaptiveRangeFetchError(RuntimeError):
+    """Raised when a range cannot be fetched within finite split limits."""
+
+    def __init__(
+        self,
+        failed_range: RpcBlockRange,
+        range_attempts: int,
+    ) -> None:
+        self.failed_range = failed_range
+        self.range_attempts = range_attempts
+        super().__init__(
+            "Aave RPC range remained unavailable at "
+            f"{failed_range.start_block}-{failed_range.end_block} after "
+            f"{range_attempts} range attempts"
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class DecodedRangeResult:
+    """Canonical events and quarantined logs from one fetched interval."""
+
+    events: tuple[EventEnvelope, ...]
+    issues: tuple[BackfillIssue, ...]
+
+
 class AaveHistoricalRpc(Protocol):
     request_count: int
 
@@ -79,6 +151,114 @@ class AaveHistoricalRpc(Protocol):
     ) -> list[dict[str, Any]]: ...
 
     def get_block_timestamp(self, block_number: int) -> datetime: ...
+
+
+def fetch_event_logs_adaptive(
+    rpc: AaveHistoricalRpc,
+    *,
+    pool_address: str,
+    start_block: int,
+    end_block: int,
+    policy: AdaptiveRangePolicy,
+) -> AdaptiveFetchResult:
+    """Fetch a finite interval, bisecting rejected ranges without gaps."""
+    requested = RpcBlockRange(start_block, end_block)
+    if requested.size > policy.maximum_range_size:
+        raise ValueError("Requested range exceeds maximum_range_size")
+
+    pending = [requested]
+    completed: list[RpcBlockRange] = []
+    logs: list[dict[str, Any]] = []
+    attempts = 0
+    split_count = 0
+    while pending:
+        current = pending.pop()
+        if attempts >= policy.max_range_attempts:
+            raise AdaptiveRangeFetchError(current, attempts)
+        attempts += 1
+        try:
+            current_logs = rpc.get_event_logs(
+                pool_address,
+                current.start_block,
+                current.end_block,
+            )
+        except Exception as error:
+            if current.size <= policy.minimum_range_size:
+                raise AdaptiveRangeFetchError(current, attempts) from error
+            midpoint = (current.start_block + current.end_block) // 2
+            left = RpcBlockRange(current.start_block, midpoint)
+            right = RpcBlockRange(midpoint + 1, current.end_block)
+            # LIFO order keeps source processing deterministic from low to high.
+            pending.extend((right, left))
+            split_count += 1
+            continue
+        completed.append(current)
+        logs.extend(current_logs)
+
+    completed.sort(key=lambda item: (item.start_block, item.end_block))
+    return AdaptiveFetchResult(
+        requested_range=requested,
+        completed_ranges=tuple(completed),
+        logs=tuple(logs),
+        range_attempts=attempts,
+        split_count=split_count,
+    )
+
+
+def decode_fetched_logs(
+    rpc: AaveHistoricalRpc,
+    *,
+    logs: Iterable[dict[str, Any]],
+    pool_address: str,
+    chain: str,
+    start_block: int,
+    end_block: int,
+    processed_at: datetime,
+) -> DecodedRangeResult:
+    """Decode a fetched range, using provider timestamps when available."""
+    requested = RpcBlockRange(start_block, end_block)
+    timestamps: dict[int, datetime] = {}
+    decoded: list[EventEnvelope] = []
+    issues: list[BackfillIssue] = []
+    for log in logs:
+        block_number, transaction_hash, log_index = _safe_log_identity(log)
+        try:
+            if str(log.get("address", "")).lower() != pool_address.lower():
+                raise ValueError("log address does not match configured Aave Pool")
+            if block_number is None or not (
+                requested.start_block <= block_number <= requested.end_block
+            ):
+                raise ValueError("log block is outside the requested range")
+            if block_number not in timestamps:
+                raw_timestamp = log.get("blockTimestamp")
+                timestamps[block_number] = (
+                    datetime.fromtimestamp(hex_int(raw_timestamp), tz=UTC)
+                    if raw_timestamp is not None
+                    else rpc.get_block_timestamp(block_number)
+                )
+            handler = get_event_handler(log)
+            decoded.append(
+                handler.build_event(
+                    log,
+                    timestamps[block_number].isoformat(),
+                    chain=chain,
+                    ingested_at=processed_at.isoformat(),
+                )
+            )
+        except Exception as error:
+            issues.append(
+                BackfillIssue(
+                    block_number,
+                    transaction_hash,
+                    log_index,
+                    str(error),
+                    processed_at,
+                )
+            )
+    return DecodedRangeResult(
+        events=merge_events((), decoded),
+        issues=tuple(issues),
+    )
 
 
 class AaveV3RpcClient:

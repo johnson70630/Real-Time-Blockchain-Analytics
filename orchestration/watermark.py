@@ -104,6 +104,13 @@ def _validate_watermark_value(value: int, *, field_name: str) -> int:
 
 AAVE_FORWARD_WATERMARK = WatermarkIdentity(
     pipeline_name="aave_forward",
+    source_name="aave_v3_pool",
+    chain_id=ARBITRUM_CHAIN_ID,
+)
+# Immutable identity used by the accepted one-time bootstrap range evidence.
+# New production progress and completed ranges use AAVE_FORWARD_WATERMARK.
+AAVE_LEGACY_BOOTSTRAP_RANGES = WatermarkIdentity(
+    pipeline_name="aave_forward",
     source_name="alchemy_rpc",
     chain_id=ARBITRUM_CHAIN_ID,
 )

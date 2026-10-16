@@ -7,6 +7,7 @@ import pytest
 from orchestration.backfill import (
     BackfillRequest,
     source_commands,
+    validate_environment,
     validate_request,
     warehouse_command,
 )
@@ -58,6 +59,53 @@ def test_chainlink_command_reuses_explicit_block_contract() -> None:
     assert extraction[extraction.index("--from-block") + 1] == "100"
     assert extraction[extraction.index("--to-block") + 1] == "109"
     assert silver[1:3] == ("-m", "spark.build_market_data_silver")
+
+
+def test_aave_environment_requires_dedicated_backfill_rpc(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        "orchestration.backfill.STORAGE",
+        type("Storage", (), {"is_s3": True})(),
+    )
+    monkeypatch.setattr(
+        "orchestration.backfill.get_aave_v3_pool_address",
+        lambda: "0x" + "10" * 20,
+    )
+    monkeypatch.setattr(
+        "orchestration.backfill.get_aave_backfill_rpc_url",
+        lambda: (_ for _ in ()).throw(
+            ValueError(
+                "Missing required environment variable: AAVE_BACKFILL_RPC_URL"
+            )
+        ),
+    )
+
+    with pytest.raises(ValueError, match="AAVE_BACKFILL_RPC_URL"):
+        validate_environment(BackfillRequest("aave", 100, 109))
+
+
+def test_aave_environment_does_not_require_alchemy_rpc(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        "orchestration.backfill.STORAGE",
+        type("Storage", (), {"is_s3": True})(),
+    )
+    monkeypatch.setattr(
+        "orchestration.backfill.get_aave_backfill_rpc_url",
+        lambda: "https://example.invalid/ankr",
+    )
+    monkeypatch.setattr(
+        "orchestration.backfill.get_aave_v3_pool_address",
+        lambda: "0x" + "10" * 20,
+    )
+    monkeypatch.setattr(
+        "orchestration.backfill.get_alchemy_rpc_url",
+        lambda: (_ for _ in ()).throw(AssertionError("Alchemy was requested")),
+    )
+
+    validate_environment(BackfillRequest("aave", 100, 109))
 
 
 def test_warehouse_selection_is_limited_to_selected_source() -> None:

@@ -111,8 +111,13 @@ def discover_bronze_files(
         aave_partition_root if aave_partition_root.exists() else bronze_root
     )
     historical_root = Path(DATA_LAKE.get("bronze_aave_backfill"))
+    forward_root = Path(DATA_LAKE.get("bronze_aave_forward"))
     return sorted(
-        (*discover_parquet_files(search_root), *discover_parquet_files(historical_root)),
+        (
+            *discover_parquet_files(search_root),
+            *discover_parquet_files(historical_root),
+            *discover_parquet_files(forward_root),
+        ),
         key=lambda path: path.as_posix(),
     )
 

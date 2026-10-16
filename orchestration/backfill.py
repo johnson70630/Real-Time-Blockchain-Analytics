@@ -14,6 +14,7 @@ from typing import Sequence
 from config.settings import (
     CHAINLINK_FEEDS_CONFIG,
     STORAGE,
+    get_aave_backfill_rpc_url,
     get_aave_v3_pool_address,
     get_alchemy_rpc_url,
 )
@@ -122,15 +123,17 @@ def warehouse_command(
 
 def validate_environment(request: BackfillRequest) -> None:
     """Fail before extraction when RPC, S3, or source config is unavailable."""
-    get_alchemy_rpc_url()
     if not STORAGE.is_s3:
         raise ValueError("Operational backfills require STORAGE_MODE=s3")
     if request.backfill_type == "aave":
+        get_aave_backfill_rpc_url()
         get_aave_v3_pool_address()
-    elif not Path(CHAINLINK_FEEDS_CONFIG).is_file():
-        raise FileNotFoundError(
-            f"Chainlink feeds config not found: {CHAINLINK_FEEDS_CONFIG}"
-        )
+    else:
+        get_alchemy_rpc_url()
+        if not Path(CHAINLINK_FEEDS_CONFIG).is_file():
+            raise FileNotFoundError(
+                f"Chainlink feeds config not found: {CHAINLINK_FEEDS_CONFIG}"
+            )
 
 
 def _run(command: Sequence[str]) -> None:

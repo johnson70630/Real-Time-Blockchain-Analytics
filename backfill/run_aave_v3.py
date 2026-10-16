@@ -17,7 +17,13 @@ from backfill.aave_v3 import (
 )
 from backfill.storage import AaveBackfillStore, BackfillState
 from config.logging import configure_logging
-from config.settings import CHAIN, DATA_LAKE, get_aave_v3_pool_address, get_alchemy_rpc_url
+from config.settings import (
+    CHAIN,
+    DATA_LAKE,
+    get_aave_backfill_rpc_url,
+    get_aave_bootstrap_chunk_size,
+    get_aave_v3_pool_address,
+)
 from spark.session import create_spark_session
 
 logger = logging.getLogger(__name__)
@@ -26,7 +32,11 @@ logger = logging.getLogger(__name__)
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run a bounded historical Aave V3 event backfill")
     parser.add_argument("--to-block", type=int)
-    parser.add_argument("--chunk-size", type=int, default=10)
+    parser.add_argument(
+        "--chunk-size",
+        type=int,
+        default=get_aave_bootstrap_chunk_size(),
+    )
     parser.add_argument("--max-blocks", type=int, default=2_000)
     parser.add_argument("--max-rpc-requests", type=int, default=500)
     parser.add_argument("--target-borrow", type=int, default=20)
@@ -42,9 +52,11 @@ def main() -> None:
     if not Web3.is_address(pool_address):
         raise ValueError("AAVE_V3_POOL_ADDRESS must be a valid Ethereum address")
 
-    rpc = AaveV3RpcClient(get_alchemy_rpc_url())
+    rpc = AaveV3RpcClient(get_aave_backfill_rpc_url())
     if not rpc.is_connected():
-        raise ConnectionError("Unable to connect to the configured Alchemy RPC")
+        raise ConnectionError(
+            "Unable to connect to the configured Aave backfill RPC"
+        )
 
     spark = create_spark_session("BackfillAaveV3")
     spark.conf.set("spark.sql.session.timeZone", "UTC")

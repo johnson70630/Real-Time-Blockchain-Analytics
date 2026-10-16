@@ -14,6 +14,7 @@ from pyspark.sql.functions import (
 )
 
 from config.settings import DATA_LAKE
+from config.storage import join_location
 from config.versions import SILVER_JOB_VERSION
 from reference_data.storage import path_exists
 from spark.parquet import write_partitioned_dataset_atomic
@@ -28,14 +29,24 @@ def read_bronze_events(spark: SparkSession) -> DataFrame:
         .parquet(path)
     )
     backfill_path = DATA_LAKE.get("bronze_aave_backfill")
-    if not path_exists(spark, backfill_path):
-        return live
-    historical = (
-        spark.read.option("basePath", backfill_path)
-        .option("mergeSchema", "true")
-        .parquet(backfill_path)
-    )
-    return live.unionByName(historical, allowMissingColumns=True)
+    sources = [live]
+    if path_exists(spark, backfill_path):
+        sources.append(
+            spark.read.option("basePath", backfill_path)
+            .option("mergeSchema", "true")
+            .parquet(backfill_path)
+        )
+    forward_path = DATA_LAKE.get("bronze_aave_forward")
+    if path_exists(spark, forward_path):
+        sources.append(
+            spark.read.option("recursiveFileLookup", "true")
+            .option("mergeSchema", "true")
+            .parquet(forward_path)
+        )
+    combined = sources[0]
+    for source in sources[1:]:
+        combined = combined.unionByName(source, allowMissingColumns=True)
+    return combined
 
 
 def _event_id() -> Column:
@@ -159,39 +170,86 @@ def build_aave_silver(spark: SparkSession) -> dict[str, int]:
     bronze = read_bronze_events(spark).filter(col("protocol") == "aave_v3")
     results: dict[str, int] = {}
     for model in CLOUD_AAVE_MODELS:
-        payload_columns = (
-            "contract_address",
-            "raw_data",
-            "raw_topics",
-            *model.payload_fields,
-        )
-        events = _deduplicate(
-            bronze.filter(col("event_type") == model.event_type)
-        ).select(
-            _event_id().alias("event_id"),
-            "protocol",
-            "chain",
-            "event_type",
-            "event_date",
-            "block_timestamp",
-            "transaction_hash",
-            "block_number",
-            "log_index",
-            "kafka_timestamp",
-            "ingested_at",
-            "producer_version",
-            "schema_version",
-            "bronze_processed_at",
-            "bronze_file",
-            *(col(f"payload.{field}").alias(field) for field in payload_columns),
-            current_timestamp().alias("silver_processed_at"),
-            lit(SILVER_JOB_VERSION).alias("silver_job_version"),
-        )
+        events = _select_aave_model(bronze, model)
         count = events.count()
         write_partitioned_dataset_atomic(
             events,
             DATA_LAKE.get(model.dataset),
             (),
         )
+        results[model.event_type] = count
+    return results
+
+
+def _select_aave_model(bronze: DataFrame, model: CloudAaveModel) -> DataFrame:
+    """Project one canonical Aave Silver schema from a Bronze frame."""
+    payload_columns = (
+        "contract_address",
+        "raw_data",
+        "raw_topics",
+        *model.payload_fields,
+    )
+    return _deduplicate(
+        bronze.filter(col("event_type") == model.event_type)
+    ).select(
+        _event_id().alias("event_id"),
+        "protocol",
+        "chain",
+        "event_type",
+        "event_date",
+        "block_timestamp",
+        "transaction_hash",
+        "block_number",
+        "log_index",
+        "kafka_timestamp",
+        "ingested_at",
+        "producer_version",
+        "schema_version",
+        "bronze_processed_at",
+        "bronze_file",
+        *(col(f"payload.{field}").alias(field) for field in payload_columns),
+        current_timestamp().alias("silver_processed_at"),
+        lit(SILVER_JOB_VERSION).alias("silver_job_version"),
+    )
+
+
+def build_aave_silver_increment(
+    spark: SparkSession,
+    *,
+    start_block: int,
+    end_block: int,
+) -> dict[str, int]:
+    """Normalize one deterministic Bronze increment without rewriting history."""
+    if start_block < 0 or end_block < start_block:
+        raise ValueError("Aave Silver increment range is invalid")
+    batch_name = f"range_{start_block}_{end_block}"
+    bronze_path = str(
+        join_location(DATA_LAKE.get("bronze_aave_forward"), batch_name)
+    )
+    if not path_exists(spark, bronze_path):
+        raise FileNotFoundError(
+            f"Forward Bronze increment does not exist: {batch_name}"
+        )
+    bronze = (
+        spark.read.option("mergeSchema", "true")
+        .parquet(bronze_path)
+        .filter(
+            (col("protocol") == "aave_v3")
+            & (col("block_number") >= start_block)
+            & (col("block_number") <= end_block)
+        )
+    )
+    results: dict[str, int] = {}
+    for model in CLOUD_AAVE_MODELS:
+        events = _select_aave_model(bronze, model)
+        count = events.count()
+        output_path = str(
+            join_location(
+                DATA_LAKE.get(model.dataset),
+                "increments",
+                batch_name,
+            )
+        )
+        write_partitioned_dataset_atomic(events, output_path, ())
         results[model.event_type] = count
     return results

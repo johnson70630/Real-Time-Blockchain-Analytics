@@ -1,6 +1,7 @@
 """Central settings for the local blockchain analytics pipeline."""
 
 import os
+from datetime import UTC, datetime
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -40,9 +41,104 @@ def get_alchemy_rpc_url() -> str:
     return get_required_env("ALCHEMY_RPC_URL")
 
 
+def get_aave_backfill_rpc_url() -> str:
+    """Return the dedicated RPC URL required by Aave bounded backfills."""
+    return get_required_env("AAVE_BACKFILL_RPC_URL")
+
+
 def get_aave_v3_pool_address() -> str:
     """Return the Pool address required only when Aave V3 is enabled."""
     return get_required_env("AAVE_V3_POOL_ADDRESS")
+
+
+def get_aave_project_collection_start_at() -> datetime:
+    """Return the explicit UTC boundary for supported Aave analytics."""
+    raw_value = os.getenv(
+        "AAVE_PROJECT_COLLECTION_START_AT",
+        "2026-10-01T00:00:00Z",
+    )
+    try:
+        value = datetime.fromisoformat(raw_value.replace("Z", "+00:00"))
+    except ValueError as error:
+        raise ValueError(
+            "AAVE_PROJECT_COLLECTION_START_AT must be ISO-8601"
+        ) from error
+    if value.tzinfo is None:
+        raise ValueError(
+            "AAVE_PROJECT_COLLECTION_START_AT must include a timezone"
+        )
+    return value.astimezone(UTC)
+
+
+def get_aave_project_collection_start_block() -> int:
+    """Return the RPC-verified first block in the supported Aave period."""
+    raw_value = os.getenv("AAVE_PROJECT_COLLECTION_START_BLOCK", "510496864")
+    try:
+        value = int(raw_value)
+    except ValueError as error:
+        raise ValueError(
+            "AAVE_PROJECT_COLLECTION_START_BLOCK must be an integer"
+        ) from error
+    if value < 0:
+        raise ValueError(
+            "AAVE_PROJECT_COLLECTION_START_BLOCK must not be negative"
+        )
+    return value
+
+
+def get_aave_confirmation_depth() -> int:
+    """Return the operational block lag used to avoid the newest L2 blocks."""
+    raw_value = os.getenv("AAVE_CONFIRMATION_DEPTH", "1200")
+    try:
+        value = int(raw_value)
+    except ValueError as error:
+        raise ValueError("AAVE_CONFIRMATION_DEPTH must be an integer") from error
+    if value < 0:
+        raise ValueError("AAVE_CONFIRMATION_DEPTH must not be negative")
+    return value
+
+
+def get_aave_bootstrap_chunk_size() -> int:
+    """Return the bounded eth_getLogs span used by Aave bootstrap jobs."""
+    raw_value = os.getenv("AAVE_BOOTSTRAP_CHUNK_SIZE", "3000")
+    try:
+        value = int(raw_value)
+    except ValueError as error:
+        raise ValueError("AAVE_BOOTSTRAP_CHUNK_SIZE must be an integer") from error
+    if value <= 0:
+        raise ValueError("AAVE_BOOTSTRAP_CHUNK_SIZE must be greater than zero")
+    return value
+
+
+def _get_positive_integer_setting(name: str, default: int) -> int:
+    raw_value = os.getenv(name, str(default))
+    try:
+        value = int(raw_value)
+    except ValueError as error:
+        raise ValueError(f"{name} must be an integer") from error
+    if value <= 0:
+        raise ValueError(f"{name} must be greater than zero")
+    return value
+
+
+def get_aave_bootstrap_min_range_size() -> int:
+    """Return the smallest provider range eligible for adaptive retry."""
+    return _get_positive_integer_setting("AAVE_BOOTSTRAP_MIN_RANGE_SIZE", 100)
+
+
+def get_aave_bootstrap_max_range_size() -> int:
+    """Return the largest provider range allowed by the active plan."""
+    return _get_positive_integer_setting("AAVE_BOOTSTRAP_MAX_RANGE_SIZE", 3_000)
+
+
+def get_aave_bootstrap_max_range_attempts() -> int:
+    """Return the finite per-parent adaptive range-attempt budget."""
+    return _get_positive_integer_setting("AAVE_BOOTSTRAP_MAX_RANGE_ATTEMPTS", 64)
+
+
+def get_aave_forward_max_blocks_per_run() -> int:
+    """Return the finite upper bound for one normal forward execution."""
+    return _get_positive_integer_setting("AAVE_FORWARD_MAX_BLOCKS_PER_RUN", 600_000)
 
 
 def get_uniswap_v3_factory_start_block() -> int:

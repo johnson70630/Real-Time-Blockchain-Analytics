@@ -44,7 +44,7 @@ RAW, STAGING, CORE, and MARTS objects. It stores one current row per identity:
 - `successful_run_id`
 - `updated_at`
 
-Initial forward identities are `aave_forward` / `alchemy_rpc` and
+Initial forward identities are `aave_forward` / `aave_v3_pool` and
 `chainlink_forward` / `chainlink_proxy_rpc`, both for Arbitrum chain ID 42161
 and a `block_number` cursor. There is intentionally no global blockchain
 watermark.
@@ -78,6 +78,66 @@ a stale writer from replacing concurrently advanced state.
 
 The existing bounded backfill is historical replay and is explicitly barred
 from committing a forward watermark.
+
+## Aave project collection boundary
+
+The supported Aave analytics boundary is a project decision, not an Aave
+deployment claim: `2026-10-01T00:00:00Z`. A deterministic Arbitrum timestamp
+binary search resolved the first block at or after that boundary as
+`510496864`. Its timestamp is exactly `2026-10-01T00:00:00Z`; the immediately
+preceding block, `510496863`, is timestamped `2026-09-30T23:59:59Z`.
+
+Forward bootstrap uses an operational lag of 1,200 blocks. This is a
+configurable guard against processing the newest L2 blocks and is not a claim
+about protocol finality. At the 2026-10-13 measurement, head `514554979`
+produced safe end `514553779`; the lag represented about 359 seconds. The
+inclusive bootstrap interval therefore contained 4,056,916 blocks. With the
+current Alchemy-compatible ten-block request limit, it requires 405,692
+source chunks, so execution must be bounded and resumable rather than one
+unbounded run.
+
+Initial Alchemy range calibration tested known-event intervals of 1, 10, 20, 50,
+100, 500, 1,000, 5,000, and 10,000 blocks. One- and ten-block requests
+succeeded, including decoding a real Borrow event without quarantine. Every
+request above ten blocks returned HTTP 400 because that Alchemy project
+limited `eth_getLogs` to ten blocks. This correctly blocked execution rather
+than issuing more than 400,000 requests.
+
+Bounded Aave bootstrap and recovery now use a separately configured Ankr RPC;
+Alchemy remains the live WebSocket and streaming provider. Known-event Ankr
+calibration succeeded for 100, 1,000, 2,000, and 3,000 blocks in one request
+each, with complete Borrow/Repay decoding and no decode failures. A single
+5,000-block probe returned provider error `-32062` (block range too large).
+The calibrated policy is therefore a 3,000-block preferred/maximum parent,
+100-block minimum fallback, and a finite 64-attempt per-parent budget.
+Adaptive bisection preserves contiguous child boundaries and never records a
+failed parent as complete.
+
+A read-only Ankr head estimate on 2026-10-14 observed block `514894541`,
+yielding estimated safe end `514893341` under the same 1,200-block lag. That
+snapshot spans 4,396,478 blocks, or 1,466 logical 3,000-block parents. It is an
+estimate, not a committed bootstrap boundary; the safe end must be refreshed
+again immediately before an approved execution.
+
+Successful source intervals are recorded in the append-only
+`BLOCKCHAIN_ANALYTICS.CONTROL.PIPELINE_COMPLETED_RANGES` ledger. The runtime
+role receives only `SELECT` and `INSERT`. Each interval is recorded only after
+its source output has persisted successfully. Planning always resumes at the
+first uncovered block, merges adjacent or overlapping evidence when computing
+coverage, and never jumps across a gap. Reprocessing an exact completed range
+is a safe no-op in the ledger.
+
+The infrastructure owner must provision the ledger using
+`warehouse/provision_completed_ranges.sql`. Until that object exists and the
+entire project boundary through a measured safe end is proven gap-free, the
+The accepted one-time Aave bootstrap range evidence remains immutable under
+the legacy `alchemy_rpc` source identity. Production watermark state and all
+new completed forward ranges use the provider-neutral `aave_v3_pool` source
+identity; coverage checks combine both evidence sets without rewriting history.
+Until explicit initialization, the `aave_forward` watermark remains
+uninitialized. Historical bounded backfills
+remain isolated and cannot write either this forward coverage evidence or the
+production forward watermark.
 
 ## Replay and lookback
 

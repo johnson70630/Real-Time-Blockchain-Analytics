@@ -20,6 +20,7 @@ from pyspark.sql.types import (
 )
 
 from backfill.aave_v3 import BackfillIssue, EventEnvelope, merge_events
+from config.storage import join_location
 from reference_data.storage import path_exists
 from spark.event_schema import get_event_schema
 from spark.parquet import write_partitioned_dataset_atomic
@@ -104,6 +105,56 @@ def _utc(value: datetime) -> datetime:
     # PySpark collects timestamp values as local-naive Python datetimes.
     # astimezone() interprets those in the host zone before converting to UTC.
     return value.astimezone(UTC)
+
+
+def _event_frame(
+    spark: SparkSession,
+    events: tuple[EventEnvelope, ...],
+    processed_at: datetime,
+    bronze_file: str,
+):
+    rows = []
+    for event in events:
+        block_timestamp = datetime.fromisoformat(event.block_timestamp)
+        ingested_at = datetime.fromisoformat(event.ingested_at)
+        payload = {
+            field.name: event.payload.get(field.name)
+            for field in _payload_schema.fields
+        }
+        rows.append(
+            (
+                None,
+                block_timestamp.date(),
+                None,
+                None,
+                None,
+                json.dumps(
+                    event.to_dict(),
+                    sort_keys=True,
+                    separators=(",", ":"),
+                ),
+                event.protocol,
+                event.chain,
+                event.event_type,
+                event.block_number,
+                event.transaction_hash,
+                event.log_index,
+                block_timestamp.isoformat(),
+                event.producer_version,
+                event.schema_version,
+                payload,
+                None,
+                event.payload["raw_data"],
+                event.payload["raw_topics"],
+                ingested_at.isoformat(),
+                processed_at.isoformat(),
+                bronze_file,
+            )
+        )
+    frame = spark.createDataFrame(rows, BRONZE_INPUT_SCHEMA)
+    for field in _TIMESTAMP_FIELDS:
+        frame = frame.withColumn(field, to_timestamp(field))
+    return frame.orderBy("block_number", "log_index")
 
 
 class AaveBackfillStore:
@@ -211,3 +262,85 @@ class AaveBackfillStore:
             "block_number", "log_index"
         )
         write_partitioned_dataset_atomic(frame, self.quarantine_path, ())
+
+
+class AaveForwardBatchStore:
+    """Persist deterministic, independently retryable Aave forward batches."""
+
+    def __init__(
+        self,
+        spark: SparkSession,
+        *,
+        bronze_path: str,
+        quarantine_path: str,
+    ) -> None:
+        self.spark = spark
+        self.bronze_path = bronze_path
+        self.quarantine_path = quarantine_path
+
+    @staticmethod
+    def _batch_name(start_block: int, end_block: int) -> str:
+        if start_block < 0 or end_block < start_block:
+            raise ValueError("Forward batch range is invalid")
+        return f"range_{start_block}_{end_block}"
+
+    def write_and_validate(
+        self,
+        *,
+        start_block: int,
+        end_block: int,
+        events: tuple[EventEnvelope, ...],
+        issues: tuple[BackfillIssue, ...],
+        processed_at: datetime,
+    ) -> None:
+        """Write one batch and verify counts, identities, and block bounds."""
+        batch_name = self._batch_name(start_block, end_block)
+        event_path = str(join_location(self.bronze_path, batch_name))
+        issue_path = str(join_location(self.quarantine_path, batch_name))
+        canonical = merge_events((), events)
+        if len(canonical) != len(events):
+            raise ValueError("Forward batch contains duplicate event identities")
+
+        write_partitioned_dataset_atomic(
+            _event_frame(
+                self.spark,
+                canonical,
+                processed_at,
+                event_path,
+            ),
+            event_path,
+            (),
+        )
+        issue_rows = [
+            (
+                issue.block_number,
+                issue.transaction_hash,
+                issue.log_index,
+                issue.reason,
+                issue.processed_at,
+            )
+            for issue in issues
+        ]
+        issue_frame = self.spark.createDataFrame(
+            issue_rows,
+            ISSUE_SCHEMA,
+        ).orderBy("block_number", "log_index")
+        write_partitioned_dataset_atomic(issue_frame, issue_path, ())
+
+        persisted = self.spark.read.schema(BRONZE_SCHEMA).parquet(event_path)
+        if persisted.count() != len(canonical):
+            raise RuntimeError("Forward Bronze persisted row count mismatch")
+        if persisted.dropDuplicates(
+            ("chain", "transaction_hash", "log_index")
+        ).count() != len(canonical):
+            raise RuntimeError("Forward Bronze contains duplicate identities")
+        if persisted.filter(
+            (persisted.block_number < start_block)
+            | (persisted.block_number > end_block)
+        ).count():
+            raise RuntimeError("Forward Bronze contains out-of-range events")
+        persisted_issues = self.spark.read.schema(ISSUE_SCHEMA).parquet(
+            issue_path
+        )
+        if persisted_issues.count() != len(issues):
+            raise RuntimeError("Forward quarantine persisted row count mismatch")

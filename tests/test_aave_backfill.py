@@ -1,13 +1,20 @@
+import sys
 from datetime import UTC, datetime
 
 import pytest
 from web3 import Web3
 
+from backfill import run_aave_v3
 from backfill.aave_v3 import (
+    AdaptiveRangeFetchError,
+    AdaptiveRangePolicy,
     AaveV3RpcClient,
+    RpcBlockRange,
     SearchLimits,
     backwards_block_ranges,
+    decode_fetched_logs,
     event_id,
+    fetch_event_logs_adaptive,
     merge_events,
     preserve_backward_checkpoint,
     search_historical_events,
@@ -76,6 +83,21 @@ class FakeRpc:
         return STAMP
 
 
+class RangeLimitedRpc(FakeRpc):
+    """Reject ranges above a configurable provider limit."""
+
+    def __init__(self, maximum_blocks: int) -> None:
+        super().__init__({})
+        self.maximum_blocks = maximum_blocks
+
+    def get_event_logs(self, pool: str, start: int, end: int) -> list[dict]:
+        self.request_count += 1
+        self.ranges.append((start, end))
+        if end - start + 1 > self.maximum_blocks:
+            raise RuntimeError("provider range limit")
+        return [_log(BorrowEventHandler(), start)]
+
+
 def _limits(**overrides) -> SearchLimits:
     values = {
         "chunk_size": 10,
@@ -91,6 +113,102 @@ def _limits(**overrides) -> SearchLimits:
 
 def test_backwards_ranges_are_inclusive_gap_free_and_bounded() -> None:
     assert backwards_block_ranges(25, 23, 10) == ((16, 25), (6, 15), (3, 5))
+
+
+def test_bounded_cli_uses_calibrated_chunk_default(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(sys, "argv", ["run_aave_v3"])
+    monkeypatch.setattr(
+        run_aave_v3,
+        "get_aave_bootstrap_chunk_size",
+        lambda: 3_000,
+    )
+
+    assert run_aave_v3.parse_args().chunk_size == 3_000
+
+
+def test_adaptive_fetch_splits_without_skipping_blocks() -> None:
+    rpc = RangeLimitedRpc(maximum_blocks=4)
+    result = fetch_event_logs_adaptive(
+        rpc,
+        pool_address=POOL,
+        start_block=100,
+        end_block=109,
+        policy=AdaptiveRangePolicy(
+            minimum_range_size=2,
+            maximum_range_size=10,
+            max_range_attempts=20,
+        ),
+    )
+
+    assert result.completed_ranges == (
+        RpcBlockRange(100, 102),
+        RpcBlockRange(103, 104),
+        RpcBlockRange(105, 107),
+        RpcBlockRange(108, 109),
+    )
+    assert [item for block_range in result.completed_ranges for item in range(
+        block_range.start_block,
+        block_range.end_block + 1,
+    )] == list(range(100, 110))
+    assert result.split_count == 3
+    assert result.range_attempts == 7
+
+
+def test_successful_adaptive_children_reconstruct_parent_coverage() -> None:
+    result = fetch_event_logs_adaptive(
+        RangeLimitedRpc(maximum_blocks=5),
+        pool_address=POOL,
+        start_block=100,
+        end_block=119,
+        policy=AdaptiveRangePolicy(5, 20, 20),
+    )
+
+    assert result.completed_ranges[0].start_block == 100
+    assert result.completed_ranges[-1].end_block == 119
+    assert all(
+        left.end_block + 1 == right.start_block
+        for left, right in zip(
+            result.completed_ranges,
+            result.completed_ranges[1:],
+        )
+    )
+
+
+def test_adaptive_fetch_stops_at_minimum_failed_range() -> None:
+    rpc = RangeLimitedRpc(maximum_blocks=0)
+    with pytest.raises(AdaptiveRangeFetchError) as raised:
+        fetch_event_logs_adaptive(
+            rpc,
+            pool_address=POOL,
+            start_block=100,
+            end_block=109,
+            policy=AdaptiveRangePolicy(5, 10, 20),
+        )
+
+    assert raised.value.failed_range == RpcBlockRange(100, 104)
+    assert rpc.ranges == [(100, 109), (100, 104)]
+
+
+def test_adaptive_fetch_enforces_maximum_range_and_attempt_budget() -> None:
+    policy = AdaptiveRangePolicy(1, 10, 1)
+    with pytest.raises(ValueError, match="maximum_range_size"):
+        fetch_event_logs_adaptive(
+            RangeLimitedRpc(maximum_blocks=10),
+            pool_address=POOL,
+            start_block=100,
+            end_block=110,
+            policy=policy,
+        )
+    with pytest.raises(AdaptiveRangeFetchError, match="after 1"):
+        fetch_event_logs_adaptive(
+            RangeLimitedRpc(maximum_blocks=5),
+            pool_address=POOL,
+            start_block=100,
+            end_block=109,
+            policy=policy,
+        )
 
 
 def test_rpc_uses_pool_address_and_topic_zero_or_filter() -> None:
@@ -179,6 +297,45 @@ def test_malformed_log_is_quarantined_without_aborting() -> None:
     assert result.events == ()
     assert len(result.issues) == 1
     assert result.issues[0].transaction_hash is not None
+
+
+def test_forward_decode_uses_provider_block_timestamp_without_lookup() -> None:
+    raw_log = {
+        **_log(BorrowEventHandler(), 100),
+        "blockTimestamp": hex(int(STAMP.timestamp())),
+    }
+    rpc = FakeRpc({})
+
+    result = decode_fetched_logs(
+        rpc,
+        logs=(raw_log,),
+        pool_address=POOL,
+        chain="arbitrum",
+        start_block=100,
+        end_block=109,
+        processed_at=STAMP,
+    )
+
+    assert len(result.events) == 1
+    assert result.events[0].block_timestamp == STAMP.isoformat()
+    assert rpc.timestamp_blocks == []
+    assert result.issues == ()
+
+
+def test_forward_decode_quarantines_out_of_range_log() -> None:
+    result = decode_fetched_logs(
+        FakeRpc({}),
+        logs=(_log(BorrowEventHandler(), 99),),
+        pool_address=POOL,
+        chain="arbitrum",
+        start_block=100,
+        end_block=109,
+        processed_at=STAMP,
+    )
+
+    assert result.events == ()
+    assert len(result.issues) == 1
+    assert "outside the requested range" in result.issues[0].reason
 
 
 def test_request_budget_stops_without_advancing_incomplete_chunk() -> None:
