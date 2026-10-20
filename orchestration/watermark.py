@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
 from enum import StrEnum
-from typing import Protocol
+from typing import Mapping, Protocol
 
 MAX_WATERMARK_VALUE = 10**38 - 1
 ARBITRUM_CHAIN_ID = 42161
@@ -90,6 +90,22 @@ class WatermarkStore(Protocol):
     ) -> WatermarkState: ...
 
 
+class AtomicWatermarkStore(WatermarkStore, Protocol):
+    """Store capable of committing related identities in one transaction."""
+
+    def initialize_many(
+        self,
+        values: Mapping[WatermarkIdentity, int],
+        successful_run_id: str,
+    ) -> tuple[WatermarkState, ...]: ...
+
+    def advance_many(
+        self,
+        expected_values: Mapping[WatermarkIdentity, int],
+        candidate_values: Mapping[WatermarkIdentity, int],
+        successful_run_id: str,
+    ) -> tuple[WatermarkState, ...]: ...
+
 def _validate_watermark_value(value: int, *, field_name: str) -> int:
     if isinstance(value, bool) or not isinstance(value, int):
         raise TypeError(f"{field_name} must be an integer")
@@ -116,9 +132,22 @@ AAVE_LEGACY_BOOTSTRAP_RANGES = WatermarkIdentity(
 )
 CHAINLINK_FORWARD_WATERMARK = WatermarkIdentity(
     pipeline_name="chainlink_forward",
-    source_name="chainlink_proxy_rpc",
+    source_name="chainlink_feeds",
     chain_id=ARBITRUM_CHAIN_ID,
 )
+
+
+def chainlink_feed_watermark(feed_address: str) -> WatermarkIdentity:
+    """Return the provider-neutral round cursor for one feed proxy."""
+    normalized = feed_address.strip().lower()
+    if not normalized:
+        raise ValueError("feed_address must not be empty")
+    return WatermarkIdentity(
+        pipeline_name="chainlink_forward",
+        source_name=normalized,
+        chain_id=ARBITRUM_CHAIN_ID,
+        watermark_type="round_id",
+    )
 
 
 def _validate_run_id(successful_run_id: str) -> str:
@@ -200,4 +229,71 @@ def commit_watermark(
         expected_value=current.committed_value,
         candidate_value=candidate_value,
         successful_run_id=run_id,
+    )
+
+
+def initialize_watermarks_atomically(
+    store: AtomicWatermarkStore,
+    values: Mapping[WatermarkIdentity, int],
+    successful_run_id: str,
+) -> tuple[WatermarkState, ...]:
+    """Initialize a related state set without permitting partial creation."""
+    if not values:
+        raise ValueError("At least one watermark is required")
+    for value in values.values():
+        _validate_watermark_value(value, field_name="initial_value")
+    run_id = _validate_run_id(successful_run_id)
+    initialized = [identity for identity in values if store.get(identity)]
+    if initialized:
+        raise WatermarkAlreadyInitializedError(
+            "Related watermarks must all be uninitialized"
+        )
+    return store.initialize_many(values, run_id)
+
+
+def commit_watermarks_atomically(
+    store: AtomicWatermarkStore,
+    current_states: Mapping[WatermarkIdentity, WatermarkState],
+    candidate_values: Mapping[WatermarkIdentity, int],
+    successful_run_id: str,
+    *,
+    processing_succeeded: bool,
+    processing_mode: ProcessingMode = ProcessingMode.FORWARD,
+) -> tuple[WatermarkState, ...]:
+    """Advance a complete related state set only after all work succeeds."""
+    if processing_mode is not ProcessingMode.FORWARD:
+        raise UnsafeWatermarkCommitError(
+            "Historical backfills must not advance forward watermarks"
+        )
+    if not processing_succeeded:
+        raise UnsafeWatermarkCommitError(
+            "Watermark commit requires a successful processing boundary"
+        )
+    if not current_states or set(current_states) != set(candidate_values):
+        raise ValueError("Current and candidate watermark identities must match")
+    run_id = _validate_run_id(successful_run_id)
+    expected_values: dict[WatermarkIdentity, int] = {}
+    for identity, current in current_states.items():
+        if current.identity != identity:
+            raise ValueError("Watermark state identity mismatch")
+        candidate = candidate_values[identity]
+        validate_candidate(current.committed_value, candidate)
+        expected_values[identity] = current.committed_value
+    if all(
+        candidate_values[identity] == expected
+        for identity, expected in expected_values.items()
+    ):
+        return tuple(
+            current_states[identity]
+            for identity in sorted(current_states, key=_identity_sort_key)
+        )
+    return store.advance_many(expected_values, candidate_values, run_id)
+
+
+def _identity_sort_key(identity: WatermarkIdentity) -> tuple[str, str, int, str]:
+    return (
+        identity.pipeline_name,
+        identity.source_name,
+        identity.chain_id,
+        identity.watermark_type,
     )

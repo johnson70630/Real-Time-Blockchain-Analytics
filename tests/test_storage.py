@@ -43,6 +43,26 @@ def test_s3_storage_generates_canonical_s3a_locations(tmp_path: Path) -> None:
         "s3a://analytics-lake-123/production/blockchain/"
         "bronze_backfill/market_data/observations"
     )
+    assert locations.get("bronze_chainlink_forward") == (
+        "s3a://analytics-lake-123/production/blockchain/"
+        "bronze_backfill/market_data/forward"
+    )
+    assert locations.get("bronze_chainlink_bootstrap") == (
+        "s3a://analytics-lake-123/production/blockchain/"
+        "bronze_backfill/market_data/bootstrap_batches"
+    )
+    assert locations.get("state_chainlink_bootstrap_staging") == (
+        "s3a://analytics-lake-123/production/blockchain/"
+        "state/chainlink/bootstrap_staging"
+    )
+    assert locations.get("quarantine_chainlink_bootstrap") == (
+        "s3a://analytics-lake-123/production/blockchain/"
+        "quarantine/chainlink/bootstrap_batches"
+    )
+    assert locations.get("state_chainlink_forward_staging") == (
+        "s3a://analytics-lake-123/production/blockchain/"
+        "state/chainlink/forward_staging"
+    )
     assert storage.s3_url("silver") == (
         "s3://analytics-lake-123/production/blockchain/silver"
     )

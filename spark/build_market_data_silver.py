@@ -41,11 +41,15 @@ from config.logging import configure_logging
 from config.settings import (
     DATA_LAKE,
 )
+from config.storage import join_location
 from config.versions import SILVER_JOB_VERSION
+from backfill.chainlink_storage import ChainlinkBootstrapBatchStore
 from reference_data.storage import path_exists
 from spark.parquet import (
+    delete_dataset,
     discover_parquet_files,
     is_remote_path,
+    write_completion_marker,
     write_partitioned_dataset_atomic,
 )
 from spark.session import create_spark_session as create_shared_spark_session
@@ -54,6 +58,7 @@ logger = logging.getLogger(__name__)
 
 MARKET_DATA_BRONZE_OUTPUT_PATH = DATA_LAKE.get("bronze_market_data")
 MARKET_DATA_BACKFILL_OUTPUT_PATH = DATA_LAKE.get("bronze_chainlink_backfill")
+MARKET_DATA_FORWARD_OUTPUT_PATH = DATA_LAKE.get("bronze_chainlink_forward")
 MARKET_DATA_SILVER_DIR = DATA_LAKE.get("silver_chainlink_market_prices")
 MARKET_DATA_SILVER_QUARANTINE_PATH = DATA_LAKE.get(
     "quarantine_market_data_silver"
@@ -237,7 +242,13 @@ def prepare_market_data_records(bronze: DataFrame) -> DataFrame:
         _column_or_null(bronze, "event_type", "string").cast("string").alias(
             "event_type"
         ),
-        _column_or_null(bronze, "chain", "string").cast("string").alias("chain"),
+        coalesce(
+            _column_or_null(bronze, "chain", "string").cast("string"),
+            get_json_object(
+                _column_or_null(bronze, "json_value", "string"),
+                "$.chain",
+            ),
+        ).alias("chain"),
         lower(
             trim(
                 _column_or_null(bronze, "feed_address", "string").cast("string")
@@ -420,16 +431,30 @@ def read_market_data_bronze(
     spark: SparkSession,
     bronze_root: str | Path = MARKET_DATA_BRONZE_OUTPUT_PATH,
     historical_root: str | Path | None = MARKET_DATA_BACKFILL_OUTPUT_PATH,
+    forward_root: str | Path | None = None,
+    bootstrap_paths: tuple[str | Path, ...] = (),
 ) -> DataFrame:
-    """Read live and historical market-data Bronze with one compatible schema."""
-    roots = (bronze_root, historical_root)
-    frames = [
-        spark.read.option("basePath", str(root))
+    """Read live, historical, and forward Bronze with one compatible schema."""
+    frames = []
+    for root in (bronze_root, historical_root):
+        if root is not None and path_exists(spark, root):
+            frames.append(
+                spark.read.option("basePath", str(root))
+                .option("mergeSchema", "true")
+                .parquet(str(root))
+            )
+    if forward_root is not None and path_exists(spark, forward_root):
+        frames.append(
+            spark.read.option("recursiveFileLookup", "true")
+            .option("mergeSchema", "true")
+            .parquet(str(forward_root))
+        )
+    frames.extend(
+        spark.read.option("recursiveFileLookup", "true")
         .option("mergeSchema", "true")
-        .parquet(str(root))
-        for root in roots
-        if root is not None and path_exists(spark, root)
-    ]
+        .parquet(str(path))
+        for path in bootstrap_paths
+    )
     if not frames:
         raise FileNotFoundError("No live or historical market-data Bronze found")
     combined = frames[0]
@@ -443,12 +468,21 @@ def build_market_data_silver(
     *,
     bronze_root: str | Path = MARKET_DATA_BRONZE_OUTPUT_PATH,
     historical_root: str | Path | None = MARKET_DATA_BACKFILL_OUTPUT_PATH,
+    forward_root: str | Path | None = None,
+    bootstrap_paths: tuple[str | Path, ...] = (),
     silver_path: str | Path = MARKET_DATA_SILVER_DIR,
     quarantine_path: str | Path = MARKET_DATA_SILVER_QUARANTINE_PATH,
 ) -> MarketDataSilverStats:
     """Rebuild Silver prices and rejected records atomically from Bronze."""
     roots = tuple(
-        root for root in (bronze_root, historical_root) if root is not None
+        root
+        for root in (
+            bronze_root,
+            historical_root,
+            forward_root,
+            *bootstrap_paths,
+        )
+        if root is not None
     )
     local_files = [
         discover_parquet_files(Path(root))
@@ -465,6 +499,8 @@ def build_market_data_silver(
             spark,
             bronze_root,
             historical_root,
+            forward_root,
+            bootstrap_paths,
         ).cache()
     except FileNotFoundError:
         logger.info("No market-data Bronze files found; Silver is unchanged")
@@ -520,6 +556,238 @@ def build_market_data_silver(
         bronze.unpersist()
 
 
+def build_market_data_silver_increment(
+    spark: SparkSession,
+    *,
+    start_block: int,
+    end_block: int,
+    bronze_root: str | Path = MARKET_DATA_FORWARD_OUTPUT_PATH,
+    silver_root: str | Path = MARKET_DATA_SILVER_DIR,
+    quarantine_root: str | Path = MARKET_DATA_SILVER_QUARANTINE_PATH,
+) -> MarketDataSilverStats:
+    """Normalize one marker-backed forward increment without rewriting history."""
+    if start_block < 0 or end_block < start_block:
+        raise ValueError("Chainlink Silver increment range is invalid")
+    batch_name = f"block_{start_block}_{end_block}"
+    paths = ChainlinkBootstrapBatchStore(
+        spark,
+        bronze_root=str(bronze_root),
+        staging_root=DATA_LAKE.get("state_chainlink_forward_staging"),
+        quarantine_root=DATA_LAKE.get("quarantine_chainlink_forward"),
+        source_topic="chainlink_forward_rpc",
+    ).committed_batch_paths()
+    if not paths:
+        raise FileNotFoundError(
+            "Chainlink forward Bronze has no committed batches"
+        )
+    frames = [
+        spark.read.option("recursiveFileLookup", "true")
+        .option("mergeSchema", "true")
+        .parquet(str(path))
+        for path in paths
+    ]
+    bronze = frames[0]
+    for frame in frames[1:]:
+        bronze = bronze.unionByName(frame, allowMissingColumns=True)
+    bronze = bronze.cache()
+    silver, quarantine = transform_market_data(bronze)
+    silver = silver.cache()
+    quarantine = quarantine.cache()
+    try:
+        bronze_count = bronze.count()
+        invalid_count = quarantine.count()
+        silver_count = silver.count()
+        valid_count = bronze_count - invalid_count
+        duplicate_count = valid_count - silver_count
+        output_path = join_location(silver_root, "increments", batch_name)
+        completion_marker = join_location(output_path, "_COMMITTED")
+        quarantine_path = join_location(
+            quarantine_root,
+            "increments",
+            batch_name,
+        )
+        if path_exists(spark, completion_marker):
+            persisted = spark.read.parquet(str(output_path))
+            persisted_count = persisted.count()
+            if persisted_count != persisted.select("observation_id").distinct().count():
+                raise RuntimeError("Existing Chainlink Silver increment has duplicates")
+            return MarketDataSilverStats(
+                persisted_count,
+                persisted_count,
+                0,
+                0,
+                persisted_count,
+            )
+        if path_exists(spark, output_path):
+            delete_dataset(spark, output_path)
+        if invalid_count:
+            write_partitioned_dataset_atomic(
+                quarantine,
+                quarantine_path,
+                ("quarantine_date",),
+            )
+            raise RuntimeError("Chainlink forward Silver contains invalid rows")
+        existing_silver = (
+            spark.read.option("recursiveFileLookup", "true")
+            .parquet(str(silver_root))
+            .select("observation_id")
+            .distinct()
+        )
+        increment = silver.join(existing_silver, "observation_id", "left_anti").cache()
+        try:
+            increment_count = increment.count()
+            write_partitioned_dataset_atomic(
+                increment.repartition("price_date"),
+                output_path,
+                ("price_date",),
+            )
+            persisted = spark.read.parquet(str(output_path))
+            persisted_count = persisted.count()
+            if (
+                persisted_count != increment_count
+                or persisted_count
+                != persisted.select("observation_id").distinct().count()
+            ):
+                raise RuntimeError("Persisted Chainlink Silver increment is invalid")
+            write_completion_marker(increment, output_path)
+        finally:
+            increment.unpersist()
+        return MarketDataSilverStats(
+            bronze_records_read=bronze_count,
+            valid_records=valid_count,
+            invalid_records=invalid_count,
+            duplicate_records_removed=duplicate_count,
+            silver_records_written=increment_count,
+        )
+    finally:
+        quarantine.unpersist()
+        silver.unpersist()
+        bronze.unpersist()
+
+
+def committed_chainlink_bootstrap_paths(
+    spark: SparkSession,
+) -> tuple[str, ...]:
+    """Return only marker-backed historical bootstrap batches."""
+    return ChainlinkBootstrapBatchStore(
+        spark,
+        bronze_root=DATA_LAKE.get("bronze_chainlink_bootstrap"),
+        staging_root=DATA_LAKE.get("state_chainlink_bootstrap_staging"),
+        quarantine_root=DATA_LAKE.get("quarantine_chainlink_bootstrap"),
+    ).committed_batch_paths()
+
+
+def build_chainlink_bootstrap_silver_increment(
+    spark: SparkSession,
+    *,
+    historical_root: str | Path = MARKET_DATA_BACKFILL_OUTPUT_PATH,
+    bootstrap_paths: tuple[str | Path, ...] | None = None,
+    silver_root: str | Path = MARKET_DATA_SILVER_DIR,
+    quarantine_root: str | Path = MARKET_DATA_SILVER_QUARANTINE_PATH,
+) -> MarketDataSilverStats:
+    """Write the complete bootstrap delta without replacing prior Silver."""
+    paths = (
+        committed_chainlink_bootstrap_paths(spark)
+        if bootstrap_paths is None
+        else bootstrap_paths
+    )
+    if not paths:
+        raise FileNotFoundError("No committed Chainlink bootstrap batches found")
+    increment_name = "bootstrap_515520400"
+    output_path = join_location(silver_root, "increments", increment_name)
+    completion_marker = join_location(output_path, "_COMMITTED")
+    if path_exists(spark, completion_marker):
+        existing = spark.read.parquet(str(output_path))
+        count = existing.count()
+        duplicate_count = count - existing.select("observation_id").distinct().count()
+        if duplicate_count:
+            raise RuntimeError("Existing Chainlink bootstrap Silver has duplicates")
+        return MarketDataSilverStats(count, count, 0, 0, count)
+    if path_exists(spark, output_path):
+        logger.warning(
+            "Removing incomplete Chainlink bootstrap Silver increment path=%s",
+            output_path,
+        )
+        delete_dataset(spark, output_path)
+
+    frames = [
+        spark.read.option("basePath", str(historical_root))
+        .option("mergeSchema", "true")
+        .parquet(str(historical_root))
+    ]
+    frames.extend(
+        spark.read.option("recursiveFileLookup", "true")
+        .option("mergeSchema", "true")
+        .parquet(str(path))
+        for path in paths
+    )
+    bronze = frames[0]
+    for frame in frames[1:]:
+        bronze = bronze.unionByName(frame, allowMissingColumns=True)
+    bronze = bronze.cache()
+    silver, quarantine = transform_market_data(bronze)
+    silver = silver.cache()
+    quarantine = quarantine.cache()
+    try:
+        invalid_count = quarantine.count()
+        if invalid_count:
+            quarantine_path = join_location(
+                quarantine_root,
+                "increments",
+                increment_name,
+            )
+            write_partitioned_dataset_atomic(
+                quarantine,
+                quarantine_path,
+                ("quarantine_date",),
+            )
+            raise RuntimeError("Chainlink bootstrap Silver contains invalid rows")
+        existing_silver = (
+            spark.read.option("recursiveFileLookup", "true")
+            .parquet(str(silver_root))
+            .select("observation_id")
+            .distinct()
+        )
+        increment = silver.join(existing_silver, "observation_id", "left_anti").cache()
+        try:
+            bronze_count = bronze.count()
+            silver_count = silver.count()
+            increment_count = increment.count()
+            duplicate_count = bronze_count - silver_count
+            compact_increment = increment.repartition("price_date")
+            write_partitioned_dataset_atomic(
+                compact_increment,
+                output_path,
+                ("price_date",),
+            )
+            persisted = spark.read.parquet(str(output_path))
+            persisted_count = persisted.count()
+            persisted_unique_count = (
+                persisted.select("observation_id").distinct().count()
+            )
+            if (
+                persisted_count != increment_count
+                or persisted_unique_count != increment_count
+            ):
+                raise RuntimeError(
+                    "Persisted Chainlink bootstrap Silver failed validation"
+                )
+            write_completion_marker(increment, output_path)
+            return MarketDataSilverStats(
+                bronze_records_read=bronze_count,
+                valid_records=bronze_count,
+                invalid_records=0,
+                duplicate_records_removed=duplicate_count,
+                silver_records_written=increment_count,
+            )
+        finally:
+            increment.unpersist()
+    finally:
+        quarantine.unpersist()
+        silver.unpersist()
+        bronze.unpersist()
+
+
 def create_spark_session() -> SparkSession:
     """Create the shared local or S3-enabled Spark session."""
     spark = create_shared_spark_session("BuildMarketDataSilver")
@@ -532,7 +800,11 @@ def main() -> None:
     spark = create_spark_session()
     spark.sparkContext.setLogLevel("WARN")
     try:
-        build_market_data_silver(spark)
+        build_market_data_silver(
+            spark,
+            forward_root=MARKET_DATA_FORWARD_OUTPUT_PATH,
+            bootstrap_paths=committed_chainlink_bootstrap_paths(spark),
+        )
     finally:
         spark.stop()
 

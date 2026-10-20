@@ -173,6 +173,47 @@ def get_chainlink_poll_interval_seconds() -> float:
     return interval
 
 
+def get_chainlink_confirmation_depth() -> int:
+    """Return the Chainlink-specific block lag for frozen RPC snapshots."""
+    raw_value = os.getenv("CHAINLINK_CONFIRMATION_DEPTH", "1200")
+    try:
+        value = int(raw_value)
+    except ValueError as error:
+        raise ValueError(
+            "CHAINLINK_CONFIRMATION_DEPTH must be an integer"
+        ) from error
+    if value < 0:
+        raise ValueError("CHAINLINK_CONFIRMATION_DEPTH must not be negative")
+    return value
+
+
+def get_chainlink_project_collection_start_block() -> int:
+    """Return the RPC-verified first block in the supported price period."""
+    raw_value = os.getenv(
+        "CHAINLINK_PROJECT_COLLECTION_START_BLOCK",
+        "510496864",
+    )
+    try:
+        value = int(raw_value)
+    except ValueError as error:
+        raise ValueError(
+            "CHAINLINK_PROJECT_COLLECTION_START_BLOCK must be an integer"
+        ) from error
+    if value < 0:
+        raise ValueError(
+            "CHAINLINK_PROJECT_COLLECTION_START_BLOCK must not be negative"
+        )
+    return value
+
+
+def get_chainlink_forward_max_rounds_per_run() -> int:
+    """Return the finite upper bound for one Chainlink forward execution."""
+    return _get_positive_integer_setting(
+        "CHAINLINK_FORWARD_MAX_ROUNDS_PER_RUN",
+        10_000,
+    )
+
+
 def get_max_price_age_seconds() -> int:
     """Return the maximum age accepted for point-in-time price enrichment."""
     raw_age = os.getenv("MAX_PRICE_AGE_SECONDS", "300")

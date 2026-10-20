@@ -6,6 +6,7 @@ from uuid import uuid4
 
 import duckdb
 from pyspark.sql import DataFrame
+from pyspark.sql import SparkSession
 
 StoragePath = str | Path
 
@@ -36,6 +37,19 @@ def discover_parquet_files(root: Path) -> list[Path]:
         ),
         key=lambda path: path.as_posix(),
     )
+
+
+def delete_dataset(spark: SparkSession, path: StoragePath) -> None:
+    """Delete one known dataset prefix for deterministic retry cleanup."""
+    if is_remote_path(path):
+        jvm_path = spark.sparkContext._jvm.org.apache.hadoop.fs.Path(str(path))
+        filesystem = jvm_path.getFileSystem(
+            spark.sparkContext._jsc.hadoopConfiguration()
+        )
+        if filesystem.exists(jvm_path):
+            filesystem.delete(jvm_path, True)
+        return
+    _remove_path(Path(path))
 
 
 def write_relation_atomic(
@@ -100,3 +114,24 @@ def write_partitioned_dataset_atomic(
     finally:
         if staging_path.exists():
             _remove_path(staging_path)
+
+
+def write_completion_marker(
+    frame: DataFrame,
+    dataset_path: StoragePath,
+    marker_name: str = "_COMMITTED",
+) -> None:
+    """Mark a fully validated dataset without exposing partial object-store writes."""
+    marker_path = f"{str(dataset_path).rstrip('/')}/{marker_name}"
+    if is_remote_path(dataset_path):
+        jvm = frame.sparkSession.sparkContext._jvm
+        path = jvm.org.apache.hadoop.fs.Path(marker_path)
+        filesystem = path.getFileSystem(
+            frame.sparkSession.sparkContext._jsc.hadoopConfiguration()
+        )
+        stream = filesystem.create(path, True)
+        stream.close()
+        return
+    marker = Path(marker_path)
+    marker.parent.mkdir(parents=True, exist_ok=True)
+    marker.touch()

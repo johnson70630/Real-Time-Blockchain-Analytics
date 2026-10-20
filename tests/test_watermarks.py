@@ -23,6 +23,7 @@ from orchestration.watermark import (
     WatermarkCommitConflictError,
     WatermarkIdentity,
     WatermarkState,
+    chainlink_feed_watermark,
     commit_watermark,
     get_watermark,
     initialize_watermark,
@@ -269,6 +270,98 @@ def test_snowflake_store_rejects_optimistic_commit_conflict() -> None:
         )
     executed = [call.args[0] for call in cursor.execute.call_args_list]
     assert executed[-1] == "ROLLBACK"
+
+
+def test_snowflake_store_commits_related_watermarks_in_one_transaction() -> None:
+    connection, cursor = _mock_connection(rowcount=1)
+    cursor.fetchall.side_effect = [
+        [(10, "bootstrap", NOW)],
+        [(100, "bootstrap", NOW)],
+    ]
+    store = SnowflakeWatermarkStore(connection, clock=lambda: NOW)
+    feed = chainlink_feed_watermark("0x" + "12" * 20)
+    states = store.advance_many(
+        {CHAINLINK_FORWARD_WATERMARK: 100, feed: 10},
+        {CHAINLINK_FORWARD_WATERMARK: 200, feed: 11},
+        "chainlink-run",
+    )
+    executed = [call.args[0] for call in cursor.execute.call_args_list]
+    assert executed[0] == "BEGIN TRANSACTION"
+    assert executed[-1] == "COMMIT"
+    assert executed.count("BEGIN TRANSACTION") == 1
+    assert len(states) == 2
+
+
+def test_snowflake_multi_watermark_initialization_conflict_rolls_back() -> None:
+    class ConflictCursor:
+        def __init__(self) -> None:
+            self.rowcount = 1
+            self.commands: list[str] = []
+            self.inserts = 0
+
+        def execute(self, sql, _parameters=None):
+            self.commands.append(sql)
+            if sql.lstrip().startswith("INSERT"):
+                self.inserts += 1
+                self.rowcount = int(self.inserts == 1)
+
+        def close(self):
+            return None
+
+    cursor = ConflictCursor()
+    connection = MagicMock()
+    connection.cursor.return_value = cursor
+    store = SnowflakeWatermarkStore(connection, clock=lambda: NOW)
+    feed = chainlink_feed_watermark("0x" + "12" * 20)
+
+    with pytest.raises(WatermarkCommitConflictError, match="initialization"):
+        store.initialize_many(
+            {CHAINLINK_FORWARD_WATERMARK: 200, feed: 11},
+            "chainlink-bootstrap",
+        )
+
+    assert cursor.commands[-1] == "ROLLBACK"
+    assert "COMMIT" not in cursor.commands
+    assert cursor.inserts == 2
+
+
+def test_snowflake_multi_watermark_conflict_rolls_back() -> None:
+    class ConflictCursor:
+        def __init__(self) -> None:
+            self.rowcount = 1
+            self.commands: list[str] = []
+            self.updates = 0
+            self.selects = 0
+
+        def execute(self, sql, _parameters=None):
+            self.commands.append(sql)
+            if sql.lstrip().startswith("UPDATE"):
+                self.updates += 1
+                self.rowcount = int(self.updates == 1)
+
+        def fetchall(self):
+            self.selects += 1
+            return [
+                (10 if self.selects == 1 else 999, "bootstrap", NOW)
+            ]
+
+        def close(self):
+            return None
+
+    cursor = ConflictCursor()
+    connection = MagicMock()
+    connection.cursor.return_value = cursor
+    store = SnowflakeWatermarkStore(connection, clock=lambda: NOW)
+    feed = chainlink_feed_watermark("0x" + "12" * 20)
+    with pytest.raises(WatermarkCommitConflictError, match="Related"):
+        store.advance_many(
+            {CHAINLINK_FORWARD_WATERMARK: 100, feed: 10},
+            {CHAINLINK_FORWARD_WATERMARK: 200, feed: 11},
+            "chainlink-run",
+        )
+    assert cursor.commands[-1] == "ROLLBACK"
+    assert "COMMIT" not in cursor.commands
+    assert cursor.updates == 0
 
 
 def test_runtime_connection_uses_pipeline_role_and_disables_secondary_roles() -> None:

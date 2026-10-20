@@ -5,6 +5,7 @@ from __future__ import annotations
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from datetime import UTC, datetime
+import re
 from threading import Lock
 from time import monotonic, sleep
 from typing import Callable, Iterable, Mapping, Protocol
@@ -286,6 +287,11 @@ def is_retryable_rpc_error(error: Exception | str) -> bool:
     )
 
 
+def sanitize_rpc_error(error: Exception | str) -> str:
+    """Remove credential-bearing endpoint URLs from persisted RPC errors."""
+    return re.sub(r"https?://[^\s'\"}]+", "<rpc-url>", str(error))
+
+
 def discover_round_ranges(
     rpc: ChainlinkHistoricalRpc,
     feed: ChainlinkFeed,
@@ -420,7 +426,7 @@ def extract_historical_rounds(
             return None, HistoricalIssue(
                 feed_address=round_range.feed.feed_address.lower(),
                 round_id=str(round_id),
-                reason=str(error),
+                reason=sanitize_rpc_error(error),
                 processed_at=processed_at,
                 retryable=is_retryable_rpc_error(error),
             )
@@ -471,7 +477,7 @@ def extract_historical_rounds(
                         HistoricalIssue(
                             feed_address=round_range.feed.feed_address.lower(),
                             round_id=str(round_id),
-                            reason=str(error),
+                            reason=sanitize_rpc_error(error),
                             processed_at=processed_at,
                             retryable=is_retryable_rpc_error(error),
                         ),

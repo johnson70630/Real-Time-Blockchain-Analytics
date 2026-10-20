@@ -1,5 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
+import json
 
 import pytest
 from pyspark.sql import SparkSession
@@ -17,7 +18,9 @@ from config.versions import SILVER_JOB_VERSION
 from spark.build_market_data_silver import (
     PRICE_PRECISION,
     PRICE_SCALE,
+    build_chainlink_bootstrap_silver_increment,
     build_market_data_silver,
+    build_market_data_silver_increment,
     get_market_price_schema,
     transform_market_data,
 )
@@ -294,3 +297,89 @@ def test_build_unions_live_and_historical_bronze(
     assert stats.bronze_records_read == 3
     assert stats.duplicate_records_removed == 1
     assert stats.silver_records_written == 2
+
+
+def test_forward_increment_writes_only_its_deterministic_batch(
+    spark: SparkSession,
+    tmp_path,
+) -> None:
+    bronze_root = tmp_path / "bronze_forward"
+    batch_root = bronze_root / "block_123000_123456"
+    committed_batch = (
+        batch_root
+        / f"feed_{NORMALIZED_FEED_ADDRESS}"
+        / "phase_0"
+        / "round_42_42"
+    )
+    silver_root = tmp_path / "silver" / "market_prices"
+    quarantine_root = tmp_path / "quarantine" / "market_prices"
+    row = _row(
+        json_value=json.dumps({"chain": "arbitrum"}),
+        block_number=123456,
+    )
+    bronze = spark.createDataFrame([row], BRONZE_SCHEMA).withColumn(
+        "observation_date", to_date(lit("2026-07-23"))
+    )
+    bronze.write.mode("overwrite").partitionBy(
+        "chain", "observation_date"
+    ).parquet(str(committed_batch))
+    (committed_batch / "_COMMITTED").touch()
+    existing_silver, _ = _transform(spark, [_row(round_id="41")])
+    existing_silver.write.mode("overwrite").parquet(str(silver_root / "base"))
+
+    stats = build_market_data_silver_increment(
+        spark,
+        start_block=123000,
+        end_block=123456,
+        bronze_root=bronze_root,
+        silver_root=silver_root,
+        quarantine_root=quarantine_root,
+    )
+
+    increment = silver_root / "increments" / "block_123000_123456"
+    assert stats.silver_records_written == 1
+    assert spark.read.parquet(str(increment)).count() == 1
+
+
+def test_bootstrap_increment_replaces_partial_output_and_marks_completion(
+    spark: SparkSession,
+    tmp_path,
+) -> None:
+    historical_root = tmp_path / "historical"
+    bootstrap_root = tmp_path / "bootstrap_batch"
+    silver_root = tmp_path / "silver" / "market_prices"
+    quarantine_root = tmp_path / "quarantine" / "market_prices"
+    output = silver_root / "increments" / "bootstrap_515520400"
+
+    historical = spark.createDataFrame([_row()], BRONZE_SCHEMA).withColumn(
+        "observation_date", to_date(lit("2026-07-23"))
+    )
+    bootstrap = spark.createDataFrame(
+        [_row(round_id="43")], BRONZE_SCHEMA
+    ).withColumn("observation_date", to_date(lit("2026-07-23")))
+    historical.write.mode("overwrite").parquet(str(historical_root))
+    bootstrap.write.mode("overwrite").parquet(str(bootstrap_root))
+
+    existing_silver, _ = _transform(spark, [_row()])
+    existing_silver.write.mode("overwrite").parquet(str(silver_root / "base"))
+    bootstrap.write.mode("overwrite").parquet(str(output))
+
+    first = build_chainlink_bootstrap_silver_increment(
+        spark,
+        historical_root=historical_root,
+        bootstrap_paths=(bootstrap_root,),
+        silver_root=silver_root,
+        quarantine_root=quarantine_root,
+    )
+    second = build_chainlink_bootstrap_silver_increment(
+        spark,
+        historical_root=historical_root,
+        bootstrap_paths=(bootstrap_root,),
+        silver_root=silver_root,
+        quarantine_root=quarantine_root,
+    )
+
+    assert first.silver_records_written == 1
+    assert second.silver_records_written == 1
+    assert spark.read.parquet(str(output)).count() == 1
+    assert (output / "_COMMITTED").exists()

@@ -93,13 +93,10 @@ def main() -> None:
         prior_states = store.load_state()
         prior_issues = store.load_issues()
         for state in prior_states:
-            if (state.from_block, state.to_block) != (
-                args.from_block,
-                args.to_block,
-            ):
+            if state.from_block != args.from_block or args.to_block < state.to_block:
                 raise ValueError(
-                    "Configured block window does not match persisted "
-                    "Chainlink backfill state"
+                    "Configured window must preserve the historical start and "
+                    "must not shrink the persisted Chainlink end block"
                 )
 
         ranges = tuple(
@@ -117,12 +114,13 @@ def main() -> None:
             raise ValueError("Discovered duplicate Chainlink feed-phase ranges")
         for state in prior_states:
             current = range_by_key.get(state.key)
-            if current is None or (
-                current.start_round_id,
-                current.end_round_id,
-            ) != (state.start_round_id, state.end_round_id):
+            if current is None or current.start_round_id != state.start_round_id:
                 raise ValueError(
-                    f"Chainlink round boundaries changed for {state.key}"
+                    f"Chainlink starting round changed for {state.key}"
+                )
+            if current.end_round_id < state.end_round_id:
+                raise ValueError(
+                    f"Chainlink ending round regressed for {state.key}"
                 )
 
         prior_next = {state.key: state.next_round_id for state in prior_states}

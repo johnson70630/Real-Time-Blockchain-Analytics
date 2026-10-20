@@ -8,6 +8,7 @@ from backfill.chainlink import (
     encode_proxy_round_id,
     extract_historical_rounds,
     merge_observations,
+    sanitize_rpc_error,
     split_proxy_round_id,
 )
 from market_data.feeds import ChainlinkFeed
@@ -84,6 +85,14 @@ def test_proxy_round_ids_preserve_phase_and_aggregator_components() -> None:
     assert split_proxy_round_id(encoded) == (3, 42)
     with pytest.raises(ValueError, match="phase_id"):
         encode_proxy_round_id(0, 42)
+
+
+def test_rpc_errors_do_not_persist_credential_bearing_urls() -> None:
+    reason = sanitize_rpc_error(
+        "429 Client Error for https://arb-mainnet.example/v2/secret-token"
+    )
+    assert "secret-token" not in reason
+    assert "<rpc-url>" in reason
 
 
 def test_round_discovery_handles_proxy_phase_transition() -> None:
