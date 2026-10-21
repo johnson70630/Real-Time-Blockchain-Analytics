@@ -135,6 +135,11 @@ CHAINLINK_FORWARD_WATERMARK = WatermarkIdentity(
     source_name="chainlink_feeds",
     chain_id=ARBITRUM_CHAIN_ID,
 )
+UNISWAP_FORWARD_WATERMARK = WatermarkIdentity(
+    pipeline_name="uniswap_forward",
+    source_name="uniswap_v3_pools",
+    chain_id=ARBITRUM_CHAIN_ID,
+)
 
 
 def chainlink_feed_watermark(feed_address: str) -> WatermarkIdentity:
@@ -227,6 +232,41 @@ def commit_watermark(
     return store.advance(
         identity,
         expected_value=current.committed_value,
+        candidate_value=candidate_value,
+        successful_run_id=run_id,
+    )
+
+
+def commit_watermark_from_expected(
+    store: WatermarkStore,
+    identity: WatermarkIdentity,
+    *,
+    expected_value: int,
+    candidate_value: int,
+    successful_run_id: str,
+    processing_succeeded: bool,
+) -> WatermarkState:
+    """Commit against the position used to plan work, rejecting stale writers."""
+    if not processing_succeeded:
+        raise UnsafeWatermarkCommitError(
+            "Watermark commit requires a successful processing boundary"
+        )
+    current = store.get(identity)
+    if current is None:
+        raise MissingWatermarkError(
+            f"Watermark {identity.pipeline_name!r} must be initialized explicitly"
+        )
+    if current.committed_value != expected_value:
+        raise WatermarkCommitConflictError(
+            f"Expected committed value {expected_value}, found "
+            f"{current.committed_value}"
+        )
+    run_id = _validate_run_id(successful_run_id)
+    if not validate_candidate(expected_value, candidate_value):
+        return current
+    return store.advance(
+        identity,
+        expected_value=expected_value,
         candidate_value=candidate_value,
         successful_run_id=run_id,
     )

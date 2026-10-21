@@ -23,7 +23,11 @@ from backfill.aave_v3 import BackfillIssue, EventEnvelope, merge_events
 from config.storage import join_location
 from reference_data.storage import path_exists
 from spark.event_schema import get_event_schema
-from spark.parquet import write_partitioned_dataset_atomic
+from spark.parquet import (
+    delete_dataset,
+    write_completion_marker,
+    write_partitioned_dataset_atomic,
+)
 
 
 _event_schema = get_event_schema()
@@ -143,7 +147,7 @@ def _event_frame(
                 event.producer_version,
                 event.schema_version,
                 payload,
-                None,
+                event.payload.get("pool_address"),
                 event.payload["raw_data"],
                 event.payload["raw_topics"],
                 ingested_at.isoformat(),
@@ -151,7 +155,9 @@ def _event_frame(
                 bronze_file,
             )
         )
-    frame = spark.createDataFrame(rows, BRONZE_INPUT_SCHEMA)
+    partition_count = max(1, min(256, (len(rows) + 249) // 250))
+    row_rdd = spark.sparkContext.parallelize(rows, partition_count)
+    frame = spark.createDataFrame(row_rdd, BRONZE_INPUT_SCHEMA)
     for field in _TIMESTAMP_FIELDS:
         frame = frame.withColumn(field, to_timestamp(field))
     return frame.orderBy("block_number", "log_index")
@@ -344,3 +350,120 @@ class AaveForwardBatchStore:
         )
         if persisted_issues.count() != len(issues):
             raise RuntimeError("Forward quarantine persisted row count mismatch")
+
+
+class UniswapRecoveryBatchStore(AaveForwardBatchStore):
+    """Persist committed Uniswap recovery batches outside streaming Bronze."""
+
+    def write_and_validate(
+        self,
+        *,
+        start_block: int,
+        end_block: int,
+        events: tuple[EventEnvelope, ...],
+        issues: tuple[BackfillIssue, ...],
+        processed_at: datetime,
+        contract_fingerprint: str,
+        pool_count: int,
+        event_topic_count: int,
+        deduplication_paths: tuple[tuple[str, bool], ...] = (),
+    ) -> None:
+        """Write, validate, then expose an explicit complete-batch marker."""
+        if len(contract_fingerprint) != 64:
+            raise ValueError("Recovery contract fingerprint must be SHA-256")
+        if pool_count <= 0 or event_topic_count <= 0:
+            raise ValueError("Recovery contract counts must be positive")
+        batch_name = self._batch_name(start_block, end_block)
+        event_path = str(join_location(self.bronze_path, batch_name))
+        issue_path = str(join_location(self.quarantine_path, batch_name))
+        contract_marker = (
+            f"_CONTRACT_{contract_fingerprint}_POOLS_{pool_count}_"
+            f"TOPICS_{event_topic_count}"
+        )
+        committed_marker = str(join_location(event_path, "_COMMITTED"))
+        if path_exists(self.spark, committed_marker):
+            expected_contract = str(join_location(event_path, contract_marker))
+            if not path_exists(self.spark, expected_contract):
+                raise RuntimeError("Committed recovery batch contract mismatch")
+            return
+        if path_exists(self.spark, event_path):
+            delete_dataset(self.spark, event_path)
+        if path_exists(self.spark, issue_path):
+            delete_dataset(self.spark, issue_path)
+
+        canonical = merge_events((), events)
+        if len(canonical) != len(events):
+            raise ValueError("Recovery batch contains duplicate event identities")
+        frame = _event_frame(
+            self.spark,
+            canonical,
+            processed_at,
+            event_path,
+        )
+        existing_keys = None
+        for path, hive_partitioned in deduplication_paths:
+            if not path_exists(self.spark, path):
+                continue
+            reader = self.spark.read.option("mergeSchema", "true")
+            reader = (
+                reader.option("basePath", path)
+                if hive_partitioned
+                else reader.option("recursiveFileLookup", "true")
+            )
+            keys = reader.parquet(path).select(
+                "chain",
+                "transaction_hash",
+                "log_index",
+            )
+            existing_keys = (
+                keys
+                if existing_keys is None
+                else existing_keys.unionByName(keys)
+            )
+        if existing_keys is not None:
+            frame = frame.join(
+                existing_keys.distinct(),
+                on=["chain", "transaction_hash", "log_index"],
+                how="left_anti",
+            )
+        expected_count = frame.count()
+        write_partitioned_dataset_atomic(frame, event_path, ())
+
+        issue_rows = [
+            (
+                issue.block_number,
+                issue.transaction_hash,
+                issue.log_index,
+                issue.reason,
+                issue.processed_at,
+            )
+            for issue in issues
+        ]
+        issue_frame = self.spark.createDataFrame(issue_rows, ISSUE_SCHEMA).orderBy(
+            "block_number",
+            "log_index",
+        )
+        write_partitioned_dataset_atomic(issue_frame, issue_path, ())
+
+        persisted = self.spark.read.schema(BRONZE_SCHEMA).parquet(event_path)
+        if persisted.count() != expected_count:
+            raise RuntimeError("Recovery Bronze persisted row count mismatch")
+        if persisted.dropDuplicates(
+            ("chain", "transaction_hash", "log_index")
+        ).count() != expected_count:
+            raise RuntimeError("Recovery Bronze contains duplicate identities")
+        if persisted.filter(
+            (persisted.block_number < start_block)
+            | (persisted.block_number > end_block)
+        ).count():
+            raise RuntimeError("Recovery Bronze contains out-of-range events")
+        if self.spark.read.schema(ISSUE_SCHEMA).parquet(issue_path).count() != len(
+            issues
+        ):
+            raise RuntimeError("Recovery quarantine persisted row count mismatch")
+        write_completion_marker(
+            persisted,
+            event_path,
+            marker_name=contract_marker,
+        )
+        write_completion_marker(persisted, event_path)

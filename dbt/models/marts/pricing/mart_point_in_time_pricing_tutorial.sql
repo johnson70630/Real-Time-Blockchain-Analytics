@@ -8,6 +8,40 @@ with selected_prices as (
         on pit.matched_observation_id = observations.observation_id
 ),
 
+canonical_future_price_times as (
+    select
+        *
+    from {{ ref('fact_market_price') }}
+    where price > 0
+    qualify row_number() over (
+        partition by
+            chain_key,
+            lower(feed_address),
+            upper(base_asset),
+            upper(quote_asset),
+            feed_updated_at
+        order by
+            block_number,
+            length(ltrim(round_id, '0')),
+            ltrim(round_id, '0'),
+            observation_id
+    ) = 1
+),
+
+future_price_intervals as (
+    select
+        *,
+        lag(feed_updated_at) over (
+            partition by
+                chain_key,
+                lower(feed_address),
+                upper(base_asset),
+                upper(quote_asset)
+            order by feed_updated_at
+        ) as previous_feed_updated_at
+    from canonical_future_price_times
+),
+
 next_observations as (
     select
         pit.event_domain,
@@ -18,22 +52,16 @@ next_observations as (
         observations.price as next_price,
         observations.feed_updated_at as next_feed_updated_at
     from {{ ref('int_defi_event_token_prices') }} as pit
-    inner join {{ ref('fact_market_price') }} as observations
+    inner join future_price_intervals as observations
         on pit.chain_key = observations.chain_key
         and lower(pit.mapped_feed_address) = lower(observations.feed_address)
         and upper(pit.mapped_base_asset) = upper(observations.base_asset)
         and upper(pit.mapped_quote_asset) = upper(observations.quote_asset)
-        and observations.price > 0
         and observations.feed_updated_at > pit.event_timestamp
-    qualify row_number() over (
-        partition by pit.event_domain, pit.event_id, pit.token_side
-        order by
-            observations.feed_updated_at,
-            observations.block_number,
-            length(ltrim(observations.round_id, '0')),
-            ltrim(observations.round_id, '0'),
-            observations.observation_id
-    ) = 1
+        and (
+            observations.previous_feed_updated_at <= pit.event_timestamp
+            or observations.previous_feed_updated_at is null
+        )
 )
 
 select

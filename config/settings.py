@@ -46,6 +46,11 @@ def get_aave_backfill_rpc_url() -> str:
     return get_required_env("AAVE_BACKFILL_RPC_URL")
 
 
+def get_blockchain_recovery_rpc_url() -> str:
+    """Return the provider-neutral RPC endpoint for bounded recovery jobs."""
+    return get_required_env("BLOCKCHAIN_RECOVERY_RPC_URL")
+
+
 def get_aave_v3_pool_address() -> str:
     """Return the Pool address required only when Aave V3 is enabled."""
     return get_required_env("AAVE_V3_POOL_ADDRESS")
@@ -139,6 +144,65 @@ def get_aave_bootstrap_max_range_attempts() -> int:
 def get_aave_forward_max_blocks_per_run() -> int:
     """Return the finite upper bound for one normal forward execution."""
     return _get_positive_integer_setting("AAVE_FORWARD_MAX_BLOCKS_PER_RUN", 600_000)
+
+
+def get_uniswap_project_collection_start_block() -> int:
+    """Return the first supported block for Uniswap source coverage."""
+    return _get_positive_integer_setting(
+        "UNISWAP_PROJECT_COLLECTION_START_BLOCK",
+        510_496_864,
+    )
+
+
+def get_uniswap_confirmation_depth() -> int:
+    """Return the operational lag applied to Uniswap recovery scans."""
+    raw_value = os.getenv("UNISWAP_CONFIRMATION_DEPTH", "1200")
+    try:
+        value = int(raw_value)
+    except ValueError as error:
+        raise ValueError(
+            "UNISWAP_CONFIRMATION_DEPTH must be an integer"
+        ) from error
+    if value < 0:
+        raise ValueError("UNISWAP_CONFIRMATION_DEPTH must not be negative")
+    return value
+
+
+def get_uniswap_recovery_chunk_size() -> int:
+    """Return the preferred parent block span for one recovery query group."""
+    return _get_positive_integer_setting("UNISWAP_RECOVERY_CHUNK_SIZE", 5_000)
+
+
+def get_uniswap_recovery_address_batch_size() -> int:
+    """Return the maximum canonical pool addresses in one RPC query."""
+    return _get_positive_integer_setting(
+        "UNISWAP_RECOVERY_ADDRESS_BATCH_SIZE",
+        68,
+    )
+
+
+def get_uniswap_recovery_min_range_size() -> int:
+    """Return the smallest block range eligible for adaptive splitting."""
+    return _get_positive_integer_setting(
+        "UNISWAP_RECOVERY_MIN_RANGE_SIZE",
+        1_000,
+    )
+
+
+def get_uniswap_recovery_max_range_attempts() -> int:
+    """Return the finite adaptive-attempt budget for one parent range."""
+    return _get_positive_integer_setting(
+        "UNISWAP_RECOVERY_MAX_RANGE_ATTEMPTS",
+        64,
+    )
+
+
+def get_uniswap_forward_max_blocks_per_run() -> int:
+    """Return the finite cap for one normal Uniswap recovery cycle."""
+    return _get_positive_integer_setting(
+        "UNISWAP_FORWARD_MAX_BLOCKS_PER_RUN",
+        600_000,
+    )
 
 
 def get_uniswap_v3_factory_start_block() -> int:

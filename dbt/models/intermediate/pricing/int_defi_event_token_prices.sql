@@ -1,6 +1,43 @@
 {% set max_price_age_seconds = var('max_price_age_seconds', 300) | int %}
 
-with candidates as (
+with canonical_price_times as (
+    select
+        *
+    from {{ ref('fact_market_price') }}
+    where price > 0
+    qualify row_number() over (
+        partition by
+            chain_key,
+            lower(feed_address),
+            upper(base_asset),
+            upper(quote_asset),
+            feed_updated_at
+        order by
+            block_number desc nulls last,
+            length(ltrim(round_id, '0')) desc nulls last,
+            ltrim(round_id, '0') desc nulls last,
+            silver_processed_at desc nulls last,
+            observation_id desc nulls last,
+            feed_address desc nulls last,
+            price desc nulls last
+    ) = 1
+),
+
+price_intervals as (
+    select
+        *,
+        lead(feed_updated_at) over (
+            partition by
+                chain_key,
+                lower(feed_address),
+                upper(base_asset),
+                upper(quote_asset)
+            order by feed_updated_at
+        ) as next_feed_updated_at
+    from canonical_price_times
+),
+
+candidates as (
     select
         event_tokens.event_domain,
         event_tokens.event_id,
@@ -28,28 +65,16 @@ with candidates as (
     left join {{ ref('token_price_feed_mapping') }} as mappings
         on lower(tokens.chain) = lower(mappings.chain)
         and lower(tokens.token_address) = lower(mappings.token_address)
-    left join {{ ref('fact_market_price') }} as prices
+    left join price_intervals as prices
         on event_tokens.chain_key = prices.chain_key
         and lower(mappings.feed_address) = lower(prices.feed_address)
         and upper(mappings.base_asset) = upper(prices.base_asset)
         and upper(mappings.quote_asset) = upper(prices.quote_asset)
-        and prices.price > 0
         and prices.feed_updated_at <= event_tokens.event_timestamp
-    qualify row_number() over (
-        partition by
-            event_tokens.event_domain,
-            event_tokens.event_id,
-            event_tokens.token_side
-        order by
-            prices.feed_updated_at desc nulls last,
-            prices.block_number desc nulls last,
-            length(ltrim(prices.round_id, '0')) desc nulls last,
-            ltrim(prices.round_id, '0') desc nulls last,
-            prices.silver_processed_at desc nulls last,
-            prices.observation_id desc nulls last,
-            prices.feed_address desc nulls last,
-            prices.price desc nulls last
-    ) = 1
+        and (
+            prices.next_feed_updated_at > event_tokens.event_timestamp
+            or prices.next_feed_updated_at is null
+        )
 ),
 
 classified as (

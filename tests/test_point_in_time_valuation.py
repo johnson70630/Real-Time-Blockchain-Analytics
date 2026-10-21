@@ -70,7 +70,10 @@ def test_pit_match_uses_latest_non_future_feed_timestamp() -> None:
     sql = _read(PRICING_ROOT / "int_defi_event_token_prices.sql").lower()
 
     assert "prices.feed_updated_at <= event_tokens.event_timestamp" in sql
-    assert "prices.feed_updated_at desc nulls last" in sql
+    assert "lead(feed_updated_at) over" in sql
+    assert "prices.next_feed_updated_at > event_tokens.event_timestamp" in sql
+    assert "block_number desc nulls last" in sql
+    assert "round_id, '0'" in sql
     assert "prices.observed_at" not in sql
     assert "row_number() over" in sql
     assert "price_age_seconds" in sql
@@ -80,7 +83,8 @@ def test_pit_statuses_preserve_unmapped_and_stale_events() -> None:
     sql = _read(PRICING_ROOT / "int_defi_event_token_prices.sql").lower()
 
     assert "left join {{ ref('token_price_feed_mapping') }}" in sql
-    assert "left join {{ ref('fact_market_price') }}" in sql
+    assert "from {{ ref('fact_market_price') }}" in sql
+    assert "left join price_intervals" in sql
     for status in ("unmapped", "no_prior_price", "stale", "priced"):
         assert f"'{status}'" in sql
     assert "price_status = 'priced'" in sql

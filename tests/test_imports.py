@@ -12,6 +12,7 @@ PRODUCER_MODULES = [
     "backfill.block_search",
     "backfill.run_aave_forward",
     "backfill.run_aave_incremental",
+    "backfill.run_uniswap_recovery",
     "backfill.run_chainlink_incremental",
     "backfill.run_chainlink_bootstrap_batches",
     "backfill.chainlink",
@@ -35,6 +36,8 @@ PRODUCER_MODULES = [
     "producer.protocols.uniswap_v3",
     "producer.registry",
     "orchestration.aave_forward",
+    "orchestration.uniswap_recovery",
+    "orchestration.run_uniswap_recovery",
     "orchestration.chainlink_forward",
     "orchestration.chainlink_bootstrap",
     "orchestration.run_chainlink_forward",
@@ -48,6 +51,7 @@ PRODUCER_MODULES = [
     "spark.bronze",
     "spark.build_cloud_silver",
     "spark.build_aave_silver_increment",
+    "spark.build_uniswap_silver_increment",
     "spark.build_chainlink_silver_increment",
     "spark.build_chainlink_bootstrap_silver",
     "spark.parquet",
@@ -58,6 +62,7 @@ PRODUCER_MODULES = [
     "spark.write_market_data_bronze",
     "warehouse.snowflake",
     "warehouse.completed_ranges",
+    "warehouse.leases",
 ]
 
 EXAMPLE_MODULES = [

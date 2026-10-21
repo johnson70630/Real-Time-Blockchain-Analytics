@@ -43,6 +43,13 @@ def read_bronze_events(spark: SparkSession) -> DataFrame:
             .option("mergeSchema", "true")
             .parquet(forward_path)
         )
+    uniswap_recovery_path = DATA_LAKE.get("bronze_uniswap_recovery")
+    if path_exists(spark, uniswap_recovery_path):
+        sources.append(
+            spark.read.option("recursiveFileLookup", "true")
+            .option("mergeSchema", "true")
+            .parquet(uniswap_recovery_path)
+        )
     combined = sources[0]
     for source in sources[1:]:
         combined = combined.unionByName(source, allowMissingColumns=True)
@@ -118,6 +125,77 @@ def build_uniswap_silver(spark: SparkSession) -> int:
         DATA_LAKE.get("silver_uniswap_swaps"),
         (),
     )
+    return count
+
+
+def build_uniswap_silver_increment(
+    spark: SparkSession,
+    *,
+    start_block: int,
+    end_block: int,
+) -> int:
+    """Normalize one committed recovery batch without rewriting base Silver."""
+    if start_block < 0 or end_block < start_block:
+        raise ValueError("Uniswap Silver increment range is invalid")
+    batch_name = f"range_{start_block}_{end_block}"
+    bronze_path = str(
+        join_location(DATA_LAKE.get("bronze_uniswap_recovery"), batch_name)
+    )
+    if not path_exists(spark, bronze_path):
+        raise FileNotFoundError(
+            f"Uniswap recovery Bronze does not exist: {batch_name}"
+        )
+    output_path = str(
+        join_location(
+            DATA_LAKE.get("silver_uniswap_swaps"),
+            "increments",
+            batch_name,
+        )
+    )
+    if path_exists(spark, output_path):
+        return spark.read.parquet(output_path).count()
+    bronze = spark.read.option("mergeSchema", "true").parquet(bronze_path)
+    silver = _deduplicate(
+        bronze.filter(
+            (col("protocol") == "uniswap_v3")
+            & (col("event_type") == "swap")
+            & (col("block_number") >= start_block)
+            & (col("block_number") <= end_block)
+            & col("chain").isNotNull()
+            & col("transaction_hash").isNotNull()
+            & col("pool_address").isNotNull()
+            & col("log_index").isNotNull()
+        )
+    ).select(
+        _event_id().alias("event_id"),
+        "protocol",
+        "chain",
+        "event_date",
+        "block_timestamp",
+        "event_type",
+        "block_number",
+        "transaction_hash",
+        "pool_address",
+        col("payload.amount0").alias("amount0_raw"),
+        col("payload.amount1").alias("amount1_raw"),
+        "log_index",
+        "raw_data",
+        "raw_topics",
+        "kafka_timestamp",
+        "ingested_at",
+        "producer_version",
+        "schema_version",
+        "bronze_processed_at",
+        "bronze_file",
+        current_timestamp().alias("silver_processed_at"),
+        lit(SILVER_JOB_VERSION).alias("silver_job_version"),
+    )
+    silver_root = DATA_LAKE.get("silver_uniswap_swaps")
+    if path_exists(spark, silver_root):
+        existing_ids = spark.read.parquet(silver_root).select("event_id").distinct()
+        silver = silver.join(existing_ids, on="event_id", how="left_anti")
+    count = silver.count()
+    write_partitioned_dataset_atomic(silver, output_path, ())
     return count
 
 

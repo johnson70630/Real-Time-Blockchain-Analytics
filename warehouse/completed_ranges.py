@@ -6,12 +6,25 @@ import os
 import re
 from contextlib import closing
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Any, Mapping
 
 from orchestration.aave_forward import CompletedBlockRange
 from orchestration.watermark import WatermarkIdentity
 
 _IDENTIFIER_PATTERN = re.compile(r"^[A-Za-z_][A-Za-z0-9_$]*$")
+
+
+class CompletedRangeEvidenceError(RuntimeError):
+    """Base exception for invalid completed-range evidence."""
+
+
+class DuplicateCompletedRangeEvidence(CompletedRangeEvidenceError):
+    """Raised when one logical interval has multiple physical evidence rows."""
+
+
+class ConflictingCompletedRangeEvidence(CompletedRangeEvidenceError):
+    """Raised when an interval exists with different success metadata."""
 
 
 def _identifier(value: str, setting: str) -> str:
@@ -67,6 +80,49 @@ class CompletedRangeTableConfig:
             )
         )
 
+
+@dataclass(frozen=True, slots=True)
+class CompletedRangeCoverage:
+    """Physical and logical coverage diagnostics for a range ledger."""
+
+    physical_rows: int
+    logical_ranges: int
+    duplicate_groups: int
+    highest_contiguous_block: int
+    gaps: tuple[tuple[int, int], ...]
+
+
+def summarize_completed_range_coverage(
+    project_start_block: int,
+    completed_ranges: tuple[CompletedBlockRange, ...],
+) -> CompletedRangeCoverage:
+    """Summarize coverage over distinct intervals while surfacing duplicates."""
+    if project_start_block < 0:
+        raise ValueError("project_start_block must not be negative")
+    counts: dict[tuple[int, int], int] = {}
+    for item in completed_ranges:
+        key = (item.start_block, item.end_block)
+        counts[key] = counts.get(key, 0) + 1
+    intervals = sorted(counts)
+    contiguous_end = project_start_block - 1
+    gaps: list[tuple[int, int]] = []
+    merged_end = project_start_block - 1
+    for start_block, end_block in intervals:
+        if end_block < project_start_block:
+            continue
+        effective_start = max(start_block, project_start_block)
+        if effective_start > merged_end + 1:
+            gaps.append((merged_end + 1, effective_start - 1))
+        merged_end = max(merged_end, end_block)
+        if effective_start <= contiguous_end + 1:
+            contiguous_end = max(contiguous_end, end_block)
+    return CompletedRangeCoverage(
+        physical_rows=len(completed_ranges),
+        logical_ranges=len(counts),
+        duplicate_groups=sum(count > 1 for count in counts.values()),
+        highest_contiguous_block=contiguous_end,
+        gaps=tuple(gaps),
+    )
 
 class SnowflakeCompletedRangeStore:
     """Read and append successfully persisted source block intervals."""
@@ -134,16 +190,29 @@ class SnowflakeCompletedRangeStore:
             return ()
         for completed_range in completed_ranges:
             self._validate_completed_range(completed_range)
-        query = self._insert_query()
         with closing(self.connection.cursor()) as cursor:
             cursor.execute("BEGIN TRANSACTION")
             try:
                 for completed_range in completed_ranges:
+                    existing = self._matching_rows(
+                        cursor,
+                        identity,
+                        completed_range,
+                    )
+                    if len(existing) > 1:
+                        raise DuplicateCompletedRangeEvidence(
+                            "Multiple physical evidence rows exist for logical "
+                            f"range {completed_range.start_block}-"
+                            f"{completed_range.end_block}"
+                        )
+                    if existing:
+                        self._assert_identical(completed_range, existing[0])
+                        continue
                     cursor.execute(
-                        query,
+                        self._insert_query(),
                         self._insert_parameters(identity, completed_range),
                     )
-                    if cursor.rowcount not in (0, 1):
+                    if cursor.rowcount != 1:
                         raise RuntimeError(
                             "Unexpected completed-range insert count"
                         )
@@ -174,17 +243,7 @@ class SnowflakeCompletedRangeStore:
                 successful_run_id,
                 completed_at
             )
-            SELECT %s, %s, %s, %s, %s, %s, %s, %s
-            WHERE NOT EXISTS (
-                SELECT 1
-                FROM {self.config.qualified_table}
-                WHERE pipeline_name = %s
-                  AND source_name = %s
-                  AND chain_id = %s
-                  AND watermark_type = %s
-                  AND start_block = %s
-                  AND end_block = %s
-            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
 
     def _insert_parameters(
@@ -192,14 +251,52 @@ class SnowflakeCompletedRangeStore:
         identity: WatermarkIdentity,
         completed_range: CompletedBlockRange,
     ) -> tuple[Any, ...]:
-        key = self._key(identity)
         return (
-            *key,
+            *self._key(identity),
             completed_range.start_block,
             completed_range.end_block,
             completed_range.successful_run_id,
             completed_range.completed_at,
-            *key,
-            completed_range.start_block,
-            completed_range.end_block,
         )
+
+    def _matching_rows(
+        self,
+        cursor: Any,
+        identity: WatermarkIdentity,
+        completed_range: CompletedBlockRange,
+    ) -> list[tuple[Any, ...]]:
+        query = f"""
+            SELECT successful_run_id, completed_at
+            FROM {self.config.qualified_table}
+            WHERE pipeline_name = %s
+              AND source_name = %s
+              AND chain_id = %s
+              AND watermark_type = %s
+              AND start_block = %s
+              AND end_block = %s
+            ORDER BY completed_at
+        """
+        cursor.execute(
+            query,
+            (
+                *self._key(identity),
+                completed_range.start_block,
+                completed_range.end_block,
+            ),
+        )
+        return list(cursor.fetchall())
+
+    @staticmethod
+    def _assert_identical(
+        candidate: CompletedBlockRange,
+        existing: tuple[Any, ...],
+    ) -> None:
+        run_id, completed_at = existing
+        if (
+            str(run_id) != candidate.successful_run_id
+            or not isinstance(completed_at, datetime)
+            or completed_at != candidate.completed_at
+        ):
+            raise ConflictingCompletedRangeEvidence(
+                "Completed range already exists with conflicting success metadata"
+            )

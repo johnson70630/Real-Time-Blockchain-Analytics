@@ -11,8 +11,11 @@ import pytest
 from orchestration.aave_forward import CompletedBlockRange
 from orchestration.watermark import AAVE_LEGACY_BOOTSTRAP_RANGES
 from warehouse.completed_ranges import (
+    ConflictingCompletedRangeEvidence,
     CompletedRangeTableConfig,
+    DuplicateCompletedRangeEvidence,
     SnowflakeCompletedRangeStore,
+    summarize_completed_range_coverage,
 )
 
 NOW = datetime(2026, 10, 13, tzinfo=UTC)
@@ -58,9 +61,8 @@ def test_store_lists_ordered_ranges_for_exact_identity() -> None:
     assert parameters == ("aave_forward", "alchemy_rpc", 42161, "block_number")
 
 
-@pytest.mark.parametrize("rowcount", [0, 1])
-def test_exact_range_retry_is_safe_and_values_are_bound(rowcount: int) -> None:
-    connection, cursor = _mock_connection(rowcount=rowcount)
+def test_new_range_is_inserted_and_values_are_bound() -> None:
+    connection, cursor = _mock_connection(rowcount=1)
     completed = CompletedBlockRange(100, 109, "run-safe", NOW)
 
     result = SnowflakeCompletedRangeStore(connection).record_range(
@@ -68,15 +70,34 @@ def test_exact_range_retry_is_safe_and_values_are_bound(rowcount: int) -> None:
         completed,
     )
 
-    insert_call = cursor.execute.call_args_list[1]
+    insert_call = cursor.execute.call_args_list[2]
     query, parameters = insert_call.args
     assert result == completed
-    assert "WHERE NOT EXISTS" in query
+    assert "VALUES" in query
     assert "run-safe" not in query
     assert "run-safe" in parameters
-    assert parameters.count(100) == 2
-    assert parameters.count(109) == 2
+    assert parameters.count(100) == 1
+    assert parameters.count(109) == 1
     assert cursor.execute.call_args_list[0].args == ("BEGIN TRANSACTION",)
+    assert cursor.execute.call_args_list[-1].args == ("COMMIT",)
+
+
+def test_exact_range_retry_is_a_noop() -> None:
+    connection, cursor = _mock_connection(
+        fetchall=[("run-safe", NOW)],
+    )
+    completed = CompletedBlockRange(100, 109, "run-safe", NOW)
+
+    result = SnowflakeCompletedRangeStore(connection).record_range(
+        AAVE_LEGACY_BOOTSTRAP_RANGES,
+        completed,
+    )
+
+    assert result == completed
+    assert all(
+        "INSERT INTO" not in call.args[0]
+        for call in cursor.execute.call_args_list
+    )
     assert cursor.execute.call_args_list[-1].args == ("COMMIT",)
 
 
@@ -92,6 +113,7 @@ def test_store_rejects_unexpected_insert_cardinality() -> None:
 
 def test_multiple_completed_ranges_are_committed_atomically() -> None:
     connection, cursor = _mock_connection(rowcount=1)
+    cursor.fetchall.side_effect = [[], []]
     ranges = (
         CompletedBlockRange(100, 109, "run", NOW),
         CompletedBlockRange(110, 119, "run", NOW),
@@ -105,9 +127,51 @@ def test_multiple_completed_ranges_are_committed_atomically() -> None:
     assert result == ranges
     calls = cursor.execute.call_args_list
     assert calls[0].args == ("BEGIN TRANSACTION",)
-    assert "INSERT INTO" in calls[1].args[0]
+    assert "SELECT successful_run_id" in calls[1].args[0]
     assert "INSERT INTO" in calls[2].args[0]
-    assert calls[3].args == ("COMMIT",)
+    assert "SELECT successful_run_id" in calls[3].args[0]
+    assert "INSERT INTO" in calls[4].args[0]
+    assert calls[5].args == ("COMMIT",)
+
+
+def test_duplicate_and_conflicting_evidence_are_rejected() -> None:
+    completed = CompletedBlockRange(100, 109, "run-safe", NOW)
+    duplicate_connection, duplicate_cursor = _mock_connection(
+        fetchall=[("run-safe", NOW), ("run-safe", NOW)],
+    )
+    with pytest.raises(DuplicateCompletedRangeEvidence):
+        SnowflakeCompletedRangeStore(duplicate_connection).record_range(
+            AAVE_LEGACY_BOOTSTRAP_RANGES,
+            completed,
+        )
+    assert duplicate_cursor.execute.call_args_list[-1].args == ("ROLLBACK",)
+
+    conflict_connection, conflict_cursor = _mock_connection(
+        fetchall=[("other-run", NOW)],
+    )
+    with pytest.raises(ConflictingCompletedRangeEvidence):
+        SnowflakeCompletedRangeStore(conflict_connection).record_range(
+            AAVE_LEGACY_BOOTSTRAP_RANGES,
+            completed,
+        )
+    assert conflict_cursor.execute.call_args_list[-1].args == ("ROLLBACK",)
+
+
+def test_coverage_uses_logical_distinct_ranges_and_reports_duplicates() -> None:
+    ranges = (
+        CompletedBlockRange(100, 109, "run-a", NOW),
+        CompletedBlockRange(100, 109, "run-a", NOW),
+        CompletedBlockRange(110, 119, "run-b", NOW),
+        CompletedBlockRange(125, 129, "run-c", NOW),
+    )
+
+    coverage = summarize_completed_range_coverage(100, ranges)
+
+    assert coverage.physical_rows == 4
+    assert coverage.logical_ranges == 3
+    assert coverage.duplicate_groups == 1
+    assert coverage.highest_contiguous_block == 119
+    assert coverage.gaps == ((120, 124),)
 
 
 def test_provisioning_sql_is_owner_run_and_runtime_is_append_only() -> None:
