@@ -1,4 +1,4 @@
-.PHONY: kafka-up kafka-down producer producer-build producer-up producer-logs producer-down market-data market-data-build market-data-up market-data-logs market-data-down uniswap-pools uniswap-pools-bootstrap uniswap-recovery-bootstrap token-metadata aave-backfill chainlink-backfill bronze market-data-bronze market-data-silver silver aave-silver price-enrichment gold snowflake-sql snowflake-load dashboard data-lab airflow-init airflow-up airflow-down airflow-logs airflow-test quality test lint check clean-data
+.PHONY: kafka-up kafka-down producer producer-build producer-up producer-logs producer-down market-data market-data-build market-data-up market-data-logs market-data-down uniswap-pools uniswap-pools-bootstrap uniswap-recovery-bootstrap token-metadata aave-backfill chainlink-backfill bronze market-data-bronze market-data-silver silver aave-silver price-enrichment gold snowflake-sql snowflake-load dashboard data-lab freshness-check airflow-init airflow-up airflow-down airflow-logs airflow-test quality test lint check clean-data
 
 kafka-up:
 	docker compose up -d kafka
@@ -86,6 +86,9 @@ dashboard:
 
 data-lab:
 	uv run python -m streamlit run streamlit_app.py
+
+freshness-check:
+	uv run python -m orchestration.run_freshness_checks
 
 airflow-init:
 	docker compose -f airflow/docker-compose.yaml up airflow-init
