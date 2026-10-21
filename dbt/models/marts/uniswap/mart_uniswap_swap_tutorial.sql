@@ -1,6 +1,22 @@
+{{ config(
+    materialized='incremental',
+    incremental_strategy='merge',
+    unique_key='event_id',
+    on_schema_change='fail'
+) }}
+
 with valued_swaps as (
     select *
     from {{ ref('fact_uniswap_swap_valued') }}
+    {% if is_incremental() %}
+    where valuation_updated_at > (
+        select coalesce(
+            max(valuation_updated_at),
+            '1970-01-01 00:00:00 +00:00'::timestamp_tz
+        )
+        from {{ this }}
+    )
+    {% endif %}
 ),
 
 denormalized as (
@@ -45,7 +61,8 @@ denormalized as (
         swaps.token1_price_status_reason,
         swaps.token1_mapped_feed_address,
         swaps.token1_matched_observation_id,
-        swaps.token1_matched_feed_address
+        swaps.token1_matched_feed_address,
+        swaps.valuation_updated_at
     from valued_swaps as swaps
     inner join {{ ref('dim_pool') }} as pools
         on swaps.pool_key = pools.pool_key

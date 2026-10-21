@@ -29,3 +29,11 @@ models:
           - accepted_values:
               arguments:
                 values: [priced, stale, unmapped, no_prior_price]
+      - name: event_source_loaded_at
+        data_tests: [not_null]
+      - name: price_input_loaded_at
+        description: Latest Chainlink RAW input considered by the pricing run.
+        data_tests: [not_null]
+      - name: pricing_updated_at
+        description: Change marker propagated to incremental consumers.
+        data_tests: [not_null]

@@ -1,3 +1,10 @@
+{{ config(
+    materialized='incremental',
+    incremental_strategy='merge',
+    unique_key='event_id',
+    on_schema_change='fail'
+) }}
+
 select
     swaps.event_id,
     dates.date_key,
@@ -17,6 +24,7 @@ select
     {{ normalize_token_amount('swaps.amount1_raw', 'token1.decimals') }} as amount1,
     swaps.ingested_at,
     swaps.silver_processed_at,
+    swaps.loaded_at as source_loaded_at,
     swaps.producer_version,
     swaps.schema_version,
     swaps.silver_job_version
@@ -36,3 +44,12 @@ left join {{ ref('dim_token') }} as token0
 left join {{ ref('dim_token') }} as token1
     on pools.token1_key = token1.token_key
 where swaps.swap_classification = 'CANONICAL_UNISWAP_V3'
+{% if is_incremental() %}
+    and swaps.loaded_at > (
+        select coalesce(
+            max(source_loaded_at),
+            '1970-01-01 00:00:00 +00:00'::timestamp_tz
+        )
+        from {{ this }}
+    )
+{% endif %}

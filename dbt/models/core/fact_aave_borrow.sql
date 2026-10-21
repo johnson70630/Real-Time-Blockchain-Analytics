@@ -18,6 +18,7 @@ select
     borrows.referral_code,
     borrows.ingested_at,
     borrows.silver_processed_at,
+    borrows.loaded_at as source_loaded_at,
     borrows.producer_version,
     borrows.schema_version,
     borrows.silver_job_version

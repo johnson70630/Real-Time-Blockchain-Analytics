@@ -16,6 +16,7 @@ select
     prices.block_timestamp,
     prices.ingested_at,
     prices.silver_processed_at,
+    prices.loaded_at as source_loaded_at,
     prices.producer_version,
     prices.schema_version,
     prices.silver_job_version

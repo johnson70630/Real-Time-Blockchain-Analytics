@@ -5,7 +5,8 @@ select
     block_timestamp as event_timestamp,
     chain_key,
     token0_key as token_key,
-    amount0::number(38, 18) as normalized_amount
+    amount0::number(38, 18) as normalized_amount,
+    source_loaded_at
 from {{ ref('fact_uniswap_swap') }}
 
 union all
@@ -17,7 +18,8 @@ select
     block_timestamp,
     chain_key,
     token1_key,
-    amount1::number(38, 18)
+    amount1::number(38, 18),
+    source_loaded_at
 from {{ ref('fact_uniswap_swap') }}
 
 union all
@@ -29,7 +31,8 @@ select
     block_timestamp,
     chain_key,
     reserve_token_key,
-    borrow_amount::number(38, 18)
+    borrow_amount::number(38, 18),
+    source_loaded_at
 from {{ ref('fact_aave_borrow') }}
 
 union all
@@ -41,7 +44,8 @@ select
     block_timestamp,
     chain_key,
     reserve_token_key,
-    repay_amount::number(38, 18)
+    repay_amount::number(38, 18),
+    source_loaded_at
 from {{ ref('fact_aave_repay') }}
 
 union all
@@ -53,7 +57,8 @@ select
     block_timestamp,
     chain_key,
     debt_token_key,
-    debt_to_cover::number(38, 18)
+    debt_to_cover::number(38, 18),
+    source_loaded_at
 from {{ ref('fact_aave_liquidation') }}
 
 union all
@@ -65,5 +70,6 @@ select
     block_timestamp,
     chain_key,
     collateral_token_key,
-    liquidated_collateral_amount::number(38, 18)
+    liquidated_collateral_amount::number(38, 18),
+    source_loaded_at
 from {{ ref('fact_aave_liquidation') }}

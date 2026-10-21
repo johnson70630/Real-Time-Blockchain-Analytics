@@ -1,3 +1,10 @@
+{{ config(
+    materialized='incremental',
+    incremental_strategy='merge',
+    unique_key=['event_domain', 'event_id', 'token_side'],
+    on_schema_change='fail'
+) }}
+
 with selected_prices as (
     select
         pit.*,
@@ -6,6 +13,15 @@ with selected_prices as (
     from {{ ref('int_defi_event_token_prices') }} as pit
     left join {{ ref('fact_market_price') }} as observations
         on pit.matched_observation_id = observations.observation_id
+    {% if is_incremental() %}
+    where pit.pricing_updated_at > (
+        select coalesce(
+            max(pricing_updated_at),
+            '1970-01-01 00:00:00 +00:00'::timestamp_tz
+        )
+        from {{ this }}
+    )
+    {% endif %}
 ),
 
 canonical_future_price_times as (
@@ -51,7 +67,7 @@ next_observations as (
         observations.round_id as next_round_id,
         observations.price as next_price,
         observations.feed_updated_at as next_feed_updated_at
-    from {{ ref('int_defi_event_token_prices') }} as pit
+    from selected_prices as pit
     inner join future_price_intervals as observations
         on pit.chain_key = observations.chain_key
         and lower(pit.mapped_feed_address) = lower(observations.feed_address)
@@ -100,6 +116,7 @@ select
     pit.price_status,
     pit.price_status_reason,
     pit.amount_usd,
+    pit.pricing_updated_at,
     pit.matched_observation_id is null
         or pit.price_feed_updated_at <= pit.event_timestamp
         as selected_price_is_non_future,

@@ -23,6 +23,7 @@ select
     liquidations.receive_atoken,
     liquidations.ingested_at,
     liquidations.silver_processed_at,
+    liquidations.loaded_at as source_loaded_at,
     liquidations.producer_version,
     liquidations.schema_version,
     liquidations.silver_job_version

@@ -1,3 +1,10 @@
+{{ config(
+    materialized='incremental',
+    incremental_strategy='merge',
+    unique_key='event_id',
+    on_schema_change='fail'
+) }}
+
 select
     swaps.*,
     token0.price_status as token0_price_status,
@@ -17,7 +24,12 @@ select
     token1.price_usd as token1_price_usd,
     token1.price_feed_updated_at as token1_price_feed_updated_at,
     token1.price_age_seconds as token1_price_age_seconds,
-    token1.amount_usd as amount1_usd
+    token1.amount_usd as amount1_usd,
+    greatest(
+        swaps.source_loaded_at,
+        token0.pricing_updated_at,
+        token1.pricing_updated_at
+    ) as valuation_updated_at
 from {{ ref('fact_uniswap_swap') }} as swaps
 left join {{ ref('int_defi_event_token_prices') }} as token0
     on swaps.event_id = token0.event_id
@@ -27,3 +39,27 @@ left join {{ ref('int_defi_event_token_prices') }} as token1
     on swaps.event_id = token1.event_id
     and token1.event_domain = 'uniswap_swap'
     and token1.token_side = 'token1'
+{% if is_incremental() %}
+where
+    swaps.source_loaded_at > (
+        select coalesce(
+            max(source_loaded_at),
+            '1970-01-01 00:00:00 +00:00'::timestamp_tz
+        )
+        from {{ this }}
+    )
+    or token0.pricing_updated_at > (
+        select coalesce(
+            max(valuation_updated_at),
+            '1970-01-01 00:00:00 +00:00'::timestamp_tz
+        )
+        from {{ this }}
+    )
+    or token1.pricing_updated_at > (
+        select coalesce(
+            max(valuation_updated_at),
+            '1970-01-01 00:00:00 +00:00'::timestamp_tz
+        )
+        from {{ this }}
+    )
+{% endif %}

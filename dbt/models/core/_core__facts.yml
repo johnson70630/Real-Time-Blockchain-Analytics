@@ -36,6 +36,9 @@ models:
           - not_null
           - relationships:
               arguments: {to: ref('dim_token'), field: token_key}
+      - name: source_loaded_at
+        description: RAW load timestamp used to select new or replayed events.
+        data_tests: [not_null]
 
   - name: fact_aave_borrow
     description: Canonical Aave borrow fact at one row per Borrow event.
@@ -151,6 +154,9 @@ models:
       - name: token0_price_status
         data_tests: [not_null]
       - name: token1_price_status
+        data_tests: [not_null]
+      - name: valuation_updated_at
+        description: Latest source or pricing change applied to the valued row.
         data_tests: [not_null]
 
   - name: fact_aave_borrow_valued

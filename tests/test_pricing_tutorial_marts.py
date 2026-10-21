@@ -25,7 +25,8 @@ def test_oracle_mart_uses_canonical_fact_and_exact_window_ordering() -> None:
 def test_pit_mart_preserves_canonical_match_and_separates_next_round() -> None:
     sql = _read(MART_ROOT / "mart_point_in_time_pricing_tutorial.sql").lower()
 
-    assert sql.count("ref('int_defi_event_token_prices')") == 2
+    assert sql.count("ref('int_defi_event_token_prices')") == 1
+    assert "from selected_prices as pit" in sql
     assert "pit.price_usd as valuation_price_usd" in sql
     assert "observations.feed_updated_at > pit.event_timestamp" in sql
     assert "next_price_occurs_after_event" in sql

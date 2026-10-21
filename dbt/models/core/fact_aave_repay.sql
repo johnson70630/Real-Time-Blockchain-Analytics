@@ -16,6 +16,7 @@ select
     repays.use_atokens,
     repays.ingested_at,
     repays.silver_processed_at,
+    repays.loaded_at as source_loaded_at,
     repays.producer_version,
     repays.schema_version,
     repays.silver_job_version

@@ -1,6 +1,17 @@
+{{ config(
+    materialized='incremental',
+    incremental_strategy='merge',
+    unique_key=['event_domain', 'event_id', 'token_side'],
+    on_schema_change='fail'
+) }}
+
 {% set max_price_age_seconds = var('max_price_age_seconds', 300) | int %}
 
-with canonical_price_times as (
+with event_tokens as (
+    select * from {{ ref('int_defi_event_token_amounts') }}
+),
+
+canonical_price_times as (
     select
         *
     from {{ ref('fact_market_price') }}
@@ -26,6 +37,14 @@ with canonical_price_times as (
 price_intervals as (
     select
         *,
+        lag(feed_updated_at) over (
+            partition by
+                chain_key,
+                lower(feed_address),
+                upper(base_asset),
+                upper(quote_asset)
+            order by feed_updated_at
+        ) as previous_feed_updated_at,
         lead(feed_updated_at) over (
             partition by
                 chain_key,
@@ -37,6 +56,122 @@ price_intervals as (
     from canonical_price_times
 ),
 
+price_input_state as (
+    select coalesce(
+        max(source_loaded_at),
+        '1970-01-01 00:00:00 +00:00'::timestamp_tz
+    ) as price_input_loaded_at
+    from {{ ref('fact_market_price') }}
+),
+
+{% if is_incremental() %}
+target_state as (
+    select
+        coalesce(
+            max(event_source_loaded_at),
+            '1970-01-01 00:00:00 +00:00'::timestamp_tz
+        ) as event_source_loaded_at,
+        coalesce(
+            max(price_input_loaded_at),
+            '1970-01-01 00:00:00 +00:00'::timestamp_tz
+        ) as price_input_loaded_at
+    from {{ this }}
+),
+
+new_price_inputs as (
+    select prices.*
+    from {{ ref('fact_market_price') }} as prices
+    cross join target_state
+    where prices.source_loaded_at > target_state.price_input_loaded_at
+),
+
+changed_price_windows as (
+    select distinct
+        intervals.chain_key,
+        intervals.feed_address,
+        intervals.base_asset,
+        intervals.quote_asset,
+        intervals.previous_feed_updated_at,
+        intervals.feed_updated_at,
+        intervals.next_feed_updated_at
+    from price_intervals as intervals
+    inner join new_price_inputs as changed
+        on intervals.chain_key = changed.chain_key
+        and lower(intervals.feed_address) = lower(changed.feed_address)
+        and upper(intervals.base_asset) = upper(changed.base_asset)
+        and upper(intervals.quote_asset) = upper(changed.quote_asset)
+        and intervals.feed_updated_at = changed.feed_updated_at
+),
+
+mapped_event_tokens as (
+    select
+        event_tokens.*,
+        mappings.feed_address,
+        mappings.base_asset,
+        mappings.quote_asset
+    from event_tokens
+    inner join {{ ref('dim_token') }} as tokens
+        on event_tokens.token_key = tokens.token_key
+    inner join {{ ref('token_price_feed_mapping') }} as mappings
+        on lower(tokens.chain) = lower(mappings.chain)
+        and lower(tokens.token_address) = lower(mappings.token_address)
+),
+
+affected_event_keys as (
+    select
+        event_tokens.event_domain,
+        event_tokens.event_id,
+        event_tokens.token_side
+    from event_tokens
+    cross join target_state
+    where event_tokens.source_loaded_at > target_state.event_source_loaded_at
+
+    union
+
+    select
+        events.event_domain,
+        events.event_id,
+        events.token_side
+    from mapped_event_tokens as events
+    inner join changed_price_windows as windows
+        on events.chain_key = windows.chain_key
+        and lower(events.feed_address) = lower(windows.feed_address)
+        and upper(events.base_asset) = upper(windows.base_asset)
+        and upper(events.quote_asset) = upper(windows.quote_asset)
+        and (
+            windows.previous_feed_updated_at is null
+            or events.event_timestamp >= windows.previous_feed_updated_at
+        )
+        and (
+            windows.next_feed_updated_at is null
+            or events.event_timestamp < windows.next_feed_updated_at
+        )
+
+    union
+
+    select
+        existing.event_domain,
+        existing.event_id,
+        existing.token_side
+    from {{ this }} as existing
+    inner join new_price_inputs as changed
+        on existing.matched_observation_id = changed.observation_id
+),
+
+selected_event_tokens as (
+    select event_tokens.*
+    from event_tokens
+    inner join affected_event_keys as affected
+        on event_tokens.event_domain = affected.event_domain
+        and event_tokens.event_id = affected.event_id
+        and event_tokens.token_side = affected.token_side
+),
+{% else %}
+selected_event_tokens as (
+    select * from event_tokens
+),
+{% endif %}
+
 candidates as (
     select
         event_tokens.event_domain,
@@ -45,6 +180,7 @@ candidates as (
         event_tokens.event_timestamp,
         event_tokens.chain_key,
         event_tokens.token_key,
+        event_tokens.source_loaded_at as event_source_loaded_at,
         tokens.chain,
         tokens.token_address,
         tokens.symbol as token_symbol,
@@ -58,8 +194,10 @@ candidates as (
         prices.feed_updated_at,
         prices.block_number as price_block_number,
         prices.round_id as price_round_id,
-        prices.silver_processed_at as price_silver_processed_at
-    from {{ ref('int_defi_event_token_amounts') }} as event_tokens
+        prices.silver_processed_at as price_silver_processed_at,
+        prices.source_loaded_at as matched_price_source_loaded_at,
+        price_input_state.price_input_loaded_at
+    from selected_event_tokens as event_tokens
     inner join {{ ref('dim_token') }} as tokens
         on event_tokens.token_key = tokens.token_key
     left join {{ ref('token_price_feed_mapping') }} as mappings
@@ -75,6 +213,7 @@ candidates as (
             prices.next_feed_updated_at > event_tokens.event_timestamp
             or prices.next_feed_updated_at is null
         )
+    cross join price_input_state
 ),
 
 classified as (
@@ -127,5 +266,12 @@ select
         price_status = 'priced',
         {{ calculate_usd_value('normalized_amount', 'candidate_price_usd') }},
         null
-    )::number(38, 8) as amount_usd
+    )::number(38, 8) as amount_usd,
+    event_source_loaded_at,
+    matched_price_source_loaded_at,
+    price_input_loaded_at,
+    greatest(
+        event_source_loaded_at,
+        price_input_loaded_at
+    ) as pricing_updated_at
 from classified
