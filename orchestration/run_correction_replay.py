@@ -21,6 +21,14 @@ from orchestration.correction_replay import (
     ReplayRequest,
     execute_replay,
 )
+from orchestration.observability import (
+    ErrorStage,
+    PipelineOutcome,
+    RunMetrics,
+    RunStatus,
+    RunType,
+)
+from orchestration.run_observer import PipelineRunObserver
 from orchestration.replay_sources import (
     fetch_fresh_records,
     load_stored_records,
@@ -45,9 +53,15 @@ def validate_environment(request: ReplayRequest) -> None:
         load_chainlink_feeds(CHAINLINK_FEEDS_CONFIG, expected_chain=CHAIN)
 
 
-def run_audit(request: ReplayRequest, run_id: str) -> None:
+def run_audit(
+    request: ReplayRequest,
+    run_id: str,
+    observer: PipelineRunObserver | None = None,
+) -> PipelineOutcome:
     """Reconcile one range, sharing the Uniswap writer lease when applicable."""
     started = monotonic()
+    if observer is not None:
+        observer.set_stage(ErrorStage.SOURCE_FETCH)
     with closing(connect_watermark_store()) as connection:
         lease_store = SnowflakePipelineLeaseStore(connection)
         lease_context = (
@@ -99,6 +113,37 @@ def run_audit(request: ReplayRequest, run_id: str) -> None:
         values = tuple(identities)
         if values:
             LOGGER.warning("Replay %s identities=%s", label, ",".join(values))
+    watermark_keys = {
+        "aave": "aave_forward/aave_v3_pool",
+        "chainlink": "chainlink_forward/chainlink_feeds",
+        "uniswap": "uniswap_forward/uniswap_v3_pools",
+    }
+    watermark = execution.watermark_state[watermark_keys[request.source]]
+    metrics = RunMetrics(
+        source_start_position=request.start_block,
+        source_end_position=request.end_block,
+        watermark_before=watermark,
+        watermark_after=watermark,
+        records_read=len(execution.source_snapshot.records),
+        records_written=0,
+        details={
+            "rpc_requests": execution.source_snapshot.request_count,
+            "stored_records": (
+                len(result.unchanged)
+                + len(result.missing_from_source)
+                + len(result.changed)
+            ),
+            "fresh_records": (
+                len(result.unchanged) + len(result.added) + len(result.changed)
+            ),
+            "unchanged_records": len(result.unchanged),
+            "added_candidates": len(result.added),
+            "missing_candidates": len(result.missing_from_source),
+            "changed_candidates": len(result.changed),
+        },
+    )
+    status = RunStatus.SUCCEEDED if result.has_changes else RunStatus.NO_OP
+    return PipelineOutcome(status, metrics)
 
 
 class UniswapReplayLease:
@@ -148,9 +193,17 @@ def main() -> None:
     )
     if args.action == "validate":
         return
-    validate_environment(request)
     if args.action == "audit":
-        run_audit(request, args.run_id)
+        with PipelineRunObserver(
+            f"{request.source}_correction_replay",
+            args.run_id,
+            RunType.CORRECTION,
+        ) as observer:
+            observer.set_stage(ErrorStage.VALIDATION)
+            validate_environment(request)
+            observer.finish(run_audit(request, args.run_id, observer))
+    else:
+        validate_environment(request)
 
 
 if __name__ == "__main__":

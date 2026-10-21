@@ -176,6 +176,40 @@ def execute_dataset_load(
     )
 
 
+def _record_observability_metrics(summary: LoadSummary) -> None:
+    """Best-effort child metrics; RAW correctness never depends on this write."""
+    pipeline_name = os.getenv("PIPELINE_OBSERVABILITY_NAME", "").strip()
+    run_id = os.getenv("PIPELINE_OBSERVABILITY_RUN_ID", "").strip()
+    if not pipeline_name or not run_id:
+        return
+    try:
+        from orchestration.observability import RunIdentity, RunMetrics
+        from warehouse.pipeline_runs import (
+            SnowflakePipelineRunStore,
+            connect_pipeline_run_store,
+        )
+
+        with closing(connect_pipeline_run_store()) as connection:
+            SnowflakePipelineRunStore(connection).increment_metrics(
+                RunIdentity(pipeline_name, run_id),
+                RunMetrics(
+                    records_read=summary.copy_rows_loaded,
+                    records_written=(
+                        summary.merge_inserted + summary.merge_updated
+                    ),
+                    records_inserted=summary.merge_inserted,
+                    records_updated=summary.merge_updated,
+                    details={"copy_files": summary.copy_files_processed},
+                ),
+            )
+    except Exception as error:
+        LOGGER.error(
+            "Observability RAW metric update failed dataset=%s error_class=%s",
+            summary.dataset,
+            type(error).__name__,
+        )
+
+
 def validate_stage_inputs(
     connection: Any,
     config: SnowflakeLandingConfig,
@@ -290,6 +324,7 @@ def main() -> None:
                 raise RuntimeError(
                     f"Natural-key duplicates found in {summary.dataset}"
                 )
+            _record_observability_metrics(summary)
 
 
 if __name__ == "__main__":

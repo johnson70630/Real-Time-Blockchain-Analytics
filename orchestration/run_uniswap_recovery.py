@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import argparse
+import json
 import logging
 import os
 import subprocess
 import sys
 from contextlib import closing
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from time import monotonic
 
 from backfill.run_uniswap_incremental import run_forward_capture
@@ -22,6 +24,9 @@ from orchestration.watermark import (
     UNISWAP_FORWARD_WATERMARK,
     commit_watermark_from_expected,
 )
+from orchestration.observability import ErrorStage, PipelineOutcome, RunStatus, RunType
+from orchestration.run_metrics import uniswap_forward_metrics
+from orchestration.run_observer import PipelineRunObserver
 from orchestration.uniswap_recovery import (
     UNISWAP_FORWARD_LEASE,
     assert_source_contract_matches,
@@ -60,12 +65,39 @@ def _run(command: tuple[str, ...]) -> None:
     )
 
 
+def _build_silver_increment(start_block: int, end_block: int) -> int:
+    """Run the existing Spark increment and read its non-secret row metric."""
+    with TemporaryDirectory(prefix="uniswap-silver-metrics-") as directory:
+        metrics_path = Path(directory) / "metrics.json"
+        _run(
+            (
+                PROJECT_PYTHON,
+                "-m",
+                "spark.build_uniswap_silver_increment",
+                "--start-block",
+                str(start_block),
+                "--end-block",
+                str(end_block),
+                "--metrics-output",
+                str(metrics_path),
+            )
+        )
+        document = json.loads(metrics_path.read_text(encoding="utf-8"))
+    count = document.get("silver_records_written")
+    if not isinstance(count, int) or count < 0:
+        raise RuntimeError("Uniswap Silver metric output is invalid")
+    return count
+
+
 def _run_pipeline_under_lease(
     run_id: str,
     *,
     safe_head: int | None = None,
-) -> None:
+    observer: PipelineRunObserver | None = None,
+) -> PipelineOutcome:
     """Run one recovery after the caller has acquired single-writer ownership."""
+    if observer is not None:
+        observer.set_stage(ErrorStage.SOURCE_FETCH)
     capture = run_forward_capture(run_id, safe_head_override=safe_head)
     plan = capture.plan
     if plan.is_noop:
@@ -73,19 +105,25 @@ def _run_pipeline_under_lease(
             "Uniswap recovery is a clean no-op at block=%s",
             plan.committed_block,
         )
-        return
-    assert plan.start_block is not None and plan.end_block is not None
-    _run(
-        (
-            PROJECT_PYTHON,
-            "-m",
-            "spark.build_uniswap_silver_increment",
-            "--start-block",
-            str(plan.start_block),
-            "--end-block",
-            str(plan.end_block),
+        return PipelineOutcome(
+            RunStatus.NO_OP,
+            uniswap_forward_metrics(
+                capture,
+                watermark_after=plan.committed_block,
+                silver_records=0,
+                live_overlap_records=0,
+            ),
         )
+    assert plan.start_block is not None and plan.end_block is not None
+    if observer is not None:
+        observer.set_stage(ErrorStage.SILVER)
+    silver_records = _build_silver_increment(plan.start_block, plan.end_block)
+    live_overlap_records = max(
+        int(capture.event_counts["swap"]) - silver_records,
+        0,
     )
+    if observer is not None:
+        observer.set_stage(ErrorStage.SNOWFLAKE)
     _run(
         (
             WAREHOUSE_PYTHON,
@@ -95,8 +133,12 @@ def _run_pipeline_under_lease(
             "silver_uniswap_swaps",
         )
     )
+    if observer is not None:
+        observer.set_stage(ErrorStage.DBT)
     _run((DBT, "run", "--project-dir", str(PROJECT_ROOT / "dbt")))
     _run((DBT, "test", "--project-dir", str(PROJECT_ROOT / "dbt")))
+    if observer is not None:
+        observer.set_stage(ErrorStage.WATERMARK_COMMIT)
     with closing(connect_watermark_store()) as connection:
         store = SnowflakeWatermarkStore(connection)
         current = store.get(UNISWAP_FORWARD_WATERMARK)
@@ -126,6 +168,15 @@ def _run_pipeline_under_lease(
         capture.event_counts["burn"],
         capture.quarantine_count,
     )
+    return PipelineOutcome(
+        RunStatus.SUCCEEDED,
+        uniswap_forward_metrics(
+            capture,
+            watermark_after=committed.committed_value,
+            silver_records=silver_records,
+            live_overlap_records=live_overlap_records,
+        ),
+    )
 
 
 def _acquire_lease(run_id: str) -> PipelineLeaseHandle:
@@ -141,7 +192,12 @@ def _release_lease(handle: PipelineLeaseHandle) -> None:
         SnowflakePipelineLeaseStore(connection).release(handle)
 
 
-def run_pipeline(run_id: str, *, safe_head: int | None = None) -> None:
+def run_pipeline(
+    run_id: str,
+    *,
+    safe_head: int | None = None,
+    observer: PipelineRunObserver | None = None,
+) -> PipelineOutcome:
     """Run one commit-last recovery while holding the shared two-hour lease."""
     handle = _acquire_lease(run_id)
     LOGGER.info(
@@ -152,7 +208,11 @@ def run_pipeline(run_id: str, *, safe_head: int | None = None) -> None:
     )
     failed = False
     try:
-        _run_pipeline_under_lease(run_id, safe_head=safe_head)
+        if observer is None:
+            return _run_pipeline_under_lease(run_id, safe_head=safe_head)
+        return _run_pipeline_under_lease(
+            run_id, safe_head=safe_head, observer=observer
+        )
     except BaseException:
         failed = True
         raise
@@ -183,9 +243,23 @@ def _parse_args() -> argparse.Namespace:
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
     args = _parse_args()
-    validate_environment()
     if args.action == "run":
-        run_pipeline(args.run_id, safe_head=args.safe_head)
+        with PipelineRunObserver(
+            "uniswap_forward",
+            args.run_id,
+            RunType.FORWARD,
+        ) as observer:
+            observer.set_stage(ErrorStage.VALIDATION)
+            validate_environment()
+            observer.finish(
+                run_pipeline(
+                    args.run_id,
+                    safe_head=args.safe_head,
+                    observer=observer,
+                )
+            )
+    else:
+        validate_environment()
 
 
 if __name__ == "__main__":

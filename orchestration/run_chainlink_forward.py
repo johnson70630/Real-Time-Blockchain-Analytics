@@ -25,6 +25,9 @@ from orchestration.chainlink_bootstrap import (
     CHAINLINK_BOOTSTRAP_ROUNDS,
     CHAINLINK_BOOTSTRAP_SAFE_BLOCK,
 )
+from orchestration.observability import ErrorStage, PipelineOutcome, RunStatus, RunType
+from orchestration.run_metrics import chainlink_forward_metrics
+from orchestration.run_observer import PipelineRunObserver
 from orchestration.watermark import (
     CHAINLINK_FORWARD_WATERMARK,
     chainlink_feed_watermark,
@@ -61,13 +64,24 @@ def _run(command: tuple[str, ...]) -> None:
     )
 
 
-def run_pipeline(run_id: str) -> None:
+def run_pipeline(
+    run_id: str,
+    observer: PipelineRunObserver | None = None,
+) -> PipelineOutcome:
     """Process one frozen snapshot and commit all five cursors last."""
+    if observer is not None:
+        observer.set_stage(ErrorStage.SOURCE_FETCH)
     capture = run_forward_capture(run_id)
     plan = capture.plan
     if plan.is_noop:
         LOGGER.info("Chainlink forward is a clean no-op at block=%s", plan.committed_block)
-        return
+        return PipelineOutcome(
+            RunStatus.NO_OP,
+            chainlink_forward_metrics(
+                capture,
+                watermark_after=plan.committed_block,
+            ),
+        )
 
     LOGGER.info(
         "Chainlink snapshot old_block=%s head=%s safe_block=%s block_delta=%s "
@@ -96,6 +110,8 @@ def run_pipeline(run_id: str) -> None:
         )
 
     if plan.round_count:
+        if observer is not None:
+            observer.set_stage(ErrorStage.SILVER)
         _run(
             (
                 PROJECT_PYTHON,
@@ -107,6 +123,8 @@ def run_pipeline(run_id: str) -> None:
                 str(plan.snapshot.block.number),
             )
         )
+        if observer is not None:
+            observer.set_stage(ErrorStage.SNOWFLAKE)
         _run(
             (
                 WAREHOUSE_PYTHON,
@@ -117,10 +135,14 @@ def run_pipeline(run_id: str) -> None:
             )
         )
 
+        if observer is not None:
+            observer.set_stage(ErrorStage.DBT)
         _run((DBT, "run", "--project-dir", str(PROJECT_ROOT / "dbt")))
         _run((DBT, "test", "--project-dir", str(PROJECT_ROOT / "dbt")))
     else:
         LOGGER.info("No new rounds; skipping Silver, Snowflake, and dbt mutations")
+    if observer is not None:
+        observer.set_stage(ErrorStage.WATERMARK_COMMIT)
     with closing(connect_watermark_store()) as connection:
         committed = commit_watermarks_atomically(
             SnowflakeWatermarkStore(connection),
@@ -133,6 +155,13 @@ def run_pipeline(run_id: str) -> None:
         "Chainlink state committed identities=%s global_block=%s",
         len(committed),
         plan.snapshot.block.number,
+    )
+    return PipelineOutcome(
+        RunStatus.SUCCEEDED,
+        chainlink_forward_metrics(
+            capture,
+            watermark_after=plan.snapshot.block.number,
+        ),
     )
 
 
@@ -179,11 +208,20 @@ def _parse_args() -> argparse.Namespace:
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
     args = _parse_args()
-    validate_environment()
     if args.action == "initialize-bootstrap":
+        validate_environment()
         initialize_bootstrap_state(args.run_id)
     elif args.action == "run":
-        run_pipeline(args.run_id)
+        with PipelineRunObserver(
+            "chainlink_forward",
+            args.run_id,
+            RunType.FORWARD,
+        ) as observer:
+            observer.set_stage(ErrorStage.VALIDATION)
+            validate_environment()
+            observer.finish(run_pipeline(args.run_id, observer))
+    else:
+        validate_environment()
 
 
 if __name__ == "__main__":

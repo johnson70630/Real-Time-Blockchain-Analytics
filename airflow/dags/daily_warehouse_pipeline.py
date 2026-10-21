@@ -7,6 +7,7 @@ from datetime import datetime, timedelta, timezone
 from airflow.providers.standard.operators.bash import BashOperator
 from airflow.providers.standard.operators.empty import EmptyOperator
 from airflow.sdk import DAG
+from orchestration.airflow_observability import record_daily_warehouse_failure
 
 PROJECT_ROOT = "/opt/project"
 PYTHON = "/opt/warehouse-venv/bin/python"
@@ -14,6 +15,11 @@ DBT = "/opt/warehouse-venv/bin/dbt"
 DBT_PROJECT_ARGS = f"--project-dir {PROJECT_ROOT}/dbt"
 WAREHOUSE_POOL = "warehouse_writes"
 EXCLUSIVE_WAREHOUSE_SLOTS = 4
+OBSERVABILITY = f"{PYTHON} -m orchestration.run_observability"
+OBSERVABILITY_ENV = (
+    'PIPELINE_OBSERVABILITY_NAME=daily_warehouse_pipeline '
+    'PIPELINE_OBSERVABILITY_RUN_ID="{{ run_id }}"'
+)
 
 
 with DAG(
@@ -25,9 +31,18 @@ with DAG(
     max_active_runs=1,
     dagrun_timeout=timedelta(minutes=30),
     default_args={"retries": 0},
+    on_failure_callback=record_daily_warehouse_failure,
     tags=["warehouse", "snowflake", "dbt"],
 ) as daily_warehouse_pipeline:
     start = EmptyOperator(task_id="start")
+    record_run_start = BashOperator(
+        task_id="record_run_start",
+        bash_command=(
+            f'{OBSERVABILITY} start --pipeline-name daily_warehouse_pipeline '
+            '--run-id "{{ run_id }}" --run-type warehouse'
+        ),
+        execution_timeout=timedelta(minutes=2),
+    )
 
     validate_environment = BashOperator(
         task_id="validate_environment",
@@ -45,7 +60,7 @@ with DAG(
     load_uniswap_raw = BashOperator(
         task_id="load_uniswap_raw",
         bash_command=(
-            f"{PYTHON} -m warehouse.load_raw "
+            f"{OBSERVABILITY_ENV} {PYTHON} -m warehouse.load_raw "
             "--dataset silver_uniswap_swaps"
         ),
         retries=1,
@@ -57,7 +72,7 @@ with DAG(
     load_reference_raw = BashOperator(
         task_id="load_reference_raw",
         bash_command=(
-            f"{PYTHON} -m warehouse.load_raw "
+            f"{OBSERVABILITY_ENV} {PYTHON} -m warehouse.load_raw "
             "--dataset reference_uniswap_v3_pools "
             "--dataset reference_tokens"
         ),
@@ -70,7 +85,7 @@ with DAG(
     load_aave_raw = BashOperator(
         task_id="load_aave_raw",
         bash_command=(
-            f"{PYTHON} -m warehouse.load_raw "
+            f"{OBSERVABILITY_ENV} {PYTHON} -m warehouse.load_raw "
             "--dataset silver_aave_borrows "
             "--dataset silver_aave_repays "
             "--dataset silver_aave_liquidations"
@@ -84,7 +99,7 @@ with DAG(
     load_chainlink_raw = BashOperator(
         task_id="load_chainlink_raw",
         bash_command=(
-            f"{PYTHON} -m warehouse.load_raw "
+            f"{OBSERVABILITY_ENV} {PYTHON} -m warehouse.load_raw "
             "--dataset silver_chainlink_market_prices"
         ),
         retries=1,
@@ -167,6 +182,16 @@ with DAG(
         bash_command=f"{DBT} test {DBT_PROJECT_ARGS} --select test_type:singular",
         execution_timeout=timedelta(minutes=15),
     )
+    record_run_success = BashOperator(
+        task_id="record_run_success",
+        bash_command=(
+            f'{OBSERVABILITY} succeed '
+            '--pipeline-name daily_warehouse_pipeline '
+            '--run-id "{{ run_id }}" '
+            f"--dbt-project-dir {PROJECT_ROOT}/dbt"
+        ),
+        execution_timeout=timedelta(minutes=2),
+    )
     complete = EmptyOperator(task_id="complete")
 
     raw_loads = [
@@ -175,7 +200,7 @@ with DAG(
         load_aave_raw,
         load_chainlink_raw,
     ]
-    start >> validate_environment >> validate_silver_inputs >> raw_loads
+    start >> record_run_start >> validate_environment >> validate_silver_inputs >> raw_loads
     raw_loads >> dbt_seed
     (
         dbt_seed
@@ -186,5 +211,6 @@ with DAG(
         >> dbt_marts
         >> dbt_test_marts
         >> reconciliation_checks
+        >> record_run_success
         >> complete
     )

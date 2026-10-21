@@ -25,6 +25,7 @@ class WarehouseDagTests(unittest.TestCase):
             set(self.dag.task_ids),
             {
                 "start",
+                "record_run_start",
                 "validate_environment",
                 "validate_silver_inputs",
                 "load_uniswap_raw",
@@ -39,6 +40,7 @@ class WarehouseDagTests(unittest.TestCase):
                 "dbt_marts",
                 "dbt_test_marts",
                 "reconciliation_checks",
+                "record_run_success",
                 "complete",
             },
         )
@@ -72,6 +74,7 @@ class WarehouseDagTests(unittest.TestCase):
             "dbt_marts",
             "dbt_test_marts",
             "reconciliation_checks",
+            "record_run_success",
             "complete",
         )
         for upstream, downstream in zip(ordered, ordered[1:]):
@@ -126,6 +129,7 @@ class WarehouseDagTests(unittest.TestCase):
             getattr(task, "bash_command", "") for task in self.dag.tasks
         )
         self.assertIn("warehouse.load_raw", commands)
+        self.assertIn("orchestration.run_observability", commands)
         self.assertNotIn("/bin/dbt --project-dir", commands)
         for subcommand in ("seed", "run", "test"):
             self.assertIn(f"/bin/dbt {subcommand} --project-dir", commands)
