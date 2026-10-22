@@ -1,0 +1,13 @@
+blockchain_analytics:
+  target: ci
+  outputs:
+    ci:
+      type: snowflake
+      account: ci_account
+      user: ci_user
+      authenticator: externalbrowser
+      role: BLOCKCHAIN_DBT_ROLE
+      database: BLOCKCHAIN_ANALYTICS
+      warehouse: BLOCKCHAIN_TRANSFORM_WH
+      schema: CI_VALIDATION
+      threads: 4

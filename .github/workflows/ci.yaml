@@ -4,27 +4,146 @@ on:
   push:
     branches:
       - main
+      - develop
   pull_request:
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
+permissions:
+  contents: read
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  quality:
+    name: Python quality and contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
 
       - name: Set up Python
-        run: uv python install 3.12
+        run: uv python install "$PYTHON_VERSION"
 
-      - name: Install dependencies
-        run: uv sync --all-extras --dev
+      - name: Verify lock file
+        run: uv lock --check
 
-      - name: Run lint
+      - name: Install locked dependencies
+        run: uv sync --all-extras --dev --frozen
+
+      - name: Check for committed secrets
+        run: uv run python scripts/check_secrets.py --all-files
+
+      - name: Run Ruff
         run: uv run ruff check .
 
-      - name: Run tests
-        run: uv run pytest
+      - name: Run credential-free Python contracts
+        env:
+          SPARK_LOCAL_IP: 127.0.0.1
+        run: make ci-python
+
+  spark:
+    name: Spark correctness
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Set up Python
+        run: uv python install "$PYTHON_VERSION"
+
+      - name: Install locked dependencies
+        run: uv sync --all-extras --dev --frozen
+
+      - name: Run Spark-backed tests
+        env:
+          SPARK_LOCAL_IP: 127.0.0.1
+        run: make ci-spark
+
+  app-contracts:
+    name: Streamlit application contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Set up Python
+        run: uv python install "$PYTHON_VERSION"
+
+      - name: Install locked dependencies
+        run: uv sync --all-extras --dev --frozen
+
+      - name: Run import, deployment, and UI contracts
+        run: make ci-app
+
+  dbt-compile:
+    name: dbt structural validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Set up Python
+        run: uv python install "$PYTHON_VERSION"
+
+      - name: Install locked dependencies
+        run: uv sync --all-extras --dev --frozen
+
+      - name: Parse and compile without a warehouse connection
+        run: make ci-dbt
+
+  airflow:
+    name: Airflow DAG contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Validate DAG imports and structure
+        run: make ci-airflow
+
+      - name: Stop Airflow services
+        if: always()
+        run: make airflow-down

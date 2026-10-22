@@ -1,4 +1,4 @@
-.PHONY: kafka-up kafka-down producer producer-build producer-up producer-logs producer-down market-data market-data-build market-data-up market-data-logs market-data-down uniswap-pools uniswap-pools-bootstrap uniswap-recovery-bootstrap token-metadata aave-backfill chainlink-backfill bronze market-data-bronze market-data-silver silver aave-silver price-enrichment gold snowflake-sql snowflake-load dashboard data-lab freshness-check airflow-init airflow-up airflow-down airflow-logs airflow-test quality test lint check clean-data
+.PHONY: kafka-up kafka-down producer producer-build producer-up producer-logs producer-down market-data market-data-build market-data-up market-data-logs market-data-down uniswap-pools uniswap-pools-bootstrap uniswap-recovery-bootstrap token-metadata aave-backfill chainlink-backfill bronze market-data-bronze market-data-silver silver aave-silver price-enrichment gold snowflake-sql snowflake-load dashboard data-lab freshness-check airflow-init airflow-up airflow-down airflow-logs airflow-test ci ci-python ci-spark ci-app ci-dbt ci-secrets ci-airflow quality test lint check clean-data
 
 kafka-up:
 	docker compose up -d kafka
@@ -104,6 +104,48 @@ airflow-logs:
 
 airflow-test:
 	docker compose -f airflow/docker-compose.yaml run --rm --entrypoint python airflow-cli -m unittest discover -s /opt/airflow/tests -v
+
+ci-python:
+	SPARK_LOCAL_IP=127.0.0.1 uv run pytest \
+		--ignore=tests/test_chainlink_bootstrap.py \
+		--ignore=tests/test_market_data_silver.py \
+		--ignore=tests/test_price_enrichment.py \
+		--ignore=tests/test_data_lab.py \
+		--ignore=tests/test_aave_lending_page.py \
+		--ignore=tests/test_pricing_lesson_pages.py \
+		--ignore=tests/test_ui_polish.py \
+		--ignore=tests/test_streamlit_deployment.py \
+		--ignore=tests/test_operations_dashboard.py
+
+ci-spark:
+	SPARK_LOCAL_IP=127.0.0.1 uv run pytest \
+		tests/test_chainlink_bootstrap.py \
+		tests/test_market_data_silver.py \
+		tests/test_price_enrichment.py
+
+ci-app:
+	uv run pytest \
+		tests/test_data_lab.py \
+		tests/test_aave_lending_page.py \
+		tests/test_pricing_lesson_pages.py \
+		tests/test_ui_polish.py \
+		tests/test_streamlit_deployment.py \
+		tests/test_operations_dashboard.py
+
+ci-dbt:
+	uv run dbt parse --project-dir dbt --profiles-dir ci/dbt \
+		--target ci --no-partial-parse
+	DBT_CI_OFFLINE_COMPILE=true uv run dbt compile \
+		--project-dir dbt --profiles-dir ci/dbt --target ci \
+		--no-populate-cache --no-introspect
+
+ci-secrets:
+	uv run python scripts/check_secrets.py --all-files
+
+ci-airflow:
+	@set -e; trap '$(MAKE) airflow-down' EXIT; $(MAKE) airflow-test
+
+ci: ci-secrets lint ci-python ci-spark ci-app ci-dbt ci-airflow
 
 lint:
 	uv run ruff check .
