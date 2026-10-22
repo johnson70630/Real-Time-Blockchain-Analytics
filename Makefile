@@ -143,6 +143,7 @@ ci-secrets:
 	uv run python scripts/check_secrets.py --all-files
 
 ci-airflow:
+	@mkdir -p dbt/logs dbt/target
 	@set -e; trap '$(MAKE) airflow-down' EXIT; $(MAKE) airflow-test
 
 ci: ci-secrets lint ci-python ci-spark ci-app ci-dbt ci-airflow

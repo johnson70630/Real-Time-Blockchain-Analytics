@@ -12,6 +12,7 @@ WORKFLOW = PROJECT_ROOT / ".github" / "workflows" / "ci.yaml"
 
 def test_ci_has_least_privilege_and_expected_quality_gates() -> None:
     workflow = WORKFLOW.read_text()
+    makefile = (PROJECT_ROOT / "Makefile").read_text()
 
     assert "permissions:\n  contents: read" in workflow
     for job in ("quality", "spark", "app-contracts", "dbt-compile", "airflow"):
@@ -19,6 +20,8 @@ def test_ci_has_least_privilege_and_expected_quality_gates() -> None:
     assert "persist-credentials: false" in workflow
     assert "uv lock --check" in workflow
     assert "uv sync --all-extras --dev --frozen" in workflow
+    assert "mkdir -p dbt/logs dbt/target" in makefile
+    assert "trap '$(MAKE) airflow-down' EXIT" in makefile
 
 
 def test_ci_commands_are_validation_only_and_credential_free() -> None:
