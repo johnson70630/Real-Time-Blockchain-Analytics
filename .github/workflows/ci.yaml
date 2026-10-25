@@ -131,6 +131,26 @@ jobs:
       - name: Parse and compile without a warehouse connection
         run: make ci-dbt
 
+  terraform:
+    name: Terraform static validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.17.0"
+
+      - name: Format and validate without credentials or backend access
+        env:
+          TF_IN_AUTOMATION: "true"
+        run: make ci-terraform
+
   airflow:
     name: Airflow DAG contracts
     runs-on: ubuntu-latest

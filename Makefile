@@ -1,4 +1,6 @@
-.PHONY: kafka-up kafka-down producer producer-build producer-up producer-logs producer-down market-data market-data-build market-data-up market-data-logs market-data-down uniswap-pools uniswap-pools-bootstrap uniswap-recovery-bootstrap token-metadata aave-backfill chainlink-backfill bronze market-data-bronze market-data-silver silver aave-silver price-enrichment gold snowflake-sql snowflake-load dashboard data-lab freshness-check airflow-init airflow-up airflow-down airflow-logs airflow-test ci ci-python ci-spark ci-app ci-dbt ci-secrets ci-airflow quality test lint check clean-data
+.PHONY: kafka-up kafka-down producer producer-build producer-up producer-logs producer-down market-data market-data-build market-data-up market-data-logs market-data-down uniswap-pools uniswap-pools-bootstrap uniswap-recovery-bootstrap token-metadata aave-backfill chainlink-backfill bronze market-data-bronze market-data-silver silver aave-silver price-enrichment gold snowflake-sql snowflake-load dashboard data-lab freshness-check airflow-init airflow-up airflow-down airflow-logs airflow-test terraform-fmt terraform-init terraform-validate ci ci-python ci-spark ci-app ci-dbt ci-secrets ci-terraform ci-airflow quality test lint check clean-data
+
+TERRAFORM_ROOTS := infra/terraform/bootstrap/state infra/terraform/environments/prod
 
 kafka-up:
 	docker compose up -d kafka
@@ -105,6 +107,19 @@ airflow-logs:
 airflow-test:
 	docker compose -f airflow/docker-compose.yaml run --rm --entrypoint python airflow-cli -m unittest discover -s /opt/airflow/tests -v
 
+terraform-fmt:
+	terraform fmt -check -recursive infra/terraform
+
+terraform-init:
+	@set -e; for root in $(TERRAFORM_ROOTS); do \
+		terraform -chdir=$$root init -backend=false -input=false; \
+	done
+
+terraform-validate: terraform-init
+	@set -e; for root in $(TERRAFORM_ROOTS); do \
+		terraform -chdir=$$root validate; \
+	done
+
 ci-python:
 	SPARK_LOCAL_IP=127.0.0.1 uv run pytest \
 		--ignore=tests/test_chainlink_bootstrap.py \
@@ -142,6 +157,8 @@ ci-dbt:
 ci-secrets:
 	uv run python scripts/check_secrets.py --all-files
 
+ci-terraform: terraform-fmt terraform-validate
+
 release-test:
 	uv run pytest tests/test_release_contracts.py tests/test_ci_contracts.py
 
@@ -149,7 +166,7 @@ ci-airflow:
 	@mkdir -p dbt/logs dbt/target
 	@set -e; trap '$(MAKE) airflow-down' EXIT; $(MAKE) airflow-test
 
-ci: ci-secrets lint ci-python ci-spark ci-app ci-dbt ci-airflow
+ci: ci-secrets lint ci-python ci-spark ci-app ci-dbt ci-terraform ci-airflow
 
 lint:
 	uv run ruff check .

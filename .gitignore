@@ -38,3 +38,18 @@ spark-warehouse/
 # Airflow local runtime state
 airflow/logs/
 airflow/config/
+
+# Terraform generated state and local configuration
+**/.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.tfstate.lock.info
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+infra/terraform/**/backend.hcl
+*.secret.tfvars
+*.secret.auto.tfvars
