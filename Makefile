@@ -142,6 +142,9 @@ ci-dbt:
 ci-secrets:
 	uv run python scripts/check_secrets.py --all-files
 
+release-test:
+	uv run pytest tests/test_release_contracts.py tests/test_ci_contracts.py
+
 ci-airflow:
 	@mkdir -p dbt/logs dbt/target
 	@set -e; trap '$(MAKE) airflow-down' EXIT; $(MAKE) airflow-test

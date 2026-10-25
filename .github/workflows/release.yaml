@@ -1,0 +1,71 @@
+name: Release
+
+on:
+  workflow_run:
+    workflows:
+      - CI
+    branches:
+      - main
+    types:
+      - completed
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-streamlit-release
+  cancel-in-progress: false
+
+jobs:
+  streamlit-production:
+    name: Verify production Streamlit release
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      RELEASE_SHA: ${{ github.event.workflow_run.head_sha }}
+      RELEASE_BRANCH: ${{ github.event.workflow_run.head_branch }}
+      RELEASE_ENVIRONMENT: production
+      RELEASE_COMPONENT: defi-data-lab-streamlit
+    steps:
+      - name: Checkout validated release commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.RELEASE_SHA }}
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate release identity and configuration
+        run: |
+          test "$RELEASE_BRANCH" = "main"
+          test "$(git rev-parse HEAD)" = "$RELEASE_SHA"
+          test -f streamlit_app.py
+
+      - name: Install browser smoke runtime
+        run: |
+          python -m pip install --disable-pip-version-check playwright==1.64.1
+          python -m playwright install --with-deps chromium
+
+      - name: Verify Streamlit Community Cloud deployment
+        run: python scripts/check_streamlit_release.py
+
+      - name: Record release metadata
+        if: always()
+        run: |
+          {
+            echo "## Streamlit production release"
+            echo "- Commit: \`$RELEASE_SHA\`"
+            echo "- Branch: \`$RELEASE_BRANCH\`"
+            echo "- Environment: \`$RELEASE_ENVIRONMENT\`"
+            echo "- Component: \`$RELEASE_COMPONENT\`"
+            echo "- Checked at: \`$(date -u +'%Y-%m-%dT%H:%M:%SZ')\`"
+            echo "- Verification outcome: \`${{ job.status }}\`"
+            echo "- Deployment: Streamlit Community Cloud tracks \`main\`"
+          } >> "$GITHUB_STEP_SUMMARY"

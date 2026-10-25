@@ -1,0 +1,13 @@
+{
+  "component": "defi-data-lab-streamlit",
+  "environment": "production",
+  "release_branch": "main",
+  "entrypoint": "streamlit_app.py",
+  "deployment_mechanism": "streamlit_community_cloud_main",
+  "app_url": "https://real-time-blockchain-analytics-pyys8l6fsnypocxtz6exjp.streamlit.app",
+  "retry_interval_seconds": 15,
+  "max_attempts": 20,
+  "timeout_seconds": 300,
+  "rollback_strategy": "revert_or_forward_fix",
+  "force_push_rollback_allowed": false
+}
