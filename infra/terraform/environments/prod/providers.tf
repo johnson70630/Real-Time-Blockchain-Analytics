@@ -15,4 +15,10 @@ provider "aws" {
   }
 }
 
+# Existing untagged resources use this alias so adoption does not add tags.
+provider "aws" {
+  alias  = "adopted"
+  region = var.aws_region
+}
+
 provider "snowflake" {}

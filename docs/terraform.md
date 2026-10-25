@@ -5,7 +5,7 @@
 Terraform is introduced through two deliberately separate root modules:
 
 - `infra/terraform/bootstrap/state` defines only the future remote-state bucket. It uses local state during the one-time, separately approved bootstrap.
-- `infra/terraform/environments/prod` is the explicit production root. It currently contains only backend, provider, naming, and tagging configuration; it owns no production resources yet.
+- `infra/terraform/environments/prod` is the explicit production root. It contains matching definitions for the discovered production data bucket and Snowflake S3 integration role. These definitions do not become authoritative until a separately approved import produces a zero-change plan.
 
 Terraform workspaces are not used to represent environments. The project currently has one real environment, represented by the `prod` root.
 

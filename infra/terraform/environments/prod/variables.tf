@@ -15,3 +15,15 @@ variable "environment" {
   type        = string
   default     = "prod"
 }
+
+variable "snowflake_storage_external_id" {
+  description = "Existing external ID required by the Snowflake storage integration trust policy."
+  type        = string
+  sensitive   = true
+  nullable    = false
+
+  validation {
+    condition     = length(trimspace(var.snowflake_storage_external_id)) > 0
+    error_message = "The Snowflake storage integration external ID must not be empty."
+  }
+}
