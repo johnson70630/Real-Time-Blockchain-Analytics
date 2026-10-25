@@ -31,6 +31,7 @@ models:
     marts:
       +materialized: table
       +schema: MARTS
+      +copy_grants: true
 
 seeds:
   blockchain_analytics:
