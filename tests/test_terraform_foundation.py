@@ -104,6 +104,7 @@ def test_production_root_models_only_approved_adoption_scope() -> None:
         "aws_iam_role_policy_attachment",
         "snowflake_account_role",
         "snowflake_database",
+        "snowflake_grant_account_role",
         "snowflake_schema",
         "snowflake_warehouse",
     }
@@ -236,6 +237,54 @@ def test_snowflake_account_roles_match_discovery() -> None:
         "ignore_changes",
     ):
         assert excluded not in account_roles
+
+
+def test_snowflake_role_hierarchy_matches_discovery() -> None:
+    hierarchy = (PROD_ROOT / "snowflake_role_hierarchy.tf").read_text()
+
+    expected_resources = (
+        "admin_to_sysadmin",
+        "de_to_admin",
+        "pipeline_to_admin",
+        "dbt_to_admin",
+        "analyst_to_admin",
+    )
+    expected_child_references = (
+        "admin",
+        "de",
+        "pipeline",
+        "dbt",
+        "analyst",
+    )
+
+    assert hierarchy.count(
+        'resource "snowflake_grant_account_role"'
+    ) == 5
+    for resource_name in expected_resources:
+        assert (
+            f'resource "snowflake_grant_account_role" "{resource_name}"'
+            in hierarchy
+        )
+    for child_reference in expected_child_references:
+        assert (
+            "role_name        = snowflake_account_role."
+            f"{child_reference}.fully_qualified_name"
+            in hierarchy
+        )
+
+    assert 'parent_role_name = "\\\"SYSADMIN\\\""' in hierarchy
+    assert hierarchy.count(
+        "parent_role_name = "
+        "snowflake_account_role.admin.fully_qualified_name"
+    ) == 4
+
+    for excluded in (
+        "user_name",
+        "snowflake_user",
+        "snowflake_grant_privileges_to_account_role",
+        "snowflake_grant_ownership",
+    ):
+        assert excluded not in hierarchy
 
 
 def test_adopted_bucket_matches_discovered_safety_controls() -> None:
