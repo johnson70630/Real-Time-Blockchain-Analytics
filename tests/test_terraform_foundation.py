@@ -90,7 +90,7 @@ def test_bootstrap_models_required_state_bucket_controls() -> None:
     assert re.search(r"prevent_destroy\s*=\s*true", bootstrap)
 
 
-def test_production_root_models_only_approved_aws_adoption_scope() -> None:
+def test_production_root_models_only_approved_adoption_scope() -> None:
     production = _terraform_text(PROD_ROOT)
 
     expected_resources = {
@@ -102,6 +102,7 @@ def test_production_root_models_only_approved_aws_adoption_scope() -> None:
         "aws_iam_role",
         "aws_iam_policy",
         "aws_iam_role_policy_attachment",
+        "snowflake_warehouse",
     }
     actual_resources = set(
         re.findall(r'(?m)^resource\s+"([^"]+)"', production)
@@ -109,6 +110,30 @@ def test_production_root_models_only_approved_aws_adoption_scope() -> None:
 
     assert actual_resources == expected_resources
     assert not re.search(r"(?m)^\s*import\s*\{", production)
+
+
+def test_snowflake_warehouse_matches_discovered_configuration() -> None:
+    warehouse = (PROD_ROOT / "snowflake_warehouse.tf").read_text()
+
+    for expected in (
+        'resource "snowflake_warehouse" "transform"',
+        'name = "BLOCKCHAIN_TRANSFORM_WH"',
+        'warehouse_type = "STANDARD"',
+        'warehouse_size = "XSMALL"',
+        'generation     = "2"',
+        "auto_suspend   = 60",
+        'auto_resume    = "true"',
+    ):
+        assert expected in warehouse
+
+    for excluded in (
+        "initially_suspended",
+        "resource_monitor",
+        "snowflake_grant_ownership",
+        "snowflake_grant_privileges_to_account_role",
+        "ignore_changes",
+    ):
+        assert excluded not in warehouse
 
 
 def test_adopted_bucket_matches_discovered_safety_controls() -> None:
