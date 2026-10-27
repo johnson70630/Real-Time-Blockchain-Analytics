@@ -2,19 +2,19 @@
 
 ## Scope and ownership
 
-Terraform is introduced through two deliberately separate root modules:
+Terraform uses two deliberately separate root modules:
 
-- `infra/terraform/bootstrap/state` defines only the future remote-state bucket. It uses local state during the one-time, separately approved bootstrap.
-- `infra/terraform/environments/prod` is the explicit production root. It contains matching definitions for the discovered production data bucket and Snowflake S3 integration role. These definitions do not become authoritative until a separately approved import produces a zero-change plan.
+- `infra/terraform/bootstrap/state` manages only the dedicated Terraform state bucket. Its state remains local, access-restricted, and separately backed up so the backend does not depend on itself.
+- `infra/terraform/environments/prod` manages adopted production infrastructure through the S3 remote backend.
 
-Terraform workspaces are not used to represent environments. The project currently has one real environment, represented by the `prod` root.
+The project has one real environment, represented by the `prod` root and Terraform's default workspace. Additional workspaces are not used as environments.
 
 ## Existing infrastructure inventory
 
 | Category | Current infrastructure | Classification | Adoption boundary |
 |---|---|---|---|
-| AWS | Production analytical-data S3 bucket | A — Terraform adoption candidate | Inspect and import in 11.5B; never recreate it. |
-| AWS | Snowflake S3 integration IAM role and policies | A — Terraform adoption candidate | Inspect and import in 11.5B. |
+| AWS | Production analytical-data S3 bucket | A — Terraform managed | Five bucket resources were imported without recreation and have a verified zero-change plan. |
+| AWS | Snowflake S3 integration IAM role and policy | A — Terraform managed | Trust, external-ID condition, least-privilege policy, and attachment were preserved during import. |
 | AWS | Local named-profile credential resolution | B — externally managed | Remains in standard AWS shared configuration, outside Terraform source and state. |
 | Snowflake | Database, schemas, warehouse, roles, service user, grants, CONTROL tables, storage integration, stage, and file format | A — Terraform adoption candidates | Inspect and import selectively in 11.5C. Account bootstrap and credentials remain external. |
 | Hosted app | Streamlit Community Cloud application | B — managed externally | Continues tracking `main`; no provider is introduced in this milestone. |
@@ -32,44 +32,44 @@ Provider constraints are deliberately bounded to compatible minor lines:
 - `hashicorp/aws ~> 6.69.0`
 - `snowflakedb/snowflake ~> 2.22.0`
 
-AWS authentication uses the standard provider credential chain. Local operators may select an existing shared profile with `AWS_PROFILE`; CI validation needs no AWS credentials. Snowflake credentials, private keys, and passwords are never stored in Terraform source. Future authenticated Snowflake operations must use an approved external credential path.
+AWS authentication uses the standard provider credential chain. Local operators select an approved shared profile with `AWS_PROFILE`; CI validation needs no AWS credentials. The existing Snowflake storage-integration external ID is retrieved through an authorized IAM read and supplied only through the sensitive `TF_VAR_snowflake_storage_external_id` process environment. Credentials, external IDs, private keys, and passwords must never be stored in Terraform source, backend configuration, plans, logs, or committed variable files.
 
 ## Remote state design
 
-Terraform state must not share the production analytical-data bucket. The dedicated bucket name follows:
+Terraform state does not share the production analytical-data bucket. Production state uses:
 
 ```text
-blockchain-analytics-terraform-state-<unique-suffix>
+bucket: blockchain-analytics-terraform-state-209479274979-usw2
+key:    production/platform/terraform.tfstate
+region: us-west-2
 ```
 
-The production state key is:
+The dedicated bucket is provisioned with versioning, SSE-S3 `AES256` encryption, all four public-access protections, bucket-owner-enforced ownership, retained noncurrent state history, and Terraform `prevent_destroy`. Native S3 locking uses `<state-key>.tflock`; no DynamoDB table is involved.
 
-```text
-production/platform/terraform.tfstate
-```
+The least-privilege backend policy requires:
 
-The bucket is in `us-west-2` and is modeled with versioning, S3-managed encryption, blocked public access, bucket-owner-enforced ownership, retained noncurrent state history, and destroy protection. Native S3 locking uses `<state-key>.tflock`; no DynamoDB table is involved.
-
-The future least-privilege backend policy requires:
-
-- `s3:ListBucket` restricted to the production state path.
+- `s3:ListBucket` restricted to the exact state and lockfile keys.
 - `s3:GetObject` and `s3:PutObject` on the state object.
 - `s3:GetObject`, `s3:PutObject`, and `s3:DeleteObject` on the lock object.
 
-Backend credentials must come from the normal AWS credential chain. The version-controlled `backend.hcl.example` contains only non-sensitive bucket, key, region, and encryption settings. A real `backend.hcl` is local and ignored.
+The operator does not require `s3:DeleteObject` on the state object or backend-policy access to analytical-data objects. Backend credentials come from the normal AWS credential chain. The version-controlled `backend.hcl.example` contains only non-sensitive settings; the real `backend.hcl` is local and ignored.
 
-## Bootstrap and migration flow
+## Bootstrap and adoption status
 
-The bootstrap root is intentionally isolated from application infrastructure:
+The state bucket was created from the isolated bootstrap root. Its Terraform state remains local and separately backed up; it must not be moved into the production state that depends on the bucket.
 
-1. Review the bootstrap configuration and choose a globally unique, non-sensitive bucket suffix.
-2. Initialize the bootstrap root with local state.
-3. In a separately approved change, apply only the bootstrap root once.
-4. Copy `backend.hcl.example` to ignored `backend.hcl` and replace the bucket placeholder with the created bucket name.
-5. Initialize the production root with `-backend-config=backend.hcl` and migrate its state to S3.
-6. Verify remote state and native lockfile behavior before adopting any production resource.
+The production root was initialized against S3 with native locking. Eight existing resources were then imported without recreation:
 
-This milestone stops before step 3. The bucket has not been created, and no state migration has occurred.
+1. Production S3 bucket
+2. S3 versioning configuration
+3. S3 server-side encryption configuration
+4. S3 public-access block
+5. S3 ownership controls
+6. Snowflake S3 IAM role
+7. Snowflake S3 managed policy
+8. IAM role-policy attachment
+
+The import preserved the bucket, IAM trust principal, external-ID condition, managed-policy permissions, and attachment. No production resource mutation was required. A full refresh-enabled plan on 2026-10-26 returned exit code `0` with `0 add, 0 change, 0 destroy` and no detected drift.
 
 ## Import-first production adoption
 
@@ -82,9 +82,11 @@ Existing production infrastructure is never recreated merely to place it under T
 5. Reconcile configuration until the plan is zero-change.
 6. Only then consider Terraform authoritative for that object.
 
-No unmanaged or speculative apply is permitted. Imports and applies require an explicitly approved milestone and operator review.
+No unmanaged or speculative apply is permitted. Imports and applies require an explicitly approved milestone and operator review. The AWS resources above completed this workflow and are now authoritative in the production state.
 
-## Safe validation
+## Safe workflow
+
+### Validation
 
 Credential-free validation is available through:
 
@@ -94,4 +96,43 @@ make terraform-init
 make terraform-validate
 ```
 
-Initialization always uses `-backend=false`, so validation neither contacts the future backend nor creates remote state. CI runs the combined `make ci-terraform` target. CI does not run plan, import, or apply.
+Run backend-disabled validation in an isolated Terraform data directory when a working checkout is already initialized against production. CI runs the combined `make ci-terraform` target and never runs authenticated plans, imports, or applies.
+
+### Drift detection
+
+An authorized drift review should:
+
+1. Confirm the `develop` branch and a clean working tree.
+2. Confirm the expected AWS identity, default workspace, state key, and absence of a stale lockfile.
+3. Supply sensitive variables through the approved process environment.
+4. Run one full refresh-enabled plan with state locking and `-detailed-exitcode`.
+5. Treat exit code `0` as no change, `1` as an error, and `2` as proposed change.
+6. Review every proposed address and attribute before authorizing a mutation.
+
+Do not use `-target`, `-refresh=false`, `-lock=false`, or broad `ignore_changes` to conceal drift.
+
+### Future infrastructure changes
+
+For an intentional change:
+
+1. Update the smallest relevant Terraform configuration on a reviewed branch.
+2. Run formatting, validation, contract tests, Ruff, pytest, and secret scanning.
+3. Run a full authenticated plan and preserve only a protected, reviewed plan when an apply is authorized.
+4. Obtain explicit approval before applying exactly that plan once.
+5. Re-run a full plan and require zero remaining changes.
+6. Confirm state versioning, lock cleanup, infrastructure health, and repository status.
+
+Existing resources must continue to use import-first adoption: inspect, model, import, reconcile to zero change, and only then consider Terraform authoritative.
+
+## State recovery
+
+Keep the local bootstrap state and its verified backup access-restricted. Production recovery uses S3 object versions:
+
+1. Stop all Terraform writers and confirm no active lock.
+2. Record the current state-object version.
+3. Select a known-good earlier version through an approved recovery process.
+4. Restore it without displaying state contents.
+5. Run `terraform state list`, followed by a refresh-only review and a normal full plan.
+6. Require a zero-change or fully explained plan before resuming infrastructure changes.
+
+Never delete state history, manually edit state JSON, expose raw state, or restore a version while another Terraform operation is active.
