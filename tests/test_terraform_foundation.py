@@ -102,6 +102,8 @@ def test_production_root_models_only_approved_adoption_scope() -> None:
         "aws_iam_role",
         "aws_iam_policy",
         "aws_iam_role_policy_attachment",
+        "snowflake_database",
+        "snowflake_schema",
         "snowflake_warehouse",
     }
     actual_resources = set(
@@ -134,6 +136,53 @@ def test_snowflake_warehouse_matches_discovered_configuration() -> None:
         "ignore_changes",
     ):
         assert excluded not in warehouse
+
+
+def test_snowflake_database_and_schemas_match_discovery() -> None:
+    database_schemas = (
+        PROD_ROOT / "snowflake_database_schemas.tf"
+    ).read_text()
+
+    assert 'resource "snowflake_database" "blockchain"' in database_schemas
+    assert 'name         = "BLOCKCHAIN_ANALYTICS"' in database_schemas
+    assert "is_transient = false" in database_schemas
+
+    for resource_name, schema_name in (
+        ("raw", "RAW"),
+        ("staging", "STAGING"),
+        ("core", "CORE"),
+        ("marts", "MARTS"),
+        ("control", "CONTROL"),
+    ):
+        assert (
+            f'resource "snowflake_schema" "{resource_name}"'
+            in database_schemas
+        )
+        assert f'name     = "{schema_name}"' in database_schemas
+
+    assert database_schemas.count(
+        "database = snowflake_database.blockchain.name"
+    ) == 5
+    assert database_schemas.count('is_transient        = "false"') == 5
+    assert database_schemas.count(
+        'with_managed_access = "false"'
+    ) == 5
+    assert database_schemas.count("prevent_destroy = true") == 6
+    assert (
+        'comment             = "Operational control state separate from '
+        'analytical models"'
+        in database_schemas
+    )
+
+    for excluded in (
+        "data_retention_time_in_days",
+        "snowflake_grant_ownership",
+        "snowflake_grant_privileges_to_account_role",
+        "snowflake_table",
+        "snowflake_view",
+        "ignore_changes",
+    ):
+        assert excluded not in database_schemas
 
 
 def test_adopted_bucket_matches_discovered_safety_controls() -> None:
