@@ -102,6 +102,7 @@ def test_production_root_models_only_approved_adoption_scope() -> None:
         "aws_iam_role",
         "aws_iam_policy",
         "aws_iam_role_policy_attachment",
+        "snowflake_account_role",
         "snowflake_database",
         "snowflake_schema",
         "snowflake_warehouse",
@@ -183,6 +184,58 @@ def test_snowflake_database_and_schemas_match_discovery() -> None:
         "ignore_changes",
     ):
         assert excluded not in database_schemas
+
+
+def test_snowflake_account_roles_match_discovery() -> None:
+    account_roles = (PROD_ROOT / "snowflake_account_roles.tf").read_text()
+
+    expected_roles = (
+        (
+            "admin",
+            "BLOCKCHAIN_ADMIN_ROLE",
+            "Owns blockchain analytics platform infrastructure",
+        ),
+        (
+            "de",
+            "BLOCKCHAIN_DE_ROLE",
+            "Human development role for blockchain data engineering",
+        ),
+        (
+            "pipeline",
+            "BLOCKCHAIN_PIPELINE_ROLE",
+            "Service role for automated blockchain data pipelines",
+        ),
+        (
+            "dbt",
+            "BLOCKCHAIN_DBT_ROLE",
+            "Transformation role for dbt models in the blockchain analytics "
+            "platform",
+        ),
+        (
+            "analyst",
+            "BLOCKCHAIN_ANALYST_ROLE",
+            "Read-only analytics role for curated blockchain datasets",
+        ),
+    )
+
+    assert account_roles.count('resource "snowflake_account_role"') == 5
+    assert account_roles.count("prevent_destroy = true") == 5
+    for resource_name, role_name, comment in expected_roles:
+        assert (
+            f'resource "snowflake_account_role" "{resource_name}"'
+            in account_roles
+        )
+        assert f'name    = "{role_name}"' in account_roles
+        assert f'comment = "{comment}"' in account_roles
+
+    for excluded in (
+        "snowflake_grant_account_role",
+        "snowflake_grant_privileges_to_account_role",
+        "snowflake_grant_ownership",
+        "snowflake_user",
+        "ignore_changes",
+    ):
+        assert excluded not in account_roles
 
 
 def test_adopted_bucket_matches_discovered_safety_controls() -> None:
