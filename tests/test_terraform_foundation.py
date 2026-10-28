@@ -268,14 +268,14 @@ def test_snowflake_role_hierarchy_matches_discovery() -> None:
     for child_reference in expected_child_references:
         assert (
             "role_name        = snowflake_account_role."
-            f"{child_reference}.fully_qualified_name"
+            f"{child_reference}.name"
             in hierarchy
         )
 
-    assert 'parent_role_name = "\\\"SYSADMIN\\\""' in hierarchy
+    assert 'parent_role_name = "SYSADMIN"' in hierarchy
     assert hierarchy.count(
         "parent_role_name = "
-        "snowflake_account_role.admin.fully_qualified_name"
+        "snowflake_account_role.admin.name"
     ) == 4
 
     for excluded in (
