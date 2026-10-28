@@ -106,6 +106,7 @@ def test_production_root_models_only_approved_adoption_scope() -> None:
         "snowflake_database",
         "snowflake_grant_account_role",
         "snowflake_schema",
+        "snowflake_storage_integration_aws",
         "snowflake_warehouse",
     }
     actual_resources = set(
@@ -285,6 +286,39 @@ def test_snowflake_role_hierarchy_matches_discovery() -> None:
         "snowflake_grant_ownership",
     ):
         assert excluded not in hierarchy
+
+
+def test_snowflake_storage_integration_matches_discovery() -> None:
+    integration = (
+        PROD_ROOT / "snowflake_storage_integration.tf"
+    ).read_text()
+
+    for expected in (
+        'resource "snowflake_storage_integration_aws" "blockchain_s3"',
+        'name    = "BLOCKCHAIN_ANALYTICS_S3_INT"',
+        "enabled = true",
+        'storage_provider          = "S3"',
+        "storage_allowed_locations = "
+        '["s3://johnson-blockchain-analytics-prod/'
+        'blockchain-analytics/production/"]',
+        "storage_blocked_locations = []",
+        "storage_aws_role_arn      = aws_iam_role.snowflake_s3.arn",
+        "storage_aws_external_id   = "
+        "var.snowflake_storage_external_id",
+        'use_privatelink_endpoint  = "false"',
+        "prevent_destroy = true",
+    ):
+        assert expected in integration
+
+    for excluded in (
+        "storage_aws_object_acl",
+        "snowflake_stage",
+        "snowflake_file_format",
+        "snowflake_grant_ownership",
+        "snowflake_grant_privileges_to_account_role",
+        "ignore_changes",
+    ):
+        assert excluded not in integration
 
 
 def test_adopted_bucket_matches_discovered_safety_controls() -> None:
