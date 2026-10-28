@@ -106,14 +106,17 @@ def test_production_root_models_only_approved_adoption_scope() -> None:
         "snowflake_database",
         "snowflake_grant_account_role",
         "snowflake_schema",
+        "snowflake_stage_external_s3",
         "snowflake_storage_integration_aws",
         "snowflake_warehouse",
     }
-    actual_resources = set(
-        re.findall(r'(?m)^resource\s+"([^"]+)"', production)
+    resource_declarations = re.findall(
+        r'(?m)^resource\s+"([^"]+)"', production
     )
+    actual_resources = set(resource_declarations)
 
     assert actual_resources == expected_resources
+    assert len(resource_declarations) == 27
     assert not re.search(r"(?m)^\s*import\s*\{", production)
 
 
@@ -319,6 +322,43 @@ def test_snowflake_storage_integration_matches_discovery() -> None:
         "ignore_changes",
     ):
         assert excluded not in integration
+
+
+def test_snowflake_external_stage_matches_discovery() -> None:
+    stage = (PROD_ROOT / "snowflake_external_stage.tf").read_text()
+
+    for expected in (
+        'resource "snowflake_stage_external_s3" "silver"',
+        'name     = "SILVER_S3_STAGE"',
+        "database = snowflake_database.blockchain.name",
+        "schema   = snowflake_schema.raw.name",
+        'url      = "s3://johnson-blockchain-analytics-prod/'
+        'blockchain-analytics/production/"',
+        "storage_integration = "
+        "snowflake_storage_integration_aws.blockchain_s3.name",
+        '"\\"%s\\".\\"%s\\".\\"PARQUET_FORMAT\\""',
+        "snowflake_database.blockchain.name",
+        "snowflake_schema.raw.name",
+        "prevent_destroy = true",
+    ):
+        assert expected in stage
+
+    assert stage.count('resource "snowflake_stage_external_s3"') == 1
+    assert stage.count("file_format {") == 1
+
+    for excluded in (
+        "credentials",
+        "directory",
+        "encryption",
+        "use_privatelink_endpoint",
+        "aws_access_point_arn",
+        "comment",
+        "snowflake_file_format",
+        "snowflake_grant_ownership",
+        "snowflake_grant_privileges_to_account_role",
+        "ignore_changes",
+    ):
+        assert excluded not in stage
 
 
 def test_adopted_bucket_matches_discovered_safety_controls() -> None:
