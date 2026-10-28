@@ -303,12 +303,12 @@ def test_snowflake_storage_integration_matches_discovery() -> None:
         'blockchain-analytics/production/"]',
         "storage_blocked_locations = []",
         "storage_aws_role_arn      = aws_iam_role.snowflake_s3.arn",
-        "storage_aws_external_id   = "
-        "var.snowflake_storage_external_id",
-        'use_privatelink_endpoint  = "false"',
         "prevent_destroy = true",
     ):
         assert expected in integration
+
+    assert "use_privatelink_endpoint" not in integration
+    assert "storage_aws_external_id" not in integration
 
     for excluded in (
         "storage_aws_object_acl",
