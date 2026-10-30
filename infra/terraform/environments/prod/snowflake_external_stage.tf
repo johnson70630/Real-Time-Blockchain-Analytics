@@ -6,12 +6,8 @@ resource "snowflake_stage_external_s3" "silver" {
 
   storage_integration = snowflake_storage_integration_aws.blockchain_s3.name
 
-  file_format {
-    format_name = format(
-      "\"%s\".\"%s\".\"PARQUET_FORMAT\"",
-      snowflake_database.blockchain.name,
-      snowflake_schema.raw.name,
-    )
+  directory {
+    enable = false
   }
 
   lifecycle {

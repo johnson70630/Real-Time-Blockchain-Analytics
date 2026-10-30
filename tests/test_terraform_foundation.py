@@ -336,19 +336,20 @@ def test_snowflake_external_stage_matches_discovery() -> None:
         'blockchain-analytics/production/"',
         "storage_integration = "
         "snowflake_storage_integration_aws.blockchain_s3.name",
-        '"\\"%s\\".\\"%s\\".\\"PARQUET_FORMAT\\""',
-        "snowflake_database.blockchain.name",
-        "snowflake_schema.raw.name",
         "prevent_destroy = true",
     ):
         assert expected in stage
 
     assert stage.count('resource "snowflake_stage_external_s3"') == 1
-    assert stage.count("file_format {") == 1
+    assert stage.count("directory {") == 1
+    assert "enable = false" in stage
 
     for excluded in (
         "credentials",
-        "directory",
+        "file_format",
+        "auto_refresh",
+        "refresh_on_create",
+        "aws_sns_topic",
         "encryption",
         "use_privatelink_endpoint",
         "aws_access_point_arn",
