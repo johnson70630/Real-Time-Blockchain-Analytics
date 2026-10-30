@@ -105,6 +105,7 @@ def test_production_root_models_only_approved_adoption_scope() -> None:
         "snowflake_account_role",
         "snowflake_database",
         "snowflake_grant_account_role",
+        "snowflake_file_format_parquet",
         "snowflake_schema",
         "snowflake_stage_external_s3",
         "snowflake_storage_integration_aws",
@@ -116,7 +117,7 @@ def test_production_root_models_only_approved_adoption_scope() -> None:
     actual_resources = set(resource_declarations)
 
     assert actual_resources == expected_resources
-    assert len(resource_declarations) == 27
+    assert len(resource_declarations) == 28
     assert not re.search(r"(?m)^\s*import\s*\{", production)
 
 
@@ -360,6 +361,39 @@ def test_snowflake_external_stage_matches_discovery() -> None:
         "ignore_changes",
     ):
         assert excluded not in stage
+
+
+def test_snowflake_parquet_file_format_matches_discovery() -> None:
+    file_format = (
+        PROD_ROOT / "snowflake_parquet_file_format.tf"
+    ).read_text()
+
+    for expected in (
+        'resource "snowflake_file_format_parquet" "raw"',
+        'name     = "PARQUET_FORMAT"',
+        "database = snowflake_database.blockchain.name",
+        "schema   = snowflake_schema.raw.name",
+        'compression = "AUTO"',
+        "null_if     = []",
+        "prevent_destroy = true",
+    ):
+        assert expected in file_format
+
+    for excluded in (
+        "binary_as_text",
+        "use_logical_type",
+        "trim_space",
+        "use_vectorized_scanner",
+        "replace_invalid_characters",
+        "comment",
+        "snowflake_grant_ownership",
+        "snowflake_grant_privileges_to_account_role",
+        "ignore_changes",
+    ):
+        assert excluded not in file_format
+
+    providers = (PROD_ROOT / "providers.tf").read_text()
+    assert "preview_features_enabled" not in providers
 
 
 def test_adopted_bucket_matches_discovered_safety_controls() -> None:
