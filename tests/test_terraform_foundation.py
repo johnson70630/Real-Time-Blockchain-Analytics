@@ -105,6 +105,7 @@ def test_production_root_models_only_approved_adoption_scope() -> None:
         "snowflake_account_role",
         "snowflake_database",
         "snowflake_grant_account_role",
+        "snowflake_grant_privileges_to_account_role",
         "snowflake_file_format_parquet",
         "snowflake_schema",
         "snowflake_stage_external_s3",
@@ -117,7 +118,7 @@ def test_production_root_models_only_approved_adoption_scope() -> None:
     actual_resources = set(resource_declarations)
 
     assert actual_resources == expected_resources
-    assert len(resource_declarations) == 28
+    assert len(resource_declarations) == 32
     assert not re.search(r"(?m)^\s*import\s*\{", production)
 
 
@@ -143,6 +144,53 @@ def test_snowflake_warehouse_matches_discovered_configuration() -> None:
         "ignore_changes",
     ):
         assert excluded not in warehouse
+
+
+def test_snowflake_warehouse_usage_grants_match_discovery() -> None:
+    grants = (PROD_ROOT / "snowflake_warehouse_grants.tf").read_text()
+
+    expected_roles = {
+        "warehouse_usage_de": "de",
+        "warehouse_usage_pipeline": "pipeline",
+        "warehouse_usage_dbt": "dbt",
+        "warehouse_usage_analyst": "analyst",
+    }
+
+    assert grants.count(
+        'resource "snowflake_grant_privileges_to_account_role"'
+    ) == 4
+    for resource_name, role_reference in expected_roles.items():
+        assert (
+            'resource "snowflake_grant_privileges_to_account_role" '
+            f'"{resource_name}"'
+            in grants
+        )
+        assert (
+            "account_role_name = snowflake_account_role."
+            f"{role_reference}.name"
+            in grants
+        )
+
+    for expected in (
+        'privileges        = ["USAGE"]',
+        "with_grant_option           = false",
+        "always_apply                = false",
+        "strict_privilege_management = false",
+        'object_type = "WAREHOUSE"',
+        "object_name = snowflake_warehouse.transform.name",
+        "prevent_destroy = true",
+    ):
+        assert grants.count(expected) == 4
+
+    for excluded in (
+        "all_privileges",
+        "on_account = true",
+        "strict_privilege_management = true",
+        "always_apply                = true",
+        "with_grant_option           = true",
+        "ignore_changes",
+    ):
+        assert excluded not in grants
 
 
 def test_snowflake_database_and_schemas_match_discovery() -> None:
