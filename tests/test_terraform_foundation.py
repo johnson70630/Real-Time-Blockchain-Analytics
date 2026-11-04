@@ -118,7 +118,7 @@ def test_production_root_models_only_approved_adoption_scope() -> None:
     actual_resources = set(resource_declarations)
 
     assert actual_resources == expected_resources
-    assert len(resource_declarations) == 41
+    assert len(resource_declarations) == 42
     assert not re.search(r"(?m)^\s*import\s*\{", production)
 
 
@@ -370,6 +370,56 @@ def test_snowflake_staging_schema_dbt_grant_matches_discovery() -> None:
 
     assert production.count(
         "schema_name = snowflake_schema.staging.fully_qualified_name"
+    ) == 1
+    for excluded in (
+        "all_privileges",
+        "on_account = true",
+        "on_account_object",
+        "on_schema_object",
+        "all_schemas_in_database",
+        "future_schemas_in_database",
+        "future",
+        'privileges        = ["OWNERSHIP"]',
+        "strict_privilege_management = true",
+        "always_apply                = true",
+        "with_grant_option           = true",
+        "ignore_changes",
+    ):
+        assert excluded not in grants
+
+
+def test_snowflake_core_schema_dbt_grant_matches_discovery() -> None:
+    grants = (PROD_ROOT / "snowflake_core_schema_grants.tf").read_text()
+    production = _terraform_text(PROD_ROOT)
+
+    assert grants.count(
+        'resource "snowflake_grant_privileges_to_account_role"'
+    ) == 1
+    for expected in (
+        'resource "snowflake_grant_privileges_to_account_role" '
+        '"core_schema_dbt_privileges"',
+        "account_role_name = snowflake_account_role.dbt.name",
+        "with_grant_option           = false",
+        "always_apply                = false",
+        "strict_privilege_management = false",
+        "on_schema {",
+        "schema_name = snowflake_schema.core.fully_qualified_name",
+        "prevent_destroy = true",
+    ):
+        assert grants.count(expected) == 1
+
+    privileges_match = re.search(
+        r"privileges\s*=\s*\[(?P<privileges>.*?)\]",
+        grants,
+        re.DOTALL,
+    )
+    assert privileges_match is not None
+    privileges = re.findall(r'"([A-Z ]+)"', privileges_match.group("privileges"))
+    assert privileges == ["CREATE TABLE", "CREATE VIEW", "USAGE"]
+    assert len(privileges) == len(set(privileges))
+
+    assert production.count(
+        "schema_name = snowflake_schema.core.fully_qualified_name"
     ) == 1
     for excluded in (
         "all_privileges",
