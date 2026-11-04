@@ -118,7 +118,7 @@ def test_production_root_models_only_approved_adoption_scope() -> None:
     actual_resources = set(resource_declarations)
 
     assert actual_resources == expected_resources
-    assert len(resource_declarations) == 39
+    assert len(resource_declarations) == 40
     assert not re.search(r"(?m)^\s*import\s*\{", production)
 
 
@@ -288,6 +288,47 @@ def test_snowflake_raw_schema_usage_grants_match_discovery() -> None:
         "on_schema_object",
         "all_schemas_in_database",
         "future_schemas_in_database",
+        'privileges        = ["OWNERSHIP"]',
+        "strict_privilege_management = true",
+        "always_apply                = true",
+        "with_grant_option           = true",
+        "ignore_changes",
+    ):
+        assert excluded not in grants
+
+
+def test_snowflake_control_schema_usage_grant_matches_discovery() -> None:
+    grants = (PROD_ROOT / "snowflake_control_schema_grants.tf").read_text()
+    production = _terraform_text(PROD_ROOT)
+
+    assert grants.count(
+        'resource "snowflake_grant_privileges_to_account_role"'
+    ) == 1
+    for expected in (
+        'resource "snowflake_grant_privileges_to_account_role" '
+        '"control_schema_usage_pipeline"',
+        "account_role_name = snowflake_account_role.pipeline.name",
+        'privileges        = ["USAGE"]',
+        "with_grant_option           = false",
+        "always_apply                = false",
+        "strict_privilege_management = false",
+        "on_schema {",
+        "schema_name = snowflake_schema.control.fully_qualified_name",
+        "prevent_destroy = true",
+    ):
+        assert grants.count(expected) == 1
+
+    assert production.count(
+        "schema_name = snowflake_schema.control.fully_qualified_name"
+    ) == 1
+    for excluded in (
+        "all_privileges",
+        "on_account = true",
+        "on_account_object",
+        "on_schema_object",
+        "all_schemas_in_database",
+        "future_schemas_in_database",
+        "future",
         'privileges        = ["OWNERSHIP"]',
         "strict_privilege_management = true",
         "always_apply                = true",
