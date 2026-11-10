@@ -566,6 +566,7 @@ def test_warehouse_probe_constructs_account_identifier_without_selecting_warehou
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     connect_arguments: dict[str, object] = {}
+    executed_queries: list[str] = []
 
     class FakeKey:
         def private_bytes(self, *args: object) -> bytes:
@@ -580,9 +581,16 @@ def test_warehouse_probe_constructs_account_identifier_without_selecting_warehou
 
         def execute(self, query: str) -> None:
             self.query = query
+            executed_queries.append(query)
 
-        def fetchone(self) -> tuple[None]:
-            return (None,)
+        def fetchone(self) -> tuple[str, str, str, str, None]:
+            return (
+                "ORGANIZATION",
+                "ACCOUNT-NAME",
+                drift.EXPECTED_SNOWFLAKE_ROLE,
+                '{"roles":"","value":"NONE"}',
+                None,
+            )
 
         def fetchall(self) -> list[tuple[str, str]]:
             return [(drift.EXPECTED_WAREHOUSE, "SUSPENDED")]
@@ -628,6 +636,159 @@ def test_warehouse_probe_constructs_account_identifier_without_selecting_warehou
     assert connect_arguments["warehouse"] is None
     assert connect_arguments["authenticator"] == "SNOWFLAKE_JWT"
     assert connect_arguments["role"] == drift.EXPECTED_SNOWFLAKE_ROLE
+    assert executed_queries[0] == "USE SECONDARY ROLES NONE"
+    assert "CURRENT_ROLE()" in executed_queries[1]
+    assert "CURRENT_SECONDARY_ROLES()" in executed_queries[1]
+    assert "CURRENT_WAREHOUSE()" in executed_queries[1]
+
+
+def safe_session_context(
+    *,
+    role: object = drift.EXPECTED_SNOWFLAKE_ROLE,
+    secondary_roles: object = '{"roles":"","value":"NONE"}',
+    warehouse: object = None,
+) -> tuple[object, object, object, object, object]:
+    return ("ORGANIZATION", "ACCOUNT-NAME", role, secondary_roles, warehouse)
+
+
+def safe_session_environment() -> dict[str, str]:
+    return {
+        "SNOWFLAKE_ORGANIZATION_NAME": "organization",
+        "SNOWFLAKE_ACCOUNT_NAME": "account-name",
+    }
+
+
+def validate_synthetic_session(
+    context: object,
+    *,
+    warehouse_state: str = "SUSPENDED",
+) -> None:
+    drift.WarehouseSafetyProbe._validate_session_context(
+        context,
+        [{"state": warehouse_state}],
+        safe_session_environment(),
+    )
+
+
+def test_null_warehouse_and_disabled_secondary_roles_are_accepted() -> None:
+    validate_synthetic_session(safe_session_context())
+
+
+@pytest.mark.parametrize("warehouse", ("BLOCKCHAIN_TRANSFORM_WH", "OTHER_WH"))
+def test_inherited_or_other_selected_warehouse_is_rejected(warehouse: str) -> None:
+    with pytest.raises(drift.SafeCheckError):
+        validate_synthetic_session(safe_session_context(warehouse=warehouse))
+
+
+def test_secondary_roles_all_is_rejected() -> None:
+    with pytest.raises(drift.SafeCheckError):
+        validate_synthetic_session(
+            safe_session_context(
+                secondary_roles='{"roles":"BLOCKCHAIN_DE_ROLE","value":"ALL"}'
+            )
+        )
+
+
+@pytest.mark.parametrize(
+    "secondary_roles",
+    (None, "NONE", "", "{}", '{"value":"NONE","roles":"AMBIGUOUS"}'),
+)
+def test_missing_or_ambiguous_secondary_role_metadata_is_rejected(
+    secondary_roles: object,
+) -> None:
+    with pytest.raises(drift.SafeCheckError):
+        validate_synthetic_session(
+            safe_session_context(secondary_roles=secondary_roles)
+        )
+
+
+def test_unexpected_primary_role_is_rejected() -> None:
+    with pytest.raises(drift.SafeCheckError):
+        validate_synthetic_session(safe_session_context(role="ACCOUNTADMIN"))
+
+
+@pytest.mark.parametrize(
+    "context",
+    (None, (), ("ORGANIZATION",), ("ORGANIZATION", "ACCOUNT-NAME", None, None)),
+)
+def test_missing_or_incomplete_session_metadata_is_rejected(context: object) -> None:
+    with pytest.raises(drift.SafeCheckError):
+        validate_synthetic_session(context)
+
+
+def test_running_warehouse_is_rejected() -> None:
+    with pytest.raises(drift.SafeCheckError):
+        validate_synthetic_session(
+            safe_session_context(), warehouse_state="STARTED"
+        )
+
+
+def test_wrong_account_identity_is_rejected() -> None:
+    context = (
+        "OTHER_ORGANIZATION",
+        "ACCOUNT-NAME",
+        drift.EXPECTED_SNOWFLAKE_ROLE,
+        '{"roles":"","value":"NONE"}',
+        None,
+    )
+
+    with pytest.raises(drift.SafeCheckError):
+        validate_synthetic_session(context)
+
+
+def test_warehouse_probe_sanitizes_raw_connection_errors(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    secret = "raw-connection-secret-that-must-not-leak"
+    fake_connector = types.ModuleType("snowflake.connector")
+
+    def fail_connect(**kwargs: object) -> None:
+        del kwargs
+        raise RuntimeError(secret)
+
+    fake_connector.connect = fail_connect  # type: ignore[attr-defined]
+    fake_snowflake = types.ModuleType("snowflake")
+    fake_snowflake.connector = fake_connector  # type: ignore[attr-defined]
+    monkeypatch.setitem(sys.modules, "snowflake", fake_snowflake)
+    monkeypatch.setitem(sys.modules, "snowflake.connector", fake_connector)
+
+    from cryptography.hazmat.primitives import serialization
+
+    class FakeKey:
+        def private_bytes(self, *args: object) -> bytes:
+            del args
+            return b"synthetic-der-key"
+
+    monkeypatch.setattr(
+        serialization,
+        "load_pem_private_key",
+        lambda *args, **kwargs: FakeKey(),
+    )
+
+    with pytest.raises(drift.SafeCheckError) as error:
+        drift.WarehouseSafetyProbe().verify(
+            {
+                "SNOWFLAKE_ORGANIZATION_NAME": "organization",
+                "SNOWFLAKE_ACCOUNT_NAME": "account-name",
+                "SNOWFLAKE_USER": "user",
+                "SNOWFLAKE_PRIVATE_KEY": "synthetic-key-material",
+            }
+        )
+
+    assert error.value.category is drift.DiagnosticCategory.WAREHOUSE_SAFETY_ERROR
+    assert secret not in str(error.value)
+    assert error.value.__cause__ is None
+
+
+def test_checker_has_no_warehouse_or_user_mutation_sql() -> None:
+    source = (drift.PROJECT_ROOT / "scripts" / "check_terraform_drift.py").read_text()
+    folded = source.casefold()
+
+    assert "resume warehouse" not in folded
+    assert "alter warehouse" not in folded
+    assert "alter user" not in folded
+    assert "use warehouse" not in folded
+    assert "use secondary roles none" in folded
 
 
 @pytest.mark.parametrize(

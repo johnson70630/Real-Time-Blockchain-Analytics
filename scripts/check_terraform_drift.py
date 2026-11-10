@@ -573,6 +573,47 @@ def prepare_production_environment(
 class WarehouseSafetyProbe:
     """Read-only Snowflake verification with no selected warehouse."""
 
+    @staticmethod
+    def _secondary_roles_are_none(value: object) -> bool:
+        if not isinstance(value, str):
+            return False
+        try:
+            parsed = json.loads(value)
+        except json.JSONDecodeError:
+            return False
+        if not isinstance(parsed, dict) or parsed.get("value") != "NONE":
+            return False
+        roles = parsed.get("roles")
+        return roles in (None, "", [])
+
+    @classmethod
+    def _validate_session_context(
+        cls,
+        context: object,
+        warehouse_rows: Sequence[Mapping[str, object]],
+        process_env: Mapping[str, str],
+    ) -> None:
+        if not isinstance(context, tuple) or len(context) != 5:
+            raise SafeCheckError(DiagnosticCategory.WAREHOUSE_SAFETY_ERROR)
+        organization, account, role, secondary_roles, warehouse = context
+        expected_organization = process_env.get("SNOWFLAKE_ORGANIZATION_NAME")
+        expected_account = process_env.get("SNOWFLAKE_ACCOUNT_NAME")
+        if not all(
+            isinstance(value, str) and value
+            for value in (expected_organization, expected_account)
+        ):
+            raise SafeCheckError(DiagnosticCategory.WAREHOUSE_SAFETY_ERROR)
+        if (
+            str(organization).upper() != expected_organization.upper()
+            or str(account).upper() != expected_account.upper()
+            or role != EXPECTED_SNOWFLAKE_ROLE
+            or not cls._secondary_roles_are_none(secondary_roles)
+            or warehouse is not None
+            or len(warehouse_rows) != 1
+            or warehouse_rows[0].get("state") != "SUSPENDED"
+        ):
+            raise SafeCheckError(DiagnosticCategory.WAREHOUSE_SAFETY_ERROR)
+
     def verify(self, process_env: Mapping[str, str]) -> None:
         try:
             from cryptography.hazmat.primitives import serialization
@@ -603,8 +644,12 @@ class WarehouseSafetyProbe:
             try:
                 cursor = connection.cursor()
                 try:
-                    cursor.execute("SELECT CURRENT_WAREHOUSE()")
-                    current = cursor.fetchone()
+                    cursor.execute("USE SECONDARY ROLES NONE")
+                    cursor.execute(
+                        "SELECT CURRENT_ORGANIZATION_NAME(), CURRENT_ACCOUNT_NAME(), "
+                        "CURRENT_ROLE(), CURRENT_SECONDARY_ROLES(), CURRENT_WAREHOUSE()"
+                    )
+                    context = cursor.fetchone()
                     cursor.execute(f"SHOW WAREHOUSES LIKE '{EXPECTED_WAREHOUSE}'")
                     columns = [item[0].lower() for item in cursor.description]
                     rows = [dict(zip(columns, row, strict=True)) for row in cursor.fetchall()]
@@ -614,8 +659,7 @@ class WarehouseSafetyProbe:
                 connection.close()
         except Exception:
             raise SafeCheckError(DiagnosticCategory.WAREHOUSE_SAFETY_ERROR) from None
-        if current != (None,) or len(rows) != 1 or rows[0].get("state") != "SUSPENDED":
-            raise SafeCheckError(DiagnosticCategory.WAREHOUSE_SAFETY_ERROR)
+        self._validate_session_context(context, rows, process_env)
 
 
 def run_production_check(
