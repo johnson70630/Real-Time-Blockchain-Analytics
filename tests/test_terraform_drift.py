@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import json
 import subprocess
+import sys
+import types
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 
@@ -446,7 +448,6 @@ def test_external_id_is_extracted_once_and_passed_only_in_child_environment() ->
     )
     process_env = {
         "AWS_PROFILE": drift.EXPECTED_AWS_PROFILE,
-        "SNOWFLAKE_ACCOUNT": "account",
         "SNOWFLAKE_ACCOUNT_NAME": "account-name",
         "SNOWFLAKE_ORGANIZATION_NAME": "organization",
         "SNOWFLAKE_USER": "user",
@@ -457,10 +458,176 @@ def test_external_id_is_extracted_once_and_passed_only_in_child_environment() ->
     child = drift.prepare_production_environment(runner, process_env)
 
     assert child["TF_VAR_snowflake_storage_external_id"] == secret
+    assert child["SNOWFLAKE_ORGANIZATION_NAME"] == "organization"
+    assert child["SNOWFLAKE_ACCOUNT_NAME"] == "account-name"
+    assert "SNOWFLAKE_ACCOUNT" not in child
     assert "TF_VAR_snowflake_storage_external_id" not in process_env
     assert secret not in drift.format_result(
         drift._safe_error_result(1, drift.DiagnosticCategory.AUTHENTICATION_ERROR)
     )
+
+
+def test_legacy_snowflake_account_is_removed_from_terraform_child_environment() -> None:
+    secret = "existing-external-id"
+    role_document = {
+        "Statement": {
+            "Action": "sts:AssumeRole",
+            "Condition": {"StringEquals": {"sts:ExternalId": secret}},
+        }
+    }
+    runner = FakeRunner(
+        {
+            (
+                "aws",
+                "sts",
+                "get-caller-identity",
+                "--profile",
+                drift.EXPECTED_AWS_PROFILE,
+                "--output",
+                "json",
+            ): drift.CommandResult(
+                0,
+                json.dumps(
+                    {
+                        "Account": drift.EXPECTED_AWS_ACCOUNT,
+                        "Arn": drift.EXPECTED_AWS_ARN,
+                    }
+                ),
+            ),
+            (
+                "aws",
+                "configure",
+                "get",
+                "region",
+                "--profile",
+                drift.EXPECTED_AWS_PROFILE,
+            ): drift.CommandResult(0, f"{drift.EXPECTED_AWS_REGION}\n"),
+            (
+                "aws",
+                "iam",
+                "get-role",
+                "--role-name",
+                "snowflake-blockchain-s3-role",
+                "--profile",
+                drift.EXPECTED_AWS_PROFILE,
+                "--output",
+                "json",
+            ): drift.CommandResult(
+                0,
+                json.dumps(
+                    {"Role": {"AssumeRolePolicyDocument": role_document}}
+                ),
+            ),
+        }
+    )
+    process_env = {
+        "AWS_PROFILE": drift.EXPECTED_AWS_PROFILE,
+        "SNOWFLAKE_ACCOUNT": "legacy-account-must-not-be-forwarded",
+        "SNOWFLAKE_ACCOUNT_NAME": "account-name",
+        "SNOWFLAKE_ORGANIZATION_NAME": "organization",
+        "SNOWFLAKE_USER": "user",
+        "SNOWFLAKE_ROLE": drift.EXPECTED_SNOWFLAKE_ROLE,
+        "SNOWFLAKE_PRIVATE_KEY": "private-key-in-memory",
+    }
+
+    child = drift.prepare_production_environment(runner, process_env)
+
+    assert "SNOWFLAKE_ACCOUNT" not in child
+    assert child["SNOWFLAKE_ORGANIZATION_NAME"] == "organization"
+    assert child["SNOWFLAKE_ACCOUNT_NAME"] == "account-name"
+
+
+@pytest.mark.parametrize(
+    "missing_name",
+    ("SNOWFLAKE_ORGANIZATION_NAME", "SNOWFLAKE_ACCOUNT_NAME"),
+)
+def test_missing_snowflake_account_identity_fails_closed_before_external_calls(
+    missing_name: str,
+) -> None:
+    environment = {
+        "AWS_PROFILE": drift.EXPECTED_AWS_PROFILE,
+        "SNOWFLAKE_ORGANIZATION_NAME": "organization",
+        "SNOWFLAKE_ACCOUNT_NAME": "account-name",
+        "SNOWFLAKE_USER": "user",
+        "SNOWFLAKE_ROLE": drift.EXPECTED_SNOWFLAKE_ROLE,
+        "SNOWFLAKE_PRIVATE_KEY": "private-key-in-memory",
+    }
+    del environment[missing_name]
+    runner = FakeRunner()
+
+    with pytest.raises(drift.SafeCheckError) as error:
+        drift.prepare_production_environment(runner, environment)
+
+    assert error.value.category is drift.DiagnosticCategory.AUTHENTICATION_ERROR
+    assert runner.calls == []
+
+
+def test_warehouse_probe_constructs_account_identifier_without_selecting_warehouse(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    connect_arguments: dict[str, object] = {}
+
+    class FakeKey:
+        def private_bytes(self, *args: object) -> bytes:
+            del args
+            return b"synthetic-der-key"
+
+    class FakeCursor:
+        description = (("name",), ("state",))
+
+        def __init__(self) -> None:
+            self.query = ""
+
+        def execute(self, query: str) -> None:
+            self.query = query
+
+        def fetchone(self) -> tuple[None]:
+            return (None,)
+
+        def fetchall(self) -> list[tuple[str, str]]:
+            return [(drift.EXPECTED_WAREHOUSE, "SUSPENDED")]
+
+        def close(self) -> None:
+            return None
+
+    class FakeConnection:
+        def cursor(self) -> FakeCursor:
+            return FakeCursor()
+
+        def close(self) -> None:
+            return None
+
+    def connect(**kwargs: object) -> FakeConnection:
+        connect_arguments.update(kwargs)
+        return FakeConnection()
+
+    fake_connector = types.ModuleType("snowflake.connector")
+    fake_connector.connect = connect  # type: ignore[attr-defined]
+    fake_snowflake = types.ModuleType("snowflake")
+    fake_snowflake.connector = fake_connector  # type: ignore[attr-defined]
+    monkeypatch.setitem(sys.modules, "snowflake", fake_snowflake)
+    monkeypatch.setitem(sys.modules, "snowflake.connector", fake_connector)
+
+    from cryptography.hazmat.primitives import serialization
+
+    monkeypatch.setattr(
+        serialization,
+        "load_pem_private_key",
+        lambda *args, **kwargs: FakeKey(),
+    )
+    environment = {
+        "SNOWFLAKE_ORGANIZATION_NAME": "organization",
+        "SNOWFLAKE_ACCOUNT_NAME": "account-name",
+        "SNOWFLAKE_USER": "user",
+        "SNOWFLAKE_PRIVATE_KEY": "synthetic-key-material",
+    }
+
+    drift.WarehouseSafetyProbe().verify(environment)
+
+    assert connect_arguments["account"] == "organization-account-name"
+    assert connect_arguments["warehouse"] is None
+    assert connect_arguments["authenticator"] == "SNOWFLAKE_JWT"
+    assert connect_arguments["role"] == drift.EXPECTED_SNOWFLAKE_ROLE
 
 
 @pytest.mark.parametrize(

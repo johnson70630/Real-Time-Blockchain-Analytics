@@ -490,7 +490,6 @@ def prepare_production_environment(
     if process_env.get("SNOWFLAKE_AUTHENTICATOR", "SNOWFLAKE_JWT") != "SNOWFLAKE_JWT":
         raise SafeCheckError(DiagnosticCategory.AUTHENTICATION_ERROR)
     for required in (
-        "SNOWFLAKE_ACCOUNT",
         "SNOWFLAKE_USER",
         "SNOWFLAKE_PRIVATE_KEY",
         "SNOWFLAKE_ORGANIZATION_NAME",
@@ -564,6 +563,7 @@ def prepare_production_environment(
         raise SafeCheckError(DiagnosticCategory.AUTHENTICATION_ERROR)
 
     child_env = dict(process_env)
+    child_env.pop("SNOWFLAKE_ACCOUNT", None)
     child_env["TF_VAR_snowflake_storage_external_id"] = next(iter(external_ids))
     child_env["TF_IN_AUTOMATION"] = "true"
     child_env["SNOWFLAKE_AUTHENTICATOR"] = "SNOWFLAKE_JWT"
@@ -588,8 +588,12 @@ class WarehouseSafetyProbe:
                 serialization.PrivateFormat.PKCS8,
                 serialization.NoEncryption(),
             )
+            account_identifier = (
+                f"{process_env['SNOWFLAKE_ORGANIZATION_NAME']}-"
+                f"{process_env['SNOWFLAKE_ACCOUNT_NAME']}"
+            )
             connection = snowflake.connector.connect(
-                account=process_env["SNOWFLAKE_ACCOUNT"],
+                account=account_identifier,
                 user=process_env["SNOWFLAKE_USER"],
                 role=EXPECTED_SNOWFLAKE_ROLE,
                 warehouse=None,
