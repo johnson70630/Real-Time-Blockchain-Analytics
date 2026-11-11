@@ -581,10 +581,16 @@ class WarehouseSafetyProbe:
             parsed = json.loads(value)
         except json.JSONDecodeError:
             return False
-        if not isinstance(parsed, dict) or parsed.get("value") != "NONE":
+        if not isinstance(parsed, dict) or set(parsed) != {"value", "roles"}:
             return False
-        roles = parsed.get("roles")
-        return roles in (None, "", [])
+        requested_value = parsed["value"]
+        roles = parsed["roles"]
+        return (
+            type(requested_value) is str
+            and requested_value in ("", "NONE")
+            and type(roles) is str
+            and roles == ""
+        )
 
     @classmethod
     def _validate_session_context(

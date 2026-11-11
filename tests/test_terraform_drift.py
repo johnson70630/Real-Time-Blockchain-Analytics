@@ -588,7 +588,7 @@ def test_warehouse_probe_constructs_account_identifier_without_selecting_warehou
                 "ORGANIZATION",
                 "ACCOUNT-NAME",
                 drift.EXPECTED_SNOWFLAKE_ROLE,
-                '{"roles":"","value":"NONE"}',
+                '{"roles":"","value":""}',
                 None,
             )
 
@@ -645,7 +645,7 @@ def test_warehouse_probe_constructs_account_identifier_without_selecting_warehou
 def safe_session_context(
     *,
     role: object = drift.EXPECTED_SNOWFLAKE_ROLE,
-    secondary_roles: object = '{"roles":"","value":"NONE"}',
+    secondary_roles: object = '{"roles":"","value":""}',
     warehouse: object = None,
 ) -> tuple[object, object, object, object, object]:
     return ("ORGANIZATION", "ACCOUNT-NAME", role, secondary_roles, warehouse)
@@ -674,32 +674,53 @@ def test_null_warehouse_and_disabled_secondary_roles_are_accepted() -> None:
     validate_synthetic_session(safe_session_context())
 
 
+def test_documented_none_value_with_empty_roles_is_accepted() -> None:
+    validate_synthetic_session(
+        safe_session_context(
+            secondary_roles='{"roles":"","value":"NONE"}'
+        )
+    )
+
+
 @pytest.mark.parametrize("warehouse", ("BLOCKCHAIN_TRANSFORM_WH", "OTHER_WH"))
 def test_inherited_or_other_selected_warehouse_is_rejected(warehouse: str) -> None:
     with pytest.raises(drift.SafeCheckError):
         validate_synthetic_session(safe_session_context(warehouse=warehouse))
 
 
-def test_secondary_roles_all_is_rejected() -> None:
-    with pytest.raises(drift.SafeCheckError):
-        validate_synthetic_session(
-            safe_session_context(
-                secondary_roles='{"roles":"BLOCKCHAIN_DE_ROLE","value":"ALL"}'
-            )
-        )
-
-
 @pytest.mark.parametrize(
     "secondary_roles",
-    (None, "NONE", "", "{}", '{"value":"NONE","roles":"AMBIGUOUS"}'),
+    (
+        None,
+        "NONE",
+        "",
+        "{}",
+        "not-json",
+        '[]',
+        '{"value":""}',
+        '{"roles":""}',
+        '{"roles":null,"value":""}',
+        '{"roles":"","value":null}',
+        '{"roles":[],"value":""}',
+        '{"roles":"ACTIVE","value":""}',
+        '{"roles":["ACTIVE"],"value":""}',
+        '{"roles":"","value":"ALL"}',
+        '{"roles":"","value":"UNKNOWN"}',
+        '{"extra":false,"roles":"","value":""}',
+    ),
 )
-def test_missing_or_ambiguous_secondary_role_metadata_is_rejected(
+def test_unverified_secondary_role_metadata_is_rejected(
     secondary_roles: object,
 ) -> None:
-    with pytest.raises(drift.SafeCheckError):
+    with pytest.raises(drift.SafeCheckError) as error:
         validate_synthetic_session(
             safe_session_context(secondary_roles=secondary_roles)
         )
+
+    rendered = str(secondary_roles)
+    if rendered:
+        assert rendered not in str(error.value)
+    assert error.value.__cause__ is None
 
 
 def test_unexpected_primary_role_is_rejected() -> None:
@@ -728,7 +749,7 @@ def test_wrong_account_identity_is_rejected() -> None:
         "OTHER_ORGANIZATION",
         "ACCOUNT-NAME",
         drift.EXPECTED_SNOWFLAKE_ROLE,
-        '{"roles":"","value":"NONE"}',
+        '{"roles":"","value":""}',
         None,
     )
 
@@ -775,6 +796,67 @@ def test_warehouse_probe_sanitizes_raw_connection_errors(
             }
         )
 
+    assert error.value.category is drift.DiagnosticCategory.WAREHOUSE_SAFETY_ERROR
+    assert secret not in str(error.value)
+    assert error.value.__cause__ is None
+
+
+def test_failed_secondary_role_setup_stops_before_metadata_query(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    secret = "secondary-role-setup-secret-that-must-not-leak"
+    executed_queries: list[str] = []
+
+    class FakeKey:
+        def private_bytes(self, *args: object) -> bytes:
+            del args
+            return b"synthetic-der-key"
+
+    class FakeCursor:
+        def execute(self, query: str) -> None:
+            executed_queries.append(query)
+            raise RuntimeError(secret)
+
+        def close(self) -> None:
+            return None
+
+    class FakeConnection:
+        def cursor(self) -> FakeCursor:
+            return FakeCursor()
+
+        def close(self) -> None:
+            return None
+
+    def connect(**kwargs: object) -> FakeConnection:
+        del kwargs
+        return FakeConnection()
+
+    fake_connector = types.ModuleType("snowflake.connector")
+    fake_connector.connect = connect  # type: ignore[attr-defined]
+    fake_snowflake = types.ModuleType("snowflake")
+    fake_snowflake.connector = fake_connector  # type: ignore[attr-defined]
+    monkeypatch.setitem(sys.modules, "snowflake", fake_snowflake)
+    monkeypatch.setitem(sys.modules, "snowflake.connector", fake_connector)
+
+    from cryptography.hazmat.primitives import serialization
+
+    monkeypatch.setattr(
+        serialization,
+        "load_pem_private_key",
+        lambda *args, **kwargs: FakeKey(),
+    )
+
+    with pytest.raises(drift.SafeCheckError) as error:
+        drift.WarehouseSafetyProbe().verify(
+            {
+                "SNOWFLAKE_ORGANIZATION_NAME": "organization",
+                "SNOWFLAKE_ACCOUNT_NAME": "account-name",
+                "SNOWFLAKE_USER": "user",
+                "SNOWFLAKE_PRIVATE_KEY": "synthetic-key-material",
+            }
+        )
+
+    assert executed_queries == ["USE SECONDARY ROLES NONE"]
     assert error.value.category is drift.DiagnosticCategory.WAREHOUSE_SAFETY_ERROR
     assert secret not in str(error.value)
     assert error.value.__cause__ is None
