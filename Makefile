@@ -1,6 +1,6 @@
 .PHONY: kafka-up kafka-down producer producer-build producer-up producer-logs producer-down market-data market-data-build market-data-up market-data-logs market-data-down uniswap-pools uniswap-pools-bootstrap uniswap-recovery-bootstrap token-metadata aave-backfill chainlink-backfill bronze market-data-bronze market-data-silver silver aave-silver price-enrichment gold snowflake-sql snowflake-load dashboard data-lab freshness-check airflow-init airflow-up airflow-down airflow-logs airflow-test terraform-fmt terraform-init terraform-validate ci ci-python ci-spark ci-app ci-dbt ci-secrets ci-terraform ci-airflow quality test lint check clean-data
 
-TERRAFORM_ROOTS := infra/terraform/bootstrap/state infra/terraform/environments/prod
+TERRAFORM_ROOTS := infra/terraform/bootstrap/state infra/terraform/environments/prod infra/terraform/environments/runtime
 
 kafka-up:
 	docker compose up -d kafka

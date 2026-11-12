@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+set -euo pipefail
+umask 027
+
+dnf install -y docker xfsprogs
+systemctl enable --now docker
+
+install -d -m 0755 /usr/local/lib/docker/cli-plugins
+compose_tmp="$(mktemp)"
+trap 'rm -f "$compose_tmp"' EXIT
+curl --fail --silent --show-error --location \
+  "${docker_compose_download_url}" \
+  --output "$compose_tmp"
+printf '%s  %s\n' "${docker_compose_sha256}" "$compose_tmp" | sha256sum --check --status
+install -m 0755 "$compose_tmp" /usr/local/lib/docker/cli-plugins/docker-compose
+
+volume_token="$(printf '%s' '${kafka_volume_id}' | tr -d '-')"
+device_path="/dev/disk/by-id/nvme-Amazon_Elastic_Block_Store_$volume_token"
+
+for _ in $(seq 1 120); do
+  if [[ -b "$device_path" ]]; then
+    break
+  fi
+  sleep 5
+done
+
+if [[ ! -b "$device_path" ]]; then
+  echo "EBS_VOLUME_MISSING_OR_DETACHED" >&2
+  exit 1
+fi
+
+resolved_device="$(readlink -f "$device_path")"
+device_serial="$(lsblk -ndo SERIAL "$resolved_device" | tr -d '[:space:]-')"
+if [[ "$device_serial" != "$volume_token" ]]; then
+  echo "EBS_VOLUME_IDENTITY_MISMATCH" >&2
+  exit 1
+fi
+
+filesystem_probe="$(blkid -p -o export "$resolved_device" || true)"
+filesystem_type=""
+while IFS='=' read -r probe_key probe_value; do
+  if [[ "$probe_key" == "TYPE" ]]; then
+    filesystem_type="$probe_value"
+    break
+  fi
+done <<< "$filesystem_probe"
+
+if [[ -z "$filesystem_type" ]]; then
+  if [[ -z "$filesystem_probe" ]]; then
+    echo "EBS_INITIALIZATION_REQUIRED" >&2
+  else
+    echo "EBS_FILESYSTEM_UNRECOGNIZED_OR_DAMAGED" >&2
+  fi
+  exit 1
+elif [[ "$filesystem_type" != "xfs" ]]; then
+  echo "EBS_FILESYSTEM_UNEXPECTED" >&2
+  exit 1
+fi
+
+install -d -m 0750 "${kafka_mount_point}"
+volume_uuid="$(blkid -p -s UUID -o value "$resolved_device")"
+if [[ -z "$volume_uuid" ]]; then
+  echo "EBS_XFS_UUID_MISSING" >&2
+  exit 1
+fi
+
+fstab_entry="UUID=$volume_uuid ${kafka_mount_point} xfs defaults,nofail 0 2"
+if ! grep -Fq "UUID=$volume_uuid " /etc/fstab; then
+  printf '%s\n' "$fstab_entry" >> /etc/fstab
+fi
+
+if mountpoint --quiet "${kafka_mount_point}"; then
+  mounted_uuid="$(findmnt --noheadings --output UUID --target "${kafka_mount_point}" | tr -d '[:space:]')"
+  if [[ "$mounted_uuid" != "$volume_uuid" ]]; then
+    echo "EBS_MOUNT_IDENTITY_MISMATCH" >&2
+    exit 1
+  fi
+else
+  mount "${kafka_mount_point}"
+fi
+
+if ! mountpoint --quiet "${kafka_mount_point}"; then
+  echo "EBS_MOUNT_FAILED" >&2
+  exit 1
+fi
+
+chmod 0750 "${kafka_mount_point}"
+echo "EBS_MOUNT_VERIFIED"
+
+install -d -m 0750 /opt/blockchain-runtime
+
+# Intentionally do not retrieve secrets, pull images, or start containers.
+# Deployment and application startup require a separately reviewed 11.6C action.
