@@ -242,7 +242,10 @@ def test_runtime_iam_is_prefix_scoped_and_denies_state_access() -> None:
     )
     assert secret_variable is not None
     assert "sensitive   = true" in secret_variable.group("body")
-    assert "default" not in secret_variable.group("body")
+    assert "default     = []" in secret_variable.group("body")
+    assert 'dynamic "statement"' in iam
+    assert "nonsensitive(length(var.approved_secret_arns) > 0) ? [true] : []" in iam
+    assert "209479274979:secret:" in secret_variable.group("body")
 
 
 def test_pilot_paths_cannot_target_production_bronze() -> None:

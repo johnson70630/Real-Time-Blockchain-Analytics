@@ -96,11 +96,14 @@ data "aws_iam_policy_document" "runtime" {
     resources = ["arn:aws:s3:::${var.terraform_state_bucket_name}/*"]
   }
 
-  statement {
-    sid       = "ReadApprovedRuntimeSecrets"
-    effect    = "Allow"
-    actions   = ["secretsmanager:GetSecretValue"]
-    resources = var.approved_secret_arns
+  dynamic "statement" {
+    for_each = nonsensitive(length(var.approved_secret_arns) > 0) ? [true] : []
+    content {
+      sid       = "ReadApprovedRuntimeSecrets"
+      effect    = "Allow"
+      actions   = ["secretsmanager:GetSecretValue"]
+      resources = var.approved_secret_arns
+    }
   }
 
   statement {

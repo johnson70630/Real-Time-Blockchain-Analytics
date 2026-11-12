@@ -12,6 +12,14 @@ created instance. The bootstrap installs Docker, verifies a pinned Compose
 binary, and mounts the persistent Kafka volume, but it deliberately starts no
 application containers and reads no secrets.
 
+For infrastructure-only planning, `approved_secret_arns` defaults to `[]`.
+The entire secret-read IAM statement is omitted in that mode. This does not
+create a secret or make the streaming application ready to start. Before a
+later pilot, separately approve secure secret creation and a policy update
+allowing only its exact ARN in account 209479274979, Region us-west-2.
+Wildcards and other accounts/Regions are rejected. Never use a fabricated ARN
+to unblock a real plan. Offline provider-mocked tests cover both modes.
+
 ## Runtime contract
 
 - No inbound security-group rules, SSH key, Elastic IP, NAT Gateway, or load

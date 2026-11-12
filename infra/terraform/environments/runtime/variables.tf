@@ -120,19 +120,17 @@ variable "pilot_s3_prefix" {
 }
 
 variable "approved_secret_arns" {
-  description = "Exact Secrets Manager ARNs readable by the runtime instance role."
+  description = "Exact approved Secrets Manager ARNs; empty disables secret access for infrastructure-only planning."
   type        = list(string)
   sensitive   = true
+  default     = []
 
   validation {
-    condition = (
-      length(var.approved_secret_arns) > 0 &&
-      alltrue([
-        for arn in var.approved_secret_arns :
-        startswith(arn, "arn:aws:secretsmanager:us-west-2:")
-      ])
-    )
-    error_message = "Supply at least one exact us-west-2 Secrets Manager ARN."
+    condition = alltrue([
+      for arn in var.approved_secret_arns :
+      can(regex("^arn:aws:secretsmanager:us-west-2:209479274979:secret:[A-Za-z0-9/_+=.@-]+-[A-Za-z0-9]{6}$", arn))
+    ])
+    error_message = "Use an empty list for no secret access, or exact secret ARNs in the approved account and Region; wildcards are forbidden."
   }
 }
 

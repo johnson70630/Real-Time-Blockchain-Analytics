@@ -1,9 +1,11 @@
 # Milestone 11.6C — first streaming pilot readiness
 
-Status: offline implementation; **AWS deployment is not authorized**. Milestone
-11.5D remains paused. No backend initialization, authenticated Terraform plan,
-apply/import, cloud mutation, EBS initialization, Snowflake operation, or main
-merge belongs to this preparation. README is unchanged.
+Status: offline implementation complete; runtime-only backend initialization
+and authenticated planning were subsequently approved. **AWS deployment is not
+authorized.** Milestone 11.5D remains paused. Apply/import, IAM permission
+changes, resource creation, EBS initialization, Snowflake operations and main
+merge remain outside the approval. README is unchanged. See the current
+[runtime plan review](aws_runtime_plan_review.md) for the planning blocker.
 
 ## Implementation plan and decisions
 
@@ -34,7 +36,10 @@ library there; the application filesystem remains read-only.
 
 ## Proposed resources and exact Terraform scope
 
-**Terraform source changes in 11.6C: none.** Use only
+The initial offline checkpoint changed no Terraform source. The subsequent
+infrastructure-only planning change makes `approved_secret_arns` optional,
+omits its IAM statement when empty, and rejects wildcard/wrong-account/Region
+ARNs. It adds no resource definitions. Use only
 `infra/terraform/environments/runtime/`. If the runtime has never been applied
 and its separate state is empty, the existing defaults describe **28 Terraform
 resource instances**, plus the EC2-managed encrypted 30-GiB gp3 root volume:
@@ -57,10 +62,12 @@ Keep `enable_scheduled_shutdown=false`: the three optional Scheduler/IAM
 resources are excluded from the 28. The host's manually started systemd timer
 provides a separate emergency stop without expanding the instance IAM role.
 
-No runtime state was read in 11.6C; actual existing runtime resources and the
-future plan counts are **unverified**. A future, explicitly approved plan must
-use key `production/runtime/terraform.tfstate`, native S3 locking, and a
-restricted plan artifact. Never use or migrate
+The approved preflight found no runtime state object and verified the backend
+key `production/runtime/terraform.tfstate` with native S3 locking. The first
+authenticated plan could not complete because the planning identity lacks
+`ssm:GetParameter` for the public AMI parameter. The expected count of 28
+remains a configuration expectation, not a successful authenticated plan result.
+Full logs remain restricted. Never use or migrate
 `production/platform/terraform.tfstate`. Stop on any existing-platform change,
 replacement, unexpected destroy, different region/AZ/type, privilege widening,
 or unreviewed charge. Preserve all 43 platform resources and 15 adopted grants.
@@ -111,8 +118,10 @@ See [Spark 4.0.1 compatibility](https://spark.apache.org/docs/4.0.1/) and the
 ## IAM, secrets, and host prerequisites
 
 The existing instance-role policy already covers pilot-only S3 reads/writes,
-two ECR repositories, the log group, approved secret ARNs, and SSM. No IAM
-expansion was added. The state bucket has an explicit deny. No Snowflake
+two ECR repositories, the log group, and SSM. Secret-read access is now omitted
+by default (`approved_secret_arns=[]`); no secret exists yet. Enabling an exact
+secret ARN later requires separate permission-change approval. No IAM
+change was applied. The state bucket has an explicit deny. No Snowflake
 credentials or privileges are needed. All containers share the EC2 trust
 boundary through IMDSv2 with response hop limit two; this is not per-container
 IAM isolation. Never mount the Docker socket or run unreviewed code/images.
@@ -217,8 +226,9 @@ repurposed, since the pilot must not touch Snowflake.
 
 ## Approved deployment/start procedure (not executed)
 
-1. Obtain a runtime-only authenticated-plan approval. Review the restricted
-   plan against the exact scope above. Obtain separate apply/launch/spending
+1. Runtime-only authenticated planning is approved, but currently blocked by
+   missing public-AMI read permission (see the plan review). Complete and review
+   that restricted plan against the exact scope above. Obtain separate apply/launch/spending
    approval, including the first boot; keep a stop deadline during provisioning.
 2. Resolve secret provisioning, Compose version/checksum, image publication,
    ECR scans/digests, and exact AMI. Approve any mutations individually. Stop
@@ -343,9 +353,12 @@ resources and CI image builds add Actions minutes.
 
 ## Remaining deployment blockers
 
-- Explicit production plan/apply/initial-launch approval and approved run window.
-- Actual runtime state inventory and restricted plan review (not performed).
-- Reviewed Compose binary version/checksum and resolved AMI.
+- A planning identity able to read the exact public AMI parameter; no IAM
+  expansion is currently approved.
+- A complete authenticated plan and restricted review, followed by explicit
+  apply/initial-launch/spending approval and an approved run window.
+- A resolved AMI. Compose v5.1.3 Linux x86_64 and its checksum were verified
+  against the official release; the pin is recorded in the plan review.
 - Exact EC2/EBS IDs, proven blank volume, separate formatting approval and UUID.
 - Existing approved secret ARN or separately approved secure provisioning.
 - Published/scanned amd64 ECR digests for all three container artifacts.
@@ -353,6 +366,7 @@ resources and CI image builds add Actions minutes.
   CloudWatch/S3/IMDS validation. Offline tests cannot establish these.
 - Live acceptance and in-flight S3 checkpoint/recovery tests after deployment.
 
-Next gated action: request approval for a **runtime-only authenticated plan**
-with the scope above. Review the concrete plan before requesting apply/launch
+Next gated action: resolve the narrowly scoped public-AMI read permission or
+use an already authorized planning identity, then retry the already approved
+runtime-only plan. Review the complete plan before requesting apply/launch
 approval. Formatting remains a separate exact-volume decision afterward.

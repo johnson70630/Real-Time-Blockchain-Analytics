@@ -158,6 +158,7 @@ ci-secrets:
 	uv run python scripts/check_secrets.py --all-files
 
 ci-terraform: terraform-fmt terraform-validate
+	terraform -chdir=infra/terraform/environments/runtime test -no-color
 
 release-test:
 	uv run pytest tests/test_release_contracts.py tests/test_ci_contracts.py
