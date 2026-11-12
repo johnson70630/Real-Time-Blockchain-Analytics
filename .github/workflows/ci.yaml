@@ -57,7 +57,7 @@ jobs:
   spark:
     name: Spark correctness
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -89,6 +89,12 @@ jobs:
         env:
           SPARK_LOCAL_IP: 127.0.0.1
         run: make ci-spark
+
+      - name: Build and verify Java 17 pilot images without cloud credentials
+        run: bash scripts/build_runtime_images.sh
+
+      - name: Test synthetic Kafka and checkpoint recovery offline
+        run: bash scripts/test_runtime_integration.sh
 
   app-contracts:
     name: Streamlit application contracts

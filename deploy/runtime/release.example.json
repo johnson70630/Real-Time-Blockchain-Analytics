@@ -1,0 +1,12 @@
+{
+  "instance_id": "REQUIRED_AFTER_APPROVED_APPLY",
+  "kafka_volume_id": "EXACT_VOLUME_REQUIRES_SEPARATE_INITIALIZATION_APPROVAL",
+  "kafka_filesystem_uuid": "REQUIRED_AFTER_APPROVED_INITIALIZATION",
+  "cluster_id": "GENERATE_ONCE_AND_PRESERVE",
+  "producer_image": "REQUIRED_ECR_PRODUCER_REPOSITORY_SHA256_DIGEST",
+  "spark_image": "REQUIRED_ECR_SPARK_REPOSITORY_SHA256_DIGEST",
+  "kafka_image": "REQUIRED_MIRRORED_KAFKA_DIGEST_IN_PRODUCER_REPOSITORY",
+  "secret_arn": "EXACT_APPROVED_SECRET_ARN_REQUIRED",
+  "pilot_prefix": "blockchain-analytics/pilot/runtime/11-6c-v1",
+  "max_runtime_seconds": 3600
+}

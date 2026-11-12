@@ -1,0 +1,19 @@
+[Unit]
+Description=Bounded blockchain streaming pilot (manual start only)
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+RequiresMountsFor=/var/lib/blockchain-runtime/kafka
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/blockchain-runtime
+ExecStart=/usr/bin/python3 -m runtime.host run /opt/blockchain-runtime/release.json
+KillSignal=SIGTERM
+KillMode=process
+TimeoutStopSec=420
+Restart=no
+UMask=0077
+LimitCORE=0
+ExecStopPost=/usr/bin/systemctl --no-block poweroff
+# Never enable on boot. Start the emergency timer BEFORE this service.

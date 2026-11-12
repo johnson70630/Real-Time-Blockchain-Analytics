@@ -1,0 +1,13 @@
+# Supply a reviewed python:3.12-slim-bookworm@sha256:... reference.
+ARG PYTHON_BASE=python:3.12-slim-bookworm@sha256:0f086103b026048cc50cb5da25ec435c023c5241a83fc44daea593377abc61c4
+FROM ${PYTHON_BASE}
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+WORKDIR /app
+COPY deploy/runtime/producer-requirements.txt /tmp/requirements.txt
+RUN python -m pip install --no-cache-dir --require-hashes -r /tmp/requirements.txt \
+    && useradd --uid 10001 --create-home pilot
+COPY config /app/config
+COPY producer /app/producer
+COPY runtime /app/runtime
+USER 10001:10001
+CMD ["python", "-m", "runtime.producer"]

@@ -25,7 +25,7 @@ def handle_shutdown_signal(_signum: int, _frame: FrameType | None) -> None:
     raise KeyboardInterrupt
 
 
-def run_producer() -> None:
+def run_producer(*, kafka_factory=None) -> None:
     """Receive blockchain logs, normalize them, and publish them to Kafka."""
     dispatcher = EventDispatcher(protocol_registry, ENABLED_PROTOCOLS)
     subscriptions = dispatcher.subscriptions
@@ -34,7 +34,9 @@ def run_producer() -> None:
 
     with (
         AlchemyClient(websocket_url) as client,
-        KafkaEventProducer(KAFKA_BOOTSTRAP_SERVERS, KAFKA_TOPIC) as kafka,
+        (kafka_factory or KafkaEventProducer)(
+            KAFKA_BOOTSTRAP_SERVERS, KAFKA_TOPIC
+        ) as kafka,
     ):
         logger.info("Starting blockchain event producer")
         logger.info("Chain: %s", CHAIN)

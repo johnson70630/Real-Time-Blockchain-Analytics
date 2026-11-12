@@ -1,0 +1,7 @@
+[Unit]
+Description=Emergency EC2 stop; inspect Kafka/checkpoint recovery afterward
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/systemctl --no-block poweroff
+# EC2 instance_initiated_shutdown_behavior=stop is required.

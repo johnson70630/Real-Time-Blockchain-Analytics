@@ -1,0 +1,8 @@
+[Unit]
+Description=Emergency compute stop deadline (manual start only)
+
+[Timer]
+OnActiveSec=150min
+AccuracySec=1s
+Unit=blockchain-pilot-poweroff.service
+# No Install section: never automatically restart a paid demonstration.

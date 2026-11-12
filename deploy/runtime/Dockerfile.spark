@@ -1,0 +1,21 @@
+# The target is linux/amd64; bookworm supplies Java 17 explicitly.
+ARG PYTHON_BASE=python:3.12-slim-bookworm@sha256:0f086103b026048cc50cb5da25ec435c023c5241a83fc44daea593377abc61c4
+FROM ${PYTHON_BASE}
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 SPARK_LOCAL_IP=127.0.0.1 SPARK_LOCAL_HOSTNAME=localhost
+WORKDIR /app
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends openjdk-17-jre-headless ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && java -version 2>&1 | head -1 | grep '"17\.'
+COPY deploy/runtime/spark-requirements.txt /tmp/requirements.txt
+RUN python -m pip install --no-cache-dir --require-hashes -r /tmp/requirements.txt \
+    && useradd --uid 10001 --create-home pilot
+COPY deploy/runtime/jars.lock.json /tmp/jars.lock.json
+COPY deploy/runtime/fetch_jars.py /tmp/fetch_jars.py
+RUN python /tmp/fetch_jars.py /tmp/jars.lock.json
+COPY config /app/config
+COPY spark /app/spark
+COPY runtime /app/runtime
+USER 10001:10001
+# No Maven resolver or package download is invoked at runtime.
+CMD ["python", "-m", "runtime.stream"]
