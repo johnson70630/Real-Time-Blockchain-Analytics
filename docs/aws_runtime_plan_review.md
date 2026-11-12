@@ -1,131 +1,184 @@
 # AWS demo infrastructure-only plan review
 
-Date: 2026-11-12. **Status: authenticated plan blocked; nothing deployed.**
-This remains a scheduled portfolio demo, initially around 40 runtime hours per
-month. Milestone 11.5D stays paused. No README or main-branch changes.
+Date: 2026-11-12. **Status: authenticated plan complete; security review passed;
+nothing deployed.** This remains a scheduled portfolio demo, initially around
+40 runtime hours per month. Milestone 11.5D stays paused. README and main are
+unchanged.
 
 ## A. What was implemented
 
-The runtime can now be planned with no Alchemy secret provisioned:
-`approved_secret_arns` defaults to an empty list and Terraform omits the entire
-Secrets Manager read statement. Exact ARNs can be opted into later, but
-wildcards, other accounts and other Regions fail validation. No Secrets Manager
-resource was added. The application release still requires a real approved
-secret before producer startup.
+The runtime supports infrastructure-only planning with
+`approved_secret_arns=[]`; the entire Secrets Manager read statement is omitted.
+No secret resource is defined. Later exact-ARN opt-in rejects wildcards and
+other accounts/Regions. The application still requires a real approved secret
+before producer startup.
+
+The authenticated plan completed using `AWS_PROFILE=blockchain-de`, IAM user
+`blockchain-de-local`, account 209479274979. Its verified result is **28 creates,
+0 updates, 0 deletes**. This is a proposal, not an apply or deployment approval.
 
 ## B. Why
 
-Secret provisioning should not block an infrastructure preview or require a
-fabricated ARN. Empty configuration grants no secret permissions. Later secret
-creation and the corresponding IAM update remain explicit approval gates.
+An infrastructure preview should not require premature secret provisioning or
+a fabricated ARN. Explicitly selecting the local operator profile also avoids
+using the pipeline identity for Terraform work. Native locking protects the
+separate runtime state against concurrent operations.
 
 ## C. Files changed
 
-- Runtime `variables.tf`: empty default and exact-ARN validation.
-- Runtime `iam.tf`: conditional secret-read statement.
-- Runtime `tests/secret_access.tftest.hcl`: five offline AWS-mock cases.
-- `Makefile`: run the mock tests in the Terraform CI job.
-- Python Terraform contracts and runtime operations/readiness documentation.
-- `docs/policies/runtime-plan-public-ami-read.json`: **review-only**, not attached
-  or managed as a Terraform resource.
+The planning implementation is already committed at `94d193f`: optional secret
+inputs, a conditional IAM statement, five offline provider-mocked tests,
+Python contracts, CI integration, and operating documentation. This follow-up
+changes only documentation:
 
-## D. Validation
+- This completed A-J plan review.
+- `docs/aws_streaming_pilot.md`: current readiness and remaining approval gates.
+- `docs/policies/runtime-plan-state-lock.json`: the separately approved runtime
+  lock-object policy, administered outside Terraform.
 
-Terraform formatting and isolated validation passed. Five credential-free,
-backend-free mock-provider tests cover no secret access by default, exact-secret
-opt-in, and rejection of wildcards, wrong accounts and wrong Regions. Python
-contracts, lint and the secret scanner passed. Hosted CI is reported with the
-final Git checkpoint in the conversation.
+`docs/policies/runtime-plan-public-ami-read.json` records the other approved
+operator permission. Neither operator policy is adopted into runtime Terraform
+state. No Terraform configuration or application code changed in this follow-up.
 
-The authenticated attempt used only the runtime root, default workspace,
-us-west-2/us-west-2a, and the separate
-`production/runtime/terraform.tfstate` backend. Preflight confirmed AWS account
-209479274979 and found the runtime state object absent. Backend initialization
-succeeded using isolated local metadata. The platform backend was not initialized,
-migrated or planned.
+## D. Tests and validation
 
-## E. Security review and blocker
+The preceding implementation passed 560 Python tests, five isolated
+credential-free/backend-free AWS-mock cases, Terraform formatting/validation,
+lint, the secret scan, and all six hosted CI jobs. The mock cases cover empty
+secret access, exact-ARN opt-in, and rejection of wildcards/wrong accounts/Regions.
 
-Both existing AWS profiles lack `ssm:GetParameter` for this AWS-managed public
-AMI parameter:
+The completed authenticated plan used only
+`infra/terraform/environments/runtime/`, default workspace, us-west-2/us-west-2a,
+and backend key `production/runtime/terraform.tfstate`. The binary and JSON were
+retained privately. Private JSON checks confirmed a complete, non-errored plan,
+28 managed creates, no updates/deletes, and no existing resources claimed.
 
-```text
-/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64
-```
+Native S3 locking stayed enabled. Both the runtime state object and temporary
+`.tflock` object were confirmed absent after planning. The platform backend was
+not initialized, migrated or planned.
 
-The plan therefore failed during AMI discovery. It is **not a complete plan or
-an apply-ready artifact**. Terraform saved an errored partial plan, which is
-retained privately with an `INCOMPLETE` filename. Post-checks confirmed no
-runtime state object or stale native lock remains. No IAM permission was expanded to bypass the error.
-The read-only policy prepared for review allows exactly one action against
-exactly that parameter in us-west-2. It belongs to the **planning identity**,
-not the future EC2 instance role. Its attachment requires separate IAM approval
-and an authorized IAM administrator. An already authorized planning identity
-is another option. No secret-value retrieval was attempted.
+## E. Security review
 
-Complete plan logs and local backend metadata remain outside Git in a
-restricted temporary directory. No raw state, full plan, credential, endpoint,
-secret value or external ID is included here.
+The user separately approved and reported adding public-AMI read and exact
+runtime-lock permissions to `blockchain-de-local` through an administrator.
+Public AMI access and successful lock acquisition/release were verified. The
+available profiles could not manage IAM, and the assistant's write attempts
+were denied. Live policy readback was unavailable, so this report does not claim
+an independent audit of every permission attached to the operator.
+
+The runtime plan review confirmed:
+
+- No ingress, SSH key, NAT Gateway, ALB, Elastic IP, Secrets Manager secret or
+  Scheduler resources.
+- IMDSv2 required with hop limit two; standard T3 credits; termination
+  protection; guest shutdown stops the instance.
+- Encrypted 30-GiB root and encrypted 100-GiB Kafka gp3 volumes.
+- Pilot object access limited to
+  `blockchain-analytics/pilot/runtime/11-6c-v1/*`, with explicit state-bucket
+  denial for the future runtime role.
+- Empty secret allowlist and no Secrets Manager read statement.
+- Fourteen-day logs, immutable ECR tags and scan on push.
+- Only new runtime resources; no changes to the existing 43 platform resources,
+  Snowflake or Streamlit.
+
+Some resource ARNs and rendered user data remain computed until IDs exist at
+apply time. Their committed source/template was reviewed. Offline contracts
+still require fail-closed EBS mounting, no filesystem formatting and no automatic
+application startup. No secret values were retrieved.
+
+Full plans/logs/local backend metadata remain outside Git in a restricted
+temporary directory. No raw state, full plan, credential, endpoint, secret value
+or external ID is included here. Earlier failed artifacts are retained privately
+and marked `INCOMPLETE`; they must not be used. Terraform considers the new
+successful plan technically applicable; **this does not authorize applying it**.
 
 ## F. Git and CI
 
-The preceding offline checkpoint is `95e5d8b83b4534ff7a5ddf7abc855a25cdd03a78`;
-its six hosted CI jobs passed. This follow-up checkpoint contains only the
-planning-mode change, its tests, and documentation. The conversation records
-its final commit and CI result.
+The exact planned configuration is
+`94d193f93998b9d6334ceca07189e1f6e4f96a11`. Its six jobs passed in
+[CI run 43304620356](https://github.com/johnson70630/Real-Time-Blockchain-Analytics/actions/runs/43304620356).
+This documentation checkpoint does not change that configuration. Its final
+commit and automatically triggered CI result are recorded in the conversation.
+`main` remains at `21be18e45791a4199830754b80620d7d6599587e`.
 
-## G. Proposed cost and runtime
+Runtime configuration SHA-256 (Terraform files, lockfile, bootstrap template):
+`e177b93d39fb97db6f5633b25f05fac9e5d88d73a86bcfd645279ee25534f37e`.
+Saved successful plan SHA-256:
+`36d446d33d7b3adafa94999fa5af6f874242f8388efef14e1a3f7f4dc74f6a9f`.
+The binary stays private, outside Git. Refresh and re-review before a separately
+approved apply if configuration, state or AMI selection has changed; do not
+assume this snapshot remains current indefinitely.
 
-No EC2, EBS, ECR, IAM, logging or secret resources were created or modified.
-Planning used the existing S3 backend's normal request/locking operations;
-there is no new runtime compute charge. Existing S3 API/versioning charges can
-still apply.
+## G. Cost and runtime
 
-The inherited estimate remains approximately USD 24/month for 40 runtime hours,
-not an approved spending cap or a current quote. The first release manifest
-proposes one hour plus bounded shutdown/boot time. Before any apply, refresh
-the region-specific rates and explicitly approve retained storage costs as
-well as running compute. An apply would launch EC2 immediately, even with no
-Alchemy secret and no containers started.
+No EC2, EBS, ECR, runtime IAM role, log-group or secret resources were deployed.
+The only approved IAM changes reported by the user are the local operator's
+public-AMI and runtime-lock policies, administered outside Terraform. Planning
+used normal request/locking operations on the existing S3 backend; existing API
+and versioning charges can apply. There is no new runtime compute charge.
 
-## H. Remaining blockers and proposed inputs
+The inherited estimate remains approximately **USD 24/month for 40 runtime
+hours**, not an authorized spend cap or independently refreshed region quote.
+The first release manifest proposes one hour plus bounded shutdown/boot time.
+Before apply, refresh region-specific rates and explicitly approve retained
+storage costs as well as running compute. An apply launches EC2 immediately,
+even with no Alchemy secret and no application containers started.
 
-The AMI read permission is the current planning blocker. Once resolved, retry
-the already approved plan with these inputs:
+The retained 130-GiB EBS storage, ECR images, logs and later secret/S3 storage
+continue to cost money when compute is stopped. Public IPv4 is separately
+billed while allocated ([AWS IPv4 pricing](https://aws.amazon.com/vpc/pricing/));
+EBS charges remain while volumes are retained
+([AWS EBS pricing](https://aws.amazon.com/ebs/pricing/)). No current EC2/EBS quote
+was established by this review; refresh it before spending approval.
 
-| Input | Proposed value |
+## H. Verified plan and remaining deployment prerequisites
+
+| Input | Verified proposal |
 |---|---|
 | Account / Region / AZ | 209479274979 / us-west-2 / us-west-2a |
+| Operator | profile `blockchain-de`, IAM user `blockchain-de-local` |
 | Instance | t3.xlarge, standard CPU credits |
-| Storage | 30-GiB encrypted gp3 root; 100-GiB encrypted gp3 Kafka volume |
+| AL2023 x86_64 AMI | `ami-0dac6cd09676c9fb1` |
+| Storage | 30-GiB encrypted gp3 root; 100-GiB encrypted gp3 Kafka |
 | Pilot prefix | `blockchain-analytics/pilot/runtime/11-6c-v1` |
 | Secret allowlist | empty; secret-read statement omitted |
-| Scheduled stop resources | disabled; no automatic start schedule |
-| Compose binary | `https://github.com/docker/compose/releases/download/v5.1.3/docker-compose-linux-x86_64` |
+| Scheduler resources | disabled; no automatic start schedule |
+| Compose | official v5.1.3 Linux x86_64 binary |
 | Compose SHA-256 | `a0298760c9772d2c06888fc8703a487c94c3c3b0134adeef830742a2fc7647b4` |
-| Expected resource count | 28 creates, configuration expectation only; authenticated plan incomplete |
-| Expected updates/deletes | zero; reject unexpected changes or any platform resources |
+| Managed resource actions | 28 creates, 0 updates, 0 deletes |
 
 The Compose binary was downloaded locally and its SHA-256 matched both official
 release metadata and the published checksum. This version matches the local
 offline validation environment. Nothing was installed on AWS. Source:
 [official Compose v5.1.3 release](https://github.com/docker/compose/releases/tag/v5.1.3).
+The exact 28 resource addresses are listed by category in the
+[pilot readiness report](aws_streaming_pilot.md).
 
-After a complete plan, deployment still requires apply/launch/spending approval,
-image publication/scans and actual ECR digests, approved secret provisioning and
-its exact ARN, SSM/operator access, and separate exact-volume EBS initialization
-approval. Existing [pilot procedures](aws_streaming_pilot.md) cover acceptance,
-recovery, shutdown, rollback, and cleanup.
+Deployment still requires separately approved apply/initial-launch/spending,
+a refreshed cost estimate, an approved run window, image publication/scans and
+actual ECR digests, approved secret provisioning and its exact ARN, SSM/operator
+checks, and exact-volume EBS initialization approval. The pilot procedures cover
+acceptance, recovery, graceful shutdown, rollback and cleanup.
+
+A successful plan does not prove the operator can provision all 28 resources:
+EC2/EBS, networking, ECR, IAM and monitoring writes were not exercised. Review a
+separately approved provisioning identity and its exact scope before apply. Do
+not widen pipeline-user privileges or grant blanket administrator access as a
+shortcut. There is no remaining blocker to this completed planning step.
 
 ## I. Next step
 
-Review the single-parameter read policy and separately authorize its attachment
-to the planning identity, or select an existing identity already permitted to
-read that parameter and the runtime backend. Then retry the scoped plan and
-review the complete result before requesting any apply/launch approval.
+Review this completed proposal. Keep the project at the demo-planning stage
+until separately approving provisioning-identity scope, updated cost assumptions,
+the exact apply/initial EC2 launch window and remaining deployment actions.
+Filesystem initialization still requires approval naming the actual EBS volume
+after it exists. No apply or deployment command is part of this handoff.
 
 ## J. Production infrastructure changes
 
-None. Backend initialization and an unsuccessful runtime-only plan do not
-deploy the proposed resources. Existing platform resources, Snowflake roles,
-grants, warehouse, Streamlit, and the platform state remain unchanged.
+Only the user-approved operator IAM permissions were added manually by the
+user/administrator. The assistant verified their functional effect but made no
+successful IAM writes. Native locking created and released its temporary runtime
+lock object; no runtime state object remains. No Terraform apply ran. Existing
+platform resources, Snowflake roles/grants/warehouse, Streamlit and the platform
+state remain untouched by this work.

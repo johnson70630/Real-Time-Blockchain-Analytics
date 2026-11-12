@@ -2,10 +2,11 @@
 
 Status: offline implementation complete; runtime-only backend initialization
 and authenticated planning were subsequently approved. **AWS deployment is not
-authorized.** Milestone 11.5D remains paused. Apply/import, IAM permission
-changes, resource creation, EBS initialization, Snowflake operations and main
-merge remain outside the approval. README is unchanged. See the current
-[runtime plan review](aws_runtime_plan_review.md) for the planning blocker.
+authorized.** Milestone 11.5D remains paused. Two narrowly scoped operator IAM
+policies were separately approved and added manually by the user. Further IAM
+changes, apply/import, resource creation, EBS initialization, Snowflake operations
+and main merge remain outside the approval. README is unchanged. See the
+[completed runtime plan review](aws_runtime_plan_review.md).
 
 ## Implementation plan and decisions
 
@@ -40,9 +41,9 @@ The initial offline checkpoint changed no Terraform source. The subsequent
 infrastructure-only planning change makes `approved_secret_arns` optional,
 omits its IAM statement when empty, and rejects wildcard/wrong-account/Region
 ARNs. It adds no resource definitions. Use only
-`infra/terraform/environments/runtime/`. If the runtime has never been applied
-and its separate state is empty, the existing defaults describe **28 Terraform
-resource instances**, plus the EC2-managed encrypted 30-GiB gp3 root volume:
+`infra/terraform/environments/runtime/`. The completed authenticated plan
+proposes **28 creates, 0 updates, 0 deletes**, plus the EC2-managed encrypted
+30-GiB gp3 root volume. Nothing has been applied:
 
 | Category | Exact resource addresses / configuration |
 |---|---|
@@ -63,11 +64,12 @@ resources are excluded from the 28. The host's manually started systemd timer
 provides a separate emergency stop without expanding the instance IAM role.
 
 The approved preflight found no runtime state object and verified the backend
-key `production/runtime/terraform.tfstate` with native S3 locking. The first
-authenticated plan could not complete because the planning identity lacks
-`ssm:GetParameter` for the public AMI parameter. The expected count of 28
-remains a configuration expectation, not a successful authenticated plan result.
-Full logs remain restricted. Never use or migrate
+key `production/runtime/terraform.tfstate` with native S3 locking. Following
+separate user-approved public-AMI and lock-object permission additions, the
+authenticated plan completed as `blockchain-de-local` (`AWS_PROFILE=blockchain-de`).
+The public AMI is `ami-0dac6cd09676c9fb1`; the plan was reviewed successfully.
+The runtime state and lock objects were absent after the plan, and full logs
+remain restricted. Never use or migrate
 `production/platform/terraform.tfstate`. Stop on any existing-platform change,
 replacement, unexpected destroy, different region/AZ/type, privilege widening,
 or unreviewed charge. Preserve all 43 platform resources and 15 adopted grants.
@@ -226,9 +228,8 @@ repurposed, since the pilot must not touch Snowflake.
 
 ## Approved deployment/start procedure (not executed)
 
-1. Runtime-only authenticated planning is approved, but currently blocked by
-   missing public-AMI read permission (see the plan review). Complete and review
-   that restricted plan against the exact scope above. Obtain separate apply/launch/spending
+1. Runtime-only authenticated planning completed (see the plan review).
+   Reconfirm configuration/state/AMI freshness before an apply. Obtain separate apply/launch/spending
    approval, including the first boot; keep a stop deadline during provisioning.
 2. Resolve secret provisioning, Compose version/checksum, image publication,
    ECR scans/digests, and exact AMI. Approve any mutations individually. Stop
@@ -353,12 +354,12 @@ resources and CI image builds add Actions minutes.
 
 ## Remaining deployment blockers
 
-- A planning identity able to read the exact public AMI parameter; no IAM
-  expansion is currently approved.
-- A complete authenticated plan and restricted review, followed by explicit
-  apply/initial-launch/spending approval and an approved run window.
-- A resolved AMI. Compose v5.1.3 Linux x86_64 and its checksum were verified
-  against the official release; the pin is recorded in the plan review.
+- Explicit apply/initial-launch/spending approval and an approved run window;
+  no such deployment approval has been given.
+- An approved provisioning identity with the required write permissions; the
+  successful plan does not test those permissions.
+- A refreshed region-specific cost estimate and plan freshness check. The
+  verified AMI and Compose v5.1.3/checksum are recorded in the plan review.
 - Exact EC2/EBS IDs, proven blank volume, separate formatting approval and UUID.
 - Existing approved secret ARN or separately approved secure provisioning.
 - Published/scanned amd64 ECR digests for all three container artifacts.
@@ -366,7 +367,7 @@ resources and CI image builds add Actions minutes.
   CloudWatch/S3/IMDS validation. Offline tests cannot establish these.
 - Live acceptance and in-flight S3 checkpoint/recovery tests after deployment.
 
-Next gated action: resolve the narrowly scoped public-AMI read permission or
-use an already authorized planning identity, then retry the already approved
-runtime-only plan. Review the complete plan before requesting apply/launch
-approval. Formatting remains a separate exact-volume decision afterward.
+Next gated action: review the completed proposal, provisioning-identity scope
+and cost assumptions before separately approving an apply/launch window.
+Formatting remains a separate exact-volume decision afterward. This is still
+a scheduled demo, with no automatic start or continuous-runtime authorization.
