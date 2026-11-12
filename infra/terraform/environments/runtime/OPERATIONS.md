@@ -159,6 +159,11 @@ and monthly review of EBS, snapshots, public IPv4, ECR, logs, secrets, and S3.
 
 Planning estimate for `us-west-2`, excluding Snowflake and taxes:
 
+The following original 11.6B estimates are preserved as historical planning
+figures. Use the refreshed [launch cost review](../../../../docs/aws_demo_launch_approval.md)
+and its verified base/usage assumptions for a new approval decision; none of
+these figures is an authorized spend cap or a guaranteed bill.
+
 | Schedule | Approximate monthly AWS cost |
 |---|---:|
 | 40-hour demonstration | USD 24 |

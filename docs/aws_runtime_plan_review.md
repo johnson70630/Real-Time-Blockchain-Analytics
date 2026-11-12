@@ -117,19 +117,22 @@ public-AMI and runtime-lock policies, administered outside Terraform. Planning
 used normal request/locking operations on the existing S3 backend; existing API
 and versioning charges can apply. There is no new runtime compute charge.
 
-The inherited estimate remains approximately **USD 24/month for 40 runtime
-hours**, not an authorized spend cap or independently refreshed region quote.
-The first release manifest proposes one hour plus bounded shutdown/boot time.
-Before apply, refresh region-specific rates and explicitly approve retained
-storage costs as well as running compute. An apply launches EC2 immediately,
-even with no Alchemy secret and no application containers started.
+The subsequent [launch approval package](aws_demo_launch_approval.md) refreshes
+the Oregon price inputs from official AWS files: **USD 17.46 base at 40 runtime
+hours** with 130 GiB retained for the full month and two alarms. Its stated
+future streaming example is **USD 19.60** before excluded usage/taxes. The
+inherited USD 24 estimate remains a planning allowance, not an approved cap or
+guaranteed bill. The first streaming release proposes one hour plus bounded
+shutdown/boot time; initial provisioning has a separate supervised-window
+proposal. An apply launches EC2 immediately, even without a secret or containers.
 
 The retained 130-GiB EBS storage, ECR images, logs and later secret/S3 storage
 continue to cost money when compute is stopped. Public IPv4 is separately
 billed while allocated ([AWS IPv4 pricing](https://aws.amazon.com/vpc/pricing/));
 EBS charges remain while volumes are retained
-([AWS EBS pricing](https://aws.amazon.com/ebs/pricing/)). No current EC2/EBS quote
-was established by this review; refresh it before spending approval.
+([AWS EBS pricing](https://aws.amazon.com/ebs/pricing/)). The
+[cost evidence snapshot](evidence/aws_runtime_demo_costs_2026-11-12.json) records
+exact rates, quantities and exclusions; refresh it if launch is delayed.
 
 ## H. Verified plan and remaining deployment prerequisites
 
@@ -155,7 +158,7 @@ The exact 28 resource addresses are listed by category in the
 [pilot readiness report](aws_streaming_pilot.md).
 
 Deployment still requires separately approved apply/initial-launch/spending,
-a refreshed cost estimate, an approved run window, image publication/scans and
+review of the refreshed cost assumptions, an approved run window, image publication/scans and
 actual ECR digests, approved secret provisioning and its exact ARN, SSM/operator
 checks, and exact-volume EBS initialization approval. The pilot procedures cover
 acceptance, recovery, graceful shutdown, rollback and cleanup.
@@ -168,9 +171,10 @@ shortcut. There is no remaining blocker to this completed planning step.
 
 ## I. Next step
 
-Review this completed proposal. Keep the project at the demo-planning stage
-until separately approving provisioning-identity scope, updated cost assumptions,
-the exact apply/initial EC2 launch window and remaining deployment actions.
+Review this completed proposal and the [launch approval package](aws_demo_launch_approval.md).
+Keep the project at the demo-planning stage until separately approving
+provisioning-identity scope, the verified cost assumptions, the exact
+apply/initial EC2 launch window and remaining deployment actions.
 Filesystem initialization still requires approval naming the actual EBS volume
 after it exists. No apply or deployment command is part of this handoff.
 

@@ -1,0 +1,212 @@
+{
+  "retrieved_at_utc": "2026-11-12T23:50:42.282593+00:00",
+  "region": "us-west-2",
+  "currency": "USD",
+  "source_method": "Public AWS regional Price List CSV files; no authenticated pricing API",
+  "planned_configuration_commit": "94d193f93998b9d6334ceca07189e1f6e4f96a11",
+  "assumptions": {
+    "instance_type": "t3.xlarge",
+    "os": "Linux",
+    "tenancy": "Shared",
+    "purchase_option": "OnDemand",
+    "cpu_credit_mode": "standard",
+    "root_gib": 30,
+    "kafka_gib": 100,
+    "volume_months_retained": "1",
+    "standard_alarm_months": "2",
+    "ipv4_allocated_hours_equal_runtime_hours": true,
+    "free_tier_credits_tax_and_existing_platform_costs_included": false
+  },
+  "rates": {
+    "t3_xlarge_linux_hour": {
+      "usd_per_unit": "0.1664000000",
+      "billing_unit": "Hrs",
+      "sku": "3ZD39ECB23FRWNNP",
+      "rate_code": "3ZD39ECB23FRWNNP.JRTCKXETXF.6YS6EN2CT7",
+      "effective_date": "2026-11-01",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/us-west-2/index.csv",
+      "offer_version": "20261110173852",
+      "publication_date": "2026-11-10T17:38:52Z"
+    },
+    "gp3_gib_month": {
+      "usd_per_unit": "0.0800000000",
+      "billing_unit": "GB-Mo",
+      "sku": "BB8UJWJ4XPFJB95G",
+      "rate_code": "BB8UJWJ4XPFJB95G.JRTCKXETXF.6YS6EN2CT7",
+      "effective_date": "2026-11-01",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/us-west-2/index.csv",
+      "offer_version": "20261110173852",
+      "publication_date": "2026-11-10T17:38:52Z"
+    },
+    "public_ipv4_hour": {
+      "usd_per_unit": "0.0050000000",
+      "billing_unit": "Hrs",
+      "sku": "NBHXEKTE88TJDDQF",
+      "rate_code": "NBHXEKTE88TJDDQF.JRTCKXETXF.6YS6EN2CT7",
+      "effective_date": "2026-11-01",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonVPC/current/us-west-2/index.csv",
+      "offer_version": "20261105181945",
+      "publication_date": "2026-11-05T18:19:45Z"
+    },
+    "standard_alarm_month": {
+      "usd_per_unit": "0.1000000000",
+      "billing_unit": "Alarms",
+      "sku": "SJTFAZNHSW2WVZB2",
+      "rate_code": "SJTFAZNHSW2WVZB2.JRTCKXETXF.6YS6EN2CT7",
+      "effective_date": "2026-11-01",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonCloudWatch/current/us-west-2/index.csv",
+      "offer_version": "20261104213532",
+      "publication_date": "2026-11-04T21:35:32Z"
+    },
+    "log_ingest_gb": {
+      "usd_per_unit": "0.5000000000",
+      "billing_unit": "GB",
+      "sku": "CWY7X4MZ4F3MP5SD",
+      "rate_code": "CWY7X4MZ4F3MP5SD.JRTCKXETXF.6YS6EN2CT7",
+      "effective_date": "2026-11-01",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonCloudWatch/current/us-west-2/index.csv",
+      "offer_version": "20261104213532",
+      "publication_date": "2026-11-04T21:35:32Z"
+    },
+    "log_storage_gb_month": {
+      "usd_per_unit": "0.0300000000",
+      "billing_unit": "GB-Mo",
+      "sku": "MN45SJANDTCPR9QA",
+      "rate_code": "MN45SJANDTCPR9QA.JRTCKXETXF.6YS6EN2CT7",
+      "effective_date": "2026-11-01",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonCloudWatch/current/us-west-2/index.csv",
+      "offer_version": "20261104213532",
+      "publication_date": "2026-11-04T21:35:32Z"
+    },
+    "ecr_private_storage_gb_month": {
+      "usd_per_unit": "0.1000000000",
+      "billing_unit": "GB-Mo",
+      "sku": "2BSQ677HKG6WUUKA",
+      "rate_code": "2BSQ677HKG6WUUKA.JRTCKXETXF.6YS6EN2CT7",
+      "effective_date": "2026-11-01",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonECR/current/us-west-2/index.csv",
+      "offer_version": "20261111153626",
+      "publication_date": "2026-11-11T15:36:26Z"
+    },
+    "s3_standard_storage_gb_month": {
+      "usd_per_unit": "0.0230000000",
+      "billing_unit": "GB-Mo",
+      "sku": "Z3FQZG73HYSPVABR",
+      "rate_code": "Z3FQZG73HYSPVABR.JRTCKXETXF.PGHJ3S3EYE",
+      "effective_date": "2026-10-01",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonS3/current/us-west-2/index.csv",
+      "offer_version": "20261109154310",
+      "publication_date": "2026-11-09T15:43:10Z"
+    },
+    "s3_tier1_request": {
+      "usd_per_unit": "0.0000050000",
+      "billing_unit": "Requests",
+      "sku": "D4PMUVH6F64HK2D6",
+      "rate_code": "D4PMUVH6F64HK2D6.JRTCKXETXF.6YS6EN2CT7",
+      "effective_date": "2026-10-01",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonS3/current/us-west-2/index.csv",
+      "offer_version": "20261109154310",
+      "publication_date": "2026-11-09T15:43:10Z"
+    },
+    "s3_tier2_request": {
+      "usd_per_unit": "0.0000004000",
+      "billing_unit": "Requests",
+      "sku": "E77AQEM2DC4VV3FC",
+      "rate_code": "E77AQEM2DC4VV3FC.JRTCKXETXF.6YS6EN2CT7",
+      "effective_date": "2026-10-01",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonS3/current/us-west-2/index.csv",
+      "offer_version": "20261109154310",
+      "publication_date": "2026-11-09T15:43:10Z"
+    },
+    "secret_month": {
+      "usd_per_unit": "0.4000000000",
+      "billing_unit": "Secrets",
+      "sku": "DWJP9S4V3HP98UNC",
+      "rate_code": "DWJP9S4V3HP98UNC.JRTCKXETXF.6YS6EN2CT7",
+      "effective_date": "2026-11-01",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AWSSecretsManager/current/us-west-2/index.csv",
+      "offer_version": "20261111195606",
+      "publication_date": "2026-11-11T19:56:06Z"
+    },
+    "secret_api_request": {
+      "usd_per_unit": "0.0000050000",
+      "billing_unit": "API Requests",
+      "sku": "AEBQHWFEG8Q4Y7AT",
+      "rate_code": "AEBQHWFEG8Q4Y7AT.JRTCKXETXF.6YS6EN2CT7",
+      "effective_date": "2026-11-01",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AWSSecretsManager/current/us-west-2/index.csv",
+      "offer_version": "20261111195606",
+      "publication_date": "2026-11-11T19:56:06Z"
+    }
+  },
+  "base_scenarios": [
+    {
+      "name": "one_runtime_hour_with_storage_and_alarms_retained_all_month",
+      "runtime_hours": 1,
+      "compute_usd_exact": "0.1664000000",
+      "ipv4_usd_exact": "0.0050000000",
+      "storage_usd_exact": "10.4000000000",
+      "alarms_usd_exact": "0.2000000000",
+      "base_subtotal_usd_exact": "10.7714000000",
+      "base_subtotal_usd_rounded": "10.77"
+    },
+    {
+      "name": "scheduled_demo_target",
+      "runtime_hours": 40,
+      "compute_usd_exact": "6.6560000000",
+      "ipv4_usd_exact": "0.2000000000",
+      "storage_usd_exact": "10.4000000000",
+      "alarms_usd_exact": "0.2000000000",
+      "base_subtotal_usd_exact": "17.4560000000",
+      "base_subtotal_usd_rounded": "17.46"
+    },
+    {
+      "name": "continuous_running_comparison_not_authorized",
+      "runtime_hours": 730,
+      "compute_usd_exact": "121.4720000000",
+      "ipv4_usd_exact": "3.6500000000",
+      "storage_usd_exact": "10.4000000000",
+      "alarms_usd_exact": "0.2000000000",
+      "base_subtotal_usd_exact": "135.7220000000",
+      "base_subtotal_usd_rounded": "135.72"
+    }
+  ],
+  "future_streaming_example": {
+    "measured_usage": false,
+    "separate_secret_image_and_app_approvals_required": true,
+    "additional_usage_units": {
+      "ecr_private_storage_gb_month": "3",
+      "log_ingest_gb": "1",
+      "log_storage_gb_month": "0.5",
+      "s3_standard_storage_gb_month": "10",
+      "s3_tier1_request": "100000",
+      "s3_tier2_request": "500000",
+      "secret_month": "1",
+      "secret_api_request": "100"
+    },
+    "additional_costs_usd_exact": {
+      "ecr_private_storage_gb_month": "0.3000000000",
+      "log_ingest_gb": "0.5000000000",
+      "log_storage_gb_month": "0.01500000000",
+      "s3_standard_storage_gb_month": "0.2300000000",
+      "s3_tier1_request": "0.5000000000",
+      "s3_tier2_request": "0.2000000000",
+      "secret_month": "0.4000000000",
+      "secret_api_request": "0.0005000000"
+    },
+    "modeled_total_usd_exact": "19.60150000000",
+    "modeled_total_usd_rounded": "19.60",
+    "planning_allowance_usd": "24.00",
+    "unallocated_margin_usd_exact": "4.39850000000",
+    "hard_cap_or_guarantee": false
+  },
+  "excluded_usage": [
+    "SNS delivery",
+    "internet/cross-AZ/cross-region transfer",
+    "snapshots",
+    "enhanced vulnerability scans",
+    "KMS charges",
+    "usage above stated storage/request/log assumptions",
+    "future permission or resource scope changes"
+  ]
+}

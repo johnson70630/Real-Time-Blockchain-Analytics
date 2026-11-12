@@ -6,7 +6,8 @@ authorized.** Milestone 11.5D remains paused. Two narrowly scoped operator IAM
 policies were separately approved and added manually by the user. Further IAM
 changes, apply/import, resource creation, EBS initialization, Snowflake operations
 and main merge remain outside the approval. README is unchanged. See the
-[completed runtime plan review](aws_runtime_plan_review.md).
+[completed runtime plan review](aws_runtime_plan_review.md) and subsequent
+[cost, provisioning-permission and launch review](aws_demo_launch_approval.md).
 
 ## Implementation plan and decisions
 
@@ -336,7 +337,10 @@ approved cleanup. No S3 lifecycle or snapshot policy was introduced.
 ## Cost and approval boundaries
 
 The inherited 11.6A/11.6B planning estimate is approximately **USD 24/month for
-40 runtime hours**, not a quote, spend cap, or guarantee. The proposed first
+40 runtime hours**, not a spend cap or guarantee. The refreshed
+[cost review](aws_demo_launch_approval.md#g-verified-cost-model) verifies a
+USD 17.46 base and a USD 19.60 future-streaming example with explicit assumptions
+and exclusions. The proposed first
 release is one hour including image preparation, plus bounded drain and host
 boot/provisioning time; do not authorize a continuous deployment from that
 estimate. Storage (130 GiB of gp3), ECR, retained logs, secrets and S3 continue
@@ -344,8 +348,10 @@ to accrue costs while EC2 is stopped; public IPv4 applies while allocated.
 Snapshots, data transfer, S3 requests/versioned checkpoint churn, monitoring,
 and taxes can add charges. Existing Snowflake/Streamlit costs are excluded.
 
-Recheck region-specific EC2, gp3, public IPv4, ECR, Secrets Manager, S3 and
-CloudWatch rates before spending approval. For example, AWS publishes separate
+The 2026-11-12 [price snapshot](evidence/aws_runtime_demo_costs_2026-11-12.json)
+covers region-specific EC2, gp3, IPv4, ECR, Secrets Manager, S3 and CloudWatch
+rates. Recheck it if launch is delayed and review the usage assumptions before
+spending approval. AWS publishes separate
 [EBS storage pricing](https://aws.amazon.com/ebs/pricing/) and
 [IPv4 pricing](https://aws.amazon.com/vpc/pricing/); stopping compute alone does
 not eliminate retained-storage charges. No new AWS charges were incurred by
@@ -358,7 +364,7 @@ resources and CI image builds add Actions minutes.
   no such deployment approval has been given.
 - An approved provisioning identity with the required write permissions; the
   successful plan does not test those permissions.
-- A refreshed region-specific cost estimate and plan freshness check. The
+- Review of the refreshed cost assumptions and a plan freshness check. The
   verified AMI and Compose v5.1.3/checksum are recorded in the plan review.
 - Exact EC2/EBS IDs, proven blank volume, separate formatting approval and UUID.
 - Existing approved secret ARN or separately approved secure provisioning.
