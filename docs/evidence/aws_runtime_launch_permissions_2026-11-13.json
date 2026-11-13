@@ -1,0 +1,109 @@
+{
+  "checked_at_utc": "2026-11-13T22:03:46.659026+00:00",
+  "source": "Current public AWS Service Authorization Reference JSON",
+  "source_urls": [
+    "https://servicereference.us-east-1.amazonaws.com/v1/cloudwatch/cloudwatch.json",
+    "https://servicereference.us-east-1.amazonaws.com/v1/ec2/ec2.json",
+    "https://servicereference.us-east-1.amazonaws.com/v1/ecr/ecr.json",
+    "https://servicereference.us-east-1.amazonaws.com/v1/events/events.json",
+    "https://servicereference.us-east-1.amazonaws.com/v1/iam/iam.json",
+    "https://servicereference.us-east-1.amazonaws.com/v1/logs/logs.json",
+    "https://servicereference.us-east-1.amazonaws.com/v1/s3/s3.json",
+    "https://servicereference.us-east-1.amazonaws.com/v1/servicequotas/servicequotas.json",
+    "https://servicereference.us-east-1.amazonaws.com/v1/sns/sns.json",
+    "https://servicereference.us-east-1.amazonaws.com/v1/ssm/ssm.json"
+  ],
+  "policy_file_sha256": {
+    "deploy-control.json": "e9f415c92987f2b7151710782d828a2a87ec5bfe9fc4aa93017a9a1c17cdcc9e",
+    "deploy-ec2.json": "a6c99084d835a18068155e31eca0eaa33187d97c8a136827d533bad25274610f",
+    "deploy-discovery-tags.json": "44496d2f967a26fd65c6580825b378bf05f9bbe4fb5c049143db89a83042f655"
+  },
+  "explicit_deployment_action_entries_checked": 107,
+  "ec2_iam_action_resource_condition_pairs_checked": 137,
+  "unresolved_metadata_issues": [],
+  "reviewed_redundant_branches": [
+    {
+      "file": "deploy-ec2.json",
+      "sid": "CreateTaggedNetwork",
+      "action": "ec2:CreateSubnet",
+      "resource_type": "vpc",
+      "condition_key": "aws:RequestTag/Project",
+      "issue": "condition_not_in_action_resource_reference"
+    },
+    {
+      "file": "deploy-ec2.json",
+      "sid": "CreateTaggedNetwork",
+      "action": "ec2:CreateSubnet",
+      "resource_type": "vpc",
+      "condition_key": "aws:RequestTag/Environment",
+      "issue": "condition_not_in_action_resource_reference"
+    },
+    {
+      "file": "deploy-ec2.json",
+      "sid": "CreateTaggedNetwork",
+      "action": "ec2:CreateSubnet",
+      "resource_type": "vpc",
+      "condition_key": "aws:RequestTag/Workload",
+      "issue": "condition_not_in_action_resource_reference"
+    },
+    {
+      "file": "deploy-ec2.json",
+      "sid": "CreateTaggedNetwork",
+      "action": "ec2:CreateRouteTable",
+      "resource_type": "vpc",
+      "condition_key": "aws:RequestTag/Project",
+      "issue": "condition_not_in_action_resource_reference"
+    },
+    {
+      "file": "deploy-ec2.json",
+      "sid": "CreateTaggedNetwork",
+      "action": "ec2:CreateRouteTable",
+      "resource_type": "vpc",
+      "condition_key": "aws:RequestTag/Environment",
+      "issue": "condition_not_in_action_resource_reference"
+    },
+    {
+      "file": "deploy-ec2.json",
+      "sid": "CreateTaggedNetwork",
+      "action": "ec2:CreateRouteTable",
+      "resource_type": "vpc",
+      "condition_key": "aws:RequestTag/Workload",
+      "issue": "condition_not_in_action_resource_reference"
+    },
+    {
+      "file": "deploy-ec2.json",
+      "sid": "CreateTaggedNetwork",
+      "action": "ec2:CreateSecurityGroup",
+      "resource_type": "vpc",
+      "condition_key": "aws:RequestTag/Project",
+      "issue": "condition_not_in_action_resource_reference"
+    },
+    {
+      "file": "deploy-ec2.json",
+      "sid": "CreateTaggedNetwork",
+      "action": "ec2:CreateSecurityGroup",
+      "resource_type": "vpc",
+      "condition_key": "aws:RequestTag/Environment",
+      "issue": "condition_not_in_action_resource_reference"
+    },
+    {
+      "file": "deploy-ec2.json",
+      "sid": "CreateTaggedNetwork",
+      "action": "ec2:CreateSecurityGroup",
+      "resource_type": "vpc",
+      "condition_key": "aws:RequestTag/Workload",
+      "issue": "condition_not_in_action_resource_reference"
+    }
+  ],
+  "redundant_branch_resolution": "The broader CreateTaggedNetwork statement also lists VPC ARNs for child-resource creation. Its request-tag condition is not listed for that existing dependency resource. NetworkCreationVpcDependency separately authorizes these VPC dependencies using the three existing resource tags. No dependency grant relies on the redundant branch; no IAM edit is proposed.",
+  "stop_scope_matches_three_runtime_tags_and_region": true,
+  "start_terminate_delete_and_ingress_not_granted": true,
+  "live_effective_permissions_proven": false,
+  "authenticated_aws_calls_made": false,
+  "aws_changes_made": false,
+  "limits": [
+    "Metadata and local evaluation do not model SCP/RCP/session policies or resource-policy denies.",
+    "API-dependent actions, request-context behavior and provider sequencing still need review.",
+    "No live policy readback or resource write/stop probe was performed."
+  ]
+}

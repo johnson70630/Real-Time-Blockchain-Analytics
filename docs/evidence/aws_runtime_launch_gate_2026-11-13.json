@@ -1,0 +1,16 @@
+{
+  "milestone": "11.6C",
+  "status": "pending_operator_account_specific_review",
+  "deployment_policy_console_validation_reviewed": false,
+  "installed_policy_documents_compared_with_repository": false,
+  "organization_membership": "unconfirmed",
+  "applicable_scp_rcp_session_and_resource_policy_review_complete": false,
+  "runtime_state_file_write_authority_reviewed": false,
+  "normal_stop_effective_authority_reviewed": false,
+  "administrator_console_stop_fallback_confirmed": false,
+  "supervised_window_operator_availability_confirmed": false,
+  "absolute_start_end_utc": null,
+  "paid_apply_and_launch_approved": false,
+  "runtime_resources_created": false,
+  "note": "False means not yet confirmed for this launch gate, not proof that permissions are denied. Earlier successful IAM/profile/boundary verification is preserved."
+}

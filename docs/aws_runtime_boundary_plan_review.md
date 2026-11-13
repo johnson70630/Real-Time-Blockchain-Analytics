@@ -130,6 +130,10 @@ is authorized by the completed init/plan approval.
 
 ## I. Next step
 
+The [first-launch window review](aws_runtime_first_launch_window.md) now records
+fresh public pricing, launch/stop policy metadata and the pending administrator
+checks. It does not authorize paid deployment.
+
 Complete the remaining launch-permission and supervised-stop review, refresh
 the paid-window proposal, and request explicit approval for its concrete scope.
 Then use separate exact-resource approvals for storage initialization and app

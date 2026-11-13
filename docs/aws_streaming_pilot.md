@@ -30,6 +30,10 @@ found no runtime name collisions, a matching AMI and sufficient inventory-based
 vCPU headroom. The refreshed plan passed review and its runtime lock was released.
 No streaming runtime has been deployed. Remaining sequence:
 
+The [first-launch window review](aws_runtime_first_launch_window.md) contains
+fresh pricing, reviewed stop scope and the remaining administrator checks.
+It proposes a supervised infrastructure-only window, with no paid apply yet.
+
 1. IAM role/policy setup and temporary-profile authentication are complete.
 2. The approved fresh runtime-only init/plan and boundary review are complete.
 3. Finish effective launch/state-write/stop permission review, refresh costs
