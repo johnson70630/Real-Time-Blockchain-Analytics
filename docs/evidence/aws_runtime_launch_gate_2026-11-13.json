@@ -1,16 +1,37 @@
 {
   "milestone": "11.6C",
-  "status": "pending_operator_account_specific_review",
-  "deployment_policy_console_validation_reviewed": false,
+  "status": "ready_for_explicit_paid_window_decision_with_execution_conditions",
+  "deployment_policy_console_validation_reviewed": true,
   "installed_policy_documents_compared_with_repository": false,
-  "organization_membership": "unconfirmed",
-  "applicable_scp_rcp_session_and_resource_policy_review_complete": false,
-  "runtime_state_file_write_authority_reviewed": false,
-  "normal_stop_effective_authority_reviewed": false,
+  "organization_membership": "standalone_indicated_by_operator_console_observation",
+  "runtime_state_file_write_authority_reviewed": true,
+  "normal_stop_effective_authority_reviewed": true,
   "administrator_console_stop_fallback_confirmed": false,
   "supervised_window_operator_availability_confirmed": false,
   "absolute_start_end_utc": null,
   "paid_apply_and_launch_approved": false,
   "runtime_resources_created": false,
-  "note": "False means not yet confirmed for this launch gate, not proof that permissions are denied. Earlier successful IAM/profile/boundary verification is preserved."
+  "note": "Review confirmations do not claim independent API readback of every installed deployment policy or prove future writes. Active Console fallback/window availability and paid approval remain pending; no IAM expansion or write probe was used.",
+  "updated_at_utc": "2026-11-13T22:13:11.605459+00:00",
+  "organization_scp_rcp_applicable": false,
+  "review_basis": {
+    "iam_validation": "Operator reported Reviewed; no unresolved findings for the three deployer policies, including runtime-state writes and normal-stop access.",
+    "organization": "Operator reported Create an organization on the Organizations Console introduction screen; standalone account inferred. No organization was created.",
+    "resource_policy": {
+      "checked_at_utc": "2026-11-13T22:12:23.314251+00:00",
+      "profile": "blockchain-de",
+      "bucket": "blockchain-analytics-terraform-state-209479274979-usw2",
+      "state_object_bodies_read": false,
+      "aws_changes_made": false,
+      "status": "no_bucket_policy",
+      "aws_error_code": "NoSuchBucketPolicy"
+    },
+    "identity_scope": "Reviewed repository policies and operator-attested IAM setup; exact runtime state key and three ownership tags for normal stop.",
+    "live_writes_proven": false
+  },
+  "remaining_execution_conditions": [
+    "Explicit approval for exact 28-create plan, immediate paid EC2 launch, runtime-state writes and normal stop.",
+    "Operator remains available with the authenticated administrator Console in the correct account/Region.",
+    "Fresh MFA session, saved-plan/source/input/lockfile hashes, backend identity/freshness and absolute UTC window verified before apply."
+  ]
 }

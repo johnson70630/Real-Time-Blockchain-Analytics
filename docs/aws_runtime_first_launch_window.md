@@ -2,8 +2,12 @@
 
 Date: 2026-11-13 UTC. Milestone 11.6C. **Preparation only. No apply, launch,
 stop, IAM modification or production credential deployment was performed.**
-The account-specific administrator checks below remain pending. This is not
-yet an unconditional request to apply. Milestone 11.5D stays paused.
+The operator has confirmed IAM Console review with no unresolved findings and
+reported the Organizations screen showing **Create an organization**. This
+indicates a standalone account; no organization was created. A separate
+read-only check found no state-bucket policy. The proposal is ready for an
+explicit paid-window decision, subject to the execution checks below.
+Milestone 11.5D stays paused.
 
 ## A. What was prepared
 
@@ -64,12 +68,31 @@ of the installed deployment policies. The review used no authenticated AWS
 calls, write probes or DryRun calls. Source:
 [AWS machine-readable authorization reference](https://docs.aws.amazon.com/service-authorization/latest/reference/service-reference.html).
 
-## E. Account-specific permission and stop gates
+## E. Account-specific permission and stop review
+
+The operator confirmed review of the three deployment policies' IAM Console
+validation findings, including runtime state writes and normal EC2 stop access,
+with no unresolved findings. This is operator-attested review, not independent
+API readback of every installed deployment-policy document.
+
+The operator subsequently reported **Create an organization** in the
+Organizations Console. Treat the account as standalone based on that Console
+observation; organization SCPs/RCPs do not apply. No Organizations mutation or
+privilege expansion is needed. Source:
+[AWS organization creation flow](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_org_create.html).
+
+At 2026-11-13T22:12:23Z, `s3:GetBucketPolicy` through the existing
+`blockchain-de` planning user returned `NoSuchBucketPolicy` for the exact state
+bucket with expected owner `209479274979`. No state object bodies were read.
+The reviewed deployer identity policy grants `GetObject/PutObject` on only the
+runtime key; the prior successful plan verified native lock acquisition/release.
+These checks resolve the resource-policy review without a state-write probe.
+Actual state persistence and future instance stop have not been exercised.
 
 The CLI role/profile identity and EC2 boundary readback are already verified.
 Do not repeat IAM setup, MFA enrollment or broaden permissions for inspection.
-The current role cannot read back its own full deployment-policy set. An
-administrator must review the following in the existing Console session:
+The current role cannot read back its own full deployment-policy set. The
+following checklist preserves the review scope and remaining execution checks:
 
 1. IAM → Policies: inspect the **current default-version JSON and validation
    findings** for `blockchain-runtime-deploy-control`,
@@ -142,10 +165,14 @@ and agree whether to preserve the runtime or request a cleanup plan.
 
 ## H. Remaining blockers and approval scope
 
-Account-specific checks in section E and the operator's availability for the
-supervised window are pending. No paid apply is approved. After these checks,
-request approval covering **the exact 28-create saved plan, immediate paid EC2
-launch, runtime-state persistence and normal stop of only its new instance**.
+IAM Console validation and standalone-account checks are operator-confirmed;
+state-bucket policy absence is independently verified. No paid apply is
+approved. Request approval covering **the exact 28-create saved plan, immediate
+paid EC2 launch, runtime-state persistence and normal stop of only its new
+instance**, with active operator supervision and the administrator Console
+stop fallback. Full installed-policy readback remains a disclosed limitation;
+the readiness decision uses the operator's review and the unchanged repository
+policy documents, not a claim that live writes are guaranteed to succeed.
 Set an absolute UTC start/end immediately before execution; use a fresh MFA
 session with approximately 55 minutes remaining and keep the Console fallback
 available through the end. If the session needs renewal, the operator enters
@@ -205,7 +232,9 @@ rollback and acceptance. None is authorized by this launch-window proposal.
 
 ## J. Production infrastructure changes
 
-None. This review downloaded public price/authorization files and ran local
-tests and calculations. It made no authenticated AWS calls, new Terraform
-plan/apply, IAM changes, instance launch/stop, EBS initialization, secret access,
-image push or Snowflake operation. Existing platform resources are unchanged.
+None. The initial review downloaded public price/authorization files and ran
+local tests and calculations. The follow-up verified the planning identity and
+read only state-bucket policy metadata, receiving `NoSuchBucketPolicy`. No state
+object bodies, new Terraform plan/apply, IAM changes, instance launch/stop,
+EBS initialization, secret access, image push or Snowflake operation occurred.
+Existing platform resources are unchanged.

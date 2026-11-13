@@ -33,6 +33,10 @@ No streaming runtime has been deployed. Remaining sequence:
 The [first-launch window review](aws_runtime_first_launch_window.md) contains
 fresh pricing, reviewed stop scope and the remaining administrator checks.
 It proposes a supervised infrastructure-only window, with no paid apply yet.
+IAM Console validation is now operator-confirmed with no unresolved findings;
+the Organizations introduction screen indicates a standalone account. The
+state bucket has no bucket policy. The next gate is explicit paid apply/launch
+and normal-stop approval with an active administrator Console fallback.
 
 1. IAM role/policy setup and temporary-profile authentication are complete.
 2. The approved fresh runtime-only init/plan and boundary review are complete.
