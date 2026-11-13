@@ -1,6 +1,6 @@
 {
   "milestone": "11.6C",
-  "status": "untaint_complete_revised_config_plan_pending_fresh_approval",
+  "status": "recovery_plan_complete_five_resource_apply_pending_approval",
   "deployment_policy_console_validation_reviewed": true,
   "installed_policy_documents_compared_with_repository": false,
   "organization_membership": "standalone_indicated_by_operator_console_observation",
@@ -34,8 +34,9 @@
     "live_writes_proven": false
   },
   "remaining_execution_conditions": [
-    "Fresh explicit approval for the authenticated saved plan using the reviewed public-IP configuration correction.",
-    "No untaint repetition, apply, start, replacement/deletion or IAM change."
+    "Explicit approval to apply only the reviewed five-create plan while EC2 remains stopped.",
+    "Verify state/config/input/plan hashes, identity/session and runtime backend/lock before that apply.",
+    "No EC2 start, replacement/deletion, IAM change, formatting, secrets, image or app action is included."
   ],
   "completed_window": {
     "apply_exit_code": 1,
@@ -52,9 +53,19 @@
     "untaint_complete": true,
     "runtime_state_serial": 3,
     "original_recovery_plan_exit_code": 1,
-    "revised_config_plan_executed": false,
-    "fresh_revised_config_plan_approval_required": true,
+    "revised_config_plan_executed": true,
+    "fresh_revised_config_plan_approval_required": false,
     "apply_or_start_approved": false,
-    "iam_change_approved": false
+    "iam_change_approved": false,
+    "fresh_revised_config_plan_approved": true,
+    "revised_plan_actions": {
+      "create": 5,
+      "no_op": 23,
+      "update": 0,
+      "delete": 0,
+      "replace": 0
+    },
+    "revised_plan_sha256": "4a859fa4ff87bd7e0098727de829679eecd95ca6106bb3f45153668ed64e7382",
+    "instance_still_stopped": true
   }
 }

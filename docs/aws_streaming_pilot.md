@@ -3,10 +3,10 @@
 Status: offline implementation complete. The first infrastructure-only paid
 apply and normal stop were separately approved and executed. **The apply
 partially completed: 23 managed resources exist; EC2 is stopped.**
-The separately approved state-only untaint completed. A local public-IP
-configuration correction is validated; authenticated planning with that changed
-configuration awaits fresh approval. See the
-[recovery review](aws_runtime_recovery_review.md).
+The separately approved state-only untaint and revised-config planning completed.
+The saved recovery plan has five creates, 23 no-ops and no updates/deletions/
+replacements. See the [successful plan result](aws_runtime_recovery_plan_result.md)
+and [recovery history](aws_runtime_recovery_review.md).
 Five resources remain uncreated. No streaming application has been deployed.
 See the [actual apply/stop and recovery review](aws_runtime_first_apply_review.md).
 The historical fresh plan proposed 28 creates with zero updates/deletes/imports;
@@ -42,15 +42,14 @@ Its supervised infrastructure-only window was approved and closed after the
 partial apply and verified stop.
 IAM Console validation is now operator-confirmed with no unresolved findings;
 the Organizations introduction screen indicates a standalone account. The
-state bucket has no bucket policy. The next gate is a saved recovery plan using
-the reviewed local correction, with no apply/start. Untaint must not be repeated.
+state bucket has no bucket policy. The next gate is the exact five-resource
+remaining apply while EC2 stays stopped. Untaint must not be repeated.
 Remaining sequence:
 
 1. IAM role/policy setup and temporary-profile authentication are complete.
 2. The approved fresh runtime-only init/plan and boundary review are complete.
-3. Obtain fresh changed-config plan approval, then review the remaining five
-   creates before any further apply. No automatic retry, replacement or IAM
-   expansion is authorized.
+3. Obtain approval to apply only the reviewed five creates while preserving
+   stopped EC2. No start, replacement or IAM expansion is authorized.
 4. Approve initialization of the exact Kafka EBS volume, image publication,
    secret/read permissions and application deployment before those actions.
 5. Smoke-test the isolated streaming path, test Kafka/Spark recovery, drain and

@@ -1,5 +1,11 @@
 # AWS demo: state recovery and stopped-instance plan correction
 
+**Completed follow-up:** the operator explicitly approved the revised-config
+plan and renewed MFA privately. The saved plan completed with five creates,
+23 no-ops and no updates/deletions/replacements. See the
+[successful plan result](aws_runtime_recovery_plan_result.md). No apply or
+EC2 start followed; the prior rejection is resolved for this planning scope.
+
 Date: 2026-11-13 UTC. Milestone 11.6C. **Approved untaint completed. The
 unchanged-config plan was blocked safely; the corrected-config plan awaits
 fresh approval. EC2 remains stopped.** Milestone 11.5D stays paused.
