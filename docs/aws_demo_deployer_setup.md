@@ -220,8 +220,10 @@ does not prove the complete attached-policy contents.
 These steps are a reviewable runbook, not instructions to execute before approval.
 The live user-policy attachment is complete and MFA inventory found an
 unassigned device. **Do not execute Console MFA enrollment below:** continue
-through the [API-only review](aws_demo_mfa_api_enrollment.md) after its separate
-temporary-permission approval. The four runtime/deployer policies and role
+through the [API-only review](aws_demo_mfa_api_enrollment.md). Its temporary
+permissions are now approved; the first run created the named device but
+attachment failed on CLI JSON input. Use the reviewed SDK recovery mode for
+that existing device; do not rerun creation. The four runtime/deployer policies and role
 remain part of the earlier approved setup; they are not yet verified as created.
 
 1. In the administrator Console, confirm the account and existing planning-user

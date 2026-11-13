@@ -2544,6 +2544,7 @@ name = "real-time-blockchain-analytics"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "boto3" },
     { name = "confluent-kafka" },
     { name = "duckdb" },
     { name = "pandas" },
@@ -2567,6 +2568,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "boto3", specifier = ">=1.43.107" },
     { name = "confluent-kafka", specifier = ">=2.14.2" },
     { name = "duckdb", specifier = ">=1.5.4" },
     { name = "pandas", specifier = ">=3.0.4" },

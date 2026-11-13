@@ -130,12 +130,13 @@ def test_credential_and_code_values_never_go_to_arguments_or_errors(monkeypatch)
 
     monkeypatch.setattr(mfa.subprocess, "run", fail)
     with pytest.raises(mfa.EnrollmentError) as exc:
-        mfa.aws_json("iam", "enable-mfa-device", payload={"AuthenticationCode1": "123456"})
+        mfa.aws_json("iam", "list-mfa-devices", "--user-name", mfa.USER)
     assert "123456" not in str(exc.value) + " ".join(seen["command"])
     assert "PRIVATE" not in str(exc.value)
     assert "AWS_ACCESS_KEY_ID" not in seen["env"]
     assert "AWS_CONFIG_FILE" not in seen["env"]
-    assert "123456" in seen["input"]
+    assert seen["env"]["AWS_MAX_ATTEMPTS"] == "1"
+    assert "input" not in seen
     assert seen["capture_output"] is True
 
 
@@ -158,3 +159,70 @@ def test_history_and_echo_fallback_fail_closed(monkeypatch):
     monkeypatch.setattr(mfa.getpass, "getpass", echo_fallback)
     with pytest.raises(mfa.EnrollmentError, match="Hidden Terminal"):
         mfa.read_code("Code: ")
+
+
+def test_resume_attaches_existing_device_without_creation_or_qr_access(fake_enrollment, monkeypatch):
+    fake = fake_enrollment
+    fake.created = True
+    monkeypatch.setattr("builtins.input", lambda prompt: "RESUME")
+    receipt = mfa.enroll(resume=True)
+    assert not any(x[1] == "create-virtual-mfa-device" for x in fake.calls)
+    assert not (receipt.parent / "bootstrap.png").exists()
+    data = json.loads(receipt.read_text())
+    assert data["resumed_existing_device"] is True
+    assert data["existing_unassigned_devices_preserved"] == sorted(fake.existing)
+    assert fake.assigned == {mfa.DEVICE_ARN}
+
+
+def test_resume_missing_or_assigned_target_cannot_mutate(fake_enrollment):
+    with pytest.raises(mfa.EnrollmentError, match="not unassigned"):
+        mfa.enroll(resume=True)
+    assert not any(x[1] in {"enable-mfa-device", "create-virtual-mfa-device"} for x in fake_enrollment.calls)
+
+
+def test_secret_payload_uses_sdk_only_without_subprocess(monkeypatch):
+    seen = []
+    monkeypatch.setattr(mfa, "enable_with_sdk", lambda p: seen.append(p))
+    monkeypatch.setattr(mfa.subprocess, "run", lambda *a, **k: pytest.fail("No CLI secret transport"))
+    payload = {"UserName": mfa.USER, "SerialNumber": mfa.DEVICE_ARN, "AuthenticationCode1": "123456", "AuthenticationCode2": "234567"}
+    assert mfa.aws_json("iam", "enable-mfa-device", payload=payload) is None
+    assert seen == [payload]
+    with pytest.raises(mfa.EnrollmentError, match="never CLI"):
+        mfa.aws_json("iam", "enable-mfa-device", "--authentication-code1", "123456")
+
+
+@pytest.mark.parametrize("fail", [False, True])
+def test_actual_sdk_service_model_accepts_codes_in_memory_and_redacts_errors(monkeypatch, capsys, fail):
+    from botocore.stub import Stubber
+
+    client = mfa.boto3.client("iam", region_name="us-west-2", aws_access_key_id="offline-key", aws_secret_access_key="offline-secret")
+    payload = {"UserName": mfa.USER, "SerialNumber": mfa.DEVICE_ARN, "AuthenticationCode1": "123456", "AuthenticationCode2": "234567"}
+    seen = {}
+
+    class Session:
+        def client(self, service, **kwargs):
+            assert service == "iam"
+            assert kwargs["config"].retries["total_max_attempts"] == 1
+            seen["environment"] = dict(mfa.os.environ)
+            return client
+
+    monkeypatch.setattr(mfa.boto3, "Session", lambda **kwargs: Session())
+    monkeypatch.setenv("AWS_ACCESS_KEY_ID", "environment-override")
+    monkeypatch.setenv("AWS_CONFIG_FILE", "/unapproved/config")
+    with Stubber(client) as stub:
+        if fail:
+            stub.add_client_error("enable_mfa_device", service_error_code="InvalidAuthenticationCode", service_message="PRIVATE 123456 234567", expected_params=payload)
+            with pytest.raises(mfa.EnrollmentError) as exc:
+                mfa.enable_with_sdk(payload)
+            assert "PRIVATE" not in str(exc.value)
+            assert "123456" not in str(exc.value)
+        else:
+            stub.add_response("enable_mfa_device", {}, expected_params=payload)
+            assert mfa.enable_with_sdk(payload) is None
+        stub.assert_no_pending_responses()
+    assert "AWS_ACCESS_KEY_ID" not in seen["environment"]
+    assert "AWS_CONFIG_FILE" not in seen["environment"]
+    assert mfa.os.environ["AWS_ACCESS_KEY_ID"] == "environment-override"
+    output = capsys.readouterr()
+    assert "123456" not in output.out + output.err
+    assert "234567" not in output.out + output.err

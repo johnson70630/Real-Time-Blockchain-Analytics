@@ -8,7 +8,9 @@ enrollment is performed. QR seeds and codes must never be sent to chat/logs.
 from __future__ import annotations
 
 import getpass
+import argparse
 import json
+import logging
 import os
 import re
 import stat
@@ -16,7 +18,15 @@ import subprocess
 import sys
 import tempfile
 import warnings
+from contextlib import closing, contextmanager
 from pathlib import Path
+
+try:
+    import boto3
+    from botocore.config import Config
+    from botocore.exceptions import BotoCoreError, ClientError
+except ImportError:
+    boto3 = None
 
 ACCOUNT = "209479274979"
 USER = "blockchain-de-local"
@@ -36,6 +46,7 @@ SAFE_ERROR_CODES = {
     "AccessDenied", "AccessDeniedException", "EntityAlreadyExists",
     "InvalidInput", "LimitExceeded", "ConcurrentModification",
     "InvalidAuthenticationCode", "ServiceFailure", "NoSuchEntity",
+    "ValidationError", "ParamValidation",
 }
 
 
@@ -45,7 +56,10 @@ class EnrollmentError(Exception):
 
 def clean_environment() -> dict[str, str]:
     env = {key: value for key, value in os.environ.items() if not key.startswith("AWS_")}
-    env.update(AWS_EC2_METADATA_DISABLED="true", AWS_PAGER="", AWS_CLI_AUTO_PROMPT="off")
+    env.update(
+        AWS_EC2_METADATA_DISABLED="true", AWS_PAGER="", AWS_CLI_AUTO_PROMPT="off",
+        AWS_MAX_ATTEMPTS="1", AWS_RETRY_MODE="standard",
+    )
     return env
 
 
@@ -58,17 +72,72 @@ def require_history_disabled() -> None:
         raise EnrollmentError("AWS CLI command history is enabled or unverified; stop before entering codes.")
 
 
+@contextmanager
+def private_sdk_environment():
+    original = {key: value for key, value in os.environ.items() if key.startswith("AWS_")}
+    loggers = [logging.getLogger(name) for name in ("boto3", "botocore", "urllib3")]
+    levels = [logger.level for logger in loggers]
+    try:
+        for key in original:
+            os.environ.pop(key, None)
+        os.environ["AWS_EC2_METADATA_DISABLED"] = "true"
+        for logger in loggers:
+            logger.setLevel(logging.WARNING)
+        yield
+    finally:
+        for key in list(os.environ):
+            if key.startswith("AWS_"):
+                os.environ.pop(key, None)
+        os.environ.update(original)
+        for logger, level in zip(loggers, levels):
+            logger.setLevel(level)
+
+
+def enable_with_sdk(payload) -> None:
+    if boto3 is None:
+        raise EnrollmentError("Use this project's .venv/bin/python; the enrollment SDK is required.")
+    if (
+        set(payload) != {"UserName", "SerialNumber", "AuthenticationCode1", "AuthenticationCode2"}
+        or payload["UserName"] != USER
+        or payload["SerialNumber"] != DEVICE_ARN
+        or not all(re.fullmatch(r"[0-9]{6}", str(payload[key])) for key in ("AuthenticationCode1", "AuthenticationCode2"))
+        or payload["AuthenticationCode1"] == payload["AuthenticationCode2"]
+    ):
+        raise EnrollmentError("Enrollment request does not match the exact approved target/code format.")
+    with private_sdk_environment():
+        try:
+            session = boto3.Session(profile_name=PROFILE, region_name="us-west-2")
+            with closing(session.client("iam", config=Config(
+                retries={"total_max_attempts": 1, "mode": "standard"},
+                connect_timeout=10, read_timeout=30,
+            ))) as client:
+                client.enable_mfa_device(**payload)
+        except ClientError as error:
+            candidate = error.response.get("Error", {}).get("Code")
+            code = candidate if candidate in SAFE_ERROR_CODES else "AWS_REQUEST_FAILED"
+            raise EnrollmentError(f"enable-mfa-device failed: {code}. No automatic retry.") from None
+        except BotoCoreError:
+            raise EnrollmentError("Enrollment SDK failed; sensitive details suppressed. No automatic retry.") from None
+
+
 def aws_json(service: str, operation: str, *args: str, payload=None):
     if (service, operation) not in OPERATIONS:
         raise EnrollmentError("Operation is outside the enrollment allowlist.")
+    if payload is not None:
+        if (service, operation) != ("iam", "enable-mfa-device") or args:
+            raise EnrollmentError("Only the exact MFA attachment operation accepts a secret payload.")
+        # Keep codes in SDK memory. The CLI file:///dev/stdin path fails with
+        # the installed CLI parser and must not be used for secret transport.
+        enable_with_sdk(payload)
+        return None
+    if (service, operation) == ("iam", "enable-mfa-device"):
+        raise EnrollmentError("MFA codes must use the private SDK payload, never CLI arguments.")
     command = [
         AWS, service, operation, "--profile", PROFILE, "--region", "us-west-2",
         "--output", "json", "--no-cli-pager", "--no-cli-auto-prompt", *args,
     ]
-    if payload is not None:
-        command.extend(["--cli-input-json", "file:///dev/stdin"])
     result = subprocess.run(
-        command, input=None if payload is None else json.dumps(payload),
+        command,
         text=True, capture_output=True, check=False, env=clean_environment(), timeout=60,
     )
     if result.returncode:
@@ -111,10 +180,12 @@ def read_code(prompt: str) -> str:
     return code
 
 
-def enroll() -> Path:
+def enroll(resume: bool = False) -> Path:
     if not all(stream.isatty() for stream in (sys.stdin, sys.stdout, sys.stderr)):
         raise EnrollmentError("Run manually in your own interactive Terminal, without pipes, tee, or recording.")
     require_history_disabled()
+    if boto3 is None:
+        raise EnrollmentError("Use this project's .venv/bin/python; the enrollment SDK is required.")
     identity = aws_json("sts", "get-caller-identity")
     if not isinstance(identity, dict) or identity.get("Account") != ACCOUNT or identity.get("Arn") != USER_ARN:
         raise EnrollmentError("The source profile is not the exact approved IAM user; stop.")
@@ -122,35 +193,46 @@ def enroll() -> Path:
         raise EnrollmentError("The user already has an MFA device; this first-device procedure cannot continue.")
     before_all = virtual_devices("Any")
     before_unassigned = virtual_devices("Unassigned")
-    if DEVICE_ARN in before_all:
+    if DEVICE_ARN in before_all and not resume:
         raise EnrollmentError("The target device already exists; preserve it and review recovery. Do not rerun creation.")
+    if resume and DEVICE_ARN not in before_unassigned:
+        raise EnrollmentError("The exact recovery target is not unassigned; stop without changes.")
+    preserved_unassigned = before_unassigned - {DEVICE_ARN}
     print(f"Target user: {USER_ARN}\nNew device: {DEVICE_ARN}")
-    print(f"Preserving {len(before_unassigned)} existing unassigned device(s).")
-    if input("Type ENROLL to create only this device, then enroll it locally: ") != "ENROLL":
+    print(f"Preserving {len(preserved_unassigned)} other existing unassigned device(s).")
+    if resume:
+        print("Resuming the existing device. Use its ORIGINAL scanned authenticator entry.")
+        if input("Type RESUME to attach only this existing device: ") != "RESUME":
+            raise EnrollmentError("Canceled before attachment; all devices preserved.")
+    elif input("Type ENROLL to create only this device, then enroll it locally: ") != "ENROLL":
         raise EnrollmentError("Canceled before device creation.")
 
     directory = Path(tempfile.mkdtemp(prefix="blockchain-mfa-enroll-"))
     directory.chmod(0o700)
-    qr = directory / "bootstrap.png"
-    fd = os.open(qr, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
-    os.close(fd)
+    qr = None
     print(f"Private enrollment directory: {directory}")
     print("If interrupted, preserve this directory for recovery; never send its contents to chat.")
-    serial = aws_json(
-        "iam", "create-virtual-mfa-device", "--virtual-mfa-device-name", DEVICE,
-        "--path", "/", "--bootstrap-method", "QRCodePNG", "--outfile", str(qr),
-        "--query", "VirtualMFADevice.SerialNumber",
-    )
-    qr.chmod(0o600)
-    if serial != DEVICE_ARN or stat.S_IMODE(qr.stat().st_mode) != 0o600 or qr.is_symlink():
-        raise EnrollmentError("Device/QR verification failed; preserve the private directory for recovery.")
-    with qr.open("rb") as handle:
-        if handle.read(8) != b"\x89PNG\r\n\x1a\n":
-            raise EnrollmentError("The private QR file is invalid; preserve it for review.")
-    print(f"Open {qr} yourself in Preview and scan it into your authenticator app.")
-    print("Do not use screen sharing/recording or send the image, seed, or codes to the assistant.")
-    if input("After scanning, type SCANNED to continue: ") != "SCANNED":
-        raise EnrollmentError("Canceled; new device and private directory preserved for recovery.")
+    if not resume:
+        qr = directory / "bootstrap.png"
+        fd = os.open(qr, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        os.close(fd)
+        serial = aws_json(
+            "iam", "create-virtual-mfa-device", "--virtual-mfa-device-name", DEVICE,
+            "--path", "/", "--bootstrap-method", "QRCodePNG", "--outfile", str(qr),
+            "--query", "VirtualMFADevice.SerialNumber",
+        )
+        if qr.is_symlink():
+            raise EnrollmentError("The QR path changed; stop without following it.")
+        qr.chmod(0o600)
+        if serial != DEVICE_ARN or stat.S_IMODE(qr.stat().st_mode) != 0o600:
+            raise EnrollmentError("Device/QR verification failed; preserve the private directory for recovery.")
+        with qr.open("rb") as handle:
+            if handle.read(8) != b"\x89PNG\r\n\x1a\n":
+                raise EnrollmentError("The private QR file is invalid; preserve it for review.")
+        print(f"Open {qr} yourself in Preview and scan it into your authenticator app.")
+        print("Do not use screen sharing/recording or send the image, seed, or codes to the assistant.")
+        if input("After scanning, type SCANNED to continue: ") != "SCANNED":
+            raise EnrollmentError("Canceled; new device and private directory preserved for recovery.")
     if assigned_devices():
         raise EnrollmentError("MFA assignment changed during enrollment; preserve all devices and stop.")
     first = read_code("Current six-digit code (hidden): ")
@@ -166,7 +248,7 @@ def enroll() -> Path:
         raise EnrollmentError("Assignment verification was inconclusive; no automatic retry or cleanup.")
     after_all = virtual_devices("Any")
     after_unassigned = virtual_devices("Unassigned")
-    if not before_all.issubset(after_all) or not before_unassigned.issubset(after_unassigned):
+    if not before_all.issubset(after_all) or not preserved_unassigned.issubset(after_unassigned):
         raise EnrollmentError("Existing MFA inventory changed; stop for review without reverting anything.")
 
     receipt = directory / "receipt.json"
@@ -175,19 +257,25 @@ def enroll() -> Path:
         json.dump({
             "account": ACCOUNT, "user_arn": USER_ARN, "device_arn": DEVICE_ARN,
             "assignment_verified": True,
-            "existing_unassigned_devices_preserved": sorted(before_unassigned),
+            "existing_unassigned_devices_preserved": sorted(preserved_unassigned),
+            "resumed_existing_device": resume,
         }, handle, indent=2)
         handle.write("\n")
     # Only the newly generated local secret file is removed; no cloud deletion.
-    qr.unlink()
-    print(f"MFA assignment verified. Private QR file removed. Nonsecret receipt: {receipt}")
+    if qr is not None:
+        qr.unlink()
+    print(f"MFA assignment verified. Nonsecret receipt: {receipt}")
+    print("New QR removed if generated this run; any earlier recovery QR remains untouched.")
     print("Close Preview without saving/exporting. No role assumption or deployment was performed.")
     return receipt
 
 
-def main() -> int:
+def main(argv=None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--resume", action="store_true", help="Attach only the existing named unassigned device; never create another.")
+    options = parser.parse_args(argv)
     try:
-        enroll()
+        enroll(resume=options.resume)
     except EnrollmentError as error:
         print(f"STOP: {error}", file=sys.stderr)
         return 1
