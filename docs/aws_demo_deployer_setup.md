@@ -200,7 +200,10 @@ profiles and a Boto3 process-profile session now authenticate as that role.
 The EC2 boundary's default document independently matches the repository.
 The [read-only preflight report](aws_runtime_boundary_plan_approval.md) records
 resource-name, quota, AMI, encryption and registry checks. IAM access setup is
-complete; a fresh runtime init/plan is the next proposed approval boundary.
+complete. The subsequently approved fresh runtime init/plan completed with the
+exact boundary and 28 creates; see the
+[completed review](aws_runtime_boundary_plan_review.md). Paid apply and launch
+remain separate approval gates.
 
 
 1. MFA enrollment for `blockchain-de-local` is complete and verified. Retain the

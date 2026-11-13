@@ -3,9 +3,11 @@
 Status: offline implementation complete; the earlier runtime-only backend/plan
 and subsequent dedicated IAM/MFA setup were separately approved. Both role
 profiles now authenticate correctly, and read-only preflight is complete.
-**AWS runtime deployment is not authorized.** A fresh boundary-based backend
-initialization and plan are proposed in the
-[current approval report](aws_runtime_boundary_plan_approval.md), not executed.
+**AWS runtime deployment is not authorized.** The fresh boundary-based backend
+initialization and plan were separately approved and completed: **28 creates,
+zero updates/deletes/imports**. See the
+[completed review](aws_runtime_boundary_plan_review.md) and retained
+[approval proposal](aws_runtime_boundary_plan_approval.md).
 Milestone 11.5D remains paused. New permissions outside the approved IAM setup,
 apply/import, resource creation, EBS initialization, Snowflake operations and
 main merge remain separate gates. README is unchanged. See the
@@ -15,23 +17,24 @@ main merge remain separate gates. README is unchanged. See the
 The subsequent [dedicated deployer setup review](aws_demo_deployer_setup.md)
 records MFA-protected temporary deployment credentials and an EC2 role boundary.
 The operator completed that IAM setup and confirmed the role settings; the
-boundary policy readback independently matches the repository. The prior saved infrastructure plan omits that
-boundary and must not be used for this design; obtain a fresh scoped review
-before apply. SSM operator permissions and secret access remain later gates.
+boundary policy readback independently matches the repository. The older saved
+infrastructure plan omits that boundary and must not be used for this design.
+Its replacement includes the exact boundary. SSM operator permissions and
+secret access remain later gates.
 
 Current milestone: **11.6C, first AWS streaming demo preparation**. Offline
 application/deployment components are implemented and tested. The planning-user
 managed grant and MFA enrollment are verified; the role and temporary profiles
 resolve to the expected principal in account 209479274979. Read-only preflight
 found no runtime name collisions, a matching AMI and sufficient inventory-based
-vCPU headroom. The next access boundary is the fresh init/plan approval.
+vCPU headroom. The refreshed plan passed review and its runtime lock was released.
 No streaming runtime has been deployed. Remaining sequence:
 
 1. IAM role/policy setup and temporary-profile authentication are complete.
-2. Obtain approval for, execute and review the fresh runtime-only init/plan for
-   the boundary-based design.
-3. Separately approve the exact apply, immediate paid EC2 launch and supervised
-   stop window; the current proposal has no AWS-side hard stop schedule.
+2. The approved fresh runtime-only init/plan and boundary review are complete.
+3. Finish effective launch/state-write/stop permission review, refresh costs
+   and separately approve the exact apply, immediate paid EC2 launch and
+   supervised stop window; there is no AWS-side hard stop schedule.
 4. Approve initialization of the exact Kafka EBS volume, image publication,
    secret/read permissions and application deployment before those actions.
 5. Smoke-test the isolated streaming path, test Kafka/Spark recovery, drain and

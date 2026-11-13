@@ -12,6 +12,11 @@ snapshot. The deployment identity has since been verified; see the
 [current access/preflight and plan proposal](aws_runtime_boundary_plan_approval.md).
 This historical launch review is not an apply approval.
 
+The subsequently approved boundary-based runtime init/plan completed with
+28 creates and zero updates/deletes/imports through the dedicated deployer.
+See the [current completed review](aws_runtime_boundary_plan_review.md);
+launch-permission/stop review and paid deployment approval remain outstanding.
+
 ## A. What was prepared
 
 - A current, source-backed Oregon cost snapshot and inspectable calculations.

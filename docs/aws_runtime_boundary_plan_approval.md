@@ -1,5 +1,10 @@
 # AWS demo: verified access and fresh runtime-plan approval
 
+**Completed follow-up:** the operator subsequently approved this exact init/plan
+scope. Both commands succeeded; see the
+[completed plan review](aws_runtime_boundary_plan_review.md). The proposal below
+is retained as approval evidence. No apply or deployment was authorized.
+
 Date: 2026-11-13 UTC. Milestone 11.6C. **Read-only preflight complete;
 fresh backend initialization and authenticated plan are proposed, not executed.**
 No apply, EC2 launch/start, EBS initialization, image push, secret setup,
