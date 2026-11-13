@@ -234,19 +234,41 @@ These steps are a reviewable runbook, not instructions to execute before approva
    the existing **IAM user's MFA device ARN**, not a key or TOTP code:
 
    ```ini
-   [profile blockchain-demo-deploy]
+   [profile blockchain-demo-assume]
    role_arn = arn:aws:iam::209479274979:role/blockchain-runtime-deployer
    source_profile = blockchain-de
    mfa_serial = <verified IAM-user MFA device ARN>
    duration_seconds = 3600
    role_session_name = blockchain-runtime-deploy
    region = us-west-2
+
+   [profile blockchain-demo-deploy]
+   credential_process = /opt/homebrew/bin/aws configure export-credentials --profile blockchain-demo-assume --format process
+   region = us-west-2
    ```
 
-8. The user enters MFA locally at the CLI prompt. Use `sts get-caller-identity`
-   with this profile for identity verification; do not manually print the
-   `AssumeRole` credentials response or copy credentials into Terraform inputs.
-   If denied, inspect the exact reason; do not remove the MFA requirement.
+   `/opt/homebrew/bin/aws` is the verified executable on the current Mac. Verify
+   the absolute path again if the installation changes. Keep the two profile
+   names distinct to avoid credential-process recursion. This follows
+   [AWS's credential-process export](https://docs.aws.amazon.com/cli/latest/reference/configure/export-credentials.html)
+   and the [locked AWS provider's external-process support](https://github.com/hashicorp/terraform-provider-aws/blob/v6.69.1/website/docs/index.html.markdown#using-an-external-credentials-process).
+   The CLI handles the MFA role session and local CLI cache; the SDK receives
+   process JSON privately. Do not run the export command directly in a terminal,
+   print its response, enable credential debug logging, or save it in `.env`.
+
+8. First run `sts get-caller-identity` with `--profile blockchain-demo-assume`
+   interactively. The user enters MFA locally; only identity metadata is
+   returned. Then verify the same expected assumed-role/account identity with
+   `--profile blockchain-demo-deploy`, which exercises the SDK handoff. Record
+   session expiry through a filtered metadata check without displaying any
+   credential JSON. Use `AWS_PROFILE=blockchain-demo-deploy` for both Terraform's
+   backend and provider; remove inherited access-key/session environment
+   overrides and do not fall back to default/root profiles. Do not assume
+   Terraform can prompt for MFA or read the CLI role cache by itself.
+   Before each approved operation, check remaining session lifetime and reserve
+   time to stop the instance. If renewal is needed, return to the interactive
+   CLI identity check first; never remove MFA or broaden policies to make a
+   noninteractive process succeed. No credentials/profile are configured yet.
 9. Stop here. No apply, launch, image push, secrets, SSM execution or formatting
    follows automatically. Expiring credentials do not stop running resources.
 
