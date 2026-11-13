@@ -1,6 +1,6 @@
 {
   "milestone": "11.6C",
-  "status": "approved_window_closed_after_partial_apply_and_verified_stop",
+  "status": "untaint_complete_revised_config_plan_pending_fresh_approval",
   "deployment_policy_console_validation_reviewed": true,
   "installed_policy_documents_compared_with_repository": false,
   "organization_membership": "standalone_indicated_by_operator_console_observation",
@@ -34,18 +34,27 @@
     "live_writes_proven": false
   },
   "remaining_execution_conditions": [
-    "Separate exact-instance runtime-state untaint and fresh recovery-plan approval.",
-    "No retry/apply/start/replacement/deletion or IAM change is authorized by the closed first window."
+    "Fresh explicit approval for the authenticated saved plan using the reviewed public-IP configuration correction.",
+    "No untaint repetition, apply, start, replacement/deletion or IAM change."
   ],
   "completed_window": {
     "apply_exit_code": 1,
     "created_managed_resource_instances": 23,
     "instance_stopped": true,
-    "instance_tainted": true,
+    "instance_tainted": false,
     "runtime_state_persisted": true,
     "lock_released": true,
     "further_apply_or_start_approved": false,
-    "recovery_untaint_and_plan_approved": false,
+    "recovery_untaint_and_plan_approved": true,
     "policy_change_approved": false
+  },
+  "recovery": {
+    "untaint_complete": true,
+    "runtime_state_serial": 3,
+    "original_recovery_plan_exit_code": 1,
+    "revised_config_plan_executed": false,
+    "fresh_revised_config_plan_approval_required": true,
+    "apply_or_start_approved": false,
+    "iam_change_approved": false
   }
 }

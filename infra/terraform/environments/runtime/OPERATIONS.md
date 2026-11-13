@@ -37,6 +37,13 @@ runtime plan needs its own approved scope and review.
 - Session Manager is the only operator access path.
 - The automatically assigned public IPv4 address provides outbound HTTPS via
   the Internet Gateway and is released when the instance stops.
+- Public IPv4 launch assignment is inherited from the runtime subnet's
+  `map_public_ip_on_launch=true`. Leave the instance's optional/computed
+  `associate_public_ip_address` unset: provider 6.69.1 reports no association
+  while stopped, and pinning that transient observation to true forces an
+  unwanted replacement. `prevent_destroy` remains enabled; no lifecycle
+  attribute is ignored. Verify the public address and outbound connectivity
+  after a separately approved start before declaring SSM/app readiness.
 - Kafka stays on the private Docker network and binds no host/public listener
   in the future cloud Compose file.
 - Container images must use ECR digest references. Tags alone are not an

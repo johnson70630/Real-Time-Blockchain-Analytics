@@ -1,5 +1,12 @@
 # AWS demo: partial first apply and verified normal stop
 
+**Recovery follow-up:** the operator subsequently approved the exact-instance
+untaint and recovery plan. Untaint completed; EC2 remains stopped. The original
+configuration's plan was blocked by `prevent_destroy`; a local correction is
+validated and its authenticated plan awaits fresh approval. See the
+[current recovery review](aws_runtime_recovery_review.md). This report preserves
+the original apply outcome and tainted-state snapshot.
+
 Date: 2026-11-13 UTC. Milestone 11.6C. **First paid infrastructure attempt
 partially completed; EC2 is stopped. Application deployment has not begun.**
 No retry, replacement, untaint, permission update or further apply is included

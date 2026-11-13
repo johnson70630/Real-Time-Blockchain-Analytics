@@ -1,0 +1,83 @@
+{
+  "milestone": "11.6C",
+  "status": "revised_config_plan_pending_fresh_approval",
+  "untaint_approved": true,
+  "untaint_exit_code": 0,
+  "untaint_verified": {
+    "stage": "verify_untaint",
+    "exit_code": 0,
+    "verified_at_utc": "2026-11-13T22:46:31.279981+00:00",
+    "only_approved_state_changes": true,
+    "resource_attributes_outputs_and_lineage_unchanged": true,
+    "cached_check_results_equivalent_with_order_change": true,
+    "state_serial_before": 2,
+    "state_serial_after": 3,
+    "state_after_sha256": "16b7a99fa7dccc4cd445d5816456982ac029309022451d5b2800ae9805997d13",
+    "instance_still_stopped": true,
+    "native_lock_released": true,
+    "platform_state_accessed": false
+  },
+  "first_recovery_plan": {
+    "exit_code": 1,
+    "completed_at_utc": "2026-11-13T22:46:48.462484+00:00",
+    "blocked_by": "prevent_destroy",
+    "replacement_trigger_attribute": "associate_public_ip_address",
+    "saved_artifact_valid_for_apply": false
+  },
+  "revised_local_configuration": {
+    "status": "pending_fresh_approval_after_automatic_review_rejection",
+    "root": "infra/terraform/environments/runtime",
+    "backend_key": "production/runtime/terraform.tfstate",
+    "profile": "blockchain-demo-deploy",
+    "workspace": "default",
+    "TF_DATA_DIR": "/tmp/blockchain-runtime-boundary-plan-qo31l9uu/terraform-data",
+    "config_with_lockfile_sha256": "6dd1bb8ebb3de1d89600a4159701548af3c918a570f15629b05d264b9abe9712",
+    "local_change": "Remove explicit instance associate_public_ip_address; inherit existing subnet map_public_ip_on_launch=true. Keep prevent_destroy; no ignore_changes.",
+    "expected_creates": 5,
+    "expected_updates": 0,
+    "expected_deletes": 0,
+    "expected_replacements": 0,
+    "exact_instance_id": "i-0ca1671a59751acc5",
+    "instance_must_remain_stopped": true,
+    "plan_only": true,
+    "terraform_apply_allowed": false,
+    "ec2_start_allowed": false,
+    "iam_change_allowed": false,
+    "untaint_already_complete": true,
+    "terraform_command_executed": false
+  },
+  "offline_validation": {
+    "focused_python_tests_passed": 37,
+    "terraform_mocks_passed": 9,
+    "terraform_validate_passed": true,
+    "terraform_fmt_passed": true,
+    "credentials_disabled_for_mocks": true,
+    "production_backend_initialized_for_mocks": false
+  },
+  "automatic_approval_review": {
+    "rejected": true,
+    "action": "Authenticated production recovery plan with revised Terraform configuration",
+    "reason": "Modified configuration expanded beyond the explicitly approved state-only untaint-and-plan scope; fresh approval required.",
+    "command_executed": false,
+    "workaround_attempted": false
+  },
+  "current_read_only_status": {
+    "checked_at_utc": "2026-11-13T22:51:24.506431+00:00",
+    "instance_id": "i-0ca1671a59751acc5",
+    "instance_state": "stopped",
+    "public_ipv4_present": false,
+    "instance_tainted": false,
+    "runtime_state_serial": 3,
+    "runtime_state_sha256": "16b7a99fa7dccc4cd445d5816456982ac029309022451d5b2800ae9805997d13",
+    "remote_state_unchanged_by_failed_plan": true,
+    "native_lock_released": true,
+    "platform_state_accessed": false,
+    "aws_mutations_performed": false
+  },
+  "terraform_apply_run": false,
+  "ec2_started": false,
+  "deployed_iam_changed": false,
+  "ebs_formatted": false,
+  "replacement_or_deletion_performed": false,
+  "platform_state_accessed": false
+}

@@ -2,14 +2,16 @@ data "aws_ssm_parameter" "al2023_ami" {
   name = "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64"
 }
 
+# Public IPv4 assignment is inherited from aws_subnet.public. The optional
+# instance flag reflects the current association, which disappears on stop;
+# setting associate_public_ip_address here would force replacement after stop.
 resource "aws_instance" "runtime" {
-  ami                         = data.aws_ssm_parameter.al2023_ami.value
-  instance_type               = var.instance_type
-  availability_zone           = var.availability_zone
-  subnet_id                   = aws_subnet.public.id
-  vpc_security_group_ids      = [aws_security_group.runtime.id]
-  associate_public_ip_address = true
-  iam_instance_profile        = aws_iam_instance_profile.runtime.name
+  ami                    = data.aws_ssm_parameter.al2023_ami.value
+  instance_type          = var.instance_type
+  availability_zone      = var.availability_zone
+  subnet_id              = aws_subnet.public.id
+  vpc_security_group_ids = [aws_security_group.runtime.id]
+  iam_instance_profile   = aws_iam_instance_profile.runtime.name
 
   disable_api_termination              = true
   instance_initiated_shutdown_behavior = "stop"

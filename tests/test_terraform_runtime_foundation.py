@@ -112,7 +112,6 @@ def test_instance_requires_imdsv2_has_no_ssh_key_and_controls_cost() -> None:
     compute = (RUNTIME_ROOT / "compute.tf").read_text()
 
     for expected in (
-        'instance_type               = var.instance_type',
         'http_tokens                 = "required"',
         'instance_initiated_shutdown_behavior = "stop"',
         "disable_api_termination              = true",
@@ -124,6 +123,8 @@ def test_instance_requires_imdsv2_has_no_ssh_key_and_controls_cost() -> None:
     ):
         assert expected in compute
 
+    assert re.search(r"instance_type\s*=\s*var\.instance_type", compute)
+
     for excluded in (
         "key_name",
         "user_data_base64",
@@ -131,6 +132,19 @@ def test_instance_requires_imdsv2_has_no_ssh_key_and_controls_cost() -> None:
         "source_dest_check = false",
     ):
         assert excluded not in compute
+
+
+def test_stopped_instance_ip_association_is_not_a_replacement_requirement() -> None:
+    compute = (RUNTIME_ROOT / "compute.tf").read_text()
+    network = (RUNTIME_ROOT / "networking.tf").read_text()
+
+    # Keep the public subnet's launch policy authoritative while a stopped
+    # instance legitimately has no public address. Retain replacement guards.
+    assert "map_public_ip_on_launch = true" in network
+    assert re.search(r"subnet_id\s*=\s*aws_subnet\.public\.id", compute)
+    assert not re.search(r"(?m)^\s*associate_public_ip_address\s*=", compute)
+    assert "prevent_destroy = true" in compute
+    assert "ignore_changes" not in compute
 
 
 def test_kafka_volume_is_encrypted_persistent_gp3() -> None:
