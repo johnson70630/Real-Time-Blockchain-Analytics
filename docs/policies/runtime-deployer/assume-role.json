@@ -1,0 +1,40 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AssumeOnlyDemoDeployer",
+      "Effect": "Allow",
+      "Action": [
+        "sts:AssumeRole"
+      ],
+      "Resource": [
+        "arn:aws:iam::209479274979:role/blockchain-runtime-deployer"
+      ],
+      "Condition": {
+        "Bool": {
+          "aws:MultiFactorAuthPresent": "true"
+        }
+      }
+    },
+    {
+      "Sid": "InspectOwnMfaAssignment",
+      "Effect": "Allow",
+      "Action": [
+        "iam:ListMFADevices"
+      ],
+      "Resource": [
+        "arn:aws:iam::209479274979:user/blockchain-de-local"
+      ]
+    },
+    {
+      "Sid": "InspectVirtualMfaInventory",
+      "Effect": "Allow",
+      "Action": [
+        "iam:ListVirtualMFADevices"
+      ],
+      "Resource": [
+        "*"
+      ]
+    }
+  ]
+}

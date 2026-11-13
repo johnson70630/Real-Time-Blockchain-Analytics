@@ -1,0 +1,107 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "RegionalEc2Preflight",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DescribeVpcs",
+        "ec2:DescribeSubnets",
+        "ec2:DescribeInternetGateways",
+        "ec2:DescribeRouteTables",
+        "ec2:DescribeSecurityGroups",
+        "ec2:DescribeSecurityGroupRules",
+        "ec2:DescribeInstances",
+        "ec2:DescribeInstanceStatus",
+        "ec2:DescribeInstanceCreditSpecifications",
+        "ec2:DescribeInstanceTypes",
+        "ec2:DescribeInstanceTypeOfferings",
+        "ec2:DescribeImages",
+        "ec2:DescribeVolumes",
+        "ec2:DescribeVolumesModifications",
+        "ec2:DescribeNetworkInterfaces",
+        "ec2:DescribeAvailabilityZones",
+        "ec2:DescribeTags",
+        "ec2:GetEbsEncryptionByDefault",
+        "ec2:GetEbsDefaultKmsKeyId"
+      ],
+      "Resource": [
+        "*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2"
+        }
+      }
+    },
+    {
+      "Sid": "RegionalQuotaPreflight",
+      "Effect": "Allow",
+      "Action": [
+        "servicequotas:GetServiceQuota",
+        "servicequotas:ListServiceQuotas"
+      ],
+      "Resource": [
+        "*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2"
+        }
+      }
+    },
+    {
+      "Sid": "InitialCreationTagsOnly",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:CreateTags"
+      ],
+      "Resource": [
+        "arn:aws:ec2:us-west-2:209479274979:vpc/*",
+        "arn:aws:ec2:us-west-2:209479274979:subnet/*",
+        "arn:aws:ec2:us-west-2:209479274979:internet-gateway/*",
+        "arn:aws:ec2:us-west-2:209479274979:route-table/*",
+        "arn:aws:ec2:us-west-2:209479274979:security-group/*",
+        "arn:aws:ec2:us-west-2:209479274979:security-group-rule/*",
+        "arn:aws:ec2:us-west-2:209479274979:instance/*",
+        "arn:aws:ec2:us-west-2:209479274979:volume/*",
+        "arn:aws:ec2:us-west-2:209479274979:network-interface/*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2",
+          "ec2:CreateAction": [
+            "CreateVpc",
+            "CreateSubnet",
+            "CreateInternetGateway",
+            "CreateRouteTable",
+            "CreateSecurityGroup",
+            "AuthorizeSecurityGroupEgress",
+            "CreateVolume",
+            "RunInstances"
+          ]
+        }
+      }
+    },
+    {
+      "Sid": "ReadTaggedAttributes",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DescribeInstanceAttribute",
+        "ec2:DescribeVpcAttribute"
+      ],
+      "Resource": [
+        "arn:aws:ec2:us-west-2:209479274979:instance/*",
+        "arn:aws:ec2:us-west-2:209479274979:vpc/*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2",
+          "aws:ResourceTag/Project": "real-time-blockchain-analytics",
+          "aws:ResourceTag/Environment": "production-runtime",
+          "aws:ResourceTag/Workload": "blockchain-runtime"
+        }
+      }
+    }
+  ]
+}

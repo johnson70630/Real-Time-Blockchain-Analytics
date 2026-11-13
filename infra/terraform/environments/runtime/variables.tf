@@ -119,6 +119,20 @@ variable "pilot_s3_prefix" {
   }
 }
 
+variable "runtime_permissions_boundary_arn" {
+  description = "Optional administrator-owned EC2 role boundary for the dedicated demo deployer; applying with it requires a fresh reviewed plan."
+  type        = string
+  default     = null
+
+  validation {
+    condition = (
+      var.runtime_permissions_boundary_arn == null ||
+      var.runtime_permissions_boundary_arn == "arn:aws:iam::209479274979:policy/blockchain-runtime-ec2-boundary"
+    )
+    error_message = "Use null for the existing foundation behavior, or the exact approved administrator-owned demo boundary ARN."
+  }
+}
+
 variable "approved_secret_arns" {
   description = "Exact approved Secrets Manager ARNs; empty disables secret access for infrastructure-only planning."
   type        = list(string)

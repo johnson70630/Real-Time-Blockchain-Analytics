@@ -9,6 +9,12 @@ and main merge remain outside the approval. README is unchanged. See the
 [completed runtime plan review](aws_runtime_plan_review.md) and subsequent
 [cost, provisioning-permission and launch review](aws_demo_launch_approval.md).
 
+The subsequent [dedicated deployer setup review](aws_demo_deployer_setup.md)
+proposes MFA-protected temporary deployment credentials and an EC2 role boundary.
+No IAM setup has been executed. The prior saved infrastructure plan omits that
+boundary and must not be used for this design; obtain a fresh scoped review
+before apply. SSM operator permissions and secret access remain later gates.
+
 ## Implementation plan and decisions
 
 1. Verify develop, origin, and hosted CI; inspect the 11.6B foundation.

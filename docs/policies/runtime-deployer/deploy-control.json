@@ -1,0 +1,336 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ReadRuntimeBucketMetadata",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetBucketLocation"
+      ],
+      "Resource": [
+        "arn:aws:s3:::blockchain-analytics-terraform-state-209479274979-usw2"
+      ]
+    },
+    {
+      "Sid": "ListRuntimeStateOnly",
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListBucket"
+      ],
+      "Resource": [
+        "arn:aws:s3:::blockchain-analytics-terraform-state-209479274979-usw2"
+      ],
+      "Condition": {
+        "StringLike": {
+          "s3:prefix": [
+            "production/runtime/terraform.tfstate",
+            "production/runtime/terraform.tfstate.tflock"
+          ]
+        }
+      }
+    },
+    {
+      "Sid": "RuntimeStateReadWrite",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::blockchain-analytics-terraform-state-209479274979-usw2/production/runtime/terraform.tfstate"
+      ]
+    },
+    {
+      "Sid": "RuntimeNativeLock",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:DeleteObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::blockchain-analytics-terraform-state-209479274979-usw2/production/runtime/terraform.tfstate.tflock"
+      ]
+    },
+    {
+      "Sid": "DenyPlatformState",
+      "Effect": "Deny",
+      "Action": [
+        "s3:*"
+      ],
+      "Resource": [
+        "arn:aws:s3:::blockchain-analytics-terraform-state-209479274979-usw2/production/platform/*"
+      ]
+    },
+    {
+      "Sid": "PublicAmiParameter",
+      "Effect": "Allow",
+      "Action": [
+        "ssm:GetParameter"
+      ],
+      "Resource": [
+        "arn:aws:ssm:us-west-2::parameter/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2"
+        }
+      }
+    },
+    {
+      "Sid": "CreateBoundedRuntimeRole",
+      "Effect": "Allow",
+      "Action": [
+        "iam:CreateRole"
+      ],
+      "Resource": [
+        "arn:aws:iam::209479274979:role/blockchain-runtime-ec2"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "iam:PermissionsBoundary": "arn:aws:iam::209479274979:policy/blockchain-runtime-ec2-boundary"
+        }
+      }
+    },
+    {
+      "Sid": "BoundedRuntimeInlinePolicy",
+      "Effect": "Allow",
+      "Action": [
+        "iam:PutRolePolicy"
+      ],
+      "Resource": [
+        "arn:aws:iam::209479274979:role/blockchain-runtime-ec2"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "iam:PermissionsBoundary": "arn:aws:iam::209479274979:policy/blockchain-runtime-ec2-boundary"
+        }
+      }
+    },
+    {
+      "Sid": "OnlySsmManagedPolicy",
+      "Effect": "Allow",
+      "Action": [
+        "iam:AttachRolePolicy"
+      ],
+      "Resource": [
+        "arn:aws:iam::209479274979:role/blockchain-runtime-ec2"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "iam:PermissionsBoundary": "arn:aws:iam::209479274979:policy/blockchain-runtime-ec2-boundary",
+          "iam:PolicyARN": "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+        }
+      }
+    },
+    {
+      "Sid": "RuntimeRoleReadsAndTags",
+      "Effect": "Allow",
+      "Action": [
+        "iam:GetRole",
+        "iam:ListRolePolicies",
+        "iam:GetRolePolicy",
+        "iam:ListAttachedRolePolicies",
+        "iam:ListInstanceProfilesForRole",
+        "iam:ListRoleTags",
+        "iam:TagRole"
+      ],
+      "Resource": [
+        "arn:aws:iam::209479274979:role/blockchain-runtime-ec2"
+      ]
+    },
+    {
+      "Sid": "RuntimeProfile",
+      "Effect": "Allow",
+      "Action": [
+        "iam:CreateInstanceProfile",
+        "iam:GetInstanceProfile",
+        "iam:AddRoleToInstanceProfile",
+        "iam:TagInstanceProfile",
+        "iam:ListInstanceProfileTags"
+      ],
+      "Resource": [
+        "arn:aws:iam::209479274979:instance-profile/blockchain-runtime-ec2"
+      ]
+    },
+    {
+      "Sid": "PassOnlyRuntimeRoleToEc2",
+      "Effect": "Allow",
+      "Action": [
+        "iam:PassRole"
+      ],
+      "Resource": [
+        "arn:aws:iam::209479274979:role/blockchain-runtime-ec2"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "iam:PassedToService": "ec2.amazonaws.com"
+        }
+      }
+    },
+    {
+      "Sid": "ReviewBoundaryAndSsmPolicy",
+      "Effect": "Allow",
+      "Action": [
+        "iam:GetPolicy",
+        "iam:GetPolicyVersion"
+      ],
+      "Resource": [
+        "arn:aws:iam::209479274979:policy/blockchain-runtime-ec2-boundary",
+        "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+      ]
+    },
+    {
+      "Sid": "FixedRuntimeRepositories",
+      "Effect": "Allow",
+      "Action": [
+        "ecr:CreateRepository",
+        "ecr:DescribeRepositories",
+        "ecr:ListTagsForResource",
+        "ecr:GetLifecyclePolicy",
+        "ecr:PutLifecyclePolicy",
+        "ecr:TagResource"
+      ],
+      "Resource": [
+        "arn:aws:ecr:us-west-2:209479274979:repository/blockchain-runtime-producer",
+        "arn:aws:ecr:us-west-2:209479274979:repository/blockchain-runtime-spark"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2"
+        }
+      }
+    },
+    {
+      "Sid": "RegistryScanPreflight",
+      "Effect": "Allow",
+      "Action": [
+        "ecr:GetRegistryScanningConfiguration"
+      ],
+      "Resource": [
+        "*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2"
+        }
+      }
+    },
+    {
+      "Sid": "RuntimeLogGroup",
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:PutRetentionPolicy",
+        "logs:ListTagsForResource",
+        "logs:TagResource",
+        "logs:DescribeLogStreams",
+        "logs:GetLogEvents"
+      ],
+      "Resource": [
+        "arn:aws:logs:us-west-2:209479274979:log-group:/blockchain/runtime/containers",
+        "arn:aws:logs:us-west-2:209479274979:log-group:/blockchain/runtime/containers:*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2"
+        }
+      }
+    },
+    {
+      "Sid": "ListLogGroupMetadata",
+      "Effect": "Allow",
+      "Action": [
+        "logs:DescribeLogGroups"
+      ],
+      "Resource": [
+        "*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2"
+        }
+      }
+    },
+    {
+      "Sid": "RuntimeAlarms",
+      "Effect": "Allow",
+      "Action": [
+        "cloudwatch:PutMetricAlarm",
+        "cloudwatch:DescribeAlarms",
+        "cloudwatch:ListTagsForResource",
+        "cloudwatch:TagResource"
+      ],
+      "Resource": [
+        "arn:aws:cloudwatch:us-west-2:209479274979:alarm:blockchain-runtime-instance-status",
+        "arn:aws:cloudwatch:us-west-2:209479274979:alarm:blockchain-runtime-high-cpu"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2"
+        }
+      }
+    },
+    {
+      "Sid": "RuntimeTopic",
+      "Effect": "Allow",
+      "Action": [
+        "sns:CreateTopic",
+        "sns:GetTopicAttributes",
+        "sns:SetTopicAttributes",
+        "sns:ListTagsForResource",
+        "sns:TagResource"
+      ],
+      "Resource": [
+        "arn:aws:sns:us-west-2:209479274979:blockchain-runtime-alerts"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2"
+        }
+      }
+    },
+    {
+      "Sid": "RuntimeRule",
+      "Effect": "Allow",
+      "Action": [
+        "events:PutRule",
+        "events:DescribeRule",
+        "events:ListTargetsByRule",
+        "events:ListTagsForResource",
+        "events:TagResource"
+      ],
+      "Resource": [
+        "arn:aws:events:us-west-2:209479274979:rule/blockchain-runtime-state-change"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2"
+        }
+      }
+    },
+    {
+      "Sid": "FixedRuntimeEventTarget",
+      "Effect": "Allow",
+      "Action": [
+        "events:PutTargets"
+      ],
+      "Resource": [
+        "arn:aws:events:us-west-2:209479274979:rule/blockchain-runtime-state-change"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2"
+        },
+        "ForAllValues:ArnEquals": {
+          "events:TargetArn": [
+            "arn:aws:sns:us-west-2:209479274979:blockchain-runtime-alerts"
+          ]
+        },
+        "Null": {
+          "events:TargetArn": "false"
+        }
+      }
+    }
+  ]
+}

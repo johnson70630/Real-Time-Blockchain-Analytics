@@ -1,0 +1,288 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "CreateTaggedNetwork",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:CreateVpc",
+        "ec2:CreateSubnet",
+        "ec2:CreateInternetGateway",
+        "ec2:CreateRouteTable",
+        "ec2:CreateSecurityGroup"
+      ],
+      "Resource": [
+        "arn:aws:ec2:us-west-2:209479274979:vpc/*",
+        "arn:aws:ec2:us-west-2:209479274979:subnet/*",
+        "arn:aws:ec2:us-west-2:209479274979:internet-gateway/*",
+        "arn:aws:ec2:us-west-2:209479274979:route-table/*",
+        "arn:aws:ec2:us-west-2:209479274979:security-group/*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2",
+          "aws:RequestTag/Project": "real-time-blockchain-analytics",
+          "aws:RequestTag/Environment": "production-runtime",
+          "aws:RequestTag/Workload": "blockchain-runtime"
+        }
+      }
+    },
+    {
+      "Sid": "NetworkCreationVpcDependency",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:CreateSubnet",
+        "ec2:CreateRouteTable",
+        "ec2:CreateSecurityGroup"
+      ],
+      "Resource": [
+        "arn:aws:ec2:us-west-2:209479274979:vpc/*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2",
+          "aws:ResourceTag/Project": "real-time-blockchain-analytics",
+          "aws:ResourceTag/Environment": "production-runtime",
+          "aws:ResourceTag/Workload": "blockchain-runtime"
+        }
+      }
+    },
+    {
+      "Sid": "ModifyTaggedNetwork",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:ModifyVpcAttribute",
+        "ec2:ModifySubnetAttribute",
+        "ec2:AttachInternetGateway",
+        "ec2:CreateRoute",
+        "ec2:AssociateRouteTable",
+        "ec2:AuthorizeSecurityGroupEgress",
+        "ec2:RevokeSecurityGroupEgress"
+      ],
+      "Resource": [
+        "arn:aws:ec2:us-west-2:209479274979:vpc/*",
+        "arn:aws:ec2:us-west-2:209479274979:subnet/*",
+        "arn:aws:ec2:us-west-2:209479274979:internet-gateway/*",
+        "arn:aws:ec2:us-west-2:209479274979:route-table/*",
+        "arn:aws:ec2:us-west-2:209479274979:security-group/*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2",
+          "aws:ResourceTag/Project": "real-time-blockchain-analytics",
+          "aws:ResourceTag/Environment": "production-runtime",
+          "aws:ResourceTag/Workload": "blockchain-runtime"
+        }
+      }
+    },
+    {
+      "Sid": "CreateTaggedEgressRule",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:AuthorizeSecurityGroupEgress"
+      ],
+      "Resource": [
+        "arn:aws:ec2:us-west-2:209479274979:security-group-rule/*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2",
+          "aws:RequestTag/Project": "real-time-blockchain-analytics",
+          "aws:RequestTag/Environment": "production-runtime",
+          "aws:RequestTag/Workload": "blockchain-runtime"
+        }
+      }
+    },
+    {
+      "Sid": "CreateKafkaVolume",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:CreateVolume"
+      ],
+      "Resource": [
+        "arn:aws:ec2:us-west-2:209479274979:volume/*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2",
+          "aws:RequestTag/Project": "real-time-blockchain-analytics",
+          "aws:RequestTag/Environment": "production-runtime",
+          "aws:RequestTag/Workload": "blockchain-runtime",
+          "ec2:AvailabilityZone": "us-west-2a",
+          "ec2:VolumeType": "gp3"
+        },
+        "Bool": {
+          "ec2:Encrypted": "true"
+        },
+        "NumericEquals": {
+          "ec2:VolumeSize": "100",
+          "ec2:VolumeIops": "3000",
+          "ec2:VolumeThroughput": "125"
+        }
+      }
+    },
+    {
+      "Sid": "LaunchTaggedInstance",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:RunInstances"
+      ],
+      "Resource": [
+        "arn:aws:ec2:us-west-2:209479274979:instance/*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2",
+          "aws:RequestTag/Project": "real-time-blockchain-analytics",
+          "aws:RequestTag/Environment": "production-runtime",
+          "aws:RequestTag/Workload": "blockchain-runtime",
+          "ec2:InstanceType": "t3.xlarge",
+          "ec2:AvailabilityZone": "us-west-2a",
+          "ec2:Tenancy": "default",
+          "ec2:MetadataHttpTokens": "required",
+          "ec2:MetadataHttpEndpoint": "enabled"
+        },
+        "ArnEquals": {
+          "ec2:InstanceProfile": "arn:aws:iam::209479274979:instance-profile/blockchain-runtime-ec2"
+        },
+        "NumericEquals": {
+          "ec2:MetadataHttpPutResponseHopLimit": "2"
+        }
+      }
+    },
+    {
+      "Sid": "ExactReviewedAmi",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:RunInstances"
+      ],
+      "Resource": [
+        "arn:aws:ec2:us-west-2::image/ami-0dac6cd09676c9fb1"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2"
+        }
+      }
+    },
+    {
+      "Sid": "LaunchRuntimeNetwork",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:RunInstances"
+      ],
+      "Resource": [
+        "arn:aws:ec2:us-west-2:209479274979:subnet/*",
+        "arn:aws:ec2:us-west-2:209479274979:security-group/*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2",
+          "aws:ResourceTag/Project": "real-time-blockchain-analytics",
+          "aws:ResourceTag/Environment": "production-runtime",
+          "aws:ResourceTag/Workload": "blockchain-runtime"
+        }
+      }
+    },
+    {
+      "Sid": "LaunchNetworkInterface",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:RunInstances"
+      ],
+      "Resource": [
+        "arn:aws:ec2:us-west-2:209479274979:network-interface/*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2"
+        }
+      }
+    },
+    {
+      "Sid": "LaunchEncryptedRoot",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:RunInstances"
+      ],
+      "Resource": [
+        "arn:aws:ec2:us-west-2:209479274979:volume/*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2",
+          "ec2:VolumeType": "gp3",
+          "ec2:AvailabilityZone": "us-west-2a"
+        },
+        "Bool": {
+          "ec2:Encrypted": "true"
+        },
+        "NumericEquals": {
+          "ec2:VolumeSize": "30"
+        }
+      }
+    },
+    {
+      "Sid": "AttachOnlyRuntimeStorage",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:AttachVolume"
+      ],
+      "Resource": [
+        "arn:aws:ec2:us-west-2:209479274979:instance/*",
+        "arn:aws:ec2:us-west-2:209479274979:volume/*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2",
+          "aws:ResourceTag/Project": "real-time-blockchain-analytics",
+          "aws:ResourceTag/Environment": "production-runtime",
+          "aws:ResourceTag/Workload": "blockchain-runtime"
+        }
+      }
+    },
+    {
+      "Sid": "RuntimeCreditsAndStop",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:ModifyInstanceCreditSpecification",
+        "ec2:StopInstances",
+        "ec2:GetConsoleOutput",
+        "ec2:GetConsoleScreenshot"
+      ],
+      "Resource": [
+        "arn:aws:ec2:us-west-2:209479274979:instance/*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2",
+          "aws:ResourceTag/Project": "real-time-blockchain-analytics",
+          "aws:ResourceTag/Environment": "production-runtime",
+          "aws:ResourceTag/Workload": "blockchain-runtime"
+        }
+      }
+    },
+    {
+      "Sid": "InitialInstanceSafetyAttributes",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:ModifyInstanceAttribute"
+      ],
+      "Resource": [
+        "arn:aws:ec2:us-west-2:209479274979:instance/*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2",
+          "aws:ResourceTag/Project": "real-time-blockchain-analytics",
+          "aws:ResourceTag/Environment": "production-runtime",
+          "aws:ResourceTag/Workload": "blockchain-runtime",
+          "ec2:Attribute": [
+            "disableApiTermination",
+            "instanceInitiatedShutdownBehavior"
+          ]
+        }
+      }
+    }
+  ]
+}

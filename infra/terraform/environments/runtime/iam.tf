@@ -14,6 +14,14 @@ resource "aws_iam_role" "runtime" {
   name                 = "blockchain-runtime-ec2"
   assume_role_policy   = data.aws_iam_policy_document.runtime_assume_role.json
   max_session_duration = 3600
+  permissions_boundary = var.runtime_permissions_boundary_arn
+
+  lifecycle {
+    precondition {
+      condition     = var.runtime_permissions_boundary_arn == null || nonsensitive(length(var.approved_secret_arns)) == 0
+      error_message = "The initial demo boundary excludes Secrets Manager. Review and approve a boundary update before enabling any secret access."
+    }
+  }
 }
 
 resource "aws_iam_instance_profile" "runtime" {

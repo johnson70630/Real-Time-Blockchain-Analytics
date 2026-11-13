@@ -67,6 +67,13 @@ Tier, credits, taxes, reservations or Savings Plans are assumed.
 
 ### Identity recommendation
 
+The operator subsequently confirmed a root Console login and reported no
+deployment-role match. The proposed dedicated-role setup and exact offline
+policy documents are in [the IAM setup review](aws_demo_deployer_setup.md).
+Nothing has been provisioned. Its boundary design changes Terraform inputs;
+the earlier saved plan must not be applied for that design. A fresh scoped
+plan and separate IAM/deployment approvals are required.
+
 Keep `blockchain-de-local` as the planning identity and keep the pipeline user
 out of provisioning. Prefer an **existing, explicitly approved provisioning role
 with a temporary federated/SSO session** for the one-off apply. Record the chosen

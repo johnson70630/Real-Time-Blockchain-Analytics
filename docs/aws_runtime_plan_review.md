@@ -5,6 +5,12 @@ nothing deployed.** This remains a scheduled portfolio demo, initially around
 40 runtime hours per month. Milestone 11.5D stays paused. README and main are
 unchanged.
 
+**Historical plan snapshot:** the subsequent
+[dedicated deployer design](aws_demo_deployer_setup.md) adds an optional
+administrator-owned EC2 role boundary. The saved plan reviewed here omits that
+boundary and must not be applied for the new design. Preserve this evidence;
+obtain a fresh scoped plan with the approved boundary input before deployment.
+
 ## A. What was implemented
 
 The runtime supports infrastructure-only planning with

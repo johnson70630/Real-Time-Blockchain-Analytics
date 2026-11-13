@@ -20,6 +20,16 @@ allowing only its exact ARN in account 209479274979, Region us-west-2.
 Wildcards and other accounts/Regions are rejected. Never use a fabricated ARN
 to unblock a real plan. Offline provider-mocked tests cover both modes.
 
+The proposed [dedicated demo deployer](../../../../docs/aws_demo_deployer_setup.md)
+requires `runtime_permissions_boundary_arn` set to the exact administrator-owned
+`arn:aws:iam::209479274979:policy/blockchain-runtime-ec2-boundary` policy. Its
+default null preserves the previous foundation. The policy itself and the
+deployer are not created by this Terraform root. This initial boundary excludes
+Secrets Manager; Terraform rejects nonempty secret input while it is selected.
+Review and approve a boundary change before the streaming phase. Existing saved
+plans omit the boundary; do not apply them for this design. A fresh authenticated
+runtime plan needs its own approved scope and review.
+
 ## Runtime contract
 
 - No inbound security-group rules, SSH key, Elastic IP, NAT Gateway, or load
