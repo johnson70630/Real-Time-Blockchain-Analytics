@@ -1,0 +1,76 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AssumeOnlyDemoDeployer",
+      "Effect": "Allow",
+      "Action": [
+        "sts:AssumeRole"
+      ],
+      "Resource": [
+        "arn:aws:iam::209479274979:role/blockchain-runtime-deployer"
+      ],
+      "Condition": {
+        "Bool": {
+          "aws:MultiFactorAuthPresent": "true"
+        }
+      }
+    },
+    {
+      "Sid": "InspectOwnMfaAssignment",
+      "Effect": "Allow",
+      "Action": [
+        "iam:ListMFADevices"
+      ],
+      "Resource": [
+        "arn:aws:iam::209479274979:user/blockchain-de-local"
+      ]
+    },
+    {
+      "Sid": "InspectVirtualMfaInventory",
+      "Effect": "Allow",
+      "Action": [
+        "iam:ListVirtualMFADevices"
+      ],
+      "Resource": [
+        "*"
+      ]
+    },
+    {
+      "Sid": "TemporaryCreateOnlyNamedDemoMfa",
+      "Effect": "Allow",
+      "Action": [
+        "iam:CreateVirtualMFADevice"
+      ],
+      "Resource": [
+        "arn:aws:iam::209479274979:mfa/blockchain-de-local-demo"
+      ],
+      "Condition": {
+        "DateLessThan": {
+          "aws:CurrentTime": "2026-11-13T02:45:00Z"
+        },
+        "StringEquals": {
+          "aws:PrincipalArn": "arn:aws:iam::209479274979:user/blockchain-de-local"
+        }
+      }
+    },
+    {
+      "Sid": "TemporaryEnableOnlyPlanningUserMfa",
+      "Effect": "Allow",
+      "Action": [
+        "iam:EnableMFADevice"
+      ],
+      "Resource": [
+        "arn:aws:iam::209479274979:user/blockchain-de-local"
+      ],
+      "Condition": {
+        "DateLessThan": {
+          "aws:CurrentTime": "2026-11-13T02:45:00Z"
+        },
+        "StringEquals": {
+          "aws:PrincipalArn": "arn:aws:iam::209479274979:user/blockchain-de-local"
+        }
+      }
+    }
+  ]
+}

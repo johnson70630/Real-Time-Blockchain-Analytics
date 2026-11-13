@@ -22,7 +22,7 @@ Terraform or placed in the local AWS profiles.
 | Deployment EC2 managed policy | `blockchain-runtime-deploy-ec2` |
 | Deployment discovery and creation-tag managed policy | `blockchain-runtime-deploy-discovery-tags` |
 | Deployment role, maximum session 3,600 seconds | `blockchain-runtime-deployer`, attaching only the three deployment policies above |
-| Inline permission on existing `blockchain-de-local` | `DeFiRuntimeAssumeDemoDeployer`: MFA-protected assumption of the exact role, own-device listing, and read-only virtual-MFA inventory |
+| Customer-managed policy attached only to existing `blockchain-de-local` | `DeFiRuntimeAssumeDemoDeployer`: MFA-protected assumption of the exact role, own-device listing, and read-only virtual-MFA inventory |
 | Proposed new virtual MFA device, assigned only to `blockchain-de-local` | `blockchain-de-local-demo`, after name/inventory checks and explicit MFA approval |
 
 The boundary policy is attached to the **runtime EC2 role**, not to the
@@ -55,12 +55,15 @@ A boundary limits grants; it grants no access itself. See
 | [deploy-ec2.json](policies/runtime-deployer/deploy-ec2.json) | Create `blockchain-runtime-deploy-ec2`. |
 | [deploy-discovery-tags.json](policies/runtime-deployer/deploy-discovery-tags.json) | Create `blockchain-runtime-deploy-discovery-tags`. |
 | [trust.json](policies/runtime-deployer/trust.json) | Use as the deployment role's custom trust policy. |
-| [assume-role.json](policies/runtime-deployer/assume-role.json) | Add only the named inline permission to `blockchain-de-local`. |
+| [assume-role.json](policies/runtime-deployer/assume-role.json) | Create `DeFiRuntimeAssumeDemoDeployer` as a customer-managed policy and attach only to `blockchain-de-local`. |
 
 All JSON files are review artifacts. None is automatically attached or executed.
 They contain resource identifiers and permission definitions, not credentials.
 Each managed policy is below the 6,144-character non-whitespace policy limit;
-trust and user inline documents are each below 2,048 characters.
+the role trust document is below 2,048 characters. The user grant uses a
+customer-managed policy because the existing user inline policies leave
+insufficient room under IAM's aggregate 2,048-character user limit. Its JSON
+permissions are unchanged; no existing inline policies are removed.
 
 The runtime Terraform root adds optional input
 `runtime_permissions_boundary_arn` and attaches it to `aws_iam_role.runtime`.
@@ -179,6 +182,18 @@ spending limit. The policy neither launches EC2 nor imposes a hard cost ceiling.
 
 ## H. Remaining blockers and approval boundaries
 
+**Live setup update:** the operator approved the IAM/MFA setup and reported
+`DeFiRuntimeAssumeDemoDeployer` attached as a customer-managed policy after the
+inline attempt exceeded the existing aggregate quota. Read-only calls verified
+the expected planning-user identity and both MFA inventory permissions. No MFA
+is assigned to the user. An unassigned virtual device named `Authapp` exists;
+Console enrollment is stopped to preserve it. See the proposed
+[API-only enrollment review](aws_demo_mfa_api_enrollment.md). Its temporary
+permission expansion needs new explicit approval. The current identity cannot
+read back the managed policy or inventory every role; functional verification
+does not prove the complete attached-policy contents.
+
+
 1. Approve MFA enrollment for the exact `blockchain-de-local` user and proposed
    device name, then verify the inventory before enrollment. Do not use or share
    root's device, recovery codes, QR secret, or a TOTP code in chat.
@@ -203,18 +218,24 @@ spending limit. The policy neither launches EC2 nor imposes a hard cost ceiling.
 ## I. Setup procedure after explicit IAM approval
 
 These steps are a reviewable runbook, not instructions to execute before approval.
+The live user-policy attachment is complete and MFA inventory found an
+unassigned device. **Do not execute Console MFA enrollment below:** continue
+through the [API-only review](aws_demo_mfa_api_enrollment.md) after its separate
+temporary-permission approval. The four runtime/deployer policies and role
+remain part of the earlier approved setup; they are not yet verified as created.
 
 1. In the administrator Console, confirm the account and existing planning-user
    ARN. Inspect its MFA devices and the proposed names without making changes.
-2. In IAM Policies, create the four managed policies listed in section A using
+2. In IAM Policies, create the managed policies listed in section A using
    their exact JSON documents. Resolve validation findings before saving. Do
    not substitute a broader AWS managed policy or overwrite an existing name.
 3. In IAM Roles, create `blockchain-runtime-deployer` with the custom trust JSON
    and only the three deployment managed policies. Set maximum session duration
    to one hour. The fourth policy is the future EC2 boundary and is not attached
    as a permissions policy to this deployer.
-4. On `blockchain-de-local`, add `DeFiRuntimeAssumeDemoDeployer` using the exact
-   assume-role JSON. Existing grants are preserved. The local profile can then
+4. On `blockchain-de-local`, attach the customer-managed
+   `DeFiRuntimeAssumeDemoDeployer` policy containing the exact assume-role JSON.
+   Existing grants are preserved. The local profile can then
    inspect its MFA assignment and the account's virtual-MFA inventory without
    receiving any device-management permission. Before opening the enrollment
    wizard, check for the proposed name and any unassigned virtual devices.
@@ -277,7 +298,7 @@ These steps are a reviewable runbook, not instructions to execute before approva
    follows automatically. Expiring credentials do not stop running resources.
 
 Rollback of IAM setup, if needed, is a separately approved administrator action:
-remove the exact user inline grant and role/policy attachments, and revoke any
+detach the exact user managed-policy grant and role/policy attachments, and revoke any
 active deployer sessions where necessary before deleting the new role/policies.
 Detach the EC2 boundary only through a reviewed replacement/removal procedure;
 it cannot be deleted while attached. Removing assume permission alone does not

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import fnmatch
 import json
+from datetime import datetime
 from pathlib import Path
 
 import pytest
@@ -50,6 +51,8 @@ def _conditions(conditions, context):
                 result = any(fnmatch.fnmatchcase(str(actual), v) for v in values)
             elif operator == "NumericEquals":
                 result = any(float(actual) == float(v) for v in values)
+            elif operator == "DateLessThan":
+                result = any(datetime.fromisoformat(str(actual)) < datetime.fromisoformat(v) for v in values)
             elif operator == "ForAllValues:ArnEquals":
                 result = all(v in values for v in _list(actual))
             else:
@@ -85,7 +88,7 @@ DEPLOY = ["deploy-control.json", "deploy-discovery-tags.json", "deploy-ec2.json"
 def test_policy_size_and_explicit_action_limits():
     for path in ROOT.glob("*.json"):
         policy = json.loads(path.read_text())
-        limit = 2048 if path.name in {"trust.json", "assume-role.json"} else 6144
+        limit = 2048 if path.name == "trust.json" else 6144
         assert len(json.dumps(policy, separators=(",", ":"))) <= limit
         assert policy["Version"] == "2012-10-17"
         for statement in policy["Statement"]:
@@ -160,6 +163,26 @@ def test_assumer_gets_only_named_role_and_nonmutating_mfa_inventory():
     assert _allows(files, "iam:ListVirtualMFADevices", "*")
     for action in ("iam:CreateVirtualMFADevice", "iam:DeleteVirtualMFADevice", "iam:EnableMFADevice", "iam:DeactivateMFADevice"):
         assert not _allows(files, action, f"{IAM}:user/blockchain-de-local")
+
+
+def test_enrollment_window_preserves_base_grants_and_expires_without_delete_access():
+    base = json.loads((ROOT / "assume-role.json").read_text())["Statement"]
+    window = json.loads((ROOT / "assume-role-enrollment-window.json").read_text())["Statement"]
+    assert window[:len(base)] == base
+    files = ["assume-role-enrollment-window.json"]
+    user = f"{IAM}:user/blockchain-de-local"
+    device = f"{IAM}:mfa/blockchain-de-local-demo"
+    context = {"aws:PrincipalArn": user, "aws:CurrentTime": "2026-11-13T01:00:00Z"}
+    assert _allows(files, "iam:CreateVirtualMFADevice", device, context)
+    assert _allows(files, "iam:EnableMFADevice", user, context)
+    assert not _allows(files, "iam:CreateVirtualMFADevice", f"{IAM}:mfa/Authapp", context)
+    assert not _allows(files, "iam:EnableMFADevice", f"{IAM}:user/other-user", context)
+    assert not _allows(files, "iam:CreateVirtualMFADevice", device, context | {"aws:PrincipalArn": f"{IAM}:user/other-user"})
+    assert not _allows(files, "iam:CreateVirtualMFADevice", device, context | {"aws:CurrentTime": "2026-11-13T02:45:00Z"})
+    assert not _allows(files, "iam:EnableMFADevice", user, context | {"aws:CurrentTime": "2026-11-13T03:00:00Z"})
+    for action in ("iam:DeleteVirtualMFADevice", "iam:DeactivateMFADevice", "iam:ResyncMFADevice"):
+        assert not _allows(files, action, device, context)
+        assert not _allows(files, action, user, context)
 
 
 def test_cannot_relabel_existing_resources_to_obtain_tag_scoped_permissions():
