@@ -1,15 +1,17 @@
 # Milestone 11.6C — first streaming pilot readiness
 
-Status: offline implementation complete; the earlier runtime-only backend/plan
-and subsequent dedicated IAM/MFA setup were separately approved. Both role
-profiles now authenticate correctly, and read-only preflight is complete.
-**AWS runtime deployment is not authorized.** The fresh boundary-based backend
-initialization and plan were separately approved and completed: **28 creates,
-zero updates/deletes/imports**. See the
+Status: offline implementation complete. The first infrastructure-only paid
+apply and normal stop were separately approved and executed. **The apply
+partially completed: 23 managed resources exist; EC2 is stopped and tainted.**
+Five resources remain uncreated. No streaming application has been deployed.
+See the [actual apply/stop and recovery review](aws_runtime_first_apply_review.md).
+The historical fresh plan proposed 28 creates with zero updates/deletes/imports;
+it is now a consumed, partially executed artifact and must not be reapplied.
+See the
 [completed review](aws_runtime_boundary_plan_review.md) and retained
 [approval proposal](aws_runtime_boundary_plan_approval.md).
-Milestone 11.5D remains paused. New permissions outside the approved IAM setup,
-apply/import, resource creation, EBS initialization, Snowflake operations and
+Milestone 11.5D remains paused. Recovery state changes/planning, further applies,
+IAM changes, EC2 start/replacement, EBS initialization, Snowflake operations and
 main merge remain separate gates. README is unchanged. See the
 [completed runtime plan review](aws_runtime_plan_review.md) and subsequent
 [cost, provisioning-permission and launch review](aws_demo_launch_approval.md).
@@ -27,22 +29,24 @@ application/deployment components are implemented and tested. The planning-user
 managed grant and MFA enrollment are verified; the role and temporary profiles
 resolve to the expected principal in account 209479274979. Read-only preflight
 found no runtime name collisions, a matching AMI and sufficient inventory-based
-vCPU headroom. The refreshed plan passed review and its runtime lock was released.
-No streaming runtime has been deployed. Remaining sequence:
+vCPU headroom. The approved apply persisted partial runtime state and released
+its lock. Normal EC2 stop succeeded; no streaming containers were deployed.
 
 The [first-launch window review](aws_runtime_first_launch_window.md) contains
 fresh pricing, reviewed stop scope and the remaining administrator checks.
-It proposes a supervised infrastructure-only window, with no paid apply yet.
+Its supervised infrastructure-only window was approved and closed after the
+partial apply and verified stop.
 IAM Console validation is now operator-confirmed with no unresolved findings;
 the Organizations introduction screen indicates a standalone account. The
-state bucket has no bucket policy. The next gate is explicit paid apply/launch
-and normal-stop approval with an active administrator Console fallback.
+state bucket has no bucket policy. The next proposed gate is an exact-instance
+untaint of runtime state plus a fresh saved recovery plan, with no apply/start.
+Remaining sequence:
 
 1. IAM role/policy setup and temporary-profile authentication are complete.
 2. The approved fresh runtime-only init/plan and boundary review are complete.
-3. Finish effective launch/state-write/stop permission review, refresh costs
-   and separately approve the exact apply, immediate paid EC2 launch and
-   supervised stop window; there is no AWS-side hard stop schedule.
+3. Obtain specific untaint-and-plan approval for the stopped instance; review
+   the remaining five creates before any further apply. No automatic retry,
+   replacement or IAM expansion is authorized.
 4. Approve initialization of the exact Kafka EBS volume, image publication,
    secret/read permissions and application deployment before those actions.
 5. Smoke-test the isolated streaming path, test Kafka/Spark recovery, drain and

@@ -1,5 +1,10 @@
 # AWS demo: completed boundary-based runtime plan
 
+**Subsequent execution:** the operator approved the first apply/stop window.
+The plan partially applied and EC2 is stopped. See the
+[actual result](aws_runtime_first_apply_review.md). This saved plan must not be
+reapplied against the now-populated runtime state.
+
 Date: 2026-11-13 UTC. Milestone 11.6C. **Approved initialization and planning
 completed; no apply or AWS runtime deployment performed.** Milestone 11.5D
 remains paused.

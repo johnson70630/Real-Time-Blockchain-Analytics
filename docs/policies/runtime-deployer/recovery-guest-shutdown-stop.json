@@ -1,0 +1,24 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "SetExistingRuntimeGuestShutdownToStop",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:ModifyInstanceAttribute"
+      ],
+      "Resource": [
+        "arn:aws:ec2:us-west-2:209479274979:instance/i-0ca1671a59751acc5"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2",
+          "aws:ResourceTag/Project": "real-time-blockchain-analytics",
+          "aws:ResourceTag/Environment": "production-runtime",
+          "aws:ResourceTag/Workload": "blockchain-runtime",
+          "ec2:Attribute/InstanceInitiatedShutdownBehavior": "stop"
+        }
+      }
+    }
+  ]
+}

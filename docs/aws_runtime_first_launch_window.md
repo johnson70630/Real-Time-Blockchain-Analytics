@@ -1,5 +1,10 @@
 # AWS demo: first infrastructure launch window
 
+**Execution outcome:** this window was subsequently approved. The apply
+partially created 23 managed resource instances; EC2 was normally stopped and
+verified. See the [actual outcome and recovery review](aws_runtime_first_apply_review.md).
+The proposal below is historical; it is not a continuing retry/start approval.
+
 Date: 2026-11-13 UTC. Milestone 11.6C. **Preparation only. No apply, launch,
 stop, IAM modification or production credential deployment was performed.**
 The operator has confirmed IAM Console review with no unresolved findings and

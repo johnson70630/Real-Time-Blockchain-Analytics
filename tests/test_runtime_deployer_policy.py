@@ -230,6 +230,51 @@ def test_stop_allowed_only_for_tagged_runtime_and_no_start_destroy_or_ingress():
         assert not _allows(DEPLOY, action, f"{EC2}:instance/i-offline", context)
 
 
+def test_structured_shutdown_request_does_not_supply_primitive_attribute():
+    """Reproduce the parameter shape used by AWS provider 6.69.1 offline."""
+    import botocore.session
+    from botocore.serialize import create_serializer
+
+    model = botocore.session.get_session().get_service_model("ec2")
+    operation = model.operation_model("ModifyInstanceAttribute")
+    request = create_serializer(model.protocol).serialize_to_request(
+        {
+            "InstanceId": "i-0ca1671a59751acc5",
+            "InstanceInitiatedShutdownBehavior": {"Value": "stop"},
+        },
+        operation,
+    )
+    assert request["body"]["InstanceInitiatedShutdownBehavior.Value"] == "stop"
+    assert "Attribute" not in request["body"]
+
+    # The deployed policy is preserved as evidence, including its known mismatch.
+    context = REGION | {f"aws:ResourceTag/{k}": v for k, v in TAGS.items()}
+    context["ec2:Attribute/InstanceInitiatedShutdownBehavior"] = "stop"
+    instance = f"{EC2}:instance/i-0ca1671a59751acc5"
+    assert not _allows(DEPLOY, "ec2:ModifyInstanceAttribute", instance, context)
+
+
+def test_optional_shutdown_remediation_is_exact_instance_and_safe_value_only():
+    files = ["recovery-guest-shutdown-stop.json"]
+    instance = f"{EC2}:instance/i-0ca1671a59751acc5"
+    context = REGION | {f"aws:ResourceTag/{k}": v for k, v in TAGS.items()}
+    key = "ec2:Attribute/InstanceInitiatedShutdownBehavior"
+    assert _allows(files, "ec2:ModifyInstanceAttribute", instance, context | {key: "stop"})
+    assert not _allows(files, "ec2:ModifyInstanceAttribute", instance, context | {key: "terminate"})
+    assert not _allows(files, "ec2:ModifyInstanceAttribute", instance, context)
+    assert not _allows(files, "ec2:ModifyInstanceAttribute", f"{EC2}:instance/i-unrelated", context | {key: "stop"})
+    assert not _allows(files, "ec2:ModifyInstanceAttribute", instance, REGION | {key: "stop"})
+    for forbidden in [
+        {"ec2:Attribute": "instanceInitiatedShutdownBehavior"},
+        {"ec2:Attribute/DisableApiTermination": "false"},
+        {"ec2:Attribute/DisableApiStop": "true"},
+        {"ec2:Attribute/UserData": "unreviewed"},
+    ]:
+        assert not _allows(files, "ec2:ModifyInstanceAttribute", instance, context | forbidden)
+    for action in ("ec2:StartInstances", "ec2:TerminateInstances", "ec2:StopInstances"):
+        assert not _allows(files, action, instance, context | {key: "stop"})
+
+
 def test_no_image_push_secrets_or_ssm_execution_in_initial_provisioner():
     for action, resource in [
         ("ecr:PutImage", f"arn:aws:ecr:us-west-2:{ACCOUNT}:repository/blockchain-runtime-producer"),

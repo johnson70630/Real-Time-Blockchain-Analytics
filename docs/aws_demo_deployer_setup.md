@@ -1,5 +1,12 @@
 # Dedicated AWS demo deployment role: offline review
 
+**First apply follow-up:** the approved window partially completed and EC2 is
+stopped. The [outcome review](aws_runtime_first_apply_review.md) records a
+provider request-shape mismatch in the deployed attribute condition. The new
+`recovery-guest-shutdown-stop.json` is an inactive exact-instance proposal,
+not part of the installed three deployment policies or an approved IAM update.
+The minimal proposed recovery first checks whether any IAM change is needed.
+
 ## A. What was prepared
 
 The operator confirmed that the AWS Console login is the **root user** in

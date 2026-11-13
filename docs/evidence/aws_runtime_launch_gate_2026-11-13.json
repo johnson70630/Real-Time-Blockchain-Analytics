@@ -1,18 +1,22 @@
 {
   "milestone": "11.6C",
-  "status": "ready_for_explicit_paid_window_decision_with_execution_conditions",
+  "status": "approved_window_closed_after_partial_apply_and_verified_stop",
   "deployment_policy_console_validation_reviewed": true,
   "installed_policy_documents_compared_with_repository": false,
   "organization_membership": "standalone_indicated_by_operator_console_observation",
   "runtime_state_file_write_authority_reviewed": true,
   "normal_stop_effective_authority_reviewed": true,
-  "administrator_console_stop_fallback_confirmed": false,
-  "supervised_window_operator_availability_confirmed": false,
-  "absolute_start_end_utc": null,
-  "paid_apply_and_launch_approved": false,
-  "runtime_resources_created": false,
-  "note": "Review confirmations do not claim independent API readback of every installed deployment policy or prove future writes. Active Console fallback/window availability and paid approval remain pending; no IAM expansion or write probe was used.",
-  "updated_at_utc": "2026-11-13T22:13:11.605459+00:00",
+  "administrator_console_stop_fallback_confirmed": true,
+  "supervised_window_operator_availability_confirmed": true,
+  "absolute_start_end_utc": {
+    "apply_started": "2026-11-13T22:27:58.730620+00:00",
+    "approved_end": "2026-11-13T23:20:59+00:00",
+    "stopped_verified": "2026-11-13T22:30:10.740249+00:00"
+  },
+  "paid_apply_and_launch_approved": true,
+  "runtime_resources_created": true,
+  "note": "Original approval covered the specific first apply and normal stop. The instance was verified stopped; partial state is preserved. Operator review is not independent full installed-policy readback. Future recovery needs its own stated scope.",
+  "updated_at_utc": "2026-11-13T22:31:50.912883+00:00",
   "organization_scp_rcp_applicable": false,
   "review_basis": {
     "iam_validation": "Operator reported Reviewed; no unresolved findings for the three deployer policies, including runtime-state writes and normal-stop access.",
@@ -30,8 +34,18 @@
     "live_writes_proven": false
   },
   "remaining_execution_conditions": [
-    "Explicit approval for exact 28-create plan, immediate paid EC2 launch, runtime-state writes and normal stop.",
-    "Operator remains available with the authenticated administrator Console in the correct account/Region.",
-    "Fresh MFA session, saved-plan/source/input/lockfile hashes, backend identity/freshness and absolute UTC window verified before apply."
-  ]
+    "Separate exact-instance runtime-state untaint and fresh recovery-plan approval.",
+    "No retry/apply/start/replacement/deletion or IAM change is authorized by the closed first window."
+  ],
+  "completed_window": {
+    "apply_exit_code": 1,
+    "created_managed_resource_instances": 23,
+    "instance_stopped": true,
+    "instance_tainted": true,
+    "runtime_state_persisted": true,
+    "lock_released": true,
+    "further_apply_or_start_approved": false,
+    "recovery_untaint_and_plan_approved": false,
+    "policy_change_approved": false
+  }
 }
