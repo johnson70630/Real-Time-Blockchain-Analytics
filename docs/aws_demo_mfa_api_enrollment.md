@@ -2,7 +2,23 @@
 
 ## A. What was prepared
 
-**Recovery update:** the operator approved and installed the temporary update,
+**Current outcome — complete:** independent IAM metadata reads confirm
+`blockchain-de-local-demo` was enabled on `blockchain-de-local` at
+`2026-11-13T01:18:06Z`. Authapp remains unassigned. The resumed request succeeded
+in AWS even though a subsequent local/CLI error prevented the helper from
+finishing its confirmation/reporting. The original error details were suppressed,
+so its exact local cause is not established. **Do not repeat enrollment.**
+A private, nonsecret metadata-verification receipt was written after independent
+verification. Only the original generated local QR file was removed under the
+approved cleanup scope; the private directories and authenticator entry are
+preserved. No QR contents or live codes were read by the assistant.
+
+The helper now reports attachment outcome separately from confirmation,
+receipt and local-cleanup failures. Safe phase/error-category diagnostics expose
+no raw exception data. Tests cover uncertain requests, accepted requests with
+confirmation timeouts, and verified enrollment with a local receipt failure.
+
+**Earlier recovery:** the operator approved and installed the temporary update,
 then ran enrollment. The exact new device was created and scanned, but attachment
 failed. Read-only checks confirm the user still has no MFA and both `Authapp`
 and `blockchain-de-local-demo` are unassigned. An offline, credential-disabled
@@ -12,10 +28,10 @@ were captured or replayed during diagnosis. The helper now uses the SDK directly
 for attachment and supports `--resume` for the existing exact device. This fix
 requires no additional IAM privilege or cloud deletion.
 
-The approved MFA inventory reads succeeded on 2026-11-13 UTC using profile
+The original approved MFA inventory reads succeeded on 2026-11-13 UTC using profile
 `blockchain-de`, account `209479274979`, principal
 `arn:aws:iam::209479274979:user/blockchain-de-local`.
-No device is assigned to that user. The account has this unassigned device:
+At that first check no device was assigned. The following device remains unassigned:
 
 ```text
 arn:aws:iam::209479274979:mfa/Authapp
@@ -26,7 +42,7 @@ documents that it can remove unassigned virtual devices. Unassigned does not
 establish that a device is disposable. No cloud deletion is approved. See
 [AWS Console enrollment behavior](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_mfa_enable_virtual.html).
 
-Prepared locally, not executed:
+Implementation and review artifacts (live enrollment was performed by the user):
 
 - [Interactive enrollment helper](../scripts/enroll_runtime_mfa.py).
 - [Complete proposed managed-policy update](policies/runtime-deployer/assume-role-enrollment-window.json),
@@ -73,7 +89,7 @@ resynchronization, root-MFA management or other-user enrollment is granted.
 
 ## D. Validation
 
-Local validation passed after recovery repair: 594 Python contracts, Ruff, repository secret scan,
+Local validation passed after outcome-reporting repair: 597 Python contracts, Ruff, repository secret scan,
 JSON/policy-size checks and local documentation links. The two IAM action names
 match the official service reference. The current CLI history setting is unset.
 Hosted CI status is recorded with the develop checkpoint in the conversation.
@@ -156,6 +172,12 @@ SSM execution, secret creation or application deployment is included.
 
 ## I. Procedure after that approval
 
+**This enrollment is now finished.** Retain the authenticator entry, close
+Preview without exporting it, and continue the already approved deployment-role
+setup. Do not rerun either creation or recovery. Temporary enrollment grants
+still expire at the original deadline; no extension or cloud MFA deletion is
+authorized. The commands below are historical recovery/initial-run instructions.
+
 **Current recovery:** the named device already exists. Do not run creation or
 scan a newly generated QR. From the repository, run manually:
 
@@ -201,11 +223,11 @@ for an initial enrollment; its creation steps are not the recovery procedure.
 
 ## J. Infrastructure status
 
-The operator reports the base customer-managed user policy and the approved
-temporary update installed. Its two MFA inventory permissions work, and the
-user's initial helper run created the exact new MFA device. Read-only checks
-after the failed attachment confirm both it and Authapp are unassigned; the user
-has no assigned MFA. The assistant has not called a live create/enable action.
-No other new IAM setup is verified yet. Recovery remains an operator action.
-EC2, EBS, both Terraform states, the 43 platform resources, Snowflake and
-Streamlit were not changed by this repair.
+The operator installed the base managed user policy and approved temporary
+update, created the named MFA device and completed attachment using the resumed
+helper. Independent reads verify the exact assignment and preserved Authapp.
+The assistant performed no live create/enable call and removed only the approved
+generated local QR after verification. A read of the proposed deployer role was
+denied by IAM; its existence/configuration is not verified, so role setup remains
+the next access step. EC2, EBS, both Terraform states, the 43 platform resources,
+Snowflake and Streamlit were not changed by this repair.

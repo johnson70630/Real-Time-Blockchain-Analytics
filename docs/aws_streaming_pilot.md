@@ -15,6 +15,27 @@ No IAM setup has been executed. The prior saved infrastructure plan omits that
 boundary and must not be used for this design; obtain a fresh scoped review
 before apply. SSM operator permissions and secret access remain later gates.
 
+Current milestone: **11.6C, first AWS streaming demo preparation**. Offline
+application/deployment components are implemented and tested. The planning-user
+managed grant is attached and MFA enrollment is independently verified; the
+proposed deployment role and temporary profiles are the next access step.
+No streaming runtime has been deployed. Remaining sequence:
+
+1. Finish the already approved IAM role/policy setup and temporary profiles.
+2. Obtain/review a fresh runtime-only plan for the boundary-based design.
+3. Separately approve the exact apply, immediate paid EC2 launch and supervised
+   stop window; the current proposal has no AWS-side hard stop schedule.
+4. Approve initialization of the exact Kafka EBS volume, image publication,
+   secret/read permissions and application deployment before those actions.
+5. Smoke-test the isolated streaming path, test Kafka/Spark recovery, drain and
+   stop gracefully, and verify retained-resource costs and cleanup scope.
+
+The initial target remains a scheduled demo around 40 runtime hours/month;
+the cost estimate is not a spending authorization or guaranteed bill.
+Milestone 11.5D remains paused. The
+[MFA outcome report](aws_demo_mfa_api_enrollment.md) records the successful
+attachment and the helper's separate local reporting problem.
+
 ## Implementation plan and decisions
 
 1. Verify develop, origin, and hosted CI; inspect the 11.6B foundation.

@@ -19,6 +19,7 @@ import sys
 import tempfile
 import warnings
 from contextlib import closing, contextmanager
+from dataclasses import dataclass
 from pathlib import Path
 
 try:
@@ -52,6 +53,14 @@ SAFE_ERROR_CODES = {
 
 class EnrollmentError(Exception):
     """Contains only controlled, nonsensitive messages."""
+
+
+@dataclass
+class EnrollmentProgress:
+    phase: str = "preflight"
+    attachment_started: bool = False
+    attachment_returned: bool = False
+    verified: bool = False
 
 
 def clean_environment() -> dict[str, str]:
@@ -180,7 +189,8 @@ def read_code(prompt: str) -> str:
     return code
 
 
-def enroll(resume: bool = False) -> Path:
+def enroll(resume: bool = False, progress: EnrollmentProgress | None = None) -> Path:
+    progress = progress or EnrollmentProgress()
     if not all(stream.isatty() for stream in (sys.stdin, sys.stdout, sys.stderr)):
         raise EnrollmentError("Run manually in your own interactive Terminal, without pipes, tee, or recording.")
     require_history_disabled()
@@ -207,12 +217,14 @@ def enroll(resume: bool = False) -> Path:
     elif input("Type ENROLL to create only this device, then enroll it locally: ") != "ENROLL":
         raise EnrollmentError("Canceled before device creation.")
 
+    progress.phase = "local-preparation"
     directory = Path(tempfile.mkdtemp(prefix="blockchain-mfa-enroll-"))
     directory.chmod(0o700)
     qr = None
     print(f"Private enrollment directory: {directory}")
     print("If interrupted, preserve this directory for recovery; never send its contents to chat.")
     if not resume:
+        progress.phase = "device-creation"
         qr = directory / "bootstrap.png"
         fd = os.open(qr, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
         os.close(fd)
@@ -235,15 +247,20 @@ def enroll(resume: bool = False) -> Path:
             raise EnrollmentError("Canceled; new device and private directory preserved for recovery.")
     if assigned_devices():
         raise EnrollmentError("MFA assignment changed during enrollment; preserve all devices and stop.")
+    progress.phase = "code-entry"
     first = read_code("Current six-digit code (hidden): ")
     second = read_code("Wait for the NEXT code, then enter it (hidden): ")
     if first == second:
         raise EnrollmentError("Two successive different codes are required; device and QR preserved.")
+    progress.phase = "attachment"
+    progress.attachment_started = True
     aws_json("iam", "enable-mfa-device", payload={
         "UserName": USER, "SerialNumber": DEVICE_ARN,
         "AuthenticationCode1": first, "AuthenticationCode2": second,
     })
+    progress.attachment_returned = True
     del first, second
+    progress.phase = "confirmation"
     if assigned_devices() != {DEVICE_ARN}:
         raise EnrollmentError("Assignment verification was inconclusive; no automatic retry or cleanup.")
     after_all = virtual_devices("Any")
@@ -251,6 +268,8 @@ def enroll(resume: bool = False) -> Path:
     if not before_all.issubset(after_all) or not preserved_unassigned.issubset(after_unassigned):
         raise EnrollmentError("Existing MFA inventory changed; stop for review without reverting anything.")
 
+    progress.verified = True
+    progress.phase = "receipt"
     receipt = directory / "receipt.json"
     fd = os.open(receipt, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
     with os.fdopen(fd, "w") as handle:
@@ -263,27 +282,46 @@ def enroll(resume: bool = False) -> Path:
         handle.write("\n")
     # Only the newly generated local secret file is removed; no cloud deletion.
     if qr is not None:
+        progress.phase = "local-qr-cleanup"
         qr.unlink()
     print(f"MFA assignment verified. Nonsecret receipt: {receipt}")
     print("New QR removed if generated this run; any earlier recovery QR remains untouched.")
     print("Close Preview without saving/exporting. No role assumption or deployment was performed.")
+    progress.phase = "complete"
     return receipt
+
+
+def report_interruption(progress: EnrollmentProgress, category: str, detail: str | None = None) -> None:
+    if progress.verified:
+        message = "MFA ENROLLMENT VERIFIED; local receipt/cleanup did not finish. Do not repeat enrollment."
+    elif progress.attachment_returned:
+        message = "AWS attachment request returned successfully; local confirmation is incomplete. Do not repeat enrollment."
+    elif progress.attachment_started:
+        message = "MFA attachment outcome is unconfirmed and it may already be enabled. Do not repeat enrollment."
+    else:
+        message = "Enrollment stopped before attachment. Preserve any created device and private directory."
+    print(message, file=sys.stderr)
+    print(f"Stage: {progress.phase}; category: {category}. Sensitive error details suppressed.", file=sys.stderr)
+    if detail:
+        print(detail, file=sys.stderr)
+    print("Inspect IAM assignment before further action. No automatic retry or cloud cleanup.", file=sys.stderr)
 
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--resume", action="store_true", help="Attach only the existing named unassigned device; never create another.")
     options = parser.parse_args(argv)
+    progress = EnrollmentProgress()
     try:
-        enroll(resume=options.resume)
+        enroll(resume=options.resume, progress=progress)
     except EnrollmentError as error:
-        print(f"STOP: {error}", file=sys.stderr)
+        report_interruption(progress, "EnrollmentError", str(error))
         return 1
-    except (KeyboardInterrupt, EOFError):
-        print("STOP: interrupted; no automatic cloud cleanup. Preserve any private enrollment directory.", file=sys.stderr)
+    except (KeyboardInterrupt, EOFError) as error:
+        report_interruption(progress, type(error).__name__)
         return 1
-    except (OSError, subprocess.SubprocessError):
-        print("STOP: local/CLI failure; details suppressed to protect secrets. Preserve any private enrollment directory.", file=sys.stderr)
+    except (OSError, subprocess.SubprocessError) as error:
+        report_interruption(progress, type(error).__name__)
         return 1
     return 0
 

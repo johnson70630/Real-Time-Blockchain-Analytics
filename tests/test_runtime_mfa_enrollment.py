@@ -226,3 +226,29 @@ def test_actual_sdk_service_model_accepts_codes_in_memory_and_redacts_errors(mon
     output = capsys.readouterr()
     assert "123456" not in output.out + output.err
     assert "234567" not in output.out + output.err
+
+
+@pytest.mark.parametrize("phase", ["attachment", "confirmation", "receipt"])
+def test_error_reporting_preserves_known_remote_outcome_and_never_prints_error_data(monkeypatch, capsys, phase):
+    def interrupt(resume=False, progress=None):
+        assert resume is True
+        progress.phase = phase
+        progress.attachment_started = True
+        progress.attachment_returned = phase != "attachment"
+        progress.verified = phase == "receipt"
+        raise subprocess.TimeoutExpired(["aws"], 60, output="PRIVATE_SEED 123456")
+
+    monkeypatch.setattr(mfa, "enroll", interrupt)
+    assert mfa.main(["--resume"]) == 1
+    output = capsys.readouterr().err
+    assert "Do not repeat enrollment" in output
+    assert f"Stage: {phase}" in output
+    assert "TimeoutExpired" in output
+    assert "PRIVATE_SEED" not in output
+    assert "123456" not in output
+    if phase == "attachment":
+        assert "may already be enabled" in output
+    elif phase == "confirmation":
+        assert "request returned successfully" in output
+    else:
+        assert "MFA ENROLLMENT VERIFIED" in output

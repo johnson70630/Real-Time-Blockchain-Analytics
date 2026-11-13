@@ -185,18 +185,19 @@ spending limit. The policy neither launches EC2 nor imposes a hard cost ceiling.
 **Live setup update:** the operator approved the IAM/MFA setup and reported
 `DeFiRuntimeAssumeDemoDeployer` attached as a customer-managed policy after the
 inline attempt exceeded the existing aggregate quota. Read-only calls verified
-the expected planning-user identity and both MFA inventory permissions. No MFA
-is assigned to the user. An unassigned virtual device named `Authapp` exists;
-Console enrollment is stopped to preserve it. See the proposed
-[API-only enrollment review](aws_demo_mfa_api_enrollment.md). Its temporary
-permission expansion needs new explicit approval. The current identity cannot
+the expected planning-user identity and both MFA inventory permissions. The
+operator separately approved the temporary MFA update and completed enrollment.
+Independent reads verify the exact demo device was enabled at
+`2026-11-13T01:18:06Z`; the existing Authapp remains unassigned and preserved.
+See the [API enrollment and verified outcome](aws_demo_mfa_api_enrollment.md).
+The temporary addition still expires at the original stated deadline. The current identity cannot
 read back the managed policy or inventory every role; functional verification
 does not prove the complete attached-policy contents.
 
 
-1. Approve MFA enrollment for the exact `blockchain-de-local` user and proposed
-   device name, then verify the inventory before enrollment. Do not use or share
-   root's device, recovery codes, QR secret, or a TOTP code in chat.
+1. MFA enrollment for `blockchain-de-local` is complete and verified. Retain the
+   authenticator entry and do not repeat enrollment. The local QR was removed
+   after verification; no cloud MFA device was deleted.
 2. Complete administrator policy validation/effective-permission review and
    check the proposed names are unused. Do not overwrite existing policies or
    roles. IAM setup is a separate explicit approval, covering the exact items
@@ -218,12 +219,10 @@ does not prove the complete attached-policy contents.
 ## I. Setup procedure after explicit IAM approval
 
 These steps are a reviewable runbook, not instructions to execute before approval.
-The live user-policy attachment is complete and MFA inventory found an
-unassigned device. **Do not execute Console MFA enrollment below:** continue
-through the [API-only review](aws_demo_mfa_api_enrollment.md). Its temporary
-permissions are now approved; the first run created the named device but
-attachment failed on CLI JSON input. Use the reviewed SDK recovery mode for
-that existing device; do not rerun creation. The four runtime/deployer policies and role
+The live user-policy attachment and MFA enrollment are complete and verified.
+**Do not repeat Console, API or recovery enrollment below.** The
+[API outcome report](aws_demo_mfa_api_enrollment.md) preserves the troubleshooting
+evidence. The four runtime/deployer policies and role
 remain part of the earlier approved setup; they are not yet verified as created.
 
 1. In the administrator Console, confirm the account and existing planning-user
