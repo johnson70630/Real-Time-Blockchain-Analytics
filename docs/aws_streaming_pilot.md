@@ -141,6 +141,11 @@ required external checksum protects transfer integrity; it does not include
 images, credentials or deployment approval. Build/verify locally while hosted
 CI verification is pending; transfer/install remains a later approved action.
 
+The [offline image publication review](aws_runtime_image_review.md) binds builds
+to committed source, checks AMD64 images and prepares exact ECR destinations
+without pushing. Commit reviewed changes before building; uncommitted changes
+are intentionally excluded from the build context.
+
 Build locally with `bash scripts/build_runtime_images.sh`. It does not push or
 log in to AWS. Build-time access to public image/package/Maven registries is
 required; the integration tests themselves use synthetic data on a private
