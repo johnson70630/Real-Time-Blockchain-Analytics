@@ -1,0 +1,148 @@
+{
+  "checked_at_utc": "2026-11-13T21:28:25.501785+00:00",
+  "profile": "blockchain-demo-deploy",
+  "account": "209479274979",
+  "principal_arn": "arn:aws:sts::209479274979:assumed-role/blockchain-runtime-deployer/blockchain-runtime-deploy",
+  "session_expiration_utc": "2026-11-13T22:25:07+00:00",
+  "checks": {
+    "boundary_policy": {
+      "status": "read_success",
+      "matches_repository": true,
+      "default_version": "v1"
+    },
+    "runtime_backend_metadata": {
+      "status": "read_success",
+      "bucket_region": "us-west-2",
+      "runtime_state_present": false,
+      "runtime_lock_present": false,
+      "platform_state_accessed": false,
+      "object_bodies_read": false
+    },
+    "runtime_ec2_role": {
+      "status": "not_found",
+      "code": "NoSuchEntity"
+    },
+    "runtime_instance_profile": {
+      "status": "not_found",
+      "code": "NoSuchEntity"
+    },
+    "runtime_vpc": {
+      "status": "read_success",
+      "existing_count": 0
+    },
+    "runtime_subnet": {
+      "status": "read_success",
+      "existing_count": 0
+    },
+    "runtime_route_table": {
+      "status": "read_success",
+      "existing_count": 0
+    },
+    "runtime_gateway": {
+      "status": "read_success",
+      "existing_count": 0
+    },
+    "runtime_security_group": {
+      "status": "read_success",
+      "existing_count": 0
+    },
+    "runtime_kafka_volume": {
+      "status": "read_success",
+      "existing_count": 0
+    },
+    "runtime_instances": {
+      "status": "read_success",
+      "existing_count": 0,
+      "states": []
+    },
+    "ec2_quota": {
+      "status": "read_success",
+      "standard_on_demand_vcpu_limit": 16.0,
+      "target_vcpus": 4,
+      "usage_and_capacity_not_guaranteed": true
+    },
+    "instance_shape_and_offering": {
+      "status": "read_success",
+      "vcpus": 4,
+      "memory_mib": 16384,
+      "offered_in_us_west_2a": true,
+      "capacity_not_guaranteed": true
+    },
+    "ebs_encryption": {
+      "status": "read_success",
+      "account_encryption_by_default": false,
+      "default_key_is_aws_ebs_alias": true,
+      "default_key_ownership_needs_review": false,
+      "key_identifier_not_published": true
+    },
+    "producer_repository": {
+      "status": "not_found",
+      "code": "RepositoryNotFoundException"
+    },
+    "spark_repository": {
+      "status": "not_found",
+      "code": "RepositoryNotFoundException"
+    },
+    "registry_scanning": {
+      "status": "read_success",
+      "scan_type": "BASIC"
+    },
+    "runtime_log_group": {
+      "status": "read_success",
+      "existing_count": 0
+    },
+    "runtime_alarms": {
+      "status": "read_success",
+      "existing_count": 0
+    },
+    "runtime_topic": {
+      "status": "not_found",
+      "code": "NotFound"
+    },
+    "runtime_event_rule": {
+      "status": "not_found",
+      "code": "ResourceNotFoundException"
+    }
+  },
+  "write_apis_called": false,
+  "terraform_backend_initialized": false,
+  "terraform_plan_run": false,
+  "terraform_apply_run": false,
+  "cloud_resources_created": false,
+  "ami_and_quota_usage": {
+    "checked_at_utc": "2026-11-13T21:31:24.240280+00:00",
+    "public_ami_parameter_version": 201,
+    "current_public_ami": "ami-0dac6cd09676c9fb1",
+    "reviewed_policy_ami": "ami-0dac6cd09676c9fb1",
+    "public_ami_matches_policy": true,
+    "reviewed_ami_available_and_amazon_owned": true,
+    "active_standard_on_demand_instances_inventory_count": 0,
+    "standard_vcpus_inventory_estimate": 0,
+    "observed_quota_limit": 16,
+    "conservative_inventory_headroom_vcpus": 16,
+    "target_requires_vcpus": 4,
+    "inventory_headroom_sufficient": true,
+    "capacity_and_effective_write_permissions_not_proven": true,
+    "write_apis_called": false
+  },
+  "operator_console_attestation": {
+    "expected_trust_user_and_mfa": true,
+    "expected_three_policy_names": true,
+    "one_hour_max_session": true,
+    "deployer_boundary_unset": true,
+    "source": "operator reported settings match; full deployer-policy readback not granted"
+  },
+  "plan_proposal": {
+    "runtime_config_sha256": "910d53461d49d46ac83dc03037a8e5827a9cf0610a0f1f65112407de770e60a6",
+    "operator_profile": "blockchain-demo-deploy",
+    "backend_key": "production/runtime/terraform.tfstate",
+    "workspace": "default",
+    "expected_managed_creates": 28,
+    "expected_updates": 0,
+    "expected_deletes": 0,
+    "approved_secret_arns": [],
+    "boundary_policy_arn": "arn:aws:iam::209479274979:policy/blockchain-runtime-ec2-boundary",
+    "allow_terraform_apply": false,
+    "commands_executed": false
+  }
+}

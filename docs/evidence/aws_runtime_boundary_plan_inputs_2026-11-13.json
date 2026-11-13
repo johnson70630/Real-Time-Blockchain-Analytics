@@ -1,0 +1,16 @@
+{
+  "aws_region": "us-west-2",
+  "availability_zone": "us-west-2a",
+  "instance_type": "t3.xlarge",
+  "root_volume_size_gib": 30,
+  "kafka_volume_size_gib": 100,
+  "data_bucket_name": "johnson-blockchain-analytics-prod",
+  "terraform_state_bucket_name": "blockchain-analytics-terraform-state-209479274979-usw2",
+  "pilot_s3_prefix": "blockchain-analytics/pilot/runtime/11-6c-v1",
+  "approved_secret_arns": [],
+  "runtime_permissions_boundary_arn": "arn:aws:iam::209479274979:policy/blockchain-runtime-ec2-boundary",
+  "docker_compose_download_url": "https://github.com/docker/compose/releases/download/v5.1.3/docker-compose-linux-x86_64",
+  "docker_compose_sha256": "a0298760c9772d2c06888fc8703a487c94c3c3b0134adeef830742a2fc7647b4",
+  "log_retention_days": 14,
+  "enable_scheduled_shutdown": false
+}

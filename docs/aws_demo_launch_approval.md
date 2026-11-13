@@ -7,8 +7,10 @@ initially 40 running hours per month. Milestone 11.5D remains paused.
 The completed infrastructure plan proposes **28 creates, 0 updates, 0 deletes**.
 Current Oregon prices give a **USD 17.46 monthly base at 40 running hours**,
 before variable services. A stated future streaming example is **USD 19.60**
-before excluded usage and taxes. The deployment identity is still unresolved;
-this is not an apply-ready approval request.
+before excluded usage and taxes. Those prices are the dated November 12
+snapshot. The deployment identity has since been verified; see the
+[current access/preflight and plan proposal](aws_runtime_boundary_plan_approval.md).
+This historical launch review is not an apply approval.
 
 ## A. What was prepared
 

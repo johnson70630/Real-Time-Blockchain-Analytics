@@ -194,6 +194,14 @@ The temporary addition still expires at the original stated deadline. The curren
 read back the managed policy or inventory every role; functional verification
 does not prove the complete attached-policy contents.
 
+The operator subsequently reported all four runtime/deployer managed policies
+created and an existing deployment role with matching settings. Both CLI
+profiles and a Boto3 process-profile session now authenticate as that role.
+The EC2 boundary's default document independently matches the repository.
+The [read-only preflight report](aws_runtime_boundary_plan_approval.md) records
+resource-name, quota, AMI, encryption and registry checks. IAM access setup is
+complete; a fresh runtime init/plan is the next proposed approval boundary.
+
 
 1. MFA enrollment for `blockchain-de-local` is complete and verified. Retain the
    authenticator entry and do not repeat enrollment. The local QR was removed
@@ -222,8 +230,9 @@ These steps are a reviewable runbook, not instructions to execute before approva
 The live user-policy attachment and MFA enrollment are complete and verified.
 **Do not repeat Console, API or recovery enrollment below.** The
 [API outcome report](aws_demo_mfa_api_enrollment.md) preserves the troubleshooting
-evidence. The four runtime/deployer policies and role
-remain part of the earlier approved setup; they are not yet verified as created.
+evidence. The operator has confirmed the four runtime/deployer policies and
+role settings; both temporary profiles authenticate successfully. These
+completed setup steps are retained for reference and must not be repeated.
 
 1. In the administrator Console, confirm the account and existing planning-user
    ARN. Inspect its MFA devices and the proposed names without making changes.
@@ -294,7 +303,9 @@ remain part of the earlier approved setup; they are not yet verified as created.
    Before each approved operation, check remaining session lifetime and reserve
    time to stop the instance. If renewal is needed, return to the interactive
    CLI identity check first; never remove MFA or broaden policies to make a
-   noninteractive process succeed. No credentials/profile are configured yet.
+   noninteractive process succeed. The two profiles are now configured, and
+   both identity checks succeeded; no credential values were printed or stored
+   in the repository. Session credentials remain managed by the AWS CLI/SDK.
 9. Stop here. No apply, launch, image push, secrets, SSM execution or formatting
    follows automatically. Expiring credentials do not stop running resources.
 

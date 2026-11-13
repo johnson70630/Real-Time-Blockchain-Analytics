@@ -1,28 +1,35 @@
 # Milestone 11.6C — first streaming pilot readiness
 
-Status: offline implementation complete; runtime-only backend initialization
-and authenticated planning were subsequently approved. **AWS deployment is not
-authorized.** Milestone 11.5D remains paused. Two narrowly scoped operator IAM
-policies were separately approved and added manually by the user. Further IAM
-changes, apply/import, resource creation, EBS initialization, Snowflake operations
-and main merge remain outside the approval. README is unchanged. See the
+Status: offline implementation complete; the earlier runtime-only backend/plan
+and subsequent dedicated IAM/MFA setup were separately approved. Both role
+profiles now authenticate correctly, and read-only preflight is complete.
+**AWS runtime deployment is not authorized.** A fresh boundary-based backend
+initialization and plan are proposed in the
+[current approval report](aws_runtime_boundary_plan_approval.md), not executed.
+Milestone 11.5D remains paused. New permissions outside the approved IAM setup,
+apply/import, resource creation, EBS initialization, Snowflake operations and
+main merge remain separate gates. README is unchanged. See the
 [completed runtime plan review](aws_runtime_plan_review.md) and subsequent
 [cost, provisioning-permission and launch review](aws_demo_launch_approval.md).
 
 The subsequent [dedicated deployer setup review](aws_demo_deployer_setup.md)
-proposes MFA-protected temporary deployment credentials and an EC2 role boundary.
-No IAM setup has been executed. The prior saved infrastructure plan omits that
+records MFA-protected temporary deployment credentials and an EC2 role boundary.
+The operator completed that IAM setup and confirmed the role settings; the
+boundary policy readback independently matches the repository. The prior saved infrastructure plan omits that
 boundary and must not be used for this design; obtain a fresh scoped review
 before apply. SSM operator permissions and secret access remain later gates.
 
 Current milestone: **11.6C, first AWS streaming demo preparation**. Offline
 application/deployment components are implemented and tested. The planning-user
-managed grant is attached and MFA enrollment is independently verified; the
-proposed deployment role and temporary profiles are the next access step.
+managed grant and MFA enrollment are verified; the role and temporary profiles
+resolve to the expected principal in account 209479274979. Read-only preflight
+found no runtime name collisions, a matching AMI and sufficient inventory-based
+vCPU headroom. The next access boundary is the fresh init/plan approval.
 No streaming runtime has been deployed. Remaining sequence:
 
-1. Finish the already approved IAM role/policy setup and temporary profiles.
-2. Obtain/review a fresh runtime-only plan for the boundary-based design.
+1. IAM role/policy setup and temporary-profile authentication are complete.
+2. Obtain approval for, execute and review the fresh runtime-only init/plan for
+   the boundary-based design.
 3. Separately approve the exact apply, immediate paid EC2 launch and supervised
    stop window; the current proposal has no AWS-side hard stop schedule.
 4. Approve initialization of the exact Kafka EBS volume, image publication,
