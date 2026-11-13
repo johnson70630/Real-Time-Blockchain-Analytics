@@ -135,6 +135,12 @@ AMI, Compose binary release and checksum before approving apply.
 
 ## Image identities and supply chain
 
+The [offline host bundle](aws_runtime_bundle.md) packages only committed,
+allowlisted controller/Compose/systemd files and an example manifest. Its
+required external checksum protects transfer integrity; it does not include
+images, credentials or deployment approval. Build/verify locally while hosted
+CI verification is pending; transfer/install remains a later approved action.
+
 Build locally with `bash scripts/build_runtime_images.sh`. It does not push or
 log in to AWS. Build-time access to public image/package/Maven registries is
 required; the integration tests themselves use synthetic data on a private
