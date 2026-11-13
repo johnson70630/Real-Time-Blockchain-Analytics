@@ -127,9 +127,13 @@ proposed role's effective permissions or successful Terraform application.
   Terraform ownership and are not a universal isolation boundary. The
   administrator must check that no unrelated existing objects share the exact
   ownership tags. EC2 multi-resource launch/network authorization must also be
-  reviewed; newly allocated IDs cannot yet be pinned. Normal `StopInstances`
-  is limited to the tagged runtime; start, force-stop workflows, termination,
-  volume deletion/detach and cleanup permissions are outside this initial role.
+  reviewed; newly allocated IDs cannot yet be pinned. `StopInstances` is limited
+  to the tagged runtime. Its IAM permission does not distinguish a normal stop
+  from force-stop request flags; only a normal stop is authorized by the proposed
+  procedure. Start, termination, volume deletion/detach and cleanup permissions
+  are outside this initial role. Credit-mode changes are also a residual
+  capability of the required EC2 credit API; the reviewed Terraform uses
+  standard credits, and switching to Unlimited is not approved.
 - Only the runtime state key can be read/written. Only its `.tflock` can be
   deleted. Platform-state object access is explicitly denied. Bucket listing is
   limited to the default-workspace runtime key/lock prefixes; no workspace or
