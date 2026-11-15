@@ -41,6 +41,10 @@ def _conditions(conditions, context):
         for key, expected in pairs.items():
             actual = context.get(key)
             values = _list(expected)
+            if "${aws:userid}" in values:
+                if "aws:userid" not in context:
+                    return False
+                values = [context["aws:userid"] if v == "${aws:userid}" else v for v in values]
             if operator == "Null":
                 result = (actual is None) == (expected == "true")
             elif actual is None:
@@ -303,3 +307,92 @@ def test_event_target_cannot_be_redirected():
     assert _allows(DEPLOY, "events:PutTargets", rule, REGION | {"events:TargetArn": [topic]})
     assert not _allows(DEPLOY, "events:PutTargets", rule, REGION)
     assert not _allows(DEPLOY, "events:PutTargets", rule, REGION | {"events:TargetArn": [topic, topic + "-other"]})
+
+
+# Candidate only: this supplemental policy is not part of DEPLOY or live IAM.
+SSM_OPERATOR = ["ssm-operator.proposed.json"]
+INSTANCE = f"{EC2}:instance/i-0ca1671a59751acc5"
+DOCUMENT = f"arn:aws:ssm:us-west-2:{ACCOUNT}:document/SSM-SessionManagerRunShell"
+SESSION = f"arn:aws:ssm:us-west-2:{ACCOUNT}:session/demo-session-fixture"
+OWNER = "AROAOFFLINEEXAMPLE:blockchain-runtime-deploy"
+SESSION_CONTEXT = REGION | {
+    "aws:userid": OWNER,
+    "ssm:resourceTag/aws:ssmmessages:session-id": OWNER,
+    "ssm:resourceTag/aws:ssmmessages:target-id": "i-0ca1671a59751acc5",
+}
+
+
+def test_operator_start_requires_exact_node_and_shell_document_authorization():
+    assert all(_allows(SSM_OPERATOR, "ssm:StartSession", r, REGION) for r in (INSTANCE, DOCUMENT))
+    for resource in (
+        INSTANCE.replace("i-0ca1671a59751acc5", "i-unrelated"),
+        INSTANCE.replace(ACCOUNT, "111122223333"),
+        INSTANCE.replace("us-west-2", "us-east-1"),
+        DOCUMENT.replace("SSM-SessionManagerRunShell", "AWS-StartPortForwardingSession"),
+        DOCUMENT.replace("SSM-SessionManagerRunShell", "AWS-StartSSHSession"),
+        DOCUMENT.replace("SSM-SessionManagerRunShell", "AWS-StartInteractiveCommand"),
+        DOCUMENT.replace(ACCOUNT, "111122223333"),
+    ):
+        assert not _allows(SSM_OPERATOR, "ssm:StartSession", resource, REGION)
+    for context in ({}, {"aws:RequestedRegion": "us-east-1"}):
+        assert not _allows(SSM_OPERATOR, "ssm:StartSession", INSTANCE, context)
+
+
+@pytest.mark.parametrize("action", ["ssm:GetDocument", "ssm:DescribeDocument"])
+def test_operator_can_inspect_only_the_reviewed_document(action):
+    assert _allows(SSM_OPERATOR, action, DOCUMENT, REGION)
+    assert not _allows(SSM_OPERATOR, action, DOCUMENT + "-unreviewed", REGION)
+    assert not _allows(SSM_OPERATOR, action, DOCUMENT, {})
+    assert not _allows(SSM_OPERATOR, action, DOCUMENT, {"aws:RequestedRegion": "us-east-1"})
+
+
+@pytest.mark.parametrize("action", ["ssm:ResumeSession", "ssm:TerminateSession", "ssmmessages:OpenDataChannel"])
+@pytest.mark.parametrize("caller", [OWNER, "AIDAOFFLINEEXAMPLE"])
+def test_operator_session_tags_work_for_role_and_user_ids(action, caller):
+    context = SESSION_CONTEXT | {"aws:userid": caller, "ssm:resourceTag/aws:ssmmessages:session-id": caller}
+    assert _allows(SSM_OPERATOR, action, SESSION, context)
+    assert not _allows(SSM_OPERATOR, action, SESSION.replace(ACCOUNT, "111122223333"), context)
+    assert not _allows(SSM_OPERATOR, action, SESSION.replace("us-west-2", "us-east-1"), context)
+
+
+@pytest.mark.parametrize("action", ["ssm:ResumeSession", "ssm:TerminateSession", "ssmmessages:OpenDataChannel"])
+@pytest.mark.parametrize("changed_key,value", [
+    ("aws:userid", None),
+    ("ssm:resourceTag/aws:ssmmessages:session-id", None),
+    ("ssm:resourceTag/aws:ssmmessages:session-id", "OTHER:caller"),
+    ("ssm:resourceTag/aws:ssmmessages:target-id", None),
+    ("ssm:resourceTag/aws:ssmmessages:target-id", "i-unrelated"),
+    ("aws:RequestedRegion", "us-east-1"),
+])
+def test_operator_cannot_manage_other_or_unattributed_sessions(action, changed_key, value):
+    context = SESSION_CONTEXT.copy()
+    if value is None:
+        context.pop(changed_key)
+    else:
+        context[changed_key] = value
+    assert not _allows(SSM_OPERATOR, action, SESSION, context)
+
+
+@pytest.mark.parametrize("action", [
+    "ssm:SendCommand", "ssm:CreateDocument", "ssm:UpdateDocument",
+    "ssm:DescribeSessions", "ssm:DescribeInstanceInformation", "ssm:ListDocuments",
+    "ec2:StartInstances", "ec2:RunInstances", "ec2:TerminateInstances",
+    "ecr:PutImage", "secretsmanager:GetSecretValue", "iam:PutRolePolicy",
+])
+def test_operator_supplement_does_not_grant_unrelated_api_actions(action):
+    assert not _allows(SSM_OPERATOR, action, "*", SESSION_CONTEXT)
+
+
+def test_operator_policy_is_explicitly_opt_in_and_keeps_region_owner_target_guards():
+    policy = json.loads((ROOT / SSM_OPERATOR[0]).read_text())
+    assert set(a for s in policy["Statement"] for a in s["Action"]) == {
+        "ssm:StartSession", "ssm:GetDocument", "ssm:DescribeDocument",
+        "ssm:ResumeSession", "ssm:TerminateSession", "ssmmessages:OpenDataChannel",
+    }
+    assert SSM_OPERATOR[0] not in DEPLOY
+    for statement in policy["Statement"]:
+        assert statement["Condition"]["StringEquals"]["aws:RequestedRegion"] == "us-west-2"
+        assert "*" not in statement["Resource"]
+    conditions = policy["Statement"][-1]["Condition"]["StringEquals"]
+    assert conditions["ssm:resourceTag/aws:ssmmessages:session-id"] == "${aws:userid}"
+    assert conditions["ssm:resourceTag/aws:ssmmessages:target-id"] == "i-0ca1671a59751acc5"

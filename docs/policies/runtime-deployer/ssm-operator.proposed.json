@@ -1,0 +1,45 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "SessionOnlyOnReviewedRuntime",
+      "Effect": "Allow",
+      "Action": ["ssm:StartSession"],
+      "Resource": [
+        "arn:aws:ec2:us-west-2:209479274979:instance/i-0ca1671a59751acc5",
+        "arn:aws:ssm:us-west-2:209479274979:document/SSM-SessionManagerRunShell"
+      ],
+      "Condition": {
+        "StringEquals": {"aws:RequestedRegion": "us-west-2"}
+      }
+    },
+    {
+      "Sid": "InspectOnlyApprovedSessionDocument",
+      "Effect": "Allow",
+      "Action": ["ssm:GetDocument", "ssm:DescribeDocument"],
+      "Resource": [
+        "arn:aws:ssm:us-west-2:209479274979:document/SSM-SessionManagerRunShell"
+      ],
+      "Condition": {
+        "StringEquals": {"aws:RequestedRegion": "us-west-2"}
+      }
+    },
+    {
+      "Sid": "ManageOnlyOwnSessionsOnReviewedRuntime",
+      "Effect": "Allow",
+      "Action": [
+        "ssm:ResumeSession",
+        "ssm:TerminateSession",
+        "ssmmessages:OpenDataChannel"
+      ],
+      "Resource": ["arn:aws:ssm:us-west-2:209479274979:session/*"],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2",
+          "ssm:resourceTag/aws:ssmmessages:session-id": "${aws:userid}",
+          "ssm:resourceTag/aws:ssmmessages:target-id": "i-0ca1671a59751acc5"
+        }
+      }
+    }
+  ]
+}
