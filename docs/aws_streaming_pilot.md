@@ -1,14 +1,15 @@
 # Milestone 11.6C — first streaming pilot readiness
 
-Status: offline implementation complete. The first infrastructure-only paid
-apply and normal stop were separately approved and executed. **The apply
-partially completed: 23 managed resources exist; EC2 is stopped.**
-The separately approved state-only untaint and revised-config planning completed.
-The saved recovery plan has five creates, 23 no-ops and no updates/deletions/
-replacements. See the [successful plan result](aws_runtime_recovery_plan_result.md)
-and [recovery history](aws_runtime_recovery_review.md).
-Five resources remain uncreated. No streaming application has been deployed.
-See the [actual apply/stop and recovery review](aws_runtime_first_apply_review.md).
+Status: offline implementation and runtime infrastructure foundation complete.
+The separately approved five-resource recovery apply succeeded on 2026-11-15:
+**28 managed runtime resources exist; EC2 is stopped; Kafka EBS is attached
+but uninitialized.** See the [completion result](aws_runtime_remaining_apply_result.md).
+All 23 existing resource IDs were preserved. No streaming application has been
+deployed. The saved recovery plan is consumed and must not be reapplied.
+The earlier state-only untaint and planning are historical completed steps;
+see the [plan result](aws_runtime_recovery_plan_result.md),
+[recovery history](aws_runtime_recovery_review.md) and
+[first apply/stop review](aws_runtime_first_apply_review.md).
 The historical fresh plan proposed 28 creates with zero updates/deletes/imports;
 it is now a consumed, partially executed artifact and must not be reapplied.
 See the
@@ -42,14 +43,14 @@ Its supervised infrastructure-only window was approved and closed after the
 partial apply and verified stop.
 IAM Console validation is now operator-confirmed with no unresolved findings;
 the Organizations introduction screen indicates a standalone account. The
-state bucket has no bucket policy. The next gate is the exact five-resource
-remaining apply while EC2 stays stopped. Untaint must not be repeated.
+state bucket had no bucket policy at that review. The five-resource remaining
+apply is now complete. Untaint and the consumed saved plan must not be repeated.
 Remaining sequence:
 
 1. IAM role/policy setup and temporary-profile authentication are complete.
 2. The approved fresh runtime-only init/plan and boundary review are complete.
-3. Obtain approval to apply only the reviewed five creates while preserving
-   stopped EC2. No start, replacement or IAM expansion is authorized.
+3. The separately approved five-create apply is complete; EC2 remains stopped.
+   No start, replacement or IAM expansion is authorized by that approval.
 4. Approve initialization of the exact Kafka EBS volume, image publication,
    secret/read permissions and application deployment before those actions.
 5. Smoke-test the isolated streaming path, test Kafka/Spark recovery, drain and

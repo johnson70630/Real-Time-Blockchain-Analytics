@@ -1,5 +1,10 @@
 # AWS demo: successful recovery plan and remaining-resource proposal
 
+**Historical proposal, executed 2026-11-15:** the five-resource apply succeeded.
+The saved plan below is consumed and must not be reapplied. See the
+[completion result](aws_runtime_remaining_apply_result.md) for current state
+and remaining approval gates. The original planning evidence below is retained.
+
 Date: 2026-11-13 UTC. Milestone 11.6C. **Approved revised-config planning
 completed. No apply or EC2 start performed.** Milestone 11.5D remains paused.
 
