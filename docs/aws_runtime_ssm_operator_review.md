@@ -1,9 +1,11 @@
 # Milestone 11.6C: SSM operator access proposal
 
-Status: **offline proposal only, not deployed or approved**. The runtime
-foundation has 28 managed resources; EC2 was last verified stopped after the
-five-resource apply. This work makes no authenticated AWS calls. Milestone
-11.5D remains paused.
+**Status update, 2026-11-15:** the operator approved and reported the policy
+attached. Read-only inspection verified the expected identity and stopped EC2,
+but the default session document returned InvalidDocument. See the
+[private-document proposal and inspection result](aws_runtime_ssm_document_review.md).
+The original offline proposal below is retained as historical review evidence;
+its six-action policy file remains unchanged. Milestone 11.5D remains paused.
 
 ## A. What was implemented
 

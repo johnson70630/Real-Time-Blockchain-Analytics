@@ -230,11 +230,13 @@ access is required. The publisher needs separately approved ECR push permissions
 the runtime instance remains pull-only. A Terraform operator must use a separate
 identity with backend and approved provisioning permissions.
 
-The [SSM operator proposal](aws_runtime_ssm_operator_review.md) prepares a
-separately approved CLI-focused supplement to the MFA deployer role for this
-single-person demo. It explicitly combines those human capabilities while
-keeping the workload identity separate. The policy is not attached; plugin
-setup, session preferences and the supervised start window remain gates.
+The [SSM operator proposal](aws_runtime_ssm_operator_review.md) was separately
+approved and reported attached by the operator. It combines those human
+capabilities while keeping the workload identity separate. Default-document
+inspection returned InvalidDocument with EC2 stopped; see the
+[private session-document proposal](aws_runtime_ssm_document_review.md).
+That proposed document and policy revision are not approved or deployed. Plugin
+setup, session authorization and the supervised start window remain gates.
 
 ## EBS first initialization — separate exact-volume approval
 

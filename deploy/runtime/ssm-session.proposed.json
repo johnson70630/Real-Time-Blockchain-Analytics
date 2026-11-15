@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "1.0",
+  "description": "Private shell preferences for the reviewed blockchain demo runtime",
+  "sessionType": "Standard_Stream",
+  "inputs": {
+    "s3BucketName": "",
+    "s3KeyPrefix": "",
+    "s3EncryptionEnabled": true,
+    "cloudWatchLogGroupName": "",
+    "cloudWatchEncryptionEnabled": true,
+    "cloudWatchStreamingEnabled": true,
+    "kmsKeyId": "",
+    "runAsEnabled": false,
+    "runAsDefaultUser": "",
+    "idleSessionTimeout": "15",
+    "maxSessionDuration": "60",
+    "shellProfile": {
+      "windows": "",
+      "linux": ""
+    }
+  }
+}

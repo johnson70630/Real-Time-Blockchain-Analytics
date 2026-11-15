@@ -7,6 +7,7 @@ the refreshed Terraform plan remain required before deployment.
 
 from __future__ import annotations
 
+import copy
 import fnmatch
 import json
 from datetime import datetime
@@ -396,3 +397,65 @@ def test_operator_policy_is_explicitly_opt_in_and_keeps_region_owner_target_guar
     conditions = policy["Statement"][-1]["Condition"]["StringEquals"]
     assert conditions["ssm:resourceTag/aws:ssmmessages:session-id"] == "${aws:userid}"
     assert conditions["ssm:resourceTag/aws:ssmmessages:target-id"] == "i-0ca1671a59751acc5"
+
+
+PRIVATE_SSM_OPERATOR = ["ssm-operator-runtime-document.proposed.json"]
+PRIVATE_DOCUMENT = f"arn:aws:ssm:us-west-2:{ACCOUNT}:document/blockchain-runtime-demo-shell"
+SESSION_DOCUMENT_PATH = Path(__file__).resolve().parents[1] / "deploy/runtime/ssm-session.proposed.json"
+
+
+def test_private_document_revision_changes_only_the_two_document_resource_entries():
+    previous = json.loads((ROOT / SSM_OPERATOR[0]).read_text())
+    expected = copy.deepcopy(previous)
+    for statement in expected["Statement"]:
+        statement["Resource"] = [PRIVATE_DOCUMENT if r == DOCUMENT else r for r in statement["Resource"]]
+    assert json.loads((ROOT / PRIVATE_SSM_OPERATOR[0]).read_text()) == expected
+    # Identity, actions, region, instance, session ownership and target stay fixed.
+    assert _allows(PRIVATE_SSM_OPERATOR, "ssm:StartSession", INSTANCE, REGION)
+
+
+@pytest.mark.parametrize("action", ["ssm:StartSession", "ssm:GetDocument", "ssm:DescribeDocument"])
+def test_private_document_policy_excludes_defaults_and_other_documents(action):
+    assert _allows(PRIVATE_SSM_OPERATOR, action, PRIVATE_DOCUMENT, REGION)
+    for resource in (DOCUMENT, PRIVATE_DOCUMENT + "-other", PRIVATE_DOCUMENT.replace(ACCOUNT, "111122223333")):
+        assert not _allows(PRIVATE_SSM_OPERATOR, action, resource, REGION)
+    assert not _allows(PRIVATE_SSM_OPERATOR, action, PRIVATE_DOCUMENT, {})
+
+
+@pytest.mark.parametrize("action", ["ssm:ResumeSession", "ssm:TerminateSession", "ssmmessages:OpenDataChannel"])
+def test_private_document_revision_preserves_own_session_guards(action):
+    assert _allows(PRIVATE_SSM_OPERATOR, action, SESSION, SESSION_CONTEXT)
+    assert not _allows(PRIVATE_SSM_OPERATOR, action, SESSION, SESSION_CONTEXT | {"ssm:resourceTag/aws:ssmmessages:target-id": "i-other"})
+    assert not _allows(PRIVATE_SSM_OPERATOR, action, SESSION, SESSION_CONTEXT | {"ssm:resourceTag/aws:ssmmessages:session-id": "OTHER:caller"})
+
+
+def test_session_document_has_fixed_shell_type_and_no_startup_commands_or_parameters():
+    document = json.loads(SESSION_DOCUMENT_PATH.read_text())
+    assert set(document) == {"schemaVersion", "description", "sessionType", "inputs"}
+    assert document["schemaVersion"] == "1.0"
+    assert document["sessionType"] == "Standard_Stream"
+    assert document["inputs"]["shellProfile"] == {"windows": "", "linux": ""}
+    assert document["inputs"]["runAsEnabled"] is False
+    assert document["inputs"]["runAsDefaultUser"] == ""
+
+
+def test_session_time_limits_are_explicit_strings_within_aws_schema_ranges():
+    inputs = json.loads(SESSION_DOCUMENT_PATH.read_text())["inputs"]
+    assert inputs["idleSessionTimeout"] == "15"
+    assert inputs["maxSessionDuration"] == "60"
+    assert 1 <= int(inputs["idleSessionTimeout"]) <= 60
+    assert 1 <= int(inputs["maxSessionDuration"]) <= 1440
+
+
+def test_bootstrap_document_has_no_unapproved_log_destinations_or_kms_dependency():
+    inputs = json.loads(SESSION_DOCUMENT_PATH.read_text())["inputs"]
+    assert set(inputs) == {
+        "s3BucketName", "s3KeyPrefix", "s3EncryptionEnabled",
+        "cloudWatchLogGroupName", "cloudWatchEncryptionEnabled",
+        "cloudWatchStreamingEnabled", "kmsKeyId", "runAsEnabled",
+        "runAsDefaultUser", "idleSessionTimeout", "maxSessionDuration", "shellProfile",
+    }
+    for key in ("s3BucketName", "s3KeyPrefix", "cloudWatchLogGroupName", "kmsKeyId"):
+        assert inputs[key] == ""
+    for key in ("s3EncryptionEnabled", "cloudWatchEncryptionEnabled", "cloudWatchStreamingEnabled"):
+        assert inputs[key] is True
