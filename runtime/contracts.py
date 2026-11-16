@@ -13,6 +13,13 @@ TOPIC = "pilot_uniswap_v3_events"
 MOUNT = Path("/var/lib/blockchain-runtime/kafka")
 RUN = Path("/run/blockchain-runtime")
 REGISTRY = "209479274979.dkr.ecr.us-west-2.amazonaws.com"
+# The 2026-11-16 ECR review rejected these exact manifests. Keep the rejection
+# even after replacing local build tags; a different digest still needs review.
+REJECTED_IMAGE_DIGESTS = frozenset({
+    "sha256:daa2cab53f201ac58435a557a2e1d2d006a4a442dc0a0c7c22fb9a81167f88e0",
+    "sha256:85c0b8ebf842847215698fe24efe05db04d0b6525d587955eb58209897843c38",
+    "sha256:5862db4a63a6dd7d46fd14771b10a1b39e069c2c47f17d8e4640f960720a0ead",
+})
 
 
 def validate_release(release: dict) -> None:
@@ -52,6 +59,8 @@ def validate_release(release: dict) -> None:
             pattern + "[0-9a-f]{64}", release[field]
         ):
             raise ValueError("ECR_DIGEST_REQUIRED")
+        if release[field].split("@", 1)[1] in REJECTED_IMAGE_DIGESTS:
+            raise ValueError("REJECTED_IMAGE_RELEASE")
     duration = release["max_runtime_seconds"]
     if type(duration) is not int or not 300 <= duration <= 7200:
         raise ValueError("PILOT_DURATION_MUST_BE_300_TO_7200_SECONDS")
@@ -70,6 +79,9 @@ def validate_environment(env) -> None:
         "KAFKA_TOPIC": TOPIC,
         "CHAIN": "arbitrum",
         "ENABLED_PROTOCOLS": "uniswap_v3",
+        "LANG": "C.UTF-8",
+        "LC_ALL": "C.UTF-8",
+        "LANGUAGE": "",
     }.items():
         if env.get(key) != value:
             raise ValueError(f"PILOT_{key}_INVALID")

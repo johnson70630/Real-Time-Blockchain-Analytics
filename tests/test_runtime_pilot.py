@@ -80,6 +80,30 @@ def test_cloud_environment_and_no_inherited_credentials():
         validate_environment(dict(env, DATA_LAKE_PREFIX="production"))
 
 
+@pytest.mark.parametrize("role", ["producer", "spark", "kafka"])
+def test_rejected_published_manifests_cannot_be_reintroduced(release, role):
+    evidence = json.loads((ROOT / "docs/evidence/aws_runtime_ecr_publication_2026-11-16.json").read_text())
+    image = next(row for row in evidence["images"] if row["role"] == role)
+    assert image["os_scan_release_gate_passed"] is False
+    release[role + "_image"] = image["digest_reference"]
+    with pytest.raises(ValueError, match="REJECTED_IMAGE_RELEASE"):
+        validate_release(release)
+
+
+@pytest.mark.parametrize("key,value", [
+    ("LANG", "en_US.UTF-8"), ("LC_ALL", "en_US.UTF-8"),
+    ("LANGUAGE", "../../untrusted"), ("LANGUAGE", "en_US:en"),
+    ("LC_ALL", None), ("LANGUAGE", None),
+])
+def test_cloud_locale_cannot_enable_untrusted_gettext_catalogs(key, value):
+    compose = yaml.safe_load((ROOT / "deploy/runtime/compose.yaml").read_text())
+    env = dict(compose["services"]["spark"]["environment"])
+    validate_environment(env)
+    env[key] = value
+    with pytest.raises(ValueError, match="PILOT_" + key + "_INVALID"):
+        validate_environment(env)
+
+
 def test_single_writer_lock_never_unlinks_inode(tmp_path):
     lock = tmp_path / "writer.lock"
     with writer_lock(lock):
@@ -431,7 +455,8 @@ def test_images_pin_base_python_dependencies_and_connector_hashes():
     assert len(jars) == 8
     assert all(len(artifact["sha512"]) == 128 for artifact in jars)
     spark_image = (ROOT / "deploy/runtime/Dockerfile.spark").read_text()
-    assert "openjdk-17-jre-headless" in spark_image
+    assert "eclipse-temurin:17-jre-noble@sha256:" in spark_image
+    assert "COPY --from=java17 /opt/java/openjdk /opt/java/openjdk" in spark_image
     assert "fetch_jars.py" in spark_image
     assert "spark.jars.packages" not in (ROOT / "runtime/stream.py").read_text()
 

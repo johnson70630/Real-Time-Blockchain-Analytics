@@ -95,6 +95,8 @@ jobs:
         with:
           path: ${{ runner.temp }}/blockchain-maven-jars
           key: runtime-maven-jars-v1-${{ hashFiles('deploy/runtime/jars.lock.json') }}
+          restore-keys: |
+            runtime-maven-jars-v1-
 
       - name: Build and verify Java 17 pilot images without cloud credentials
         env:

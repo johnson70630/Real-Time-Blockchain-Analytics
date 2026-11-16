@@ -1,5 +1,13 @@
 # Milestone 11.6C — first streaming pilot readiness
 
+Latest offline work: [image remediation](aws_runtime_image_remediation.md) tests
+Kafka 4.3.2 with current Alpine packages, Debian 13 / Python 3.12 application
+images and pinned Temurin Java 17 for Spark. The rejected published manifests
+are now blocked by code. Local Kafka OS findings are clear; producer/Spark still
+have unfixed HIGH findings. Replacement publication and the pilot remain blocked
+pending security review and separate approvals. Existing ECR images below are
+the historical rejected c917f2a artifacts, not the replacement candidates.
+
 Status: offline implementation and runtime infrastructure foundation complete.
 The separately approved five-resource recovery apply succeeded on 2026-11-15:
 **28 managed runtime resources exist; EC2 is stopped; Kafka EBS is attached

@@ -1,5 +1,10 @@
 # Milestone 11.6C: cache verified build dependencies
 
+Later [image remediation](aws_runtime_image_remediation.md) adds a cache-prefix
+restore after lock changes. Restored entries remain untrusted and every named
+JAR is verified against the new committed lock; unrelated/old files are excluded.
+This avoids redownloading seven unchanged artifacts for a one-client update.
+
 The Spark image step in develop CI run
 [43807733166](https://github.com/johnson70630/Real-Time-Blockchain-Analytics/actions/runs/43807733166)
 failed with Maven Central HTTP 429. Spark-backed tests passed; the failure was

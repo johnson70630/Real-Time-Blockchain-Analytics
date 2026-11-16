@@ -1,5 +1,12 @@
 # Milestone 11.6C: offline image publication review
 
+Latest source tooling: [offline remediation](aws_runtime_image_remediation.md)
+now builds and labels all three images, including an OS-patched Kafka derivative
+with its pinned upstream base label. It no longer plans a bare upstream mirror.
+All three old failed manifests are quarantined; replacements remain unpublished
+and blocked by unresolved application-image findings. The sections below retain
+the original tooling review and historical validation counts.
+
 **Current status:** GitHub billing/CI access is restored; the foundation, SSM
 access, host software and one-time Kafka filesystem setup are complete. EC2 is
 stopped. The separately approved publisher scope is now complete: three images

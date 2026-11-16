@@ -1,0 +1,8 @@
+# Supported Kafka patch release, with current Alpine security packages.
+ARG KAFKA_BASE=apache/kafka@sha256:852a0d49fc4e656b022e7f23785411802c9a088c78a7c5e39f33969de9c227a7
+FROM ${KAFKA_BASE}
+ARG KAFKA_BASE
+LABEL org.opencontainers.image.base.name="${KAFKA_BASE}"
+USER root
+RUN apk upgrade --no-cache
+USER 1000:1000

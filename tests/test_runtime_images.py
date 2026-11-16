@@ -10,10 +10,47 @@ import subprocess
 import tarfile
 
 import pytest
+import yaml
 
 from runtime import images
 
 COMMIT = "a" * 40
+
+
+def test_cloud_image_pins_match_reviewed_platform_lock_and_java17():
+    root = images.ROOT
+    lock = json.loads((root / "deploy/runtime/images.lock.json").read_text())
+    assert lock["platform"] == "linux/amd64"
+    rows = {row["role"]: row for row in lock["sources"]}
+    assert set(rows) == {"python", "java17", "kafka"}
+    for row in rows.values():
+        assert row["pinned_reference"].endswith("@" + row["index_digest"])
+        for key in ("index_digest", "amd64_manifest_digest", "config_digest"):
+            assert len(row[key]) == 71 and row[key].startswith("sha256:")
+    producer = (root / "deploy/runtime/Dockerfile.producer").read_text()
+    spark = (root / "deploy/runtime/Dockerfile.spark").read_text()
+    for dockerfile in (producer, spark):
+        assert "ARG PYTHON_BASE=" + rows["python"]["pinned_reference"] in dockerfile
+        assert "apt-get upgrade -y" in dockerfile
+        assert 'LANG=C.UTF-8 LC_ALL=C.UTF-8 LANGUAGE=""' in dockerfile
+    assert "ARG JAVA17_BASE=" + rows["java17"]["pinned_reference"] in spark
+    assert rows["java17"]["selected_environment"]["JAVA_VERSION"].startswith("jdk-17.")
+    assert "COPY --from=java17 /opt/java/openjdk /opt/java/openjdk" in spark
+    assert 'JAVA_TOOL_OPTIONS="-Djava.awt.headless=true"' in spark
+    assert "fontconfig" not in spark and "libfreetype6" not in spark
+    assert "openjdk-21" not in spark
+    compose = yaml.safe_load((root / "deploy/runtime/compose.test.yaml").read_text())
+    assert compose["services"]["kafka"]["image"] == images.LOCAL_IMAGES["kafka"]
+    assert images.KAFKA_SOURCE.endswith("@" + rows["kafka"]["index_digest"])
+    kafka = (root / "deploy/runtime/Dockerfile.kafka").read_text()
+    assert "ARG KAFKA_BASE=" + images.KAFKA_SOURCE in kafka
+    assert "RUN apk upgrade --no-cache" in kafka
+    assert "USER 1000:1000" in kafka
+    assert rows["kafka"]["upstream_tag"] == "apache/kafka:" + images.KAFKA_VERSION
+    jars = json.loads((root / "deploy/runtime/jars.lock.json").read_text())
+    clients = [row for row in jars if row["path"].startswith("org/apache/kafka/kafka-clients/")]
+    assert len(clients) == 1
+    assert clients[0]["path"] == "org/apache/kafka/kafka-clients/3.9.2/kafka-clients-3.9.2.jar"
 
 
 def committed_jar_repo(tmp_path, lock=None):
@@ -122,10 +159,10 @@ def inspected():
             "id": "sha256:" + str(index) * 64,
             "os": "linux",
             "architecture": "amd64",
-            "user": "10001:10001",
+            "user": "1000:1000" if role == "kafka" else "10001:10001",
             "revision": COMMIT,
             "title": "blockchain-runtime-" + role,
-            "repo_digests": [images.KAFKA_SOURCE] if role == "kafka" else [],
+            "base_reference": images.KAFKA_SOURCE if role == "kafka" else None,
         }
     return result
 
@@ -138,14 +175,23 @@ def test_exact_targets_require_no_aws_calls_and_no_fabricated_ecr_digests(inspec
     expected = [
         f"{images.REGISTRY}/blockchain-runtime-producer:producer-{COMMIT}",
         f"{images.REGISTRY}/blockchain-runtime-spark:spark-{COMMIT}",
-        f"{images.REGISTRY}/blockchain-runtime-producer:kafka-3.9.1-{COMMIT}",
+        f"{images.REGISTRY}/blockchain-runtime-producer:kafka-{images.KAFKA_VERSION}-{COMMIT}",
     ]
     assert [item["target"] for item in result["images"]] == expected
     assert [item["local_reference"] for item in result["images"]] == list(images.LOCAL_IMAGES.values())
     assert all(item["ecr_deployment_digest"] is None for item in result["images"])
     assert all(item["scan_review"] == "pending" for item in result["images"])
-    assert result["images"][2]["source_commit"] is None
+    assert result["images"][2]["source_commit"] == COMMIT
     assert result["images"][2]["upstream_reference"] == images.KAFKA_SOURCE
+
+
+@pytest.mark.parametrize("role", ["producer", "spark", "kafka"])
+def test_rejected_manifest_cannot_be_planned_even_with_claimed_current_labels(inspected, role):
+    evidence = json.loads((images.ROOT / "docs/evidence/aws_runtime_ecr_publication_2026-11-16.json").read_text())
+    rejected = next(row for row in evidence["images"] if row["role"] == role)
+    inspected[role]["id"] = rejected["ecr_deployment_digest"]
+    with pytest.raises(ValueError, match="REJECTED_IMAGE_RELEASE"):
+        images.publication_plan(inspected, COMMIT)
 
 
 @pytest.mark.parametrize(
@@ -158,8 +204,11 @@ def test_exact_targets_require_no_aws_calls_and_no_fabricated_ecr_digests(inspec
         ("producer", "user", "root"),
         ("spark", "id", "sha256:invalid"),
         ("spark", "id", "sha256:" + "1" * 64),
-        ("kafka", "repo_digests", ["apache/kafka:latest"]),
-        ("kafka", "repo_digests", None),
+        ("kafka", "base_reference", "apache/kafka:latest"),
+        ("kafka", "base_reference", None),
+        ("kafka", "revision", "b" * 40),
+        ("kafka", "title", "unreviewed"),
+        ("kafka", "user", "root"),
     ],
 )
 def test_unreviewed_images_are_rejected(inspected, role, field, value):
@@ -255,7 +304,7 @@ def test_inspection_reads_only_allowlisted_fields_from_local_engine(
                     "os",
                     "architecture",
                     "user",
-                    "repo_digests",
+                    "base_reference",
                     "revision",
                     "title",
                 )

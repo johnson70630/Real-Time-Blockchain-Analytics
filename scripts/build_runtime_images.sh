@@ -22,12 +22,16 @@ unset DOCKER_HOST DOCKER_CONTEXT DOCKER_TLS_VERIFY DOCKER_CERT_PATH BUILDX_BUILD
 docker_local=(docker --host "$endpoint")
 echo "BUILD_SOURCE_COMMIT=$source_commit"
 echo "BUILD_CONTEXT_RECEIPT=$context_dir/receipt.json"
-for role in producer spark; do
+for role in producer spark kafka; do
   "${docker_local[@]}" build --builder default --platform linux/amd64 \
     --label "org.opencontainers.image.revision=$source_commit" \
     --label "org.opencontainers.image.title=blockchain-runtime-$role" \
     -f "deploy/runtime/Dockerfile.$role" -t "blockchain-pilot-$role:offline" - < "$context_dir/context.tar"
 done
-"${docker_local[@]}" run --rm --network none --read-only --tmpfs /tmp:size=2g,mode=1777,exec \
-  --entrypoint python blockchain-pilot-spark:offline -c \
-  'from pyspark.sql import SparkSession; s=SparkSession.builder.master("local[1]").config("spark.ui.enabled","false").getOrCreate(); j=s.sparkContext._jvm; assert s.version=="4.0.1"; assert j.java.lang.System.getProperty("java.specification.version")=="17"; assert j.org.apache.hadoop.util.VersionInfo.getVersion()=="3.4.1"; c=j.java.lang.Thread.currentThread().getContextClassLoader(); [c.loadClass(n) for n in ["org.apache.spark.sql.kafka010.KafkaSourceProvider","org.apache.hadoop.fs.s3a.S3AFileSystem","org.apache.hadoop.fs.s3a.auth.IAMInstanceCredentialsProvider","software.amazon.awssdk.services.s3.S3Client"]]; s.range(3).write.parquet("/tmp/smoke.parquet"); assert s.read.parquet("/tmp/smoke.parquet").count()==3; s.stop(); print("JAVA_SPARK_S3A_KAFKA_PARQUET_VERIFIED")'
+tar -xOf "$context_dir/context.tar" deploy/runtime/smoke_producer.py | \
+  "${docker_local[@]}" run --rm -i --network none --read-only \
+    --entrypoint python blockchain-pilot-producer:offline -
+expected_ca_sha="$(tar -xOf "$context_dir/context.tar" deploy/runtime/images.lock.json | python3 -c 'import json,sys; print(next(row["trust_store_sha256"] for row in json.load(sys.stdin)["sources"] if row["role"]=="java17"))')"
+tar -xOf "$context_dir/context.tar" deploy/runtime/smoke_spark.py | \
+  "${docker_local[@]}" run --rm -i --network none --read-only --tmpfs /tmp:size=2g,mode=1777,exec \
+    --entrypoint python blockchain-pilot-spark:offline - "$expected_ca_sha"

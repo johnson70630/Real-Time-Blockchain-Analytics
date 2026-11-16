@@ -1,5 +1,9 @@
 # Milestone 11.6C: image publication completed; release blocked
 
+Later [offline remediation](aws_runtime_image_remediation.md) replaces the build
+bases and explicitly quarantines these three published digests. The original
+artifacts/scans below are preserved; no replacement publication is authorized.
+
 The three approved Linux/AMD64 images were published to the two existing ECR
 repositories on **2026-11-16**, with completion at **06:07:02 UTC**. Every stored
 manifest hash matches the reviewed local manifest. All BASIC scans completed,

@@ -1,0 +1,48 @@
+{
+  "reviewed_at_utc": "2026-11-16",
+  "platform": "linux/amd64",
+  "sources": [
+    {
+      "role": "python",
+      "upstream_tag": "python:3.12-slim-trixie",
+      "pinned_reference": "python:3.12-slim-trixie@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b",
+      "index_digest": "sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b",
+      "amd64_manifest_digest": "sha256:05a994d2344eb364cc186910f4fc8786a38215f39f00d0acc25bff33a08f4177",
+      "config_digest": "sha256:78976a69c067520ef8be34cde307ef9f6fea6dcefa50edb57039773d241ca0db",
+      "selected_environment": {
+        "LANG": "C.UTF-8",
+        "PYTHON_VERSION": "3.12.16"
+      },
+      "compressed_layer_bytes": 43268722
+    },
+    {
+      "role": "java17",
+      "upstream_tag": "eclipse-temurin:17-jre-noble",
+      "pinned_reference": "eclipse-temurin:17-jre-noble@sha256:042c05a77eb915684fc8c92cfbbef4fd6f8c24ca7d934d1a7db3543453aaa077",
+      "index_digest": "sha256:042c05a77eb915684fc8c92cfbbef4fd6f8c24ca7d934d1a7db3543453aaa077",
+      "amd64_manifest_digest": "sha256:75de746e1d782bd75704debd2b76f82f3d60c72c4c7818c288ad3ae2522bd8d3",
+      "config_digest": "sha256:761fc9dc3c2a2650d033eb980a0abcf23e3eb64407026af868b4edd02b731042",
+      "selected_environment": {
+        "JAVA_HOME": "/opt/java/openjdk",
+        "LANG": "en_US.UTF-8",
+        "JAVA_VERSION": "jdk-17.0.21+9"
+      },
+      "compressed_layer_bytes": 94385059,
+      "trust_store_sha256": "c8b4cbbd1a9d122f61946cef518fcae97b3ead4b2902da3605aeedf8a478eb37"
+    },
+    {
+      "role": "kafka",
+      "upstream_tag": "apache/kafka:4.3.2",
+      "pinned_reference": "apache/kafka:4.3.2@sha256:852a0d49fc4e656b022e7f23785411802c9a088c78a7c5e39f33969de9c227a7",
+      "index_digest": "sha256:852a0d49fc4e656b022e7f23785411802c9a088c78a7c5e39f33969de9c227a7",
+      "amd64_manifest_digest": "sha256:8f325fc00143fed78eabe00b033a86747078bb06edc21345d06651f77ae44f30",
+      "config_digest": "sha256:5f903e08de3eaa781db23c1ca43c274b50accc969f8b46effe5da0c7be73a968",
+      "selected_environment": {
+        "JAVA_HOME": "/opt/java/openjdk",
+        "LANG": "en_US.UTF-8",
+        "JAVA_VERSION": "jdk-21.0.12.1+1"
+      },
+      "compressed_layer_bytes": 238799351
+    }
+  ]
+}

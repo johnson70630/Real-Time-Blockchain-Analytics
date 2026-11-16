@@ -1,12 +1,19 @@
-# The target is linux/amd64; bookworm supplies Java 17 explicitly.
-ARG PYTHON_BASE=python:3.12-slim-bookworm@sha256:0f086103b026048cc50cb5da25ec435c023c5241a83fc44daea593377abc61c4
+# Preserve Java 17 explicitly on the cloud-only Python 3.12 / Debian 13 base.
+ARG PYTHON_BASE=python:3.12-slim-trixie@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
+ARG JAVA17_BASE=eclipse-temurin:17-jre-noble@sha256:042c05a77eb915684fc8c92cfbbef4fd6f8c24ca7d934d1a7db3543453aaa077
+FROM ${JAVA17_BASE} AS java17
 FROM ${PYTHON_BASE}
-ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 SPARK_LOCAL_IP=127.0.0.1 SPARK_LOCAL_HOSTNAME=localhost
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 SPARK_LOCAL_IP=127.0.0.1 SPARK_LOCAL_HOSTNAME=localhost \
+    JAVA_HOME=/opt/java/openjdk LANG=C.UTF-8 LC_ALL=C.UTF-8 LANGUAGE="" \
+    JAVA_TOOL_OPTIONS="-Djava.awt.headless=true"
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
 WORKDIR /app
+COPY --from=java17 /opt/java/openjdk /opt/java/openjdk
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends openjdk-17-jre-headless ca-certificates \
+    && apt-get upgrade -y \
+    && apt-get install -y --no-install-recommends ca-certificates libstdc++6 zlib1g \
     && rm -rf /var/lib/apt/lists/* \
-    && java -version 2>&1 | head -1 | grep '"17\.'
+    && java -version 2>&1 | grep '^openjdk version "17\.'
 COPY deploy/runtime/spark-requirements.txt /tmp/requirements.txt
 RUN python -m pip install --no-cache-dir --require-hashes -r /tmp/requirements.txt \
     && useradd --uid 10001 --create-home pilot

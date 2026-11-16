@@ -40,6 +40,9 @@ x-application: &application
     ENABLED_PROTOCOLS: uniswap_v3
     PROTOCOL: uniswap_v3
     CHAIN: arbitrum
+    LANG: C.UTF-8
+    LC_ALL: C.UTF-8
+    LANGUAGE: ""
 
 services:
   kafka:

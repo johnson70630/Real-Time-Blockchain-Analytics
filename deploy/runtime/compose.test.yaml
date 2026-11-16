@@ -2,7 +2,8 @@
 name: blockchain-pilot-offline
 services:
   kafka:
-    image: apache/kafka@sha256:4ceccc577f03f51f6af8dbfda55194d0d892f4fa7913ffbded567ce3895622ed
+    image: blockchain-pilot-kafka:offline
+    platform: linux/amd64
     ports: ["127.0.0.1:19092:19092"]
     environment:
       KAFKA_NODE_ID: 1

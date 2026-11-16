@@ -15,9 +15,10 @@ import tempfile
 from pathlib import Path
 
 from runtime.bundle import _git
-from runtime.contracts import REGISTRY
+from runtime.contracts import REGISTRY, REJECTED_IMAGE_DIGESTS
 
-KAFKA_SOURCE = "apache/kafka@sha256:4ceccc577f03f51f6af8dbfda55194d0d892f4fa7913ffbded567ce3895622ed"
+KAFKA_VERSION = "4.3.2"
+KAFKA_SOURCE = "apache/kafka@sha256:852a0d49fc4e656b022e7f23785411802c9a088c78a7c5e39f33969de9c227a7"
 BUILD_PATHS = (
     ".dockerignore",
     "config",
@@ -29,7 +30,7 @@ BUILD_PATHS = (
 LOCAL_IMAGES = {
     "producer": "blockchain-pilot-producer:offline",
     "spark": "blockchain-pilot-spark:offline",
-    "kafka": KAFKA_SOURCE,
+    "kafka": "blockchain-pilot-kafka:offline",
 }
 ROOT = Path(__file__).resolve().parents[1]
 JAR_CONTEXT_PREFIX = "deploy/runtime/verified-jars"
@@ -138,28 +139,26 @@ def publication_plan(inspections: dict, commit: str) -> dict:
             or image.get("os") != "linux"
         ):
             raise ValueError("LINUX_AMD64_DISTINCT_IMAGES_REQUIRED")
+        if image_id in REJECTED_IMAGE_DIGESTS:
+            raise ValueError("REJECTED_IMAGE_RELEASE")
         ids.add(image_id)
-        if role == "kafka":
-            digests = image.get("repo_digests")
-            if not isinstance(digests, list) or not (
-                {KAFKA_SOURCE, "docker.io/" + KAFKA_SOURCE} & set(digests)
-            ):
-                raise ValueError("PINNED_KAFKA_SOURCE_REQUIRED")
-        elif (
+        if (
             image.get("revision") != commit
             or image.get("title") != "blockchain-runtime-" + role
-            or image.get("user") != "10001:10001"
+            or image.get("user") != ("1000:1000" if role == "kafka" else "10001:10001")
         ):
             raise ValueError("REVIEWED_SOURCE_LABELS_AND_USER_REQUIRED")
+        if role == "kafka" and image.get("base_reference") != KAFKA_SOURCE:
+            raise ValueError("PINNED_KAFKA_SOURCE_REQUIRED")
         repository = "spark" if role == "spark" else "producer"
-        tag = ("kafka-3.9.1" if role == "kafka" else role) + "-" + commit
+        tag = ("kafka-" + KAFKA_VERSION if role == "kafka" else role) + "-" + commit
         images.append(
             {
                 "role": role,
                 "local_reference": LOCAL_IMAGES[role],
                 "local_image_id": image_id,
                 "platform": "linux/amd64",
-                "source_commit": commit if role != "kafka" else None,
+                "source_commit": commit,
                 "upstream_reference": KAFKA_SOURCE if role == "kafka" else None,
                 "target": f"{REGISTRY}/blockchain-runtime-{repository}:{tag}",
                 "ecr_deployment_digest": None,
@@ -195,13 +194,13 @@ def inspect_local_images() -> dict:
     )
     if not isinstance(endpoint, str) or not endpoint.startswith("unix:///"):
         raise ValueError("LOCAL_UNIX_DOCKER_REQUIRED")
-    fields = ("id", "os", "architecture", "user", "repo_digests", "revision", "title")
+    fields = ("id", "os", "architecture", "user", "base_reference", "revision", "title")
     expressions = (
         ".Id",
         ".Os",
         ".Architecture",
         ".Config.User",
-        ".RepoDigests",
+        '(index .Config.Labels "org.opencontainers.image.base.name")',
         '(index .Config.Labels "org.opencontainers.image.revision")',
         '(index .Config.Labels "org.opencontainers.image.title")',
     )
