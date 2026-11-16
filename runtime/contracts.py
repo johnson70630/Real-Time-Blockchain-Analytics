@@ -30,6 +30,8 @@ REJECTED_IMAGE_DIGESTS = frozenset({
     "sha256:31394fda18b6324806d91302ed273e9b7dc579ac10e3a8964b1afe43c85879e6",
     # f91dc41 Spark still bundled the vulnerable Hadoop 3.4.1 / Avro copy.
     "sha256:95ea3fce6ff6acad3b6a4765e7a7563eba3ba35183491fe3633d661fb4081872",
+    # 1b3fb7d Spark retained Connect, Derby and legacy Jackson vulnerabilities.
+    "sha256:652b347f1455dbd397336fc2334a3e5d90c95ea10229dc49a4459a68675cd5de",
 })
 
 

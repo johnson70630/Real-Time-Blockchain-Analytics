@@ -24,10 +24,14 @@ COPY deploy/runtime/jars.lock.json /tmp/jars.lock.json
 COPY deploy/runtime/fetch_jars.py /tmp/fetch_jars.py
 COPY deploy/runtime/spark-jvm-patches.lock.json /tmp/spark-jvm-patches.lock.json
 COPY deploy/runtime/patch_jars.py /tmp/patch_jars.py
+COPY deploy/runtime/spark-features.lock.json /tmp/spark-features.lock.json
+COPY deploy/runtime/prune_features.py /tmp/prune_features.py
+COPY runtime/features.py /tmp/runtime_features.py
 RUN --mount=type=bind,source=deploy/runtime/verified-jars,target=/tmp/verified-jars,ro \
     python /tmp/fetch_jars.py /tmp/jars.lock.json --cache-only /tmp/reviewed-jars --cache /tmp/verified-jars --offline \
     && python /tmp/patch_jars.py /tmp/spark-jvm-patches.lock.json --cache /tmp/reviewed-jars --overrides /opt/pilot/jvm-overrides --downloads /tmp/jars.lock.json \
     && python /tmp/fetch_jars.py /tmp/jars.lock.json --cache /tmp/reviewed-jars --offline \
+    && python /tmp/prune_features.py /tmp/spark-features.lock.json --manifest /opt/pilot/streaming-profile.json \
     && rm -rf /tmp/reviewed-jars
 COPY config /app/config
 COPY spark /app/spark

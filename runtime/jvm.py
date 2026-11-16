@@ -3,6 +3,8 @@
 import json
 from pathlib import Path
 
+from runtime.features import verify_profile
+
 
 OVERRIDES = Path("/opt/pilot/jvm-overrides")
 JARS = Path("/usr/local/lib/python3.12/site-packages/pyspark/jars")
@@ -68,6 +70,7 @@ def verify_classloader(jvm):
         "families": lock["families"],
         "components": lock["components"],
         "class_origins": origins,
+        "streaming_profile": verify_profile(loader),
     }
 
 

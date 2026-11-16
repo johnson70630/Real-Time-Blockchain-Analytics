@@ -6,6 +6,7 @@ from types import SimpleNamespace as NS
 import pytest
 
 from runtime import jvm
+from runtime import features
 
 COMPONENTS = {
     "hadoop": "3.4.3",
@@ -46,7 +47,9 @@ def fake_spark(override, shadow=None, *, version="4.0.1", java="17", hadoop="3.4
             )
         )
 
-    loader = NS(loadClass=load)
+    loader = NS(
+        loadClass=load, getResources=lambda _: NS(hasMoreElements=lambda: False)
+    )
     vm = NS(
         java=NS(
             lang=NS(
@@ -67,6 +70,21 @@ def fake_spark(override, shadow=None, *, version="4.0.1", java="17", hadoop="3.4
         ),
         conf=NS(get=lambda _: "in-memory"),
     ), families
+
+
+@pytest.fixture(autouse=True)
+def reviewed_streaming_profile(tmp_path, monkeypatch):
+    from pathlib import Path
+
+    monkeypatch.setattr(features, "MANIFEST", tmp_path / "streaming-profile.json")
+    monkeypatch.setattr(features, "JARS", tmp_path / "jars")
+    features.JARS.mkdir()
+    features.MANIFEST.write_bytes(
+        (
+            Path(__file__).resolve().parents[1]
+            / "deploy/runtime/spark-features.lock.json"
+        ).read_bytes()
+    )
 
 
 @pytest.mark.parametrize(

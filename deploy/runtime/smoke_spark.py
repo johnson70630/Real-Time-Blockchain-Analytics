@@ -4,10 +4,12 @@ import hashlib
 import json
 import os
 import sys
+import zipfile
 from pathlib import Path
 
 from pyspark.sql import SparkSession
 from runtime.jvm import verify_class_origins
+from runtime.features import FORBIDDEN_CLASSES, verify_profile
 
 spark = (
     SparkSession.builder.master("local[1]")
@@ -25,6 +27,33 @@ try:
     assert jvm.org.apache.kafka.common.utils.AppInfoParser.getVersion() == "3.9.2"
     assert jvm.java.nio.charset.Charset.defaultCharset().name() == "UTF-8"
     security = verify_class_origins(spark)
+    assert security["streaming_profile"]["profile"] == "local_streaming_pilot"
+    assert not security["streaming_profile"]["excluded_classes_resolvable"]
+    print("SPARK_STREAMING_FEATURE_PROFILE_VERIFIED")
+    # A renamed artifact cannot bypass the resource guard. This synthetic class
+    # resource is deliberately never loaded or executed; use a child loader so
+    # the real Spark driver classpath remains intact for subsequent I/O checks.
+    resource = FORBIDDEN_CLASSES[-1].replace(".", "/") + ".class"
+    shadow = Path("/tmp/renamed-feature.jar")
+    with zipfile.ZipFile(shadow, "w") as jar:
+        jar.writestr(resource, b"synthetic resource; never executable")
+    gateway = spark.sparkContext._gateway
+    urls = gateway.new_array(jvm.java.net.URL, 1)
+    urls[0] = jvm.java.io.File(str(shadow)).toURI().toURL()
+    child = jvm.java.net.URLClassLoader.newInstance(
+        urls, jvm.java.lang.Thread.currentThread().getContextClassLoader()
+    )
+    try:
+        try:
+            verify_profile(child)
+        except RuntimeError as error:
+            assert str(error) == "PILOT_STREAMING_FEATURE_PROFILE_REQUIRED"
+        else:
+            raise AssertionError("Renamed excluded class resource was accepted")
+    finally:
+        child.close()
+        shadow.unlink()
+    print("RENAMED_EXCLUDED_CLASS_RESOURCE_REJECTED")
     assert (
         str(jvm.io.netty.util.Version.identify().get("netty-handler").artifactVersion())
         == security["families"]["netty"]

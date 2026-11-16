@@ -1,6 +1,11 @@
 # Milestone 11.6C — first streaming pilot readiness
 
-Latest offline work: [matched Hadoop 3.4.3 remediation](aws_runtime_hadoop343_remediation.md)
+Latest profile review: [minimal cloud streaming distribution](aws_runtime_streaming_profile.md)
+removes unused server/catalog modules and reduces Spark library findings to
+1 critical / 60 high. The release remains blocked; no exceptions, publication
+or paid pilot are approved. Counts below preserve the earlier checkpoint.
+
+Previous offline work: [matched Hadoop 3.4.3 remediation](aws_runtime_hadoop343_remediation.md)
 updates the client/S3A/SDK cohort and reduces Spark library findings to 4 critical /
 78 high. The release remains blocked; no exceptions or deployment are approved.
 

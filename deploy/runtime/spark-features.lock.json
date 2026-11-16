@@ -1,0 +1,380 @@
+{
+  "schema_version": 1,
+  "pyspark_version": "4.0.1",
+  "profile": "local_streaming_pilot",
+  "excluded_features": [
+    "spark_connect",
+    "hive_catalog",
+    "hive_thriftserver",
+    "embedded_derby",
+    "legacy_codehaus_json"
+  ],
+  "removals": [
+    {
+      "path": "connect-repl/ammonite-compiler-interface_2.13.16-3.0.1.jar",
+      "sha512": "088d53d8da5a0746ad6662f51cf8eff007446fac58602736ecf116ec228a45be6c86982a2d9802a8c404889ec0a237463a81a73e70e8fc687496eadcab0cceaf",
+      "size_bytes": 37443,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/ammonite-compiler_2.13.16-3.0.1.jar",
+      "sha512": "f63a637fad9e50355878146f5371f1b9521579d8b198fa8c5eb03a38b559969f70d074b5016eb90bcd84e6f75e690e682303a6b134454132992ee1bc34e47f05",
+      "size_bytes": 406897,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/ammonite-interp-api_2.13.16-3.0.1.jar",
+      "sha512": "2700fb25033ede58b907a8cef1f3cc0c3ac0ef050de25a9284fec73f62f1ad17a5507e4be0f8b3be83385184a9429eaa7438cb50e53adb3dea44b6f86de02fcf",
+      "size_bytes": 28064,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/ammonite-interp_2.13.16-3.0.1.jar",
+      "sha512": "e2e6756b95454afaba23269ab59b376c03316c2056d4dee95e1dc0738b3c8c352234606261ef1417841edbdad3bbbf4e9e2eede30fdc054550ed06921b750c00",
+      "size_bytes": 234749,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/ammonite-repl-api_2.13.16-3.0.1.jar",
+      "sha512": "b833803cdf88ec7240b9f24a414ba4f1047c75db0df1f68af1d0b1c8f1ea2ec44fa55777f492e14bb0b21541a3ae16bdeb6ed8336af0311015e748d24db8b9c8",
+      "size_bytes": 83553,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/ammonite-repl_2.13.16-3.0.1.jar",
+      "sha512": "db65a7310cfb791f682389e3f78b64e6c4846f6e7c44fa76c91e38c3fe9e269e154da560bb8f4460a5f0757c43e4c9b6b43f6c034743dc7487faa8389c965456",
+      "size_bytes": 105168,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/ammonite-runtime_2.13.16-3.0.1.jar",
+      "sha512": "aa65116904016b09a2e46c94f20d0a4ed16806477db35b6a529be8382e069c34c7508a9f5c8a20638ac28349c5900f6b79871e71c0c261e52abdf6ec33b2bde4",
+      "size_bytes": 193027,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/ammonite-terminal_2.13-3.0.1.jar",
+      "sha512": "148999c586c0d629b1f7a44d593e95b4e1f43e8f854d9077d37c9bac7867861ae1eddf83b782ae5ba989dc388aa290575e1b8ab9b03da6dff334a7b66537cbd0",
+      "size_bytes": 178158,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/ammonite-util_2.13-3.0.1.jar",
+      "sha512": "dc8edae9ab9c0ea5ba65536cd627ec49f190bc6ed9480afb9d3cc1190370e60fe1140757fadfa3b491b7015852cfcb0b3bf1017503a51d8f12789e1d7b2453c0",
+      "size_bytes": 154485,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/ammonite_2.13.16-3.0.1.jar",
+      "sha512": "40db1542f57e75597f0abfc6fc1d8ee00c6de0e80a27ed2c50a78f70eee1de5af7c81dc8b4f3915ed97dc9fcc74f696d8e1c0f85bb3121a3308085e5788fec90",
+      "size_bytes": 176072,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/bsp4j-2.1.0-M5.jar",
+      "sha512": "b135a888a902d1734b90da16a050554bc1230660886f1625638c1a452e1eff1190160cfbd6d6b9ce939d363f3790aca4514e7884ff15ad9830eb3f79e394e610",
+      "size_bytes": 151956,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/class-path-util_2.13-0.1.4.jar",
+      "sha512": "5bb6cb183e9748f3884f5cca2fd55b2490d7f8ec4d23dcb1a232134bcb81692d214025c566de556f1ecf4a71b393deef6dc2cf94f8102d9587a75995a975e851",
+      "size_bytes": 8572,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/common_2.13-4.9.7.jar",
+      "sha512": "6a5c50fc1f152aa606313322dcdca0407497a569cfeacf5591930d2e8e21bb319d23c08b56b0a585132be6cd342892a4ef8fa76ab6ab3092f95dc6d0340765de",
+      "size_bytes": 2487477,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/dependency-interface_2.13-0.2.3.jar",
+      "sha512": "4790e6544585a8dfb9e7553507ed02249ac74ee1db776d57649608a2836f8f1daa66dd75b3c742a81927b04d2fc69c493097144d3a68df04a0e21eb1f87f1934",
+      "size_bytes": 10673,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/dependency_2.13-0.2.3.jar",
+      "sha512": "d5346440ee7b8e3e45baa065c1848ebf4a4611a27672753856abd885e4225b0da00517a4791b13d2bd6d59cccae2b72fac012f2c7d9e5b336d71383f8be18848",
+      "size_bytes": 92642,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/fansi_2.13-0.5.0.jar",
+      "sha512": "354a846ff173b27300e361c135f72673956def4d2bc976ffedf1135fe1e2a9e9faa9f31f699b8eddb97accc03d6781d1207f076a81437c9ebd8177b54b60e3b8",
+      "size_bytes": 65360,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/fastparse_2.13-3.1.1.jar",
+      "sha512": "b46f8c0d4f1e561ac0bec3d6b34d7018e36958d185f07c26560a0db77117bc5c8820744cb3cb514ccfaa797bfa770a8f5630d9de6b140d9a14f688f4b1a6d135",
+      "size_bytes": 332554,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/geny_2.13-1.1.1.jar",
+      "sha512": "519c3fa7854f225631b7c03044d81e2eaf64c386a93084378c9a19345f3400dcfb3f16846fab7abeaeafb760782120826f68b0f61895df866fa3c436115377aa",
+      "size_bytes": 91985,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/interface-1.0.19.jar",
+      "sha512": "b32d62214e76687bb8e25b8e5b9b0fe7e84a6d3db8366f7d8af55b9b5563fae866f0663c8536cf6c3a782951c1d418d354265faae50b28a2a76ea780ae553fa6",
+      "size_bytes": 9943108,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/javaparser-core-3.2.12.jar",
+      "sha512": "bd353ec7909fe1a9bdf9d3f36559475763507179857d7390a745d992e2a409c7785dd1d3fa15caacd131e6c36009fd27782957a593883d71c7abd95f703bc63c",
+      "size_bytes": 882046,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/lenses_2.13-0.11.17.jar",
+      "sha512": "3801ff66fd27b2135f0d83cdeb20261467eb7605f9ca8eb2905b534335e16aaa661c7d81bdbe467b3bc4cd478e4552135d74ad2fb4234694e30759049ecd413c",
+      "size_bytes": 35755,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/mainargs_2.13-0.7.5.jar",
+      "sha512": "0185be48fa76e9fdde0ed197d959ee6c89486a0351133d8cfa97490d0d55b6c23b160f3b2c52e11d802cafd268c7a5ade58324ed0ff36bdd000e865d365a42be",
+      "size_bytes": 217834,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/org.eclipse.lsp4j.generator-0.20.1.jar",
+      "sha512": "48e4c472e0ed9454b42458e24c574dbf8fda57e83ea07b5432d3a0f1dc4269addedc78d4b6ed78782168ff744fd3498d910bfcc5c627b4569a26ab33fb527c1b",
+      "size_bytes": 54029,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/org.eclipse.lsp4j.jsonrpc-0.20.1.jar",
+      "sha512": "e4e95a2d4b3efc568c6639f71c760960f4816342d926d1e87b4f09245b90f8c60d71b17acdf655035fe6f6d2398b055f43c4142e62c088c321ff5cb0fc39c815",
+      "size_bytes": 137420,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/org.eclipse.xtend.lib-2.28.0.jar",
+      "sha512": "a370f9a56c8f4f98f1544d8505176af1b21d32e73a4ec6441df44c5140da77dd0bcc7c365fde0a0b15eabb0f6a685f96cf0dc83f46163d7cd217dc2da4968ef9",
+      "size_bytes": 112545,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/org.eclipse.xtend.lib.macro-2.28.0.jar",
+      "sha512": "a9982f3a22627ba4bd2491042049da8e7e2934685df6d4e185e4e586825582e3fe6ec4d5d3aaf757e67b5b27fe215a3daaf2fdb86a22f7b3db58f9c9af70d585",
+      "size_bytes": 79739,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/org.eclipse.xtext.xbase.lib-2.28.0.jar",
+      "sha512": "06874fdd5c93b789441280ef46de25c843a76217e918db6ae60e7de0d62cdb4ad7fdf11b1d65a4e0660ed3649fe24c1dd23c1d73ff7972344b8080cb00778022",
+      "size_bytes": 166255,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/os-lib_2.13-0.11.2.jar",
+      "sha512": "87eae7842df4a957aea4076f7b8139b7522cb81732181662be7ee56c847ac66210b15456dd094785e65133e08a073d0d4eff893a6e1b82233e03f862a7b43d5b",
+      "size_bytes": 439317,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/pprint_2.13-0.9.0.jar",
+      "sha512": "5a76b67885c70e020ea7a30c42c404ecf0fdf0418d3accef628c01e52cf54154c8a3503ba0e4a0bcab8719e62919d665967b6dd6a5f902084b6851787ce37179",
+      "size_bytes": 127127,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/protobuf-java-util-4.29.3.jar",
+      "sha512": "9683e8d20748d792c3ea62827559f8b4557a36bcda287c84b0a7c3a06cada3eb2069227690ad282d5b54b720b56c1f325a26bd1624157a27181104e7788b021f",
+      "size_bytes": 76479,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/requests_2.13-0.9.0.jar",
+      "sha512": "cde223d533f21208ba073ed7d38c3f01e8f5c37d2f4ce7709ff7a1927b30a6802704123dde496a7f943a34716c0f397cb0bc03b947101533856a529e92466dc3",
+      "size_bytes": 128209,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/scalaparse_2.13-3.1.1.jar",
+      "sha512": "4f4d6f708bb510870856f47d95ff296eb816f6c717ad703d215bebfa4dd2647117f4a0c374361881cf5e7a776cb3d79627c76a69a19360d6249098f4c52f974b",
+      "size_bytes": 388558,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/scalapb-runtime_2.13-0.11.17.jar",
+      "sha512": "c04917080796c7b79f2316056517816f2b550299203f295f07cef25b89c9ee2e963b83016eed109f00c38aeca4f096e1315c86aa68ca6cbf51b67615994a441e",
+      "size_bytes": 2423169,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/sourcecode_2.13-0.4.3-M1.jar",
+      "sha512": "b9f69c47bbae9ff5abb0aa33ca09125323fa365c65f736fabe9a3ad07e8bf8124399502d2814eb7b462e17aaefa555e0c3e218053f8134fa75bc3c01fb98d870",
+      "size_bytes": 119351,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/spark-connect-client-jvm_2.13-4.0.1.jar",
+      "sha512": "f99854a969639f2af96812fce3a4ec377fbf4e1f05e1d02bf9bcc2e58d51b38fec927640e258d51b35169b1d3a612e823e373655c325b6e54c65e929efd75ef3",
+      "size_bytes": 25162878,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/typename_2.13-1.1.0.jar",
+      "sha512": "2a67a9df0037debfbf6df4dd0e99ec7cbadd8270414d5db2f0e238943b2d131e64ded99e55e4e4a09888a34b44591659756bbada656935136f8668884a6ac02f",
+      "size_bytes": 9701,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/ujson_2.13-4.0.2.jar",
+      "sha512": "2fe2f8554cffd9bc239ea856301506ba801e01b71c583106ea45501b3c92c5cefddcb79b85e79ff7dbdee37dcb3362e25a2110fd0b4a7256cf016a09acc629a0",
+      "size_bytes": 204002,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/upack_2.13-4.0.2.jar",
+      "sha512": "8b51b9157349d1fbc7bb448133cd7d649ef81b760eda19b6d611669ffdaca81b5a26d9e3e5b67b538da58181701c568f7560762531f6321c2857cf206d95c179",
+      "size_bytes": 109385,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/upickle-core_2.13-4.0.2.jar",
+      "sha512": "6ac46e84b30b0a5e026f4b0d697cc0b2e4eaf8280ace7369e141cc38303c0a305fe6d075dcdc085ed279f7c850e2afa4246bf055a111333027ee957dd4e07b41",
+      "size_bytes": 289922,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/upickle-implicits_2.13-4.0.2.jar",
+      "sha512": "56da44650a2fa4a8f432d0eeb0b43729a990d2a679a3e714085ab1b0cb581080eab0a4fe37ae5208dbde92c3ff02d996363800f88e5741edd57a426282ad5a50",
+      "size_bytes": 255075,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "connect-repl/upickle_2.13-4.0.2.jar",
+      "sha512": "e799e7a4048f025191963e46a09df93b2a9d8edef1e66ee34fb4e5806342aa60104a4edcfebc9887cad3c5e26afef5e7a1344fddd26743421067ffffa7fccc79",
+      "size_bytes": 118925,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "derby-10.16.1.1.jar",
+      "sha512": "2e645944b029d7acaf26afd1d490ef6b599206062ec36a2a052e84b591bf84738145ace70bd1371642273659b61a6b17fb40ea64a516db70580c56ff7abd837a",
+      "size_bytes": 3538107,
+      "feature": "embedded_derby"
+    },
+    {
+      "path": "derbyshared-10.16.1.1.jar",
+      "sha512": "df8f739037bdead36c80a3f8129b26bd24c4b45a7cda2cd440edbbb66d5f53a93fe4c9dd088a54feb9c0e6b1924e3609984869bc432cb869bdc858616cf5d678",
+      "size_bytes": 88705,
+      "feature": "embedded_derby"
+    },
+    {
+      "path": "derbytools-10.16.1.1.jar",
+      "sha512": "f1dc4aac64cd31c20d09f62aa81920216a15850d344126d57683bc4dd498396d74d5ceacf0838c4a4a5e52988fa25e1dd345810c91ddaf065f217cbffa35ceee",
+      "size_bytes": 252754,
+      "feature": "embedded_derby"
+    },
+    {
+      "path": "hive-beeline-2.3.10.jar",
+      "sha512": "9506110d88e74afc13fed9816d049cebc5d4331af6790217e7536019ed97d54ed8b09797a4412b737aa224fe583c484efd476e2f0031c8b0dd54edfbb472adde",
+      "size_bytes": 183850,
+      "feature": "hive_thriftserver"
+    },
+    {
+      "path": "hive-cli-2.3.10.jar",
+      "sha512": "98511307401cdac2511e84184a922b7a568759da134674d7c9afa2b57dff47f37cffa90fa40981da2c68dc286710b333915005ee4cac5d2cfd369a41c3557627",
+      "size_bytes": 44798,
+      "feature": "hive_thriftserver"
+    },
+    {
+      "path": "hive-common-2.3.10.jar",
+      "sha512": "52f471ce5052566c1b05fb936e37e0ad57bf5fb7a2f6bccbfc676e294f8caf9c8d772c6874d389b0ec13ab96e7b787a7835d94ebdc23e9977c944811cdf2ee31",
+      "size_bytes": 447633,
+      "feature": "hive_catalog"
+    },
+    {
+      "path": "hive-exec-2.3.10-core.jar",
+      "sha512": "f1403fa70bab012df11868c66b3caab0040cd830b3a86c90324d934d543a7c1131065f0437e6e8adadd875f2e778031174b1573f4570cdeb979ec8acec43fddf",
+      "size_bytes": 10851509,
+      "feature": "hive_catalog"
+    },
+    {
+      "path": "hive-jdbc-2.3.10.jar",
+      "sha512": "8b24b05b15d6b00f722c7394a9493b5175d6d60604480616b21a2d5ae81c1b5f7ba7995536f80e5c9ddfd44a9c378ba78de2315b8692936356570de1a2de5c4d",
+      "size_bytes": 116988,
+      "feature": "hive_thriftserver"
+    },
+    {
+      "path": "hive-metastore-2.3.10.jar",
+      "sha512": "ed4d4df6db0ab96b4bbf793cb2e75351ed1c9b1cb5562212f1c52a9b8e57f3e2b0c536868a5207a6243f05270b75506a563a930d115b78b3cd5ebd6c5be0ec45",
+      "size_bytes": 8338732,
+      "feature": "hive_catalog"
+    },
+    {
+      "path": "hive-serde-2.3.10.jar",
+      "sha512": "1469bdb00edb064b213575816f41255cf457929527704faa883355721344d718f22756c05dc4b891947bfc42cf9cd352d73663eef63c0b8458f5aea4d6e081ed",
+      "size_bytes": 917902,
+      "feature": "hive_catalog"
+    },
+    {
+      "path": "hive-service-rpc-4.0.0.jar",
+      "sha512": "97305235166cb04f8043bdf039ddccc7323b123b26d7d645682c6e29ba65709dd8e722ffb3b6ab146738a07dc495141f55654c2a9bd056d4ecdf23936bddb79d",
+      "size_bytes": 1810036,
+      "feature": "hive_thriftserver"
+    },
+    {
+      "path": "hive-shims-0.23-2.3.10.jar",
+      "sha512": "61ab9330d203ba100cd87494ee8bc594e439892e252f02e3422b9c14dacc2d6fee2448c8b97ca3ffc02168b81134a727b41884c3bfacc8a2f7b1e19043db2a67",
+      "size_bytes": 54374,
+      "feature": "hive_catalog"
+    },
+    {
+      "path": "hive-shims-2.3.10.jar",
+      "sha512": "735cd90c92c783b22728584ace9e47020dffb0b7db57225e66667a48eddcfa43645e48cb2f3b4e70c965a7b44316ac1e71674bf6ceda01fcc41b345505bd363f",
+      "size_bytes": 9014,
+      "feature": "hive_catalog"
+    },
+    {
+      "path": "hive-shims-common-2.3.10.jar",
+      "sha512": "de2fdd8c785591fe64af2b6891033d62cdd3304c1e3cc35ec0d6606cd613c4fc9b13f1ea18cba08c507da93d65135f3cc7f40b4ecbc907b4d02c14d8eac003af",
+      "size_bytes": 121491,
+      "feature": "hive_catalog"
+    },
+    {
+      "path": "hive-shims-scheduler-2.3.10.jar",
+      "sha512": "ad01ae1e20ec94650b9c4855b8c82a9d9b1b27f6075ee6289ecdbcf9bd1e00ed26587749177d3e6215d1ca3743b095a60b9d4b91a7bc168114a462122194aef0",
+      "size_bytes": 13169,
+      "feature": "hive_catalog"
+    },
+    {
+      "path": "jackson-core-asl-1.9.13.jar",
+      "sha512": "11725da54c7c18af0b50967a9317866ce9d11eb94d3b52ff7a54c6550070e143b5a582de9a8ebb6d61a8104f4dcd7ddb9c2e6f5c3605b6900d48f5241fe38d89",
+      "size_bytes": 232248,
+      "feature": "legacy_codehaus_json"
+    },
+    {
+      "path": "jackson-mapper-asl-1.9.13.jar",
+      "sha512": "81cd7962fd9ee6d2354f5e44d23de1fa96d0da665b79a0f4ce6f8012bb4651683ae69b82daae3cf4feb101658a344bf4d665fefc3a57eca3a720761732963873",
+      "size_bytes": 780664,
+      "feature": "legacy_codehaus_json"
+    },
+    {
+      "path": "spark-connect_2.13-4.0.1.jar",
+      "sha512": "aeca9e52593e4ab712d23b0faadd6df3f6d68c0c94f630971b7bd40410bc483c204c37d149c620ec589620aecdac2351b5284ae987b815101bd51d14b4090713",
+      "size_bytes": 16577649,
+      "feature": "spark_connect"
+    },
+    {
+      "path": "spark-hive-thriftserver_2.13-4.0.1.jar",
+      "sha512": "42a9d41e4edaffb9471f2fdde3ade3d562b63155d57001ba08a1b251b2de7774f90c4a8fe94e070140612bfc795c93997b78690b25cb76cbead5744f14801c3b",
+      "size_bytes": 601134,
+      "feature": "hive_thriftserver"
+    },
+    {
+      "path": "spark-hive_2.13-4.0.1.jar",
+      "sha512": "ef0008842a0cfe9c91aa0f2de703dca5fd040b2a1422ea12374367ddc29a35837dbb153d3a54707ad25938bbad144ad8c685ea48a21c2aed31ab232cbbb2605b",
+      "size_bytes": 735184,
+      "feature": "hive_catalog"
+    }
+  ]
+}

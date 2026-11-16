@@ -1,5 +1,10 @@
 # Milestone 11.6C — matched Hadoop 3.4.3 runtime
 
+Latest profile review: [minimal cloud streaming distribution](aws_runtime_streaming_profile.md)
+removes unused server/catalog modules and reduces Spark library findings to
+1 critical / 60 high. The release remains blocked; no exceptions, publication
+or paid pilot are approved. Counts below preserve the earlier checkpoint.
+
 Reviewed 2026-11-16 UTC. **The release remains blocked.** This is an offline
 application-image checkpoint. It accepts no vulnerability exceptions and does
 not authorize publication or an AWS pilot. Milestone 11.5D remains paused.
