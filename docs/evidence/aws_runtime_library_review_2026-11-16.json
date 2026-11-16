@@ -1,0 +1,1981 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-11-16T07:30:04.281780+00:00",
+  "milestone": "11.6C",
+  "scope": "OFFLINE_LIBRARY_AND_APPLICABILITY_REVIEW",
+  "baseline_source_commit": "8805eddb25a20f5abc188d359bf7412d2998c1c4",
+  "release_gate": "BLOCKED",
+  "exceptions_accepted": [],
+  "suppression_files_created": false,
+  "aws_calls_made": false,
+  "cloud_resources_modified": false,
+  "images_published": false,
+  "scanner": {
+    "name": "Trivy",
+    "version": "0.76.2",
+    "binary_sha256": "7a15c426f963473a485a4f315e21f8e2c881269d500bf0de35da13a4421fa108",
+    "vulnerability_database": {
+      "Version": 2,
+      "NextUpdate": "2026-11-17T01:11:02.624122856Z",
+      "UpdatedAt": "2026-11-16T01:11:02.624123452Z",
+      "DownloadedAt": "2026-11-16T06:29:57.145978Z"
+    },
+    "java_identification_database": {
+      "Version": 1,
+      "NextUpdate": "2026-11-19T00:57:00.601023403Z",
+      "UpdatedAt": "2026-11-16T00:57:00.601024044Z",
+      "DownloadedAt": "2026-11-16T07:24:25.109375Z"
+    },
+    "scan_input": "local_image_tar",
+    "offline_scan": true,
+    "ignore_unfixed": false,
+    "ignorefile": "",
+    "library_scan_excludes_jre_audit": true
+  },
+  "baseline_library_scans": [
+    {
+      "role": "producer",
+      "source_commit": "8805eddb25a20f5abc188d359bf7412d2998c1c4",
+      "manifest_digest": "sha256:4f3eba5a4885ad26e8ac2699ef103d0eba4e447922be4089f657593d72b46772",
+      "severity_counts": {
+        "HIGH": 6,
+        "MEDIUM": 13,
+        "LOW": 2,
+        "CRITICAL": 1
+      },
+      "unique_high_critical_package_cve_pairs": 7,
+      "result_types": {
+        "python-pkg": 1
+      },
+      "scanners": [
+        "vuln"
+      ],
+      "package_types": [
+        "library"
+      ],
+      "ignore_unfixed": false,
+      "ignorefile": "",
+      "aws_calls_made": false,
+      "release_approved": false,
+      "scan_report_sha256": "700690417f0bda931457d9853334f5d0f6c7c2da716f213a8f7882e7e523c94b",
+      "artifact_id": "sha256:3c7818084bac33bfc4cacbba31de4712c58c78f91c187d9e6fffc6e785ce8206",
+      "image_config_id": "sha256:194606b4561afe61e0b8090531e15a0a020aaf6a8aa56236894d65c23c2ae412",
+      "high_critical_occurrences": [
+        {
+          "VulnerabilityID": "CVE-2026-111064",
+          "PkgName": "aiohttp",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/aiohttp-3.14.1.dist-info/METADATA",
+          "InstalledVersion": "3.14.1",
+          "FixedVersion": "3.14.4",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-111066",
+          "PkgName": "aiohttp",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/aiohttp-3.14.1.dist-info/METADATA",
+          "InstalledVersion": "3.14.1",
+          "FixedVersion": "3.14.4",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-123817",
+          "PkgName": "aiohttp",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/aiohttp-3.14.1.dist-info/METADATA",
+          "InstalledVersion": "3.14.1",
+          "FixedVersion": "3.14.4",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-69244",
+          "PkgName": "aiohttp",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/aiohttp-3.14.1.dist-info/METADATA",
+          "InstalledVersion": "3.14.1",
+          "FixedVersion": "3.14.3",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "GHSA-6q48-6c7w-9gw2",
+          "PkgName": "certifi",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/certifi-2025.1.31.dist-info/METADATA",
+          "InstalledVersion": "2025.1.31",
+          "FixedVersion": "2026.10.18",
+          "Severity": "CRITICAL",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-97687",
+          "PkgName": "urllib3",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/urllib3-2.7.0.dist-info/METADATA",
+          "InstalledVersion": "2.7.0",
+          "FixedVersion": "2.8.0",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-97689",
+          "PkgName": "urllib3",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/urllib3-2.7.0.dist-info/METADATA",
+          "InstalledVersion": "2.7.0",
+          "FixedVersion": "2.8.0",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        }
+      ],
+      "scanned_package_counts_by_type": {
+        "python-pkg": 43
+      }
+    },
+    {
+      "role": "spark",
+      "source_commit": "8805eddb25a20f5abc188d359bf7412d2998c1c4",
+      "manifest_digest": "sha256:7d943ca6e3598bcab11f3729610c846f4d4d0736e3702b6b19e1faa8939288a9",
+      "severity_counts": {
+        "HIGH": 102,
+        "MEDIUM": 122,
+        "LOW": 9,
+        "CRITICAL": 9
+      },
+      "unique_high_critical_package_cve_pairs": 92,
+      "result_types": {
+        "jar": 1,
+        "python-pkg": 1
+      },
+      "scanners": [
+        "vuln"
+      ],
+      "package_types": [
+        "library"
+      ],
+      "ignore_unfixed": false,
+      "ignorefile": "",
+      "aws_calls_made": false,
+      "release_approved": false,
+      "scan_report_sha256": "38a9401be3f6a18659d06b0cb9fd8c2ba579415036629a0b94264479a062a867",
+      "artifact_id": "sha256:79055b8e1284ec6369ee45e9d4fde4a421a9594a6f302c0587ac826324258d6e",
+      "image_config_id": "sha256:eb80261ab57a164822dd20ae5c4731a9c78b18605b04ff7123cc3bb9bad9dac0",
+      "high_critical_occurrences": [
+        {
+          "VulnerabilityID": "CVE-2025-52999",
+          "PkgName": "com.fasterxml.jackson.core:jackson-core",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.1.jar",
+          "InstalledVersion": "2.12.7",
+          "FixedVersion": "2.15.0",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-68494",
+          "PkgName": "com.fasterxml.jackson.core:jackson-core",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.1.jar",
+          "InstalledVersion": "2.12.7",
+          "FixedVersion": "2.18.8, 2.21.4",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-89425",
+          "PkgName": "com.fasterxml.jackson.core:jackson-core",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.1.jar",
+          "InstalledVersion": "2.12.7",
+          "FixedVersion": "2.21.7, 2.22.3, 2.18.11",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-68494",
+          "PkgName": "com.fasterxml.jackson.core:jackson-core",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/parquet-jackson-1.15.2.jar",
+          "InstalledVersion": "2.18.1",
+          "FixedVersion": "2.18.8, 2.21.4",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-89407",
+          "PkgName": "com.fasterxml.jackson.core:jackson-core",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/parquet-jackson-1.15.2.jar",
+          "InstalledVersion": "2.18.1",
+          "FixedVersion": "2.18.11, 2.21.7, 2.22.3",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-89425",
+          "PkgName": "com.fasterxml.jackson.core:jackson-core",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/parquet-jackson-1.15.2.jar",
+          "InstalledVersion": "2.18.1",
+          "FixedVersion": "2.21.7, 2.22.3, 2.18.11",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-68494",
+          "PkgName": "com.fasterxml.jackson.core:jackson-core",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/jackson-core-2.18.2.jar",
+          "InstalledVersion": "2.18.2",
+          "FixedVersion": "2.18.8, 2.21.4",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-89407",
+          "PkgName": "com.fasterxml.jackson.core:jackson-core",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/jackson-core-2.18.2.jar",
+          "InstalledVersion": "2.18.2",
+          "FixedVersion": "2.18.11, 2.21.7, 2.22.3",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-89425",
+          "PkgName": "com.fasterxml.jackson.core:jackson-core",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/jackson-core-2.18.2.jar",
+          "InstalledVersion": "2.18.2",
+          "FixedVersion": "2.21.7, 2.22.3, 2.18.11",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-54512",
+          "PkgName": "com.fasterxml.jackson.core:jackson-databind",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.1.jar",
+          "InstalledVersion": "2.12.7.1",
+          "FixedVersion": "2.18.8, 3.1.4, 2.21.4",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-54513",
+          "PkgName": "com.fasterxml.jackson.core:jackson-databind",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.1.jar",
+          "InstalledVersion": "2.12.7.1",
+          "FixedVersion": "2.18.8, 2.21.4, 3.1.4",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-91776",
+          "PkgName": "com.fasterxml.jackson.core:jackson-databind",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.1.jar",
+          "InstalledVersion": "2.12.7.1",
+          "FixedVersion": "2.18.11, 2.21.7, 2.22.3",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-91777",
+          "PkgName": "com.fasterxml.jackson.core:jackson-databind",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.1.jar",
+          "InstalledVersion": "2.12.7.1",
+          "FixedVersion": "2.21.7, 2.18.11, 2.22.3",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-54512",
+          "PkgName": "com.fasterxml.jackson.core:jackson-databind",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/parquet-jackson-1.15.2.jar",
+          "InstalledVersion": "2.18.1",
+          "FixedVersion": "2.18.8, 3.1.4, 2.21.4",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-54513",
+          "PkgName": "com.fasterxml.jackson.core:jackson-databind",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/parquet-jackson-1.15.2.jar",
+          "InstalledVersion": "2.18.1",
+          "FixedVersion": "2.18.8, 2.21.4, 3.1.4",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-68497",
+          "PkgName": "com.fasterxml.jackson.core:jackson-databind",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/parquet-jackson-1.15.2.jar",
+          "InstalledVersion": "2.18.1",
+          "FixedVersion": "2.18.10, 2.21.6, 2.22.2",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-91776",
+          "PkgName": "com.fasterxml.jackson.core:jackson-databind",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/parquet-jackson-1.15.2.jar",
+          "InstalledVersion": "2.18.1",
+          "FixedVersion": "2.18.11, 2.21.7, 2.22.3",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-91777",
+          "PkgName": "com.fasterxml.jackson.core:jackson-databind",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/parquet-jackson-1.15.2.jar",
+          "InstalledVersion": "2.18.1",
+          "FixedVersion": "2.21.7, 2.18.11, 2.22.3",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-54512",
+          "PkgName": "com.fasterxml.jackson.core:jackson-databind",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/jackson-databind-2.18.2.jar",
+          "InstalledVersion": "2.18.2",
+          "FixedVersion": "2.18.8, 3.1.4, 2.21.4",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-54513",
+          "PkgName": "com.fasterxml.jackson.core:jackson-databind",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/jackson-databind-2.18.2.jar",
+          "InstalledVersion": "2.18.2",
+          "FixedVersion": "2.18.8, 2.21.4, 3.1.4",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-68497",
+          "PkgName": "com.fasterxml.jackson.core:jackson-databind",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/jackson-databind-2.18.2.jar",
+          "InstalledVersion": "2.18.2",
+          "FixedVersion": "2.18.10, 2.21.6, 2.22.2",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-91776",
+          "PkgName": "com.fasterxml.jackson.core:jackson-databind",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/jackson-databind-2.18.2.jar",
+          "InstalledVersion": "2.18.2",
+          "FixedVersion": "2.18.11, 2.21.7, 2.22.3",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-91777",
+          "PkgName": "com.fasterxml.jackson.core:jackson-databind",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/jackson-databind-2.18.2.jar",
+          "InstalledVersion": "2.18.2",
+          "FixedVersion": "2.21.7, 2.18.11, 2.22.3",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-102554",
+          "PkgName": "com.google.guava:guava",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.1.jar",
+          "InstalledVersion": "32.0.1-jre",
+          "FixedVersion": "33.7.2",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-102554",
+          "PkgName": "com.google.guava:guava",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/connect-repl/spark-connect-client-jvm_2.13-4.0.1.jar",
+          "InstalledVersion": "33.4.0-jre",
+          "FixedVersion": "33.7.2",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-102554",
+          "PkgName": "com.google.guava:guava",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/guava-33.4.0-jre.jar",
+          "InstalledVersion": "33.4.0-jre",
+          "FixedVersion": "33.7.2",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-102554",
+          "PkgName": "com.google.guava:guava",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/spark-connect_2.13-4.0.1.jar",
+          "InstalledVersion": "33.4.0-jre",
+          "FixedVersion": "33.7.2",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-102554",
+          "PkgName": "com.google.guava:guava",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/spark-network-common_2.13-4.0.1.jar",
+          "InstalledVersion": "33.4.0-jre",
+          "FixedVersion": "33.7.2",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2025-48734",
+          "PkgName": "commons-beanutils:commons-beanutils",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.1.jar",
+          "InstalledVersion": "1.9.4",
+          "FixedVersion": "1.11.0",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2025-67721",
+          "PkgName": "io.airlift:aircompressor",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/aircompressor-2.0.2.jar",
+          "InstalledVersion": "2.0.2",
+          "FixedVersion": "2.0.3",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-42583",
+          "PkgName": "io.netty:netty-codec",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.24.6.jar",
+          "InstalledVersion": "4.1.100.Final",
+          "FixedVersion": "4.1.133.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-59901",
+          "PkgName": "io.netty:netty-codec",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.24.6.jar",
+          "InstalledVersion": "4.1.100.Final",
+          "FixedVersion": "4.1.136.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-42583",
+          "PkgName": "io.netty:netty-codec",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/connect-repl/spark-connect-client-jvm_2.13-4.0.1.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.1.133.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-42583",
+          "PkgName": "io.netty:netty-codec",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/netty-codec-4.1.118.Final.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.1.133.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-59901",
+          "PkgName": "io.netty:netty-codec",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/connect-repl/spark-connect-client-jvm_2.13-4.0.1.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.1.136.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-59901",
+          "PkgName": "io.netty:netty-codec",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/netty-codec-4.1.118.Final.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.1.136.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-42579",
+          "PkgName": "io.netty:netty-codec-dns",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/netty-codec-dns-4.1.118.Final.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.2.13.Final, 4.1.133.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-33870",
+          "PkgName": "io.netty:netty-codec-http",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.24.6.jar",
+          "InstalledVersion": "4.1.100.Final",
+          "FixedVersion": "4.1.132.Final, 4.2.10.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-42584",
+          "PkgName": "io.netty:netty-codec-http",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.24.6.jar",
+          "InstalledVersion": "4.1.100.Final",
+          "FixedVersion": "4.2.13.Final, 4.1.133.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-42587",
+          "PkgName": "io.netty:netty-codec-http",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.24.6.jar",
+          "InstalledVersion": "4.1.100.Final",
+          "FixedVersion": "4.2.13.Final, 4.1.133.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-55831",
+          "PkgName": "io.netty:netty-codec-http",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.24.6.jar",
+          "InstalledVersion": "4.1.100.Final",
+          "FixedVersion": "4.2.16.Final, 4.1.136.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-55833",
+          "PkgName": "io.netty:netty-codec-http",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.24.6.jar",
+          "InstalledVersion": "4.1.100.Final",
+          "FixedVersion": "4.2.16.Final, 4.1.136.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-56745",
+          "PkgName": "io.netty:netty-codec-http",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.24.6.jar",
+          "InstalledVersion": "4.1.100.Final",
+          "FixedVersion": "4.2.16.Final, 4.1.136.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-33870",
+          "PkgName": "io.netty:netty-codec-http",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/connect-repl/spark-connect-client-jvm_2.13-4.0.1.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.1.132.Final, 4.2.10.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-33870",
+          "PkgName": "io.netty:netty-codec-http",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/netty-codec-http-4.1.118.Final.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.1.132.Final, 4.2.10.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-42584",
+          "PkgName": "io.netty:netty-codec-http",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/connect-repl/spark-connect-client-jvm_2.13-4.0.1.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.2.13.Final, 4.1.133.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-42584",
+          "PkgName": "io.netty:netty-codec-http",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/netty-codec-http-4.1.118.Final.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.2.13.Final, 4.1.133.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-42587",
+          "PkgName": "io.netty:netty-codec-http",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/connect-repl/spark-connect-client-jvm_2.13-4.0.1.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.2.13.Final, 4.1.133.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-42587",
+          "PkgName": "io.netty:netty-codec-http",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/netty-codec-http-4.1.118.Final.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.2.13.Final, 4.1.133.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-55831",
+          "PkgName": "io.netty:netty-codec-http",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/connect-repl/spark-connect-client-jvm_2.13-4.0.1.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.2.16.Final, 4.1.136.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-55831",
+          "PkgName": "io.netty:netty-codec-http",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/netty-codec-http-4.1.118.Final.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.2.16.Final, 4.1.136.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-55833",
+          "PkgName": "io.netty:netty-codec-http",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/connect-repl/spark-connect-client-jvm_2.13-4.0.1.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.2.16.Final, 4.1.136.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-55833",
+          "PkgName": "io.netty:netty-codec-http",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/netty-codec-http-4.1.118.Final.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.2.16.Final, 4.1.136.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-56745",
+          "PkgName": "io.netty:netty-codec-http",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/connect-repl/spark-connect-client-jvm_2.13-4.0.1.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.2.16.Final, 4.1.136.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-56745",
+          "PkgName": "io.netty:netty-codec-http",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/netty-codec-http-4.1.118.Final.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.2.16.Final, 4.1.136.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2025-55163",
+          "PkgName": "io.netty:netty-codec-http2",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.24.6.jar",
+          "InstalledVersion": "4.1.100.Final",
+          "FixedVersion": "4.2.4.Final, 4.1.124.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-33871",
+          "PkgName": "io.netty:netty-codec-http2",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.24.6.jar",
+          "InstalledVersion": "4.1.100.Final",
+          "FixedVersion": "4.1.132.Final, 4.2.11.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-42587",
+          "PkgName": "io.netty:netty-codec-http2",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.24.6.jar",
+          "InstalledVersion": "4.1.100.Final",
+          "FixedVersion": "4.2.13.Final, 4.1.133.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-56819",
+          "PkgName": "io.netty:netty-codec-http2",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.24.6.jar",
+          "InstalledVersion": "4.1.100.Final",
+          "FixedVersion": "4.2.16.Final, 4.1.136.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2025-55163",
+          "PkgName": "io.netty:netty-codec-http2",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/connect-repl/spark-connect-client-jvm_2.13-4.0.1.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.2.4.Final, 4.1.124.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2025-55163",
+          "PkgName": "io.netty:netty-codec-http2",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/netty-codec-http2-4.1.118.Final.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.2.4.Final, 4.1.124.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-33871",
+          "PkgName": "io.netty:netty-codec-http2",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/connect-repl/spark-connect-client-jvm_2.13-4.0.1.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.1.132.Final, 4.2.11.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-33871",
+          "PkgName": "io.netty:netty-codec-http2",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/netty-codec-http2-4.1.118.Final.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.1.132.Final, 4.2.11.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-42587",
+          "PkgName": "io.netty:netty-codec-http2",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/connect-repl/spark-connect-client-jvm_2.13-4.0.1.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.2.13.Final, 4.1.133.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-42587",
+          "PkgName": "io.netty:netty-codec-http2",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/netty-codec-http2-4.1.118.Final.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.2.13.Final, 4.1.133.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-56819",
+          "PkgName": "io.netty:netty-codec-http2",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/connect-repl/spark-connect-client-jvm_2.13-4.0.1.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.2.16.Final, 4.1.136.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-56819",
+          "PkgName": "io.netty:netty-codec-http2",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/netty-codec-http2-4.1.118.Final.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.2.16.Final, 4.1.136.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-75595",
+          "PkgName": "io.netty:netty-handler",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.24.6.jar",
+          "InstalledVersion": "4.1.100.Final",
+          "FixedVersion": "4.2.17.Final, 4.1.137.Final",
+          "Severity": "CRITICAL",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2025-24970",
+          "PkgName": "io.netty:netty-handler",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.24.6.jar",
+          "InstalledVersion": "4.1.100.Final",
+          "FixedVersion": "4.1.118.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-44249",
+          "PkgName": "io.netty:netty-handler",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.24.6.jar",
+          "InstalledVersion": "4.1.100.Final",
+          "FixedVersion": "4.2.15.Final, 4.1.135.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-45416",
+          "PkgName": "io.netty:netty-handler",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.24.6.jar",
+          "InstalledVersion": "4.1.100.Final",
+          "FixedVersion": "4.2.15.Final, 4.1.135.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-50010",
+          "PkgName": "io.netty:netty-handler",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.24.6.jar",
+          "InstalledVersion": "4.1.100.Final",
+          "FixedVersion": "4.2.15.Final, 4.1.135.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-75595",
+          "PkgName": "io.netty:netty-handler",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/connect-repl/spark-connect-client-jvm_2.13-4.0.1.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.2.17.Final, 4.1.137.Final",
+          "Severity": "CRITICAL",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-75595",
+          "PkgName": "io.netty:netty-handler",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/netty-handler-4.1.118.Final.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.2.17.Final, 4.1.137.Final",
+          "Severity": "CRITICAL",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-44249",
+          "PkgName": "io.netty:netty-handler",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/connect-repl/spark-connect-client-jvm_2.13-4.0.1.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.2.15.Final, 4.1.135.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-44249",
+          "PkgName": "io.netty:netty-handler",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/netty-handler-4.1.118.Final.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.2.15.Final, 4.1.135.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-45416",
+          "PkgName": "io.netty:netty-handler",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/connect-repl/spark-connect-client-jvm_2.13-4.0.1.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.2.15.Final, 4.1.135.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-45416",
+          "PkgName": "io.netty:netty-handler",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/netty-handler-4.1.118.Final.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.2.15.Final, 4.1.135.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-50010",
+          "PkgName": "io.netty:netty-handler",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/connect-repl/spark-connect-client-jvm_2.13-4.0.1.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.2.15.Final, 4.1.135.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-50010",
+          "PkgName": "io.netty:netty-handler",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/netty-handler-4.1.118.Final.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.2.15.Final, 4.1.135.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-45674",
+          "PkgName": "io.netty:netty-resolver-dns",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/netty-resolver-dns-4.1.118.Final.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.2.15.Final, 4.1.135.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-47691",
+          "PkgName": "io.netty:netty-resolver-dns",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/netty-resolver-dns-4.1.118.Final.jar",
+          "InstalledVersion": "4.1.118.Final",
+          "FixedVersion": "4.2.15.Final, 4.1.135.Final",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2024-47561",
+          "PkgName": "org.apache.avro:avro",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.1.jar",
+          "InstalledVersion": "1.9.2",
+          "FixedVersion": "1.11.4",
+          "Severity": "CRITICAL",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2023-39410",
+          "PkgName": "org.apache.avro:avro",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.1.jar",
+          "InstalledVersion": "1.9.2",
+          "FixedVersion": "1.11.3",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2022-46337",
+          "PkgName": "org.apache.derby:derby",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/derby-10.16.1.1.jar",
+          "InstalledVersion": "10.16.1.1",
+          "FixedVersion": "10.14.2.1, 10.16.1.2, 10.15.2.1",
+          "Severity": "CRITICAL",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-43869",
+          "PkgName": "org.apache.thrift:libthrift",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/libthrift-0.16.0.jar",
+          "InstalledVersion": "0.16.0",
+          "FixedVersion": "0.23.0",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-43871",
+          "PkgName": "org.apache.thrift:libthrift",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/libthrift-0.16.0.jar",
+          "InstalledVersion": "0.16.0",
+          "FixedVersion": "0.24.0",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-24281",
+          "PkgName": "org.apache.zookeeper:zookeeper",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/zookeeper-3.9.3.jar",
+          "InstalledVersion": "3.9.3",
+          "FixedVersion": "3.8.6, 3.9.5",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-24308",
+          "PkgName": "org.apache.zookeeper:zookeeper",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/zookeeper-3.9.3.jar",
+          "InstalledVersion": "3.9.3",
+          "FixedVersion": "3.9.5, 3.8.6",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2025-14813",
+          "PkgName": "org.bouncycastle:bcprov-jdk18on",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/bcprov-jdk18on-1.80.jar",
+          "InstalledVersion": "1.80",
+          "FixedVersion": "1.80.2, 1.81.1, 1.84",
+          "Severity": "CRITICAL",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-8763",
+          "PkgName": "org.bouncycastle:bcprov-jdk18on",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/bcprov-jdk18on-1.80.jar",
+          "InstalledVersion": "1.80",
+          "FixedVersion": "1.85",
+          "Severity": "CRITICAL",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-13506",
+          "PkgName": "org.bouncycastle:bcprov-jdk18on",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/bcprov-jdk18on-1.80.jar",
+          "InstalledVersion": "1.80",
+          "FixedVersion": "1.85",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-5598",
+          "PkgName": "org.bouncycastle:bcprov-jdk18on",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/bcprov-jdk18on-1.80.jar",
+          "InstalledVersion": "1.80",
+          "FixedVersion": "1.84, 1.80.2",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2019-10202",
+          "PkgName": "org.codehaus.jackson:jackson-mapper-asl",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/jackson-mapper-asl-1.9.13.jar",
+          "InstalledVersion": "1.9.13",
+          "FixedVersion": null,
+          "Severity": "CRITICAL",
+          "Status": "affected"
+        },
+        {
+          "VulnerabilityID": "CVE-2019-10172",
+          "PkgName": "org.codehaus.jackson:jackson-mapper-asl",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/jackson-mapper-asl-1.9.13.jar",
+          "InstalledVersion": "1.9.13",
+          "FixedVersion": null,
+          "Severity": "HIGH",
+          "Status": "affected"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-2332",
+          "PkgName": "org.eclipse.jetty:jetty-http",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/spark-core_2.13-4.0.1.jar",
+          "InstalledVersion": "11.0.24",
+          "FixedVersion": "12.1.7, 12.0.33, 11.0.29, 10.0.28, 9.4.60",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-2332",
+          "PkgName": "org.eclipse.jetty:jetty-http",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.1.jar",
+          "InstalledVersion": "9.4.53.v20231009",
+          "FixedVersion": "12.1.7, 12.0.33, 11.0.29, 10.0.28, 9.4.60",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-10050",
+          "PkgName": "org.eclipse.jetty:jetty-security",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/spark-core_2.13-4.0.1.jar",
+          "InstalledVersion": "11.0.24",
+          "FixedVersion": "9.4.63, 10.0.31, 11.0.31, 12.0.36, 12.1.10",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2025-12383",
+          "PkgName": "org.glassfish.jersey.core:jersey-client",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/jersey-client-3.0.16.jar",
+          "InstalledVersion": "3.0.16",
+          "FixedVersion": "2.46, 3.0.17, 3.1.10",
+          "Severity": "CRITICAL",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-77422",
+          "PkgName": "org.jline:jline-builtins",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/jline-3.27.1-jdk8.jar",
+          "InstalledVersion": "3.27.1",
+          "FixedVersion": "4.3.1, 3.30.15",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-77422",
+          "PkgName": "org.jline:jline-builtins",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.1.jar",
+          "InstalledVersion": "3.9.0",
+          "FixedVersion": "4.3.1, 3.30.15",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-56740",
+          "PkgName": "org.jline:jline-remote-telnet",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/jline-3.27.1-jdk8.jar",
+          "InstalledVersion": "3.27.1",
+          "FixedVersion": "4.2.1, 4.0.16, 3.30.14",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-56741",
+          "PkgName": "org.jline:jline-remote-telnet",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/jline-3.27.1-jdk8.jar",
+          "InstalledVersion": "3.27.1",
+          "FixedVersion": "4.2.1, 4.0.16, 3.30.14",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-56740",
+          "PkgName": "org.jline:jline-remote-telnet",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.1.jar",
+          "InstalledVersion": "3.9.0",
+          "FixedVersion": "4.2.1, 4.0.16, 3.30.14",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-56741",
+          "PkgName": "org.jline:jline-remote-telnet",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.1.jar",
+          "InstalledVersion": "3.9.0",
+          "FixedVersion": "4.2.1, 4.0.16, 3.30.14",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2025-12183",
+          "PkgName": "org.lz4:lz4-java",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/lz4-java-1.8.0.jar",
+          "InstalledVersion": "1.8.0",
+          "FixedVersion": "1.8.1",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2025-66566",
+          "PkgName": "org.lz4:lz4-java",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/lz4-java-1.8.0.jar",
+          "InstalledVersion": "1.8.0",
+          "FixedVersion": null,
+          "Severity": "HIGH",
+          "Status": "affected"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-106451",
+          "PkgName": "org.lz4:lz4-java",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/lz4-java-1.8.0.jar",
+          "InstalledVersion": "1.8.0",
+          "FixedVersion": null,
+          "Severity": "HIGH",
+          "Status": "affected"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-108106",
+          "PkgName": "org.xerial.snappy:snappy-java",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/snappy-java-1.1.10.7.jar",
+          "InstalledVersion": "1.1.10.7",
+          "FixedVersion": "1.1.10.9",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-93451",
+          "PkgName": "org.xerial.snappy:snappy-java",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/snappy-java-1.1.10.7.jar",
+          "InstalledVersion": "1.1.10.7",
+          "FixedVersion": "1.1.10.9",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        },
+        {
+          "VulnerabilityID": "GHSA-443w-3rq3-5m5h",
+          "PkgName": "software.amazon.awssdk:cloudfront",
+          "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.24.6.jar",
+          "InstalledVersion": "2.24.6",
+          "FixedVersion": "2.41.30",
+          "Severity": "HIGH",
+          "Status": "fixed"
+        }
+      ],
+      "scanned_package_counts_by_type": {
+        "jar": 950,
+        "python-pkg": 5
+      }
+    },
+    {
+      "role": "kafka",
+      "source_commit": "8805eddb25a20f5abc188d359bf7412d2998c1c4",
+      "manifest_digest": "sha256:b48cd39039d364f27433797d4f52aabef46535cd0701bb24d06bef6c4a5b4a4e",
+      "severity_counts": {},
+      "unique_high_critical_package_cve_pairs": 0,
+      "result_types": {
+        "jar": 1
+      },
+      "scanners": [
+        "vuln"
+      ],
+      "package_types": [
+        "library"
+      ],
+      "ignore_unfixed": false,
+      "ignorefile": "",
+      "aws_calls_made": false,
+      "release_approved": false,
+      "scan_report_sha256": "ac80c5823805d75e1e10e67dbd6f218709a6160c97e56f224066b74a16ab91cf",
+      "artifact_id": "sha256:e7c414f90e7bb51dc777aaeaf581755730af27d8a8bb1ceb4aa02791bf6e8cfb",
+      "image_config_id": "sha256:2497dd5d0474a8eef9aa367f45f8a8e4db1639e04b604fb062015cb907748905",
+      "high_critical_occurrences": [],
+      "scanned_package_counts_by_type": {
+        "jar": 109
+      }
+    }
+  ],
+  "component_presence": [
+    {
+      "source_commit": "8805eddb25a20f5abc188d359bf7412d2998c1c4",
+      "role": "producer",
+      "manifest_digest": "sha256:4f3eba5a4885ad26e8ac2699ef103d0eba4e447922be4089f657593d72b46772",
+      "inventory": {
+        "perl_archive_tar_exit": 2,
+        "perl_archive_tar_missing_module_confirmed": true,
+        "critical_jar_inventory": []
+      },
+      "no_exception_accepted": true
+    },
+    {
+      "source_commit": "8805eddb25a20f5abc188d359bf7412d2998c1c4",
+      "role": "spark",
+      "manifest_digest": "sha256:7d943ca6e3598bcab11f3729610c846f4d4d0736e3702b6b19e1faa8939288a9",
+      "inventory": {
+        "perl_archive_tar_exit": 2,
+        "perl_archive_tar_missing_module_confirmed": true,
+        "critical_jar_inventory": [
+          {
+            "path": "/usr/local/lib/python3.12/site-packages/pyspark/jars/netty-handler-proxy-4.1.118.Final.jar",
+            "sha256": "fef926126f44c668968dd3e2389c2552981d452e6dfc23b1f9bd03db92c21f96",
+            "matching_class_entries": {
+              "io/netty/handler/ssl/SslClientHelloHandler.class": []
+            }
+          },
+          {
+            "path": "/usr/local/lib/python3.12/site-packages/pyspark/jars/netty-handler-4.1.118.Final.jar",
+            "sha256": "26e3f8a5e859fd62cf3c13dc6d75e4e18879f000a5d0ad7f58f8679675d23dae",
+            "matching_class_entries": {
+              "io/netty/handler/ssl/SslClientHelloHandler.class": [
+                "io/netty/handler/ssl/SslClientHelloHandler.class"
+              ]
+            }
+          },
+          {
+            "path": "/usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.24.6.jar",
+            "sha256": "890bf9f2a80488f7a8aa8277d64d13a9ea3a3cdff8607ef3b63a878d8b467b41",
+            "matching_class_entries": {
+              "io/netty/handler/ssl/SslClientHelloHandler.class": [
+                "software/amazon/awssdk/thirdparty/io/netty/handler/ssl/SslClientHelloHandler.class",
+                "io/netty/handler/ssl/SslClientHelloHandler.class"
+              ]
+            }
+          },
+          {
+            "path": "/usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.1.jar",
+            "sha256": "f6a800a159f918670db533606d33560d6c13b7e13f14eda493280ae33b9eeb2f",
+            "matching_class_entries": {
+              "org/apache/avro/Schema.class": [
+                "org/apache/hadoop/shaded/org/apache/avro/Schema.class"
+              ]
+            }
+          },
+          {
+            "path": "/usr/local/lib/python3.12/site-packages/pyspark/jars/derby-10.16.1.1.jar",
+            "sha256": "ede804cb04e871d7c52d2414e952ab939f9ef243abb7bd0ce7dbeb6e1e28bd0b",
+            "matching_class_entries": {
+              "LDAPAuthenticationSchemeImpl.class": [
+                "org/apache/derby/impl/jdbc/authentication/LDAPAuthenticationSchemeImpl.class"
+              ]
+            }
+          },
+          {
+            "path": "/usr/local/lib/python3.12/site-packages/pyspark/jars/bcprov-jdk18on-1.80.jar",
+            "sha256": "e8ad209f8c58d291a37ca9750e9e9fac60596956c983e49dd8282381dd8b3249",
+            "matching_class_entries": {
+              "G3413CTRBlockCipher.class": [
+                "org/bouncycastle/crypto/modes/G3413CTRBlockCipher.class"
+              ],
+              "PKIXNameConstraintValidator.class": [
+                "org/bouncycastle/asn1/x509/PKIXNameConstraintValidator.class",
+                "org/bouncycastle/jce/provider/PKIXNameConstraintValidator.class"
+              ]
+            }
+          },
+          {
+            "path": "/usr/local/lib/python3.12/site-packages/pyspark/jars/jackson-mapper-asl-1.9.13.jar",
+            "sha256": "74e7a07a76f2edbade29312a5a2ebccfa019128bc021ece3856d76197e9be0c2",
+            "matching_class_entries": {
+              "org/codehaus/jackson/map/ObjectMapper.class": [
+                "org/codehaus/jackson/map/ObjectMapper.class"
+              ]
+            }
+          },
+          {
+            "path": "/usr/local/lib/python3.12/site-packages/pyspark/jars/jersey-client-3.0.16.jar",
+            "sha256": "f831cf9b7967bd8281b2155cccee2f7d81716ab8c77cdb1ead0bb503ee28190f",
+            "matching_class_entries": {
+              "HttpUrlConnector.class": [
+                "org/glassfish/jersey/client/internal/HttpUrlConnector.class"
+              ]
+            }
+          },
+          {
+            "path": "/usr/local/lib/python3.12/site-packages/pyspark/jars/connect-repl/spark-connect-client-jvm_2.13-4.0.1.jar",
+            "sha256": "a5b1ef6f785dd627d1b6e2eada40a8a0fd8a1400b414de9eeab9b4b8ae237868",
+            "matching_class_entries": {
+              "SslClientHelloHandler.class": [
+                "org/sparkproject/io/netty/handler/ssl/SslClientHelloHandler.class"
+              ]
+            }
+          }
+        ]
+      },
+      "no_exception_accepted": true
+    }
+  ],
+  "runtime_security_inventory": [
+    {
+      "role": "producer",
+      "manifest_digest": "sha256:4f3eba5a4885ad26e8ac2699ef103d0eba4e447922be4089f657593d72b46772",
+      "inventory": {
+        "uid": 10001,
+        "components": {
+          "/usr/lib/systemd/systemd-homed": {
+            "exists": false,
+            "setuid": false
+          },
+          "/lib/systemd/systemd-homed": {
+            "exists": false,
+            "setuid": false
+          },
+          "/usr/bin/homectl": {
+            "exists": false,
+            "setuid": false
+          },
+          "/usr/bin/infocmp": {
+            "exists": true,
+            "setuid": false
+          },
+          "/usr/bin/mount": {
+            "exists": true,
+            "setuid": true
+          },
+          "/usr/bin/nsenter": {
+            "exists": true,
+            "setuid": false
+          }
+        },
+        "perl_archive_tar_load_exit": 2,
+        "perl_archive_tar_version": null,
+        "sqlite_version": "3.46.1",
+        "sqlite_fts5_enabled": true,
+        "sqlite_session_enabled": true,
+        "process_security": {
+          "CapEff": "0000000000000000",
+          "CapBnd": "0000000000000000",
+          "NoNewPrivs": "1"
+        }
+      },
+      "network": "none",
+      "applicability_status": "REVIEW_REQUIRED_NO_EXCEPTION_ACCEPTED"
+    },
+    {
+      "role": "spark",
+      "manifest_digest": "sha256:7d943ca6e3598bcab11f3729610c846f4d4d0736e3702b6b19e1faa8939288a9",
+      "inventory": {
+        "uid": 10001,
+        "components": {
+          "/usr/lib/systemd/systemd-homed": {
+            "exists": false,
+            "setuid": false
+          },
+          "/lib/systemd/systemd-homed": {
+            "exists": false,
+            "setuid": false
+          },
+          "/usr/bin/homectl": {
+            "exists": false,
+            "setuid": false
+          },
+          "/usr/bin/infocmp": {
+            "exists": true,
+            "setuid": false
+          },
+          "/usr/bin/mount": {
+            "exists": true,
+            "setuid": true
+          },
+          "/usr/bin/nsenter": {
+            "exists": true,
+            "setuid": false
+          }
+        },
+        "perl_archive_tar_load_exit": 2,
+        "perl_archive_tar_version": null,
+        "sqlite_version": "3.46.1",
+        "sqlite_fts5_enabled": true,
+        "sqlite_session_enabled": true,
+        "process_security": {
+          "CapEff": "0000000000000000",
+          "CapBnd": "0000000000000000",
+          "NoNewPrivs": "1"
+        }
+      },
+      "network": "none",
+      "applicability_status": "REVIEW_REQUIRED_NO_EXCEPTION_ACCEPTED"
+    }
+  ],
+  "os_advisory_review": [
+    {
+      "cve": "CVE-2025-69720",
+      "source": "https://security-tracker.debian.org/tracker/CVE-2025-69720",
+      "checked_at_utc": "2026-11-16T07:12:29.381611+00:00",
+      "page_sha256": "3542be519daaef8f60a0fd662f4a6129a238f59ef9b86155869d49cfd2b3af78",
+      "trixie_rows": [
+        [
+          "",
+          "trixie",
+          "6.5+20250216-2",
+          "vulnerable"
+        ]
+      ],
+      "binary_packages": [
+        {
+          "name": "libncursesw6",
+          "installed_version": "6.5+20250216-2",
+          "status": "affected"
+        },
+        {
+          "name": "libtinfo6",
+          "installed_version": "6.5+20250216-2",
+          "status": "affected"
+        },
+        {
+          "name": "ncurses-base",
+          "installed_version": "6.5+20250216-2",
+          "status": "affected"
+        },
+        {
+          "name": "ncurses-bin",
+          "installed_version": "6.5+20250216-2",
+          "status": "affected"
+        }
+      ],
+      "applicability_status": "REVIEW_REQUIRED_NO_EXCEPTION_ACCEPTED",
+      "candidate_classification": "PRESENT_NOT_CALLED_CANDIDATE",
+      "review_rationale": "infocmp is present; no app entrypoint calls it. Requires review; no runtime tracing proof."
+    },
+    {
+      "cve": "CVE-2026-119373",
+      "source": "https://security-tracker.debian.org/tracker/CVE-2026-119373",
+      "checked_at_utc": "2026-11-16T07:12:29.390187+00:00",
+      "page_sha256": "caa306ace78626cf4c28044f3d1053a2d7a5785ebe88d42504218e5ffa23aaee",
+      "trixie_rows": [
+        [
+          "",
+          "trixie",
+          "3.46.1-7+deb13u2",
+          "vulnerable"
+        ]
+      ],
+      "binary_packages": [
+        {
+          "name": "libsqlite3-0",
+          "installed_version": "3.46.1-7+deb13u2",
+          "status": "affected"
+        }
+      ],
+      "applicability_status": "REVIEW_REQUIRED_NO_EXCEPTION_ACCEPTED",
+      "candidate_classification": "PRESENT_UNUSED_FEATURE_CANDIDATE",
+      "review_rationale": "SQLite FTS5 is enabled. Reviewed app code has no SQLite queries; do not classify as absent."
+    },
+    {
+      "cve": "CVE-2026-119374",
+      "source": "https://security-tracker.debian.org/tracker/CVE-2026-119374",
+      "checked_at_utc": "2026-11-16T07:12:29.379245+00:00",
+      "page_sha256": "08ee3a28b1be9e9dfcbad161a79731b08cc08a6b54caef90098da46bfc574cdc",
+      "trixie_rows": [
+        [
+          "",
+          "trixie",
+          "3.46.1-7+deb13u2",
+          "vulnerable"
+        ]
+      ],
+      "binary_packages": [
+        {
+          "name": "libsqlite3-0",
+          "installed_version": "3.46.1-7+deb13u2",
+          "status": "affected"
+        }
+      ],
+      "applicability_status": "REVIEW_REQUIRED_NO_EXCEPTION_ACCEPTED",
+      "candidate_classification": "PRESENT_UNUSED_FEATURE_CANDIDATE",
+      "review_rationale": "SQLite FTS5 is enabled. Reviewed flow does not ingest SQLite files; transitive reachability remains unproven."
+    },
+    {
+      "cve": "CVE-2026-119379",
+      "source": "https://security-tracker.debian.org/tracker/CVE-2026-119379",
+      "checked_at_utc": "2026-11-16T07:12:29.388788+00:00",
+      "page_sha256": "d7171e070be82e7ea297bad3ab3d2ca5aee54a70b198c5a2bec2b762ac942679",
+      "trixie_rows": [
+        [
+          "",
+          "trixie",
+          "3.46.1-7+deb13u2",
+          "vulnerable"
+        ]
+      ],
+      "binary_packages": [
+        {
+          "name": "libsqlite3-0",
+          "installed_version": "3.46.1-7+deb13u2",
+          "status": "affected"
+        }
+      ],
+      "applicability_status": "REVIEW_REQUIRED_NO_EXCEPTION_ACCEPTED",
+      "candidate_classification": "PRESENT_UNUSED_FEATURE_CANDIDATE",
+      "review_rationale": "SQLite session extension is enabled. No application changeset API calls were found; review remains open."
+    },
+    {
+      "cve": "CVE-2026-16742",
+      "source": "https://security-tracker.debian.org/tracker/CVE-2026-16742",
+      "checked_at_utc": "2026-11-16T07:12:30.063863+00:00",
+      "page_sha256": "c02e61ecf8255bb8874419ddb4ea555e32daf30163b919e3d88234d8d8b1c43a",
+      "trixie_rows": [
+        [
+          "",
+          "trixie",
+          "257.13-1~deb13u1",
+          "vulnerable"
+        ]
+      ],
+      "binary_packages": [
+        {
+          "name": "libsystemd0",
+          "installed_version": "257.13-1~deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "libudev1",
+          "installed_version": "257.13-1~deb13u1",
+          "status": "affected"
+        }
+      ],
+      "applicability_status": "REVIEW_REQUIRED_NO_EXCEPTION_ACCEPTED",
+      "candidate_classification": "COMPONENT_ABSENT_CANDIDATE",
+      "review_rationale": "systemd-homed and homectl executables absent; related shared libraries remain installed."
+    },
+    {
+      "cve": "CVE-2026-54369",
+      "source": "https://security-tracker.debian.org/tracker/CVE-2026-54369",
+      "checked_at_utc": "2026-11-16T07:12:29.781798+00:00",
+      "page_sha256": "4677cdb2b848eca7bc76f57dd54e5d01e309f438bba58d892550db432fbde5ca",
+      "trixie_rows": [
+        [
+          "",
+          "trixie",
+          "2.3.2-2",
+          "vulnerable"
+        ]
+      ],
+      "binary_packages": [
+        {
+          "name": "libacl1",
+          "installed_version": "2.3.2-2+b1",
+          "status": "affected"
+        }
+      ],
+      "applicability_status": "REVIEW_REQUIRED_NO_EXCEPTION_ACCEPTED",
+      "candidate_classification": "PRIVILEGE_MITIGATED_CANDIDATE",
+      "review_rationale": "libacl remains; UID10001, zero effective/bounding capabilities, read-only root filesystem and no-new-privileges reduce privileged-caller exposure."
+    },
+    {
+      "cve": "CVE-2026-76642",
+      "source": "https://security-tracker.debian.org/tracker/CVE-2026-76642",
+      "checked_at_utc": "2026-11-16T07:12:29.549959+00:00",
+      "page_sha256": "fd40eb589f4edd1f5b2df060db1d418501f7138459069481c60471abe1efde24",
+      "trixie_rows": [
+        [
+          "",
+          "trixie (security), trixie",
+          "2.41.5-0+deb13u1",
+          "vulnerable"
+        ]
+      ],
+      "binary_packages": [
+        {
+          "name": "bsdutils",
+          "installed_version": "1:2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "libblkid1",
+          "installed_version": "2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "liblastlog2-2",
+          "installed_version": "2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "libmount1",
+          "installed_version": "2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "libsmartcols1",
+          "installed_version": "2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "libuuid1",
+          "installed_version": "2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "login",
+          "installed_version": "1:4.16.0-2+really2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "mount",
+          "installed_version": "2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "util-linux",
+          "installed_version": "2.41.5-0+deb13u1",
+          "status": "affected"
+        }
+      ],
+      "applicability_status": "REVIEW_REQUIRED_NO_EXCEPTION_ACCEPTED",
+      "candidate_classification": "PRIVILEGE_MITIGATED_CANDIDATE",
+      "review_rationale": "mount remains setuid on disk. no-new-privileges and zero capabilities block gaining mount privilege; package is not patched."
+    },
+    {
+      "cve": "CVE-2026-78408",
+      "source": "https://security-tracker.debian.org/tracker/CVE-2026-78408",
+      "checked_at_utc": "2026-11-16T07:12:29.746931+00:00",
+      "page_sha256": "c2ce37b05cca7f05768d22c20645c174592a837fb20423fa7f106dc4e6e0d104",
+      "trixie_rows": [
+        [
+          "",
+          "trixie (security), trixie",
+          "2.41.5-0+deb13u1",
+          "vulnerable"
+        ]
+      ],
+      "binary_packages": [
+        {
+          "name": "bsdutils",
+          "installed_version": "1:2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "libblkid1",
+          "installed_version": "2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "liblastlog2-2",
+          "installed_version": "2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "libmount1",
+          "installed_version": "2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "libsmartcols1",
+          "installed_version": "2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "libuuid1",
+          "installed_version": "2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "login",
+          "installed_version": "1:4.16.0-2+really2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "mount",
+          "installed_version": "2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "util-linux",
+          "installed_version": "2.41.5-0+deb13u1",
+          "status": "affected"
+        }
+      ],
+      "applicability_status": "REVIEW_REQUIRED_NO_EXCEPTION_ACCEPTED",
+      "candidate_classification": "PRIVILEGE_MITIGATED_CANDIDATE",
+      "review_rationale": "nsenter is present and not setuid; no privileged namespace entry is part of app startup."
+    },
+    {
+      "cve": "CVE-2026-78409",
+      "source": "https://security-tracker.debian.org/tracker/CVE-2026-78409",
+      "checked_at_utc": "2026-11-16T07:12:29.922946+00:00",
+      "page_sha256": "7762ce7d10558ca03e3fcc3995b97e7a24d13ab4b1d6cdd3e4bf9ff7d357ba48",
+      "trixie_rows": [
+        [
+          "",
+          "trixie (security), trixie",
+          "2.41.5-0+deb13u1",
+          "vulnerable"
+        ]
+      ],
+      "binary_packages": [
+        {
+          "name": "bsdutils",
+          "installed_version": "1:2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "libblkid1",
+          "installed_version": "2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "liblastlog2-2",
+          "installed_version": "2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "libmount1",
+          "installed_version": "2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "libsmartcols1",
+          "installed_version": "2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "libuuid1",
+          "installed_version": "2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "login",
+          "installed_version": "1:4.16.0-2+really2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "mount",
+          "installed_version": "2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "util-linux",
+          "installed_version": "2.41.5-0+deb13u1",
+          "status": "affected"
+        }
+      ],
+      "applicability_status": "REVIEW_REQUIRED_NO_EXCEPTION_ACCEPTED",
+      "candidate_classification": "PRIVILEGE_MITIGATED_CANDIDATE",
+      "review_rationale": "mount is present; capability and privilege restrictions reduce exposure, without proving the affected code absent."
+    },
+    {
+      "cve": "CVE-2026-78410",
+      "source": "https://security-tracker.debian.org/tracker/CVE-2026-78410",
+      "checked_at_utc": "2026-11-16T07:12:29.887131+00:00",
+      "page_sha256": "370b52136365d440004d915421bd2b2529393511c802bdc04f3e3a873241621b",
+      "trixie_rows": [
+        [
+          "",
+          "trixie (security), trixie",
+          "2.41.5-0+deb13u1",
+          "vulnerable"
+        ]
+      ],
+      "binary_packages": [
+        {
+          "name": "bsdutils",
+          "installed_version": "1:2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "libblkid1",
+          "installed_version": "2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "liblastlog2-2",
+          "installed_version": "2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "libmount1",
+          "installed_version": "2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "libsmartcols1",
+          "installed_version": "2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "libuuid1",
+          "installed_version": "2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "login",
+          "installed_version": "1:4.16.0-2+really2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "mount",
+          "installed_version": "2.41.5-0+deb13u1",
+          "status": "affected"
+        },
+        {
+          "name": "util-linux",
+          "installed_version": "2.41.5-0+deb13u1",
+          "status": "affected"
+        }
+      ],
+      "applicability_status": "REVIEW_REQUIRED_NO_EXCEPTION_ACCEPTED",
+      "candidate_classification": "PRIVILEGE_MITIGATED_CANDIDATE",
+      "review_rationale": "mount remains setuid; no-new-privileges blocks setuid elevation. Normal host disk setup is outside this container review."
+    },
+    {
+      "cve": "CVE-2026-9538",
+      "source": "https://security-tracker.debian.org/tracker/CVE-2026-9538",
+      "checked_at_utc": "2026-11-16T07:12:30.148833+00:00",
+      "page_sha256": "774c584dc3b6ecfb7b8650775a2642d87a5897265c4ab1208af9f936912f0c9f",
+      "trixie_rows": [
+        [
+          "",
+          "trixie",
+          "5.40.1-6+deb13u1",
+          "vulnerable"
+        ]
+      ],
+      "binary_packages": [
+        {
+          "name": "perl-base",
+          "installed_version": "5.40.1-6+deb13u1",
+          "status": "fix_deferred"
+        }
+      ],
+      "applicability_status": "REVIEW_REQUIRED_NO_EXCEPTION_ACCEPTED",
+      "candidate_classification": "COMPONENT_ABSENT_CANDIDATE",
+      "review_rationale": "Perl is present, but loading Archive::Tar fails specifically because Archive/Tar.pm is missing from @INC."
+    }
+  ],
+  "producer_patch_prototype": {
+    "prototype_manifest_digest": "sha256:7d1f0d08362eac61f44e4b9fdbb23a70591f413a9c906f0f20712f7f69afec87",
+    "report_sha256": "097a3cbb8709a7b7b4bff6c003a82c468f88e15d24be4542d477898491cb7fe7",
+    "findings_by_class": {
+      "os-pkgs": {
+        "LOW": 65,
+        "HIGH": 47,
+        "MEDIUM": 92,
+        "UNKNOWN": 5
+      },
+      "lang-pkgs": {
+        "MEDIUM": 6,
+        "LOW": 1
+      }
+    },
+    "publication_authorized": false,
+    "aws_calls_made": false,
+    "source_status": "UNCOMMITTED_PROTOTYPE_NOT_PUBLISHABLE",
+    "base_commit": "8805eddb25a20f5abc188d359bf7412d2998c1c4",
+    "smoke_checks": [
+      "native_kafka_abi",
+      "canonical_swap_event_normalization",
+      "installed_http_dependency_versions",
+      "certifi_ca_bundle_positive_and_negative_anchors"
+    ],
+    "remaining_library_findings": [
+      {
+        "VulnerabilityID": "CVE-2026-104874",
+        "PkgName": "multidict",
+        "PkgPath": "usr/local/lib/python3.12/site-packages/multidict-6.7.1.dist-info/METADATA",
+        "InstalledVersion": "6.7.1",
+        "FixedVersion": "6.9.1",
+        "Severity": "MEDIUM",
+        "Status": "fixed"
+      },
+      {
+        "VulnerabilityID": "CVE-2025-8869",
+        "PkgName": "pip",
+        "PkgPath": "usr/local/lib/python3.12/site-packages/pip-25.0.1.dist-info/METADATA",
+        "InstalledVersion": "25.0.1",
+        "FixedVersion": "25.3",
+        "Severity": "MEDIUM",
+        "Status": "fixed"
+      },
+      {
+        "VulnerabilityID": "CVE-2026-13346",
+        "PkgName": "pip",
+        "PkgPath": "usr/local/lib/python3.12/site-packages/pip-25.0.1.dist-info/METADATA",
+        "InstalledVersion": "25.0.1",
+        "FixedVersion": "26.2.0",
+        "Severity": "MEDIUM",
+        "Status": "fixed"
+      },
+      {
+        "VulnerabilityID": "CVE-2026-3219",
+        "PkgName": "pip",
+        "PkgPath": "usr/local/lib/python3.12/site-packages/pip-25.0.1.dist-info/METADATA",
+        "InstalledVersion": "25.0.1",
+        "FixedVersion": "26.1",
+        "Severity": "MEDIUM",
+        "Status": "fixed"
+      },
+      {
+        "VulnerabilityID": "CVE-2026-6357",
+        "PkgName": "pip",
+        "PkgPath": "usr/local/lib/python3.12/site-packages/pip-25.0.1.dist-info/METADATA",
+        "InstalledVersion": "25.0.1",
+        "FixedVersion": "26.1",
+        "Severity": "MEDIUM",
+        "Status": "fixed"
+      },
+      {
+        "VulnerabilityID": "CVE-2026-8643",
+        "PkgName": "pip",
+        "PkgPath": "usr/local/lib/python3.12/site-packages/pip-25.0.1.dist-info/METADATA",
+        "InstalledVersion": "25.0.1",
+        "FixedVersion": "26.1.2",
+        "Severity": "MEDIUM",
+        "Status": "fixed"
+      },
+      {
+        "VulnerabilityID": "CVE-2026-1703",
+        "PkgName": "pip",
+        "PkgPath": "usr/local/lib/python3.12/site-packages/pip-25.0.1.dist-info/METADATA",
+        "InstalledVersion": "25.0.1",
+        "FixedVersion": "26.0",
+        "Severity": "LOW",
+        "Status": "fixed"
+      }
+    ]
+  },
+  "cloud_dependency_changes": [
+    {
+      "package": "aiohttp",
+      "platform_lock_version": "3.14.1",
+      "cloud_lock_version": "3.14.5"
+    },
+    {
+      "package": "certifi",
+      "platform_lock_version": "2025.1.31",
+      "cloud_lock_version": "2026.10.23"
+    },
+    {
+      "package": "urllib3",
+      "platform_lock_version": "2.7.0",
+      "cloud_lock_version": "2.8.0"
+    },
+    {
+      "package": "yarl",
+      "platform_lock_version": "1.24.2",
+      "cloud_lock_version": "1.25.1"
+    }
+  ],
+  "cloud_dependency_inputs_sha256": {
+    "deploy/runtime/pyproject.toml": "8db774e9ba94c56f2294411d1fb5ab77182743beb4fac37ac0d961d556fee4c0",
+    "deploy/runtime/uv.lock": "f46ee7dcf3412c589ac221a57ba92a4a28a913d6c1de9c3cb4a899f7b2d3add5",
+    "deploy/runtime/producer-requirements.txt": "20d647bdc1a9ea7ed2003e6a494d5c92a60965cb39ff73f8c67269e6523c5441",
+    "deploy/runtime/spark-requirements.txt": "5337e689a50343f9179a3809efadcde977e40c5c98b72ed551fca22a5f1dcc8c"
+  },
+  "limitations": [
+    "Counts are scanner occurrences, not distinct exploitable vulnerabilities.",
+    "Library counts are separate from OS counts and from historic ECR BASIC results.",
+    "A Java library scan does not replace JRE vendor/trust-store review.",
+    "No exploitation or exploit reproduction was attempted.",
+    "Static application inspection does not prove absence of transitive vulnerable calls.",
+    "No S3 authentication, live Alchemy or cloud checkpoint tests were performed.",
+    "New frozen build identities and hosted CI must be observed after the reviewed checkpoint."
+  ],
+  "local_terraform_commands_run": false,
+  "production_terraform_commands_run": false,
+  "local_validation": {
+    "focused_pytest_passed": 235,
+    "ruff": "passed",
+    "secret_scan_all_files": "passed",
+    "cloud_lock_freshness": "passed_offline",
+    "frozen_group_exports": "passed_offline",
+    "ci_status": "new_checkpoint_pending_observation",
+    "previous_ci_run_id": 43821949830,
+    "previous_ci_all_six_jobs": "success"
+  }
+}

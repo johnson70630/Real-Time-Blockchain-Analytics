@@ -21,6 +21,9 @@ REJECTED_IMAGE_DIGESTS = frozenset({
     "sha256:5862db4a63a6dd7d46fd14771b10a1b39e069c2c47f17d8e4640f960720a0ead",
     # Unpublished 83d4363 Kafka candidate: OS patches left the old JRE CA store.
     "sha256:5214d6b84fe627a56fac141020c71bf877bb62a208a3b1fd6c44358ad85551ce",
+    # Unpublished 8805edd app candidates: Python/JVM library review failed.
+    "sha256:4f3eba5a4885ad26e8ac2699ef103d0eba4e447922be4089f657593d72b46772",
+    "sha256:7d943ca6e3598bcab11f3729610c846f4d4d0736e3702b6b19e1faa8939288a9",
 })
 
 

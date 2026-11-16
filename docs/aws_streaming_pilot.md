@@ -1,6 +1,10 @@
 # Milestone 11.6C — first streaming pilot readiness
 
-Latest offline work: [image remediation](aws_runtime_image_remediation.md) tests
+Latest review: [library security and applicability](aws_runtime_security_applicability.md)
+adds isolated producer Python fixes and identifies unresolved Spark JVM critical/high
+findings. The release remains blocked; no exceptions are accepted or images published.
+
+Earlier offline work: [image remediation](aws_runtime_image_remediation.md) tests
 Kafka 4.3.2 with current Alpine packages, Debian 13 / Python 3.12 application
 images and pinned Temurin Java 17 for Spark. The rejected published manifests
 are now blocked by code. Local Kafka OS findings are clear; producer/Spark still

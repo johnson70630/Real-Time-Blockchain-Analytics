@@ -1,0 +1,27 @@
+[project]
+name = "blockchain-streaming-pilot"
+version = "0.1.0"
+requires-python = ">=3.12,<3.13"
+dependencies = []
+
+[dependency-groups]
+producer = [
+    "confluent-kafka==2.14.2",
+    "python-dotenv==1.2.2",
+    "web3==7.16.0",
+    "websocket-client==1.9.0",
+]
+spark = [
+    "confluent-kafka==2.14.2",
+    "pyspark==4.0.1",
+    "python-dotenv==1.2.2",
+]
+
+[tool.uv]
+package = false
+# Cloud-only security updates; the platform/local-development lock is separate.
+constraint-dependencies = [
+    "aiohttp==3.14.5",
+    "certifi==2026.10.23",
+    "urllib3==2.8.0",
+]

@@ -1,5 +1,10 @@
 # Milestone 11.6C: offline image remediation
 
+Follow-up: the [library/applicability review](aws_runtime_security_applicability.md)
+patches producer Python dependencies and records additional critical/high findings
+inside Spark's JVM libraries. The OS results below do not establish full-image
+security readiness. No remaining finding has been waived.
+
 Status: replacement prototypes build and pass functional/recovery tests.
 Kafka's local OS scan is clear. Producer/Spark still have unfixed HIGH findings,
 so **the replacement release is blocked**. No replacement image was published,

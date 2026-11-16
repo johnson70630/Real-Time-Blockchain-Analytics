@@ -99,6 +99,17 @@ def test_os_only_kafka_candidate_with_compromised_java_root_is_rejected(release)
         validate_release(release)
 
 
+@pytest.mark.parametrize("role", ["producer", "spark"])
+def test_library_rejected_app_manifests_cannot_be_released(release, role):
+    evidence = json.loads((ROOT / "docs/evidence/aws_runtime_library_review_2026-11-16.json").read_text())
+    image = next(row for row in evidence["baseline_library_scans"] if row["role"] == role)
+    assert image["severity_counts"]["CRITICAL"] > 0
+    repository = "spark" if role == "spark" else "producer"
+    release[role + "_image"] = f"{REGISTRY}/blockchain-runtime-{repository}@{image['manifest_digest']}"
+    with pytest.raises(ValueError, match="REJECTED_IMAGE_RELEASE"):
+        validate_release(release)
+
+
 @pytest.mark.parametrize("key,value", [
     ("LANG", "en_US.UTF-8"), ("LC_ALL", "en_US.UTF-8"),
     ("LANGUAGE", "../../untrusted"), ("LANGUAGE", "en_US:en"),
@@ -445,7 +456,7 @@ def test_compose_contract_has_no_host_ports_or_credentials():
 
 
 def test_images_pin_base_python_dependencies_and_connector_hashes():
-    lock = tomllib.loads((ROOT / "uv.lock").read_text())
+    lock = tomllib.loads((ROOT / "deploy/runtime/uv.lock").read_text())
     pins = {package["name"]: package["version"] for package in lock["package"]}
     for component in ("producer", "spark"):
         dockerfile = (ROOT / f"deploy/runtime/Dockerfile.{component}").read_text()

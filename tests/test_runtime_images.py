@@ -206,6 +206,15 @@ def test_os_only_kafka_candidate_is_rejected_by_publication_review(inspected):
         images.publication_plan(inspected, COMMIT)
 
 
+@pytest.mark.parametrize("role", ["producer", "spark"])
+def test_library_rejected_app_cannot_be_planned_with_new_labels(inspected, role):
+    evidence = json.loads((images.ROOT / "docs/evidence/aws_runtime_library_review_2026-11-16.json").read_text())
+    image = next(row for row in evidence["baseline_library_scans"] if row["role"] == role)
+    inspected[role]["id"] = image["manifest_digest"]
+    with pytest.raises(ValueError, match="REJECTED_IMAGE_RELEASE"):
+        images.publication_plan(inspected, COMMIT)
+
+
 @pytest.mark.parametrize(
     "role,field,value",
     [

@@ -40,6 +40,11 @@ jobs:
       - name: Verify lock file
         run: uv lock --check
 
+      - name: Verify isolated cloud dependencies
+        run: |
+          uv lock --project deploy/runtime --check
+          python scripts/check_runtime_dependencies.py
+
       - name: Install locked dependencies
         run: uv sync --all-extras --dev --frozen
 
