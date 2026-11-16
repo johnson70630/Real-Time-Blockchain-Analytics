@@ -28,6 +28,9 @@ PREFIXES = (
     "jline-",
     "zookeeper-",
     "lz4-java-",
+    "parquet-",
+    "zstd-jni-",
+    "commons-pool-",
 )
 LEGACY_JSON_PREFIXES = ("jackson-core-asl-", "jackson-mapper-asl-")
 SEPARATE_API_PREFIXES = LEGACY_JSON_PREFIXES + ("jline-2.",)
@@ -41,6 +44,17 @@ NORMAL_FAMILIES = {
     "jline",
     "zookeeper",
     "lz4",
+    "parquet",
+    "zstd",
+    "commons_pool",
+}
+PARQUET_ARTIFACTS = {
+    "parquet-column", "parquet-common", "parquet-encoding",
+    "parquet-format-structures", "parquet-hadoop", "parquet-jackson",
+}
+PARQUET_ADDITIONS = {
+    "jts-core": ("org/locationtech/jts", "jts"),
+    "javax.annotation-api": ("javax/annotation", "javax_annotation"),
 }
 JACKSON_ARTIFACTS = {
     "jackson-annotations": "com/fasterxml/jackson/core/",
@@ -69,6 +83,9 @@ def family(name):
         ("jline-", "jline"),
         ("zookeeper-", "zookeeper"),
         ("lz4-java-", "lz4"),
+        ("parquet-", "parquet"),
+        ("zstd-jni-", "zstd"),
+        ("commons-pool-", "commons_pool"),
     ):
         if name.startswith(prefix):
             return group
@@ -110,13 +127,18 @@ def validate(lock):
             "jline",
             "zookeeper",
             "lz4",
+            "parquet",
+            "zstd",
+            "commons_pool",
+            "jts",
+            "javax_annotation",
         }
         or lock.get("components") != COMPONENTS
         or lock["families"]["hadoop"] != COMPONENTS["hadoop"]
         or not 1 <= len(lock.get("replacements", [])) <= 100
     ):
         raise ValueError("Invalid JVM patch scope")
-    old_names, new_names = set(), set()
+    old_names, new_names, parquet_artifacts = set(), set(), set()
     for row in lock["replacements"]:
         old, new = row["old"], row["new"]
         path, name = new["path"], old["name"]
@@ -157,6 +179,10 @@ def validate(lock):
             if artifact in {"zookeeper", "zookeeper-jute"}
             else None,
             "lz4": "at/yawk/lz4/" if artifact == "lz4-java" else None,
+            "parquet": "org/apache/parquet/"
+            if artifact in PARQUET_ARTIFACTS else None,
+            "zstd": "com/github/luben/" if artifact == "zstd-jni" else None,
+            "commons_pool": "commons-pool/" if artifact == "commons-pool" else None,
         }[group]
         if (
             prefix is None
@@ -168,6 +194,7 @@ def validate(lock):
                 re.escape(artifact)
                 + r"-[0-9][A-Za-z0-9.]*"
                 + (r"-jre" if group == "guava" else "")
+                + (r"(?:-[0-9]+)?" if group == "zstd" else "")
                 + re.escape(suffix),
                 name,
             )
@@ -180,6 +207,10 @@ def validate(lock):
             raise ValueError("Duplicate or inconsistent JVM family replacement")
         old_names.add(name)
         new_names.add(destination)
+        if group == "parquet":
+            parquet_artifacts.add(artifact)
+    if parquet_artifacts and parquet_artifacts != PARQUET_ARTIFACTS:
+        raise ValueError("Complete matched Parquet artifact cohort required")
     if old_names & new_names:
         raise ValueError("Overlapping JVM replacement names")
     return old_names, new_names
@@ -255,15 +286,26 @@ def validate_downloads(lock, downloads):
         matches = [row for row in downloads if row["path"].split("/")[-3] == artifact]
         if len(matches) != 1 or matches[0]["path"] != expected:
             raise ValueError("Unmatched Hadoop/S3 dependency cohort")
+    additions = set()
+    for artifact, (group, family_name) in PARQUET_ADDITIONS.items():
+        version = lock["families"][family_name]
+        name = f"{artifact}-{version}.jar"
+        expected = f"{group}/{artifact}/{version}/{name}"
+        matches = [row for row in downloads if row["path"].split("/")[-3] == artifact]
+        if len(matches) != 1 or matches[0]["path"] != expected:
+            raise ValueError("Unmatched Parquet runtime dependency cohort")
+        additions.add(name)
     if any(row["new"] not in downloads for row in lock["replacements"]):
         raise ValueError("JVM replacement missing from download lock")
     managed = [
         row["path"].rsplit("/", 1)[-1]
         for row in downloads
-        if row["path"].rsplit("/", 1)[-1].startswith(PREFIXES)
+        if row["path"].rsplit("/", 1)[-1].startswith(
+            PREFIXES + tuple(name + "-" for name in PARQUET_ADDITIONS)
+        )
         and not row["path"].rsplit("/", 1)[-1].startswith(SEPARATE_API_PREFIXES)
     ]
-    if set(managed) != new_names or len(managed) != len(new_names):
+    if set(managed) != new_names | additions or len(managed) != len(new_names | additions):
         raise ValueError("Unmatched reviewed JVM download inventory")
 
 

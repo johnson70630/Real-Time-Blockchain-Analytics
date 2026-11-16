@@ -1,6 +1,8 @@
 """Network-disabled Java/Spark/classpath/CA-store and Parquet checks."""
 
 import base64
+from datetime import datetime
+from decimal import Decimal
 import hashlib
 import json
 import os
@@ -8,7 +10,7 @@ import sys
 import zipfile
 from pathlib import Path
 
-from pyspark.sql import SparkSession
+from pyspark.sql import SparkSession, Row
 from py4j.protocol import Py4JJavaError
 from runtime.jvm import verify_class_origins
 from runtime.features import FORBIDDEN_CLASSES, verify_profile
@@ -300,7 +302,7 @@ try:
         parquet_thrift.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()
     ) == str(
         Path(
-            "/usr/local/lib/python3.12/site-packages/pyspark/jars/parquet-format-structures-1.15.2.jar"
+            "/usr/local/lib/python3.12/site-packages/pyspark/jars/parquet-format-structures-1.18.2.jar"
         )
     )
     legacy_parquet = Path("/tmp/legacy-thrift.parquet")
@@ -327,6 +329,49 @@ try:
         range(32)
     )
     print("PARQUET_RELOCATED_THRIFT_LEGACY_READ_AND_LZ4_SHUFFLE_VERIFIED")
+    # Exercise the relocated Jackson implementation, rather than the separate
+    # patched top-level Jackson modules. Include native and new POM dependencies.
+    parquet_mapper = jvm.shaded.parquet.com.fasterxml.jackson.databind.ObjectMapper()
+    assert str(parquet_mapper.version()) == "2.22.4"
+    assert (
+        parquet_mapper.readTree('{"chain":"arbitrum"}').get("chain").asText() == "arbitrum"
+    )
+    zstd = jvm.com.github.luben.zstd.Zstd
+    assert (
+        bytes(zstd.decompress(zstd.compress(lz4_payload), len(lz4_payload))) == lz4_payload
+    )
+    pool = jvm.org.apache.commons.pool.impl.GenericObjectPool()
+    pool.close()
+    point = jvm.org.locationtech.jts.geom.GeometryFactory().createPoint(
+        jvm.org.locationtech.jts.geom.Coordinate(1.0, 2.0)
+    )
+    assert point.getX() == 1.0 and point.getY() == 2.0
+    spark.conf.set("spark.sql.session.timeZone", "UTC")
+    schema = "id long, address string, amount decimal(38,18), event_time timestamp, payload binary, tags array<string>, properties map<string,string>, meta struct<chain:string,log_index:int>"
+    original = [
+        (
+            1,
+            "0xsynthetic",
+            Decimal("123456789.123456789123456789"),
+            datetime(2026, 1, 1, 12, 34, 56, 123456),
+            b"\x00\xff",
+            ["swap", "demo"],
+            {"source": "offline"},
+            Row(chain="arbitrum", log_index=3),
+        ),
+        (2, None, None, None, None, [], {}, None),
+    ]
+    frame = spark.createDataFrame(original, schema)
+    expected = frame.orderBy("id").collect()
+    for codec in ("snappy", "zstd"):
+        destination = "/tmp/parquet-types-" + codec
+        frame.coalesce(1).write.option("compression", codec).parquet(destination)
+        for vectorized in ("true", "false"):
+            spark.conf.set("spark.sql.parquet.enableVectorizedReader", vectorized)
+            decoded = spark.read.schema(frame.schema).parquet(destination)
+            assert decoded.orderBy("id").collect() == expected
+            assert decoded.where("id = 2").collect() == [expected[1]]
+    print("PARQUET_SHADED_JSON_NATIVE_ZSTD_AND_TYPED_READERS_VERIFIED")
     for name in (
         "org.apache.spark.sql.kafka010.KafkaSourceProvider",
         "org.apache.hadoop.fs.s3a.S3AFileSystem",

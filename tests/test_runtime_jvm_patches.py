@@ -50,6 +50,11 @@ def prepared(tmp_path):
             "jline": "3.30.16",
             "zookeeper": "3.9.7",
             "lz4": "1.14.1",
+            "parquet": "1.18.2",
+            "zstd": "1.5.7-24",
+            "commons_pool": "1.6",
+            "jts": "1.20.0",
+            "javax_annotation": "1.3.2",
         },
         "components": {
             "hadoop": "3.4.3",
@@ -268,6 +273,8 @@ def test_matched_hadoop_client_is_not_duplicated_into_override_directory(
         ("zookeeper", "org/apache/zookeeper", "zookeeper"),
         ("zookeeper-jute", "org/apache/zookeeper", "zookeeper"),
         ("lz4-java", "at/yawk/lz4", "lz4"),
+        ("zstd-jni", "com/github/luben", "zstd"),
+        ("commons-pool", "commons-pool", "commons_pool"),
     ],
 )
 def test_normal_directory_patches_preserve_legacy_json_and_avoid_duplicate_copies(
@@ -276,7 +283,7 @@ def test_normal_directory_patches_preserve_legacy_json_and_avoid_duplicate_copie
     target, cache, lock = prepared
     version = lock["families"][family]
     name = f"{artifact}-{version}.jar"
-    old = f"{artifact}-1.0{'-jre' if family == 'guava' else ''}.jar"
+    old = f"{artifact}-1.0{'-jre' if family == 'guava' else '-9' if family == 'zstd' else ''}.jar"
     (target / old).write_bytes(b"old component")
     (cache / name).write_bytes(b"patched component")
     lock["replacements"].append(
@@ -351,5 +358,53 @@ def test_lz4_replacement_requires_the_reviewed_maintainer_coordinate():
     lock = json.loads((ROOT / "deploy/runtime/spark-jvm-patches.lock.json").read_text())
     row = next(r for r in lock["replacements"] if r["old"]["name"].startswith("lz4-java-"))
     row["new"]["path"] = row["new"]["path"].replace("at/yawk/lz4/", "org/lz4/")
+    with pytest.raises(ValueError, match="inconsistent"):
+        patch_jars.validate(lock)
+
+
+@pytest.mark.parametrize("missing", sorted(patch_jars.PARQUET_ARTIFACTS))
+def test_every_parquet_module_is_required_in_the_same_replacement_cohort(missing):
+    lock = json.loads((ROOT / "deploy/runtime/spark-jvm-patches.lock.json").read_text())
+    lock["replacements"] = [
+        row for row in lock["replacements"]
+        if row["new"]["path"].split("/")[-3] != missing
+    ]
+    with pytest.raises(ValueError, match="Complete matched Parquet"):
+        patch_jars.validate(lock)
+
+
+@pytest.mark.parametrize("artifact", sorted(patch_jars.PARQUET_ADDITIONS))
+@pytest.mark.parametrize("failure", ["missing", "old_version", "duplicate"])
+def test_required_parquet_runtime_additions_cannot_be_missing_or_mixed(artifact, failure):
+    lock = json.loads((ROOT / "deploy/runtime/spark-jvm-patches.lock.json").read_text())
+    downloads = json.loads((ROOT / "deploy/runtime/jars.lock.json").read_text())
+    row = next(r for r in downloads if r["path"].split("/")[-3] == artifact)
+    if failure == "missing":
+        downloads.remove(row)
+    elif failure == "duplicate":
+        downloads.append(copy.deepcopy(row))
+    else:
+        version = row["path"].split("/")[-2]
+        row["path"] = row["path"].replace(version, "0.0.1")
+    with pytest.raises(ValueError, match="Parquet runtime dependency cohort"):
+        patch_jars.validate_downloads(lock, downloads)
+
+
+@pytest.mark.parametrize("artifact", sorted(patch_jars.PARQUET_ARTIFACTS) + ["zstd-jni", "commons-pool"])
+def test_older_parquet_codec_downloads_are_rejected(artifact):
+    lock = json.loads((ROOT / "deploy/runtime/spark-jvm-patches.lock.json").read_text())
+    downloads = json.loads((ROOT / "deploy/runtime/jars.lock.json").read_text())
+    row = copy.deepcopy(next(r for r in downloads if r["path"].split("/")[-3] == artifact))
+    version = row["path"].split("/")[-2]
+    row["path"] = row["path"].replace(version, "0.0.1")
+    downloads.append(row)
+    with pytest.raises(ValueError, match="JVM download inventory"):
+        patch_jars.validate_downloads(lock, downloads)
+
+
+def test_mixed_parquet_versions_are_rejected_before_installation():
+    lock = json.loads((ROOT / "deploy/runtime/spark-jvm-patches.lock.json").read_text())
+    row = next(r for r in lock["replacements"] if r["new"]["path"].split("/")[-3] == "parquet-jackson")
+    row["new"]["path"] = row["new"]["path"].replace("1.18.2", "1.18.1")
     with pytest.raises(ValueError, match="inconsistent"):
         patch_jars.validate(lock)

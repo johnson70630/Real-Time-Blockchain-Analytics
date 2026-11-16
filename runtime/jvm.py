@@ -57,6 +57,26 @@ CONNECTOR_CLASSES = (
     ),
 )
 NORMAL_CLASSES = (
+    ("org.apache.parquet.Version", "parquet-common", "parquet"),
+    ("org.apache.parquet.column.ColumnDescriptor", "parquet-column", "parquet"),
+    (
+        "org.apache.parquet.column.values.bitpacking.BytePacker",
+        "parquet-encoding", "parquet",
+    ),
+    ("org.apache.parquet.format.FileMetaData", "parquet-format-structures", "parquet"),
+    (
+        "shaded.parquet.org.apache.thrift.protocol.TCompactProtocol",
+        "parquet-format-structures", "parquet",
+    ),
+    ("org.apache.parquet.hadoop.ParquetFileReader", "parquet-hadoop", "parquet"),
+    (
+        "shaded.parquet.com.fasterxml.jackson.databind.ObjectMapper",
+        "parquet-jackson", "parquet",
+    ),
+    ("com.github.luben.zstd.Zstd", "zstd-jni", "zstd"),
+    ("org.apache.commons.pool.impl.GenericObjectPool", "commons-pool", "commons_pool"),
+    ("org.locationtech.jts.geom.GeometryFactory", "jts-core", "jts"),
+    ("javax.annotation.PostConstruct", "javax.annotation-api", "javax_annotation"),
     ("net.jpountz.lz4.LZ4Factory", "lz4-java", "lz4"),
     ("net.jpountz.xxhash.XXHashFactory", "lz4-java", "lz4"),
     ("net.jpountz.util.Native", "lz4-java", "lz4"),

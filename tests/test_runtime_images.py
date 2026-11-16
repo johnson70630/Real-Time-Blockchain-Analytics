@@ -414,3 +414,10 @@ def test_old_thrift_lz4_manifest_remains_rejected(inspected):
     inspected["spark"]["id"] = evidence["baseline_spark_manifest"]
     with pytest.raises(ValueError, match="REJECTED_IMAGE_RELEASE"):
         images.publication_plan(inspected, COMMIT)
+
+
+def test_old_parquet_cohort_manifest_cannot_be_planned_as_current(inspected):
+    evidence = json.loads((images.ROOT / "docs/evidence/aws_runtime_parquet_2026-11-16.json").read_text())
+    inspected["spark"]["id"] = evidence["baseline_spark_manifest"]
+    with pytest.raises(ValueError, match="REJECTED_IMAGE_RELEASE"):
+        images.publication_plan(inspected, COMMIT)

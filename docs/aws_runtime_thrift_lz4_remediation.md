@@ -1,5 +1,7 @@
 # Milestone 11.6C — LZ4 maintenance and unused Thrift removal
 
+Current offline follow-up: [complete Parquet cohort maintenance](aws_runtime_parquet_remediation.md). Deployment remains blocked; no exceptions or AWS changes are authorized.
+
 Reviewed 2026-11-16 UTC. **Deployment remains blocked.** This is an offline
 security checkpoint, with no accepted exceptions, ECR publication or paid
 runtime authorization. Milestone 11.5D remains paused.

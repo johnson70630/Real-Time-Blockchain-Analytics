@@ -31,6 +31,11 @@ def fake_spark(override, shadow=None, *, version="4.0.1", java="17", hadoop="3.4
         "jline": "3.30.16",
         "zookeeper": "3.9.7",
         "lz4": "1.14.1",
+        "parquet": "1.18.2",
+        "zstd": "1.5.7-24",
+        "commons_pool": "1.6",
+        "jts": "1.20.0",
+        "javax_annotation": "1.3.2",
     }
     paths = {
         name: str(override / f"{artifact}-{families[family]}.jar")
@@ -132,12 +137,12 @@ def test_normal_class_origins_match_the_reviewed_artifact_filenames(
     lock = json.loads(
         (
             Path(__file__).resolve().parents[1]
-            / "deploy/runtime/spark-jvm-patches.lock.json"
+            / "deploy/runtime/jars.lock.json"
         ).read_text()
     )
     filenames = {
-        row["new"]["path"].split("/")[-3]: row["new"]["path"].split("/")[-1]
-        for row in lock["replacements"]
+        row["path"].split("/")[-3]: row["path"].split("/")[-1]
+        for row in lock
     }
     monkeypatch.setattr(jvm, "OVERRIDES", tmp_path)
     spark, families = fake_spark(tmp_path)

@@ -1,0 +1,600 @@
+{
+  "schema_version": 1,
+  "milestone": "11.6C",
+  "review_date_utc": "2026-11-16",
+  "base_commit": "3505f95f962eaa0dbc7e297f80134aa1c4ad0e79",
+  "baseline_ci": {
+    "run_id": 43976809375,
+    "all_six_jobs": "success"
+  },
+  "baseline_spark_manifest": "sha256:e3137a88b38902245299c47bfc7fde1027b86870a26a2d5fb646e2f3e019a9c9",
+  "scope": "OFFLINE_COMPLETE_PARQUET_COHORT_AND_REQUIRED_RUNTIME_DEPENDENCIES",
+  "selected_versions": {
+    "parquet": "1.18.2",
+    "zstd": "1.5.7-24",
+    "commons_pool": "1.6",
+    "jts": "1.20.0",
+    "javax_annotation": "1.3.2"
+  },
+  "exact_replacements": [
+    {
+      "old": {
+        "name": "parquet-column-1.15.2.jar",
+        "sha512": "85892e350f087e46fd8c8f470af280ee727c229fbce08223b8bc46549cd8fb4d2d94cdc55b81c24b07992ac100f4e7b80adaab760d3550582adb30bab69fbdb0"
+      },
+      "new": {
+        "path": "org/apache/parquet/parquet-column/1.18.2/parquet-column-1.18.2.jar",
+        "sha512": "a16cf7de147f447039343b7607df26f85f948b3458d3fd0f155b63ee683f457be97d4006ab923fce62c1ffdb422c3da5e72b40102b6490709a398cf877d36c87"
+      }
+    },
+    {
+      "old": {
+        "name": "parquet-common-1.15.2.jar",
+        "sha512": "7dc871bc96a97e9232622882ff4c6affbcf18691f77f3845c135e1d348dda85f8b06ed5719d1b0ed0da78c842282744f3d0babc5e22b24c184fe55c8a8d4331a"
+      },
+      "new": {
+        "path": "org/apache/parquet/parquet-common/1.18.2/parquet-common-1.18.2.jar",
+        "sha512": "81317df4b598f4529a28e48365c65a131b4395d1fefe0d829f5d8e692603795f3997da5a652d039d45f9d927459ddf813efec375e165b7ac49c55881b9f489de"
+      }
+    },
+    {
+      "old": {
+        "name": "parquet-encoding-1.15.2.jar",
+        "sha512": "61e336d60917b2e8319b66cadcdb1c862bce715ab32c7efac99786ef1217afc0eaa845b36975b1ac0ef6a05d96a4b2e8755892e1220c17261a76fd67489798f1"
+      },
+      "new": {
+        "path": "org/apache/parquet/parquet-encoding/1.18.2/parquet-encoding-1.18.2.jar",
+        "sha512": "03979e37567ba361feffadd2a6a9b23ef122e0e515494b54628752924f1e878f9bb7c86f2726f199e0046b61732e307673e971e747df98a7d4881f2353828423"
+      }
+    },
+    {
+      "old": {
+        "name": "parquet-format-structures-1.15.2.jar",
+        "sha512": "837da2ca1a85dad0cad29040a15f51f2cf0ba953e9e2fc1e9a4279e06af7f8d9966adc733d3ab4092359f836b315be0f04d9925498fc73b00e7e91e776c5aeda"
+      },
+      "new": {
+        "path": "org/apache/parquet/parquet-format-structures/1.18.2/parquet-format-structures-1.18.2.jar",
+        "sha512": "4ded0335bf959b7a0ce4f3e8e9b31dd9cf257ccae0f75807351833a08cac00a78799d66f66b5c0bc1336b31425c888330b5731e87e28b9a7382b5604e63f8997"
+      }
+    },
+    {
+      "old": {
+        "name": "parquet-hadoop-1.15.2.jar",
+        "sha512": "d7f4293d5f266d2cd9555dfadb52895bd894787d2fdeb476077d85dab7cad784abf7418d9748a51118be91b2cb72c8775710e0938c7e0995041755dddd9f7855"
+      },
+      "new": {
+        "path": "org/apache/parquet/parquet-hadoop/1.18.2/parquet-hadoop-1.18.2.jar",
+        "sha512": "fbbc7328e208c212fae1f6129c5753140141273f113f80fe0acd2b0e6afe8480eebdc1ad20ffd1ca751886e314fa34151e6f1394dcc8a5efb281daee9d2400eb"
+      }
+    },
+    {
+      "old": {
+        "name": "parquet-jackson-1.15.2.jar",
+        "sha512": "4622d76bae26e1a3e390eefa2bf43274f227342432ac81f91deff209425ef6935d7e3e7e5886a09f7827c50e23859e8d9fa878ad0388b4289a623c40047711f0"
+      },
+      "new": {
+        "path": "org/apache/parquet/parquet-jackson/1.18.2/parquet-jackson-1.18.2.jar",
+        "sha512": "57f87afc1720bce8ffa8e866b969c2578c6c2a3a719672faa3c1d357541ee26a2081c08eaaeeed38f713c2efc739c564632fe370993e850147b2f731320edcd1"
+      }
+    },
+    {
+      "old": {
+        "name": "zstd-jni-1.5.6-9.jar",
+        "sha512": "dba0a8fa61368ad3263949e00427a2c82caf392977a8a97415b617dc29c7df2a46bed709c9ff3460954bd3dbe5275da91fa36cea53a9aeed27621163ec8ed59f"
+      },
+      "new": {
+        "path": "com/github/luben/zstd-jni/1.5.7-24/zstd-jni-1.5.7-24.jar",
+        "sha512": "a8d42052fd2716091913cd4e6ea001b93bc5530145e7ed571423a2cd551071da21a7d99bee93778f60101829d27a0d4d27d0bc4edb2b933747784a4429ac0487"
+      }
+    },
+    {
+      "old": {
+        "name": "commons-pool-1.5.4.jar",
+        "sha512": "bb5a66d7da8f389660fb369c1a6e77296f39239cca1d69ca1b7c80e8e81c38a9d25debefb702a2eaac987e83885898ca0c95c6387d8440e548653d6bdae686a6"
+      },
+      "new": {
+        "path": "commons-pool/commons-pool/1.6/commons-pool-1.6.jar",
+        "sha512": "3bf5bcdbd7342e794f95747421c510778d8656d7ca901eb9b0fd15b9edb5b470e799c76abce9fe5958355d0d6067565ab71897d02462232176a0145a7d546e69"
+      }
+    }
+  ],
+  "checksum_provenance": [
+    {
+      "path": "org/apache/parquet/parquet-column/1.18.2/parquet-column-1.18.2.jar",
+      "bytes": 3265116,
+      "sha512": "a16cf7de147f447039343b7607df26f85f948b3458d3fd0f155b63ee683f457be97d4006ab923fce62c1ffdb422c3da5e72b40102b6490709a398cf877d36c87",
+      "published_checksum_algorithm": "sha1",
+      "published_checksum": "0fbef5f3764dd7f1667164afe42461623d42e705",
+      "pom_sha256": "af004c8fdae5ff2e884d11277963241fb09fa338270a8362e620d2a7cb31d08b"
+    },
+    {
+      "path": "org/apache/parquet/parquet-common/1.18.2/parquet-common-1.18.2.jar",
+      "bytes": 131242,
+      "sha512": "81317df4b598f4529a28e48365c65a131b4395d1fefe0d829f5d8e692603795f3997da5a652d039d45f9d927459ddf813efec375e165b7ac49c55881b9f489de",
+      "published_checksum_algorithm": "sha1",
+      "published_checksum": "5689699fdd05ef2da303edcb792568e01a3e150a",
+      "pom_sha256": "653068c587f5c160079a2d1724ae2b10a6ae2d8617439e18900a4764b3f75599"
+    },
+    {
+      "path": "org/apache/parquet/parquet-encoding/1.18.2/parquet-encoding-1.18.2.jar",
+      "bytes": 835487,
+      "sha512": "03979e37567ba361feffadd2a6a9b23ef122e0e515494b54628752924f1e878f9bb7c86f2726f199e0046b61732e307673e971e747df98a7d4881f2353828423",
+      "published_checksum_algorithm": "sha1",
+      "published_checksum": "4dc2a901e4466c8d09d54b4a50981b6abe346d59",
+      "pom_sha256": "8d7fcff34b2c1afb721c93516b3582f66cc7fb17839853fb585ef521f244c820"
+    },
+    {
+      "path": "org/apache/parquet/parquet-format-structures/1.18.2/parquet-format-structures-1.18.2.jar",
+      "bytes": 868158,
+      "sha512": "4ded0335bf959b7a0ce4f3e8e9b31dd9cf257ccae0f75807351833a08cac00a78799d66f66b5c0bc1336b31425c888330b5731e87e28b9a7382b5604e63f8997",
+      "published_checksum_algorithm": "sha1",
+      "published_checksum": "ad88add9377e4a5f1a1d3f91c59c98dfad607b1a",
+      "pom_sha256": "acbcb60ca58dde9841a8c45a4c6536e75838e0f3f07a3ba2cc1357a4b378effe"
+    },
+    {
+      "path": "org/apache/parquet/parquet-hadoop/1.18.2/parquet-hadoop-1.18.2.jar",
+      "bytes": 1655471,
+      "sha512": "fbbc7328e208c212fae1f6129c5753140141273f113f80fe0acd2b0e6afe8480eebdc1ad20ffd1ca751886e314fa34151e6f1394dcc8a5efb281daee9d2400eb",
+      "published_checksum_algorithm": "sha1",
+      "published_checksum": "7d00883a565628f317a089480c2a51d7085e6212",
+      "pom_sha256": "b67bfafeea33e1ee123a651f3bbf9ac4f547a922536bb02a257910318294f609"
+    },
+    {
+      "path": "org/apache/parquet/parquet-jackson/1.18.2/parquet-jackson-1.18.2.jar",
+      "bytes": 2448512,
+      "sha512": "57f87afc1720bce8ffa8e866b969c2578c6c2a3a719672faa3c1d357541ee26a2081c08eaaeeed38f713c2efc739c564632fe370993e850147b2f731320edcd1",
+      "published_checksum_algorithm": "sha1",
+      "published_checksum": "e35cfacc60b0b448434cad6450fa4fdbaeb47768",
+      "pom_sha256": "6811749aa2c01a069c6a2bc3ecaef0ed5fc82b6098086e2bd2a1e9187c2c06b2"
+    },
+    {
+      "path": "com/github/luben/zstd-jni/1.5.7-24/zstd-jni-1.5.7-24.jar",
+      "bytes": 6483095,
+      "sha512": "a8d42052fd2716091913cd4e6ea001b93bc5530145e7ed571423a2cd551071da21a7d99bee93778f60101829d27a0d4d27d0bc4edb2b933747784a4429ac0487",
+      "published_checksum_algorithm": "sha1",
+      "published_checksum": "03db28b2a682184f5be41eb6774c8ec1a81683c2",
+      "pom_sha256": "86c6d45aa3ac9082357ad05ec3226edc9b0ab36b9f6614e8ebeeadba72c496ae"
+    },
+    {
+      "path": "commons-pool/commons-pool/1.6/commons-pool-1.6.jar",
+      "bytes": 111119,
+      "sha512": "3bf5bcdbd7342e794f95747421c510778d8656d7ca901eb9b0fd15b9edb5b470e799c76abce9fe5958355d0d6067565ab71897d02462232176a0145a7d546e69",
+      "published_checksum_algorithm": "sha1",
+      "published_checksum": "4572d589699f09d866a226a14b7f4323c6d8f040",
+      "pom_sha256": "2dde6b76ae0f4cffd0ad7429e06557d4bfd167cf42b2041aca5ca3c01cb60ca9"
+    },
+    {
+      "path": "org/locationtech/jts/jts-core/1.20.0/jts-core-1.20.0.jar",
+      "bytes": 1239978,
+      "sha512": "3d6e32203f36517447cc027d741d1be301d454d34707d9fcb870d49dd686e7f1f72cff4b36bdd90ed8f2bee7e3afade7b3a1457de9c15777b91f47cdace91a6e",
+      "published_checksum_algorithm": "sha1",
+      "published_checksum": "25b72c9548a328cb1aea8a6b89d710a31ade5403",
+      "pom_sha256": "aaab506d3942149d5466c7ea3ea154cc3ea50c06bb39a533799dd9c7ff8b2146"
+    },
+    {
+      "path": "javax/annotation/javax.annotation-api/1.3.2/javax.annotation-api-1.3.2.jar",
+      "bytes": 26586,
+      "sha512": "679cf44c3b9d635b43ed122a555d570292c3f0937c33871c40438a1a53e2058c80578694ec9466eac9e280e19bfb7a95b261594cc4c1161c85dc97df6235e553",
+      "published_checksum_algorithm": "sha1",
+      "published_checksum": "934c04d3cfef185a8008e7bf34331b79730a9d43",
+      "pom_sha256": "46a4a251ca406e78e4853d7a2bae83282844a4992851439ee9a1f23716f06b97"
+    }
+  ],
+  "public_metadata_review": [
+    {
+      "artifact": "org/apache/hadoop/hadoop-aws",
+      "latest": "3.5.0",
+      "recent": [
+        "3.3.0",
+        "3.3.1",
+        "3.3.2",
+        "3.3.3",
+        "3.3.4",
+        "3.3.5",
+        "3.3.6",
+        "3.4.0",
+        "3.4.1",
+        "3.4.2",
+        "3.4.3",
+        "3.5.0"
+      ],
+      "sha256": "bbdb66b26e50cc4cf986fc70ebb57121198491090097de4c528263b223acbe87",
+      "url": "https://repo.maven.apache.org/maven2/org/apache/hadoop/hadoop-aws/maven-metadata.xml"
+    },
+    {
+      "artifact": "software/amazon/awssdk/bundle",
+      "latest": "2.59.1",
+      "recent": [
+        "2.57.5",
+        "2.57.6",
+        "2.57.7",
+        "2.57.8",
+        "2.57.9",
+        "2.57.10",
+        "2.57.11",
+        "2.57.12",
+        "2.57.13",
+        "2.58.0",
+        "2.59.0",
+        "2.59.1"
+      ],
+      "sha256": "8df9b363ed7c3aa4cec3bec4c877368be49eaeb9c724fbc5b7d016612b0155df",
+      "url": "https://repo.maven.apache.org/maven2/software/amazon/awssdk/bundle/maven-metadata.xml"
+    },
+    {
+      "artifact": "org/apache/parquet/parquet-hadoop",
+      "latest": "1.18.2",
+      "recent": [
+        "1.14.2",
+        "1.14.3",
+        "1.14.4",
+        "1.15.0",
+        "1.15.1",
+        "1.15.2",
+        "1.16.0",
+        "1.17.0",
+        "1.17.1",
+        "1.18.0",
+        "1.18.1",
+        "1.18.2"
+      ],
+      "sha256": "47624c7071a6cbc3647436d390f51310ddf373cae4a5dc57493b8c4f304e14e8",
+      "url": "https://repo.maven.apache.org/maven2/org/apache/parquet/parquet-hadoop/maven-metadata.xml"
+    }
+  ],
+  "runtime_dependency_review": [
+    {
+      "old": {
+        "name": "parquet-column-1.15.2.jar",
+        "size": 3231753,
+        "sha512": "85892e350f087e46fd8c8f470af280ee727c229fbce08223b8bc46549cd8fb4d2d94cdc55b81c24b07992ac100f4e7b80adaab760d3550582adb30bab69fbdb0"
+      },
+      "artifact": "parquet-column",
+      "dependencies": [
+        {
+          "groupId": "org.apache.parquet",
+          "artifactId": "parquet-common",
+          "version": "1.18.2",
+          "scope": "compile",
+          "optional": null
+        },
+        {
+          "groupId": "org.apache.parquet",
+          "artifactId": "parquet-encoding",
+          "version": "1.18.2",
+          "scope": "compile",
+          "optional": null
+        },
+        {
+          "groupId": "org.slf4j",
+          "artifactId": "slf4j-api",
+          "version": "1.7.33",
+          "scope": "compile",
+          "optional": null
+        },
+        {
+          "groupId": "org.locationtech.jts",
+          "artifactId": "jts-core",
+          "version": "1.20.0",
+          "scope": "compile",
+          "optional": null
+        }
+      ],
+      "pom_sha256": "af004c8fdae5ff2e884d11277963241fb09fa338270a8362e620d2a7cb31d08b"
+    },
+    {
+      "old": {
+        "name": "parquet-common-1.15.2.jar",
+        "size": 124577,
+        "sha512": "7dc871bc96a97e9232622882ff4c6affbcf18691f77f3845c135e1d348dda85f8b06ed5719d1b0ed0da78c842282744f3d0babc5e22b24c184fe55c8a8d4331a"
+      },
+      "artifact": "parquet-common",
+      "dependencies": [
+        {
+          "groupId": "org.apache.parquet",
+          "artifactId": "parquet-format-structures",
+          "version": "${project.version}",
+          "scope": null,
+          "optional": null
+        },
+        {
+          "groupId": "org.slf4j",
+          "artifactId": "slf4j-api",
+          "version": "${slf4j.version}",
+          "scope": null,
+          "optional": null
+        }
+      ],
+      "pom_sha256": "653068c587f5c160079a2d1724ae2b10a6ae2d8617439e18900a4764b3f75599"
+    },
+    {
+      "old": {
+        "name": "parquet-encoding-1.15.2.jar",
+        "size": 849404,
+        "sha512": "61e336d60917b2e8319b66cadcdb1c862bce715ab32c7efac99786ef1217afc0eaa845b36975b1ac0ef6a05d96a4b2e8755892e1220c17261a76fd67489798f1"
+      },
+      "artifact": "parquet-encoding",
+      "dependencies": [
+        {
+          "groupId": "org.apache.parquet",
+          "artifactId": "parquet-common",
+          "version": "${project.version}",
+          "scope": null,
+          "optional": null
+        },
+        {
+          "groupId": "org.slf4j",
+          "artifactId": "slf4j-api",
+          "version": "${slf4j.version}",
+          "scope": null,
+          "optional": null
+        }
+      ],
+      "pom_sha256": "8d7fcff34b2c1afb721c93516b3582f66cc7fb17839853fb585ef521f244c820"
+    },
+    {
+      "old": {
+        "name": "parquet-format-structures-1.15.2.jar",
+        "size": 767181,
+        "sha512": "837da2ca1a85dad0cad29040a15f51f2cf0ba953e9e2fc1e9a4279e06af7f8d9966adc733d3ab4092359f836b315be0f04d9925498fc73b00e7e91e776c5aeda"
+      },
+      "artifact": "parquet-format-structures",
+      "dependencies": [
+        {
+          "groupId": "javax.annotation",
+          "artifactId": "javax.annotation-api",
+          "version": "1.3.2",
+          "scope": "compile",
+          "optional": null
+        }
+      ],
+      "pom_sha256": "acbcb60ca58dde9841a8c45a4c6536e75838e0f3f07a3ba2cc1357a4b378effe"
+    },
+    {
+      "old": {
+        "name": "parquet-hadoop-1.15.2.jar",
+        "size": 1182337,
+        "sha512": "d7f4293d5f266d2cd9555dfadb52895bd894787d2fdeb476077d85dab7cad784abf7418d9748a51118be91b2cb72c8775710e0938c7e0995041755dddd9f7855"
+      },
+      "artifact": "parquet-hadoop",
+      "dependencies": [
+        {
+          "groupId": "org.apache.parquet",
+          "artifactId": "parquet-column",
+          "version": "1.18.2",
+          "scope": "compile",
+          "optional": null
+        },
+        {
+          "groupId": "org.apache.parquet",
+          "artifactId": "parquet-format-structures",
+          "version": "1.18.2",
+          "scope": "compile",
+          "optional": null
+        },
+        {
+          "groupId": "org.apache.parquet",
+          "artifactId": "parquet-common",
+          "version": "1.18.2",
+          "scope": "compile",
+          "optional": null
+        },
+        {
+          "groupId": "org.apache.parquet",
+          "artifactId": "parquet-jackson",
+          "version": "1.18.2",
+          "scope": "runtime",
+          "optional": null
+        },
+        {
+          "groupId": "org.xerial.snappy",
+          "artifactId": "snappy-java",
+          "version": "1.1.10.12",
+          "scope": "compile",
+          "optional": null
+        },
+        {
+          "groupId": "io.airlift",
+          "artifactId": "aircompressor",
+          "version": "2.0.3",
+          "scope": "compile",
+          "optional": null
+        },
+        {
+          "groupId": "commons-pool",
+          "artifactId": "commons-pool",
+          "version": "1.6",
+          "scope": "compile",
+          "optional": null
+        },
+        {
+          "groupId": "com.github.luben",
+          "artifactId": "zstd-jni",
+          "version": "1.5.7-24",
+          "scope": "compile",
+          "optional": null
+        },
+        {
+          "groupId": "org.slf4j",
+          "artifactId": "slf4j-api",
+          "version": "1.7.33",
+          "scope": "compile",
+          "optional": null
+        },
+        {
+          "groupId": "com.github.rdblue",
+          "artifactId": "brotli-codec",
+          "version": "0.1.1",
+          "scope": "runtime",
+          "optional": "true"
+        }
+      ],
+      "pom_sha256": "b67bfafeea33e1ee123a651f3bbf9ac4f547a922536bb02a257910318294f609"
+    },
+    {
+      "old": {
+        "name": "parquet-jackson-1.15.2.jar",
+        "size": 2389994,
+        "sha512": "4622d76bae26e1a3e390eefa2bf43274f227342432ac81f91deff209425ef6935d7e3e7e5886a09f7827c50e23859e8d9fa878ad0388b4289a623c40047711f0"
+      },
+      "artifact": "parquet-jackson",
+      "dependencies": [],
+      "pom_sha256": "6811749aa2c01a069c6a2bc3ecaef0ed5fc82b6098086e2bd2a1e9187c2c06b2"
+    }
+  ],
+  "sdk_recheck": [
+    {
+      "artifact": "hadoop-project",
+      "version": "3.5.0",
+      "url": "https://repo.maven.apache.org/maven2/org/apache/hadoop/hadoop-project/3.5.0/hadoop-project-3.5.0.pom",
+      "sha256": "592faadca05d91d7339323b02494d39955a8f08909ecbe893518debbf58453d7",
+      "properties": {
+        "aws-java-sdk-v2.version": "2.35.4"
+      }
+    },
+    {
+      "artifact": "aws-sdk-java-pom",
+      "version": "2.59.1",
+      "url": "https://repo.maven.apache.org/maven2/software/amazon/awssdk/aws-sdk-java-pom/2.59.1/aws-sdk-java-pom-2.59.1.pom",
+      "sha256": "38f964c59aae3b768943aecabf36616dee7fa57384e1fc5bdf0e457dd790eed1",
+      "properties": {
+        "jackson.version": "2.21.8",
+        "netty.version": "4.1.138.Final"
+      }
+    }
+  ],
+  "sdk_replacement_selected": false,
+  "hadoop_sdk_pair_unchanged": true,
+  "parquet_shaded_jackson_metadata": {
+    "META-INF/maven/com.fasterxml.jackson.core/jackson-core/pom.properties": "artifactId=jackson-core\ngroupId=com.fasterxml.jackson.core\nversion=2.22.4",
+    "META-INF/maven/com.fasterxml.jackson.core/jackson-annotations/pom.properties": "artifactId=jackson-annotations\ngroupId=com.fasterxml.jackson.core\nversion=2.22",
+    "META-INF/maven/com.fasterxml.jackson.core/jackson-databind/pom.properties": "artifactId=jackson-databind\ngroupId=com.fasterxml.jackson.core\nversion=2.22.4"
+  },
+  "parquet_shaded_jackson_high_critical_findings": [],
+  "build_contract": {
+    "downloaded_artifacts": 69,
+    "verified_maven_bytes": 801572009,
+    "exact_replacements": 58,
+    "precedence_copies": 34,
+    "runtime_class_origins": 51,
+    "whole_jar_removals": 63,
+    "java": "17",
+    "spark": "4.0.1",
+    "hadoop": "3.4.3",
+    "sdk": "2.35.4"
+  },
+  "prototype_scan": {
+    "prototype_manifest_digest": "sha256:3c1febdca7927c4d9add148015c397a93fc7823b45317ec4473313289be40153",
+    "report_sha256": "bec8e77a0dff5da04350a7ab877e6d5522f561986006a319cd9fdf9d1abd3fc6",
+    "findings_by_class": {
+      "os-pkgs": {
+        "LOW": 65,
+        "HIGH": 47,
+        "MEDIUM": 92,
+        "UNKNOWN": 5
+      },
+      "lang-pkgs": {
+        "HIGH": 30,
+        "MEDIUM": 47,
+        "CRITICAL": 1,
+        "LOW": 3
+      }
+    },
+    "publication_authorized": false,
+    "aws_calls_made": false
+  },
+  "baseline_scan_sha256": "f1d5b503a2f2d05b380245a38408f118a104bfaa02259894b76f020472de3df4",
+  "high_critical_comparison": {
+    "baseline_distinct_high_critical_pairs": 31,
+    "candidate_distinct_high_critical_pairs": 29,
+    "introduced_pairs": [],
+    "removed_pairs": [
+      [
+        "com.fasterxml.jackson.core:jackson-core",
+        "CVE-2026-89407"
+      ],
+      [
+        "com.fasterxml.jackson.core:jackson-databind",
+        "CVE-2026-68497"
+      ]
+    ]
+  },
+  "scanner": {
+    "name": "Trivy",
+    "version": "0.76.2",
+    "binary_sha256": "7a15c426f963473a485a4f315e21f8e2c881269d500bf0de35da13a4421fa108",
+    "vulnerability_db": {
+      "Version": 2,
+      "NextUpdate": "2026-11-17T01:11:02.624122856Z",
+      "UpdatedAt": "2026-11-16T01:11:02.624123452Z",
+      "DownloadedAt": "2026-11-16T06:29:57.145978Z"
+    },
+    "java_db": {
+      "Version": 1,
+      "NextUpdate": "2026-11-19T00:57:00.601023403Z",
+      "UpdatedAt": "2026-11-16T00:57:00.601024044Z",
+      "DownloadedAt": "2026-11-16T07:24:25.109375Z"
+    },
+    "offline_same_db_comparison": true,
+    "ignore_file": "",
+    "ignore_unfixed": false,
+    "severity_filter": null
+  },
+  "smoke": {
+    "network": "none",
+    "uid": 10001,
+    "read_only_root": true,
+    "class_origins": 51,
+    "java_and_spark_versions": "passed",
+    "legacy_parquet_1_15_2_read": "passed",
+    "shaded_jackson_json": "passed",
+    "native_zstd_and_snappy": "passed",
+    "scalar_and_vectorized_parquet_readers": "passed",
+    "typed_roundtrip": [
+      "decimal(38,18)",
+      "timestamp with microseconds",
+      "binary",
+      "array",
+      "map",
+      "nested struct",
+      "null",
+      "empty array/map"
+    ],
+    "predicate_read": "passed",
+    "s3a_client_construction_without_requests": "passed",
+    "wrong_classpath_rejected": "passed"
+  },
+  "security_exceptions": [],
+  "release_status": "BLOCKED_SDK_CRITICAL_AND_REMAINING_LIBRARY_OS_HIGH",
+  "sources": [
+    "https://github.com/apache/parquet-java/releases/tag/apache-parquet-1.18.2",
+    "https://repo.maven.apache.org/maven2/org/apache/parquet/parquet/1.18.2/parquet-1.18.2.pom",
+    "https://hadoop.apache.org/docs/r3.4.3/hadoop-aws/tools/hadoop-aws/troubleshooting_s3a.html"
+  ],
+  "publication_authorized": false,
+  "images_published": false,
+  "aws_calls_made": false,
+  "terraform_changed": false,
+  "production_infrastructure_changed": false,
+  "milestone_11_5d": "PAUSED",
+  "checkpoint_followup": "Exact committed builds, identity-bound scans, recovery and all six CI jobs must be observed after commit. Prototype data is not an ECR publication receipt.",
+  "cross_version_recovery": {
+    "base_commit": "3505f95f962eaa0dbc7e297f80134aa1c4ad0e79",
+    "source_status": "UNCOMMITTED_PROTOTYPE",
+    "cross_version_parquet_recovery": {
+      "initial": "1.15.2",
+      "resume": "1.18.2"
+    },
+    "synthetic_recovery_passed": true,
+    "phases": [
+      "initial",
+      "kafka_restart",
+      "checkpoint_resume",
+      "repeat_without_duplicate_rows",
+      "offset_loss_fail_closed"
+    ],
+    "project": "blockchain-parquet-prototype-1b65b7b0ab",
+    "aws_calls_made": false,
+    "publication_authorized": false
+  }
+}
