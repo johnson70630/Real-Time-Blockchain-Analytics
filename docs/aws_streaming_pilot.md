@@ -3,7 +3,8 @@
 Status: offline implementation and runtime infrastructure foundation complete.
 The separately approved five-resource recovery apply succeeded on 2026-11-15:
 **28 managed runtime resources exist; EC2 is stopped; Kafka EBS is attached
-but uninitialized.** See the [completion result](aws_runtime_remaining_apply_result.md).
+and now initialized as XFS.** See the [foundation result](aws_runtime_remaining_apply_result.md)
+and later [one-time initialization result](aws_runtime_ebs_initialization_result.md).
 All 23 existing resource IDs were preserved. No streaming application has been
 deployed. The saved recovery plan is consumed and must not be reapplied.
 The subsequent approved [SSM access test](aws_runtime_access_test_result.md)
@@ -11,9 +12,12 @@ passed and ended with verified stop at 2026-11-16 01:25:02 UTC. The local client
 is installed. Guest inspection found missing Compose and incomplete bootstrap.
 The subsequent approved [host-software recovery](aws_runtime_host_recovery_result.md)
 installed verified Compose 5.1.3, enabled Docker, verified zero containers and
-ended with EC2 stopped at 2026-11-16 01:44:02 UTC. Kafka EBS remains untouched;
-its [exact-volume initialization proposal](aws_runtime_ebs_initialization_review.md)
-requires separate destructive-storage and paid-window approval.
+ended with EC2 stopped at 2026-11-16 01:44:02 UTC. The separately approved later
+initialization formatted only vol-02c9fb14a9c568fb5 once, verified a UUID-based
+mount and ended with EC2 stopped at 04:50:40 UTC. Recorded filesystem UUID:
+`da1454d8-1bea-41a3-89d7-87bd570a47bd`. Mount-on-next-boot is not yet tested.
+The formatting approval is consumed and must never be reused. The next
+[publisher proposal](aws_runtime_ecr_publisher_review.md) is offline/unapproved.
 The earlier state-only untaint and planning are historical completed steps;
 see the [plan result](aws_runtime_recovery_plan_result.md),
 [recovery history](aws_runtime_recovery_review.md) and
@@ -24,7 +28,7 @@ See the
 [completed review](aws_runtime_boundary_plan_review.md) and retained
 [approval proposal](aws_runtime_boundary_plan_approval.md).
 Milestone 11.5D remains paused. Recovery state changes/planning, further applies,
-IAM changes, EC2 start/replacement, EBS initialization, Snowflake operations and
+IAM changes, EC2 start/replacement, any further storage mutation, Snowflake operations and
 main merge remain separate gates. README is unchanged. See the
 [completed runtime plan review](aws_runtime_plan_review.md) and subsequent
 [cost, provisioning-permission and launch review](aws_demo_launch_approval.md).
@@ -60,8 +64,8 @@ Remaining sequence:
 2. The approved fresh runtime-only init/plan and boundary review are complete.
 3. The separately approved five-create apply is complete; EC2 remains stopped.
    No start, replacement or IAM expansion is authorized by that approval.
-4. Host software recovery is complete. Separately approve initialization of
-   the exact Kafka EBS volume, image publication,
+4. Host software recovery and one-time Kafka XFS initialization are complete.
+   Verify mount persistence on the next approved start. Separately approve image publication,
    secret/read permissions and application deployment before those actions.
 5. Smoke-test the isolated streaming path, test Kafka/Spark recovery, drain and
    stop gracefully, and verify retained-resource costs and cleanup scope.
@@ -256,7 +260,12 @@ tests remain unperformed. A new paid window needs new approval. The local assume
 profile now requests four hours; this does not extend the document's 60-minute
 shell limit or authorize runtime.
 
-## EBS first initialization — separate exact-volume approval
+## EBS first initialization — completed, never repeat
+
+The exact-volume approval was subsequently completed; see the initialization
+result above. Reuse the recorded XFS UUID. The retained procedure below
+describes the historical approval boundary; mount/recovery errors must never
+trigger another mkfs. Normal user data remains unchanged.
 
 The EC2 user-data script remains unchanged and never calls mkfs/wipefs. A blank
 volume must still produce `EBS_INITIALIZATION_REQUIRED`. No initialization

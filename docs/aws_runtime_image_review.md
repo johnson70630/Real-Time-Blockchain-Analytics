@@ -1,5 +1,12 @@
 # Milestone 11.6C: offline image publication review
 
+**Current status:** GitHub billing/CI access is restored; the foundation, SSM
+access, host software and one-time Kafka filesystem setup are complete. EC2 is
+stopped. See the [new publisher permission/publication proposal](aws_runtime_ecr_publisher_review.md).
+Its IAM expansion and live uploads are unapproved. The existing image builder
+and planner described below remain offline-only; older private reviews are
+preserved and must not substitute for a fresh frozen-source artifact plan.
+
 ## A. What was implemented
 
 The cloud-only build script now builds the producer and Spark images from a
@@ -87,10 +94,10 @@ No credentials are embedded or requested, and no publisher IAM changes are made.
 
 ## F. Git and CI
 
-Create a local develop checkpoint after offline validation. Keep it local while
-GitHub payment-method verification/account unlocking is pending. Once access
-returns, push the reviewed checkpoints and observe one new hosted CI run.
-Do not claim hosted CI passed for an unpushed commit. Main remains untouched.
+Create a develop checkpoint after offline validation, push and observe its
+new hosted CI. GitHub access is restored. Build/review from that exact committed
+source; report the revision and artifacts before requesting publication.
+Do not substitute older successful CI or mutable local tags. Main remains untouched.
 
 ## G. Cost implications
 
@@ -101,19 +108,18 @@ review because the existing lifecycle policy only expires untagged images.
 
 ## H. Remaining blockers
 
-Actual ECR digests and scan reviews remain unavailable. ECR publication and its
-IAM permissions, secret provisioning/read access, the five-resource Terraform
-apply, EC2 start, SSM operator access, exact-volume initialization and application
-deployment retain their separate approval gates. GitHub verification/CI remains
-pending. None of these gates is satisfied by this offline proposal.
+Actual ECR digests and scan reviews remain unavailable. Publisher IAM and image
+uploads/scans, secret provisioning/workload IAM, next-boot mount checks and
+application deployment retain their separate gates. The foundation, access,
+host recovery and exact-volume initialization are complete; their approvals do
+not authorize publication. CI is operational and EC2 is stopped.
 
 ## I. Next step
 
-Review the local build and publication proposal, then restore hosted CI when
-GitHub verification completes. Return to the concrete
-[five-resource recovery proposal](aws_runtime_recovery_plan_result.md) before
-any AWS apply. Publication is a separate later action with exact image IDs,
-destination tags, permission scope and storage cost made reviewable first.
+Review the new publisher proposal and fresh committed local builds. Make exact
+image IDs, destination tags, source/context hashes, permission scope and storage
+cost reviewable before requesting publication. No Terraform apply is needed;
+all earlier recovery plans are consumed and must not be replayed.
 
 ## J. Production infrastructure changes
 

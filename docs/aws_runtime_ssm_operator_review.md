@@ -9,7 +9,9 @@ Live IAM policy JSON remains independently unread. Subsequent live SSM shell
 and data-channel access passed; the approved window closed with EC2 stopped.
 See the [access result and host-recovery proposal](aws_runtime_access_test_result.md).
 The later separately approved [Compose/Docker recovery](aws_runtime_host_recovery_result.md)
-is also complete with EC2 stopped; Kafka storage remains uninitialized.
+is also complete with EC2 stopped. The later approved
+[one-time Kafka initialization](aws_runtime_ebs_initialization_result.md) is
+complete; reuse its recorded UUID and never reformat on recovery.
 The operator reports a four-hour maximum role duration; the local assume profile
 now requests four hours and a fresh MFA session was checked before access.
 The original offline proposal below is retained as historical review evidence;

@@ -14,6 +14,8 @@ stopped at 2026-11-16 01:25:02 UTC. The separately approved later
 [host recovery](aws_runtime_host_recovery_result.md) fixed Compose/Docker
 enablement and ended with verified stop at 01:44:02 UTC. See the
 [earlier access result](aws_runtime_access_test_result.md) for historical findings.
+The separately approved [one-time Kafka initialization](aws_runtime_ebs_initialization_result.md)
+is also complete with EC2 stopped; its formatting approval is consumed.
 
 | Report item | Current result |
 |---|---|
@@ -24,9 +26,9 @@ enablement and ended with verified stop at 01:44:02 UTC. See the
 | E. Security | No startup commands, forwarding or added IAM actions. Live policy JSON and sharing permissions were not independently read; policy update is operator-attested. Subsequent live shell/data-channel access passed; explicit resume/terminate API tests remain unperformed. |
 | F. Git / CI | Documentation/evidence checkpoint on develop; hosted CI status is reported separately in the conversation. Main and README remain unchanged. |
 | G. Cost | Document creation/readback started no compute. The later access window has separate costs in its result report. Retained disks and alarms remain approximately USD 10.60/month before other usage and taxes; not a spending limit. |
-| H. Blockers | Client installation, access and Compose/Docker recovery are complete. Exact-volume initialization, image publication, secret-access design and streaming deployment remain outstanding. |
-| I. Next step | Review the exact-volume initialization proposal linked from the host-recovery result. Formatting/mount setup and a new paid window require separate approval. |
-| J. Infrastructure | Administrator reports the approved IAM policy revision and document creation. Document verification used only read calls. The separately approved later EC2 start/SSM/stop is recorded in the access result; no Terraform/state, formatting, secret, image publication or Snowflake operation occurred. |
+| H. Blockers | Client/access/Compose/Docker and one-time XFS initialization are complete. Mount-on-boot validation, image publication, secret-access design and streaming deployment remain outstanding. |
+| I. Next step | Review the offline ECR publisher proposal linked from the initialization result. IAM expansion and image publication require separate approval. |
+| J. Infrastructure | Document verification used only read calls. Later approved EC2/SSM, guest repair and one-time Kafka formatting are recorded in their separate results. No Terraform/state, secret, image publication or Snowflake operation occurred. |
 
 The verified document uses a 15-minute idle timeout and 60-minute shell limit.
 These limits do not stop EC2. The operator also reports increasing the human

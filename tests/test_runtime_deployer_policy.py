@@ -459,3 +459,55 @@ def test_bootstrap_document_has_no_unapproved_log_destinations_or_kms_dependency
         assert inputs[key] == ""
     for key in ("s3EncryptionEnabled", "cloudWatchEncryptionEnabled", "cloudWatchStreamingEnabled"):
         assert inputs[key] is True
+
+
+ECR_PUBLISHER = ["ecr-publisher.proposed.json"]
+ECR_REPOSITORIES = [
+    f"arn:aws:ecr:us-west-2:{ACCOUNT}:repository/blockchain-runtime-{role}"
+    for role in ("producer", "spark")
+]
+ECR_REPOSITORY_ACTIONS = [
+    "ecr:BatchCheckLayerAvailability", "ecr:InitiateLayerUpload",
+    "ecr:UploadLayerPart", "ecr:CompleteLayerUpload", "ecr:PutImage",
+    "ecr:BatchGetImage", "ecr:DescribeImages", "ecr:DescribeImageScanFindings",
+    "ecr:StartImageScan",
+]
+
+
+@pytest.mark.parametrize("action", ECR_REPOSITORY_ACTIONS)
+def test_ecr_publication_is_scoped_to_two_exact_regional_repositories(action):
+    for repository in ECR_REPOSITORIES:
+        assert _allows(ECR_PUBLISHER, action, repository, REGION)
+        assert not _allows(ECR_PUBLISHER, action, repository, {})
+        assert not _allows(ECR_PUBLISHER, action, repository, {"aws:RequestedRegion": "us-east-1"})
+        for other in (
+            repository + "-other",
+            repository.replace(ACCOUNT, "111122223333"),
+            repository.replace("us-west-2", "us-east-1"),
+            f"arn:aws:ecr:us-west-2:{ACCOUNT}:repository/platform",
+        ):
+            assert not _allows(ECR_PUBLISHER, action, other, REGION)
+
+
+def test_ecr_authorization_token_is_the_only_unscoped_resource_action():
+    policy = json.loads((ROOT / ECR_PUBLISHER[0]).read_text())
+    assert _allows(ECR_PUBLISHER, "ecr:GetAuthorizationToken", "*", REGION)
+    assert not _allows(ECR_PUBLISHER, "ecr:GetAuthorizationToken", "*", {})
+    assert not _allows(ECR_PUBLISHER, "ecr:GetAuthorizationToken", "*", {"aws:RequestedRegion": "us-east-1"})
+    unscoped = [s for s in policy["Statement"] if "*" in _list(s["Resource"])]
+    assert len(unscoped) == 1 and unscoped[0]["Action"] == ["ecr:GetAuthorizationToken"]
+    assert {a for s in policy["Statement"] for a in s["Action"]} == set(ECR_REPOSITORY_ACTIONS) | {"ecr:GetAuthorizationToken"}
+    assert ECR_PUBLISHER[0] not in DEPLOY
+
+
+@pytest.mark.parametrize("action", [
+    "ecr:CreateRepository", "ecr:DeleteRepository", "ecr:BatchDeleteImage",
+    "ecr:PutImageTagMutability", "ecr:PutImageScanningConfiguration",
+    "ecr:PutRegistryScanningConfiguration", "ecr:SetRepositoryPolicy",
+    "ecr:PutLifecyclePolicy", "ecr:GetDownloadUrlForLayer",
+    "iam:AttachRolePolicy", "iam:PutRolePolicy", "iam:CreateAccessKey",
+    "secretsmanager:GetSecretValue", "ec2:StartInstances", "s3:PutObject",
+])
+def test_ecr_supplement_adds_no_deletion_policy_changes_or_unrelated_access(action):
+    for resource in [*ECR_REPOSITORIES, "*", RUNTIME_ROLE, STATE]:
+        assert not _allows(ECR_PUBLISHER, action, resource, REGION)

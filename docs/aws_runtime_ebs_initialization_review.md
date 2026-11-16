@@ -1,9 +1,10 @@
 # Milestone 11.6C: exact Kafka EBS initialization proposal
 
-**Preparation only. Not approved or executed.** The preceding
-[Compose/Docker recovery](aws_runtime_host_recovery_result.md) is complete and
-EC2 is stopped. Normal startup must never initialize storage. Milestone 11.5D
-remains paused. This proposal requires a new, volume-specific decision.
+**Historical proposal: subsequently approved and completed.** See the
+[initialization result](aws_runtime_ebs_initialization_result.md) and recorded
+UUID. The exact-volume approval is consumed; the example formatting command
+below must not be replayed. EC2 is stopped. Normal startup must never initialize
+storage. Milestone 11.5D remains paused. The original review scope is preserved.
 
 ## A. Proposed action
 

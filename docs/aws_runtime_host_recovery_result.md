@@ -4,6 +4,9 @@ Completed 2026-11-16 UTC (2026-11-15 Pacific). **The approved host-software
 recovery passed and EC2 is stopped.** The separate 15-minute window is closed;
 it is not continuing approval for another start, storage initialization or
 application deployment. Milestone 11.5D remains paused.
+The later separately approved [one-time Kafka initialization](aws_runtime_ebs_initialization_result.md)
+is complete and ended with EC2 stopped. Findings below describe this earlier
+software-recovery window; its storage proposal is now historical/consumed.
 
 ## A. What was implemented
 

@@ -1,0 +1,31 @@
+{
+  "account": "209479274979",
+  "authorization_token_requested": false,
+  "aws_mutations_performed": false,
+  "checked_at_utc": "2026-11-16T04:54:47.625767+00:00",
+  "images_pushed": false,
+  "instance_verified_stopped": true,
+  "live_publisher_policy_json_independently_read": false,
+  "profile": "blockchain-demo-deploy",
+  "region": "us-west-2",
+  "registry_scanning": {
+    "rules": [],
+    "scanType": "BASIC"
+  },
+  "repositories": [
+    {
+      "arn": "arn:aws:ecr:us-west-2:209479274979:repository/blockchain-runtime-producer",
+      "encryption_type": "AES256",
+      "name": "blockchain-runtime-producer",
+      "scan_on_push": true,
+      "tag_mutability": "IMMUTABLE"
+    },
+    {
+      "arn": "arn:aws:ecr:us-west-2:209479274979:repository/blockchain-runtime-spark",
+      "encryption_type": "AES256",
+      "name": "blockchain-runtime-spark",
+      "scan_on_push": true,
+      "tag_mutability": "IMMUTABLE"
+    }
+  ]
+}
