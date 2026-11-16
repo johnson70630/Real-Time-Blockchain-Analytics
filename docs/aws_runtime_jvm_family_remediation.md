@@ -95,7 +95,7 @@ fail-closed offset-loss handling. These tests use an isolated internal Docker
 network and owned disposable volumes, which were removed afterwards. Their
 root-owned volume fixture is separate from the non-root cloud image smoke.
 
-The focused local suite passed **273 tests**. Ruff, secret scanning and shell
+The focused local suite passed **274 tests**. Ruff, secret scanning and shell
 syntax checks passed before commit. Exact committed builds, recovery and hosted CI are
 observed after the develop checkpoint; results are reported in the conversation.
 
@@ -152,6 +152,15 @@ Starting develop SHA: `43d3b4b40166483ea7412bda7d10a6f153dfddaf`.
 was independently verified successful in all six jobs. This checkpoint is
 committed/pushed on develop only after local review; its source SHA and triggered
 CI result are reported after observation. No main merge is authorized.
+
+The first checkpoint `714400b` passed its positive hosted image smoke but
+[CI 43828890739](https://github.com/johnson70630/Real-Time-Blockchain-Analytics/actions/runs/43828890739)
+failed the intentional invalid-classpath test: Netty initialization failed before
+the guard could run on Ubuntu. The corrected negative harness launches only the
+real Java gateway and checks class origins before Spark RPC initialization. It
+still requires the specific shadow-rejection error and closes stdin/waits for
+its owned JVM to exit. It does not turn an arbitrary startup failure into a pass.
+The full local suite and positive/negative container checks passed after this fix.
 
 ## G. Cost implications
 

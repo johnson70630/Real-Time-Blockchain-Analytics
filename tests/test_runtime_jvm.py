@@ -87,3 +87,15 @@ def test_hive_catalog_cannot_be_enabled_for_the_pilot(tmp_path, monkeypatch):
     spark.conf.get = lambda _: "hive"
     with pytest.raises(RuntimeError, match="PILOT_IN_MEMORY_CATALOG_REQUIRED"):
         jvm.verify_class_origins(spark)
+
+
+def test_classloader_guard_needs_no_spark_context_or_rpc_initialization(
+    tmp_path, monkeypatch
+):
+    monkeypatch.setattr(jvm, "OVERRIDES", tmp_path)
+    spark, families = fake_spark(tmp_path, jvm.CLASSES[0][0])
+    (tmp_path / "patches.lock.json").write_text(
+        json.dumps({"pyspark_version": "4.0.1", "families": families})
+    )
+    with pytest.raises(RuntimeError, match="JVM_SECURITY_CLASSPATH_MISMATCH"):
+        jvm.verify_classloader(spark.sparkContext._jvm)

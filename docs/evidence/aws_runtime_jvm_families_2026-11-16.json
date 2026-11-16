@@ -2263,10 +2263,27 @@
   "terraform_changes": false,
   "production_infrastructure_changed": false,
   "local_validation": {
-    "focused_tests_passed": 273,
+    "focused_tests_passed": 274,
     "ruff": "passed",
     "secret_scan_all_files": "passed",
     "shell_syntax": "passed",
     "exact_committed_build_and_ci": "pending_after_checkpoint"
+  },
+  "hosted_ci_followup": {
+    "source_commit": "714400b8b09a9341c2d977883ef17cbd364112df",
+    "run_id": 43828890739,
+    "conclusion": "failure",
+    "failed_step": "Spark correctness / Build and verify Java 17 pilot images without cloud credentials",
+    "positive_smoke_passed": true,
+    "other_five_jobs": "success",
+    "failure": "Intentional invalid classpath triggered a Netty NoSuchMethodError during SparkContext initialization before the guard was reached.",
+    "failed_log_sha256": "a2e1ba7476120ebeaef769082399036505581c81df786633c073af92a13f44b5",
+    "fix": "Inspect actual JVM class origins via launch_gateway without initializing Spark RPC; retain the exact expected rejection and terminate the owned gateway process.",
+    "local_test_fix_prototype_manifest": "sha256:97ad834eabfab6e61f221d0257e4897651e48b7fdce657ca8aa8fa126906ccb5",
+    "local_positive_smoke_sha256": "e1e89d26bb8e8bc83be3580ae6d1818271e730f8ee1240513c214e3b92bcd2ad",
+    "local_negative_smoke_sha256": "d663ca04cba87fd496fec41fe66f910a092aac4544ba02b0cd0678150041cf1c",
+    "prototype_status": "UNCOMMITTED_NOT_PUBLISHABLE",
+    "fresh_ci_status": "pending_after_fix_checkpoint",
+    "security_gate_unchanged": "BLOCKED"
   }
 }

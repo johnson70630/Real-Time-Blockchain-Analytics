@@ -23,18 +23,11 @@ CLASSES = (
 )
 
 
-def verify_class_origins(spark):
+def verify_classloader(jvm):
+    """Check real Java classes without initializing a Spark RPC environment."""
     lock = json.loads((OVERRIDES / "patches.lock.json").read_text())
-    jvm = spark.sparkContext._jvm
-    if (
-        spark.version != "4.0.1"
-        or lock["pyspark_version"] != "4.0.1"
-        or jvm.java.lang.System.getProperty("java.specification.version") != "17"
-        or jvm.org.apache.hadoop.util.VersionInfo.getVersion() != "3.4.1"
-    ):
+    if lock["pyspark_version"] != "4.0.1":
         raise RuntimeError("REVIEWED_SPARK_JAVA_HADOOP_VERSIONS_REQUIRED")
-    if spark.conf.get("spark.sql.catalogImplementation") != "in-memory":
-        raise RuntimeError("PILOT_IN_MEMORY_CATALOG_REQUIRED")
     loader = jvm.java.lang.Thread.currentThread().getContextClassLoader()
     origins = {}
     for name, artifact, family in CLASSES:
@@ -46,3 +39,16 @@ def verify_class_origins(spark):
             raise RuntimeError("JVM_SECURITY_CLASSPATH_MISMATCH")
         origins[name] = path
     return {"families": lock["families"], "class_origins": origins}
+
+
+def verify_class_origins(spark):
+    jvm = spark.sparkContext._jvm
+    if (
+        spark.version != "4.0.1"
+        or jvm.java.lang.System.getProperty("java.specification.version") != "17"
+        or jvm.org.apache.hadoop.util.VersionInfo.getVersion() != "3.4.1"
+    ):
+        raise RuntimeError("REVIEWED_SPARK_JAVA_HADOOP_VERSIONS_REQUIRED")
+    if spark.conf.get("spark.sql.catalogImplementation") != "in-memory":
+        raise RuntimeError("PILOT_IN_MEMORY_CATALOG_REQUIRED")
+    return verify_classloader(jvm)
