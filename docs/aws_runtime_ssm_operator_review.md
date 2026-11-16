@@ -1,9 +1,13 @@
 # Milestone 11.6C: SSM operator access proposal
 
-**Status update, 2026-11-15:** the operator approved and reported the policy
-attached. Read-only inspection verified the expected identity and stopped EC2,
-but the default session document returned InvalidDocument. See the
-[private-document proposal and inspection result](aws_runtime_ssm_document_review.md).
+**Status update, 2026-11-16 UTC:** the operator reports the approved policy
+attached and its document references retargeted. The separately approved private
+document now exists in us-west-2; read-only verification confirms its owner,
+version and exact reviewed content with EC2 stopped. See the
+[private-document result and historical proposal](aws_runtime_ssm_document_review.md).
+Live IAM policy JSON and session/channel authorization remain unverified.
+The operator reports a four-hour maximum role duration; the local assume profile
+still requests one hour at this inspection.
 The original offline proposal below is retained as historical review evidence;
 its six-action policy file remains unchanged. Milestone 11.5D remains paused.
 

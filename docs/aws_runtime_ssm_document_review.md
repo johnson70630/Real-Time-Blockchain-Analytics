@@ -1,5 +1,40 @@
 # Milestone 11.6C: private SSM session document proposal
 
+## Current result: approved bootstrap document verified
+
+**2026-11-16 00:54:57 UTC:** the operator approved document creation and the
+two-ARN managed-policy revision, reported updating the policy, then confirmed
+document creation. Read-only verification now passes. EC2 stayed stopped.
+See [sanitized verification evidence](evidence/aws_runtime_ssm_document_2026-11-16.json).
+The original proposal below is retained as historical review evidence.
+
+| Report item | Current result |
+|---|---|
+| A. Implemented | Operator-created `blockchain-runtime-demo-shell` in us-west-2; operator reports the existing SSM policy retargeted to it. |
+| B. Purpose | Explicit, inspectable project shell settings for the exact demo node, without SSH ingress or changes to account defaults. |
+| C. Files | This result, sanitized evidence, and current-status links in the operator and pilot reviews. Reviewed JSON files remain unchanged. |
+| D. Validation | Expected STS identity; document owner/account, Active status, Session type, EC2 target and default/latest version 1 verified. Parsed live JSON exactly matches the reviewed artifact. Instance stopped before and after. All 71 offline policy/document tests, focused Ruff, repository secret scan and whitespace checks pass. |
+| E. Security | No startup commands, forwarding or added IAM actions. Live policy JSON and sharing permissions were not independently read; policy update is operator-attested. Session/channel authorization remains untested. |
+| F. Git / CI | Documentation/evidence checkpoint on develop; hosted CI status is reported separately in the conversation. Main and README remain unchanged. |
+| G. Cost | No compute started or application deployed. Retained disks and alarms remain approximately USD 10.60/month before other usage and taxes; not a spending limit. |
+| H. Blockers | Session Manager client installation, live access test, approved paid window, exact-volume initialization, image publication and secret-access design remain outstanding. |
+| I. Next step | Install the separately reviewed, signed local Session Manager client after installation authorization. EC2 start and session opening require their own approved window. |
+| J. Infrastructure | Administrator reports the approved IAM policy revision and document creation. Assistant verification made only read calls; no Terraform/state, EC2 mutation, formatting, secret, image publication or Snowflake operation. |
+
+The verified document uses a 15-minute idle timeout and 60-minute shell limit.
+These limits do not stop EC2. The operator also reports increasing the human
+deployer role's maximum credential duration to four hours; that IAM setting was
+not independently read. The local `blockchain-demo-assume` profile still
+requests 3600 seconds at this inspection. Requesting 14400 seconds is a separate
+local configuration step; existing credentials retain their original expiry.
+Neither setting changes the EC2 workload role or the reviewed shell document.
+
+Milestone 11.5D remains paused. The runtime/platform Terraform states were not
+accessed. Do not repeat either consumed recovery apply or overwrite the document
+under the earlier creation-only approval.
+
+## Historical proposal (superseded status; artifacts retained)
+
 Status: **offline proposal; document creation and policy revision not approved**.
 The operator reported the original SSM policy attached. Read-only inspection at
 2026-11-15 23:43:29 UTC verified the expected deployer identity and stopped EC2,

@@ -26,8 +26,9 @@ records MFA-protected temporary deployment credentials and an EC2 role boundary.
 The operator completed that IAM setup and confirmed the role settings; the
 boundary policy readback independently matches the repository. The older saved
 infrastructure plan omits that boundary and must not be used for this design.
-Its replacement includes the exact boundary. SSM operator permissions and
-secret access remain later gates.
+Its replacement includes the exact boundary. The operator reports the approved
+SSM supplement attached and retargeted to the verified private session document;
+live session authorization and secret access remain later gates.
 
 Current milestone: **11.6C, first AWS streaming demo preparation**. Offline
 application/deployment components are implemented and tested. The planning-user
@@ -232,11 +233,16 @@ identity with backend and approved provisioning permissions.
 
 The [SSM operator proposal](aws_runtime_ssm_operator_review.md) was separately
 approved and reported attached by the operator. It combines those human
-capabilities while keeping the workload identity separate. Default-document
-inspection returned InvalidDocument with EC2 stopped; see the
-[private session-document proposal](aws_runtime_ssm_document_review.md).
-That proposed document and policy revision are not approved or deployed. Plugin
-setup, session authorization and the supervised start window remain gates.
+capabilities while keeping the workload identity separate. After the default
+document inspection returned InvalidDocument, the operator approved creation of
+the private document and revision of the existing policy's two document ARNs.
+Read-only verification on 2026-11-16 UTC confirms the custom document's owner,
+version and exact reviewed content, with EC2 stopped before and after; see the
+[private session-document result](aws_runtime_ssm_document_review.md).
+The policy revision is operator-attested; its JSON and live session/channel
+authorization were not independently verified. Plugin setup and the supervised
+start window remain gates. The operator reports a four-hour human-role maximum;
+this does not extend the document's 60-minute shell limit or authorize runtime.
 
 ## EBS first initialization — separate exact-volume approval
 
