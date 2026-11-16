@@ -35,3 +35,7 @@ expected_ca_sha="$(tar -xOf "$context_dir/context.tar" deploy/runtime/images.loc
 tar -xOf "$context_dir/context.tar" deploy/runtime/smoke_spark.py | \
   "${docker_local[@]}" run --rm -i --network none --read-only --tmpfs /tmp:size=2g,mode=1777,exec \
     --entrypoint python blockchain-pilot-spark:offline - "$expected_ca_sha"
+expected_kafka_ca_sha="$(tar -xOf "$context_dir/context.tar" deploy/runtime/images.lock.json | python3 -c 'import json,sys; print(next(row["trust_store_sha256"] for row in json.load(sys.stdin)["sources"] if row["role"]=="kafka_java21"))')"
+tar -xOf "$context_dir/context.tar" deploy/runtime/smoke_kafka.sh | \
+  "${docker_local[@]}" run --rm -i --network none --read-only \
+    --entrypoint /bin/sh blockchain-pilot-kafka:offline -s -- "$expected_kafka_ca_sha"

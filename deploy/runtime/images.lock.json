@@ -43,6 +43,29 @@
         "JAVA_VERSION": "jdk-21.0.12.1+1"
       },
       "compressed_layer_bytes": 238799351
+    },
+    {
+      "role": "kafka_java21",
+      "upstream_tag": "eclipse-temurin:21-jre-alpine",
+      "pinned_reference": "eclipse-temurin:21-jre-alpine@sha256:ac05c3c42b7c2f1a52c9bd52f01041fa1958231b15ebeae7420429cbc5baf474",
+      "index_digest": "sha256:ac05c3c42b7c2f1a52c9bd52f01041fa1958231b15ebeae7420429cbc5baf474",
+      "amd64_manifest_digest": "sha256:b6ea71e690a72ba240b3d1b5c477410014862f9ea2cc73ab40e41ff21b03ba1c",
+      "config_digest": "sha256:fe627b2563ceeae30cd349fd41fffa2379f79a31581cb8e5a599a29be4f0e598",
+      "selected_environment": {
+        "JAVA_HOME": "/opt/java/openjdk",
+        "LANG": "en_US.UTF-8",
+        "JAVA_VERSION": "jdk-21.0.13+9"
+      },
+      "compressed_layer_bytes": 74204491,
+      "trust_store_sha256": "628b436e6698c364c5498a32c5bff91806bea7a9b501f75e2289ddc60b4ca7ef",
+      "verified_ca_roots": {
+        "emSign ECC Root CA - G3": false,
+        "AAA Certificate Services": false,
+        "emSign Root CA - G2": false,
+        "Amazon Root CA 1": true,
+        "ISRG Root X1": true
+      },
+      "trust_store_anchors": 118
     }
   ]
 }

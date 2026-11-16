@@ -1,8 +1,23 @@
 # Supported Kafka patch release, with current Alpine security packages.
 ARG KAFKA_BASE=apache/kafka@sha256:852a0d49fc4e656b022e7f23785411802c9a088c78a7c5e39f33969de9c227a7
+ARG JAVA21_BASE=eclipse-temurin:21-jre-alpine@sha256:ac05c3c42b7c2f1a52c9bd52f01041fa1958231b15ebeae7420429cbc5baf474
+FROM ${JAVA21_BASE} AS java21
 FROM ${KAFKA_BASE}
 ARG KAFKA_BASE
-LABEL org.opencontainers.image.base.name="${KAFKA_BASE}"
+ARG JAVA21_BASE
+LABEL org.opencontainers.image.base.name="${KAFKA_BASE}" \
+    org.opencontainers.image.java.base.name="${JAVA21_BASE}"
 USER root
-RUN apk upgrade --no-cache
+RUN apk upgrade --no-cache \
+    && rm -rf /opt/java/openjdk
+COPY --from=java21 /opt/java/openjdk /opt/java/openjdk
+ENV JAVA_VERSION=jdk-21.0.13+9
+# These upstream application archives belong to the old JVM. Keep launch's
+# ordinary JVM options and use the replacement JRE's own default CDS archive.
+RUN test "$(grep -c 'SharedArchiveFile=/opt/kafka/' /etc/kafka/docker/launch)" = 2 \
+    && sed -i -e 's# -XX:SharedArchiveFile=/opt/kafka/storage.jsa##g' \
+        -e 's# -XX:SharedArchiveFile=/opt/kafka/kafka.jsa##g' /etc/kafka/docker/launch \
+    && ! grep -q 'SharedArchiveFile=/opt/kafka/' /etc/kafka/docker/launch \
+    && rm -f /opt/kafka/storage.jsa /opt/kafka/kafka.jsa \
+    && java -version 2>&1 | grep '^openjdk version "21\.0\.13'
 USER 1000:1000

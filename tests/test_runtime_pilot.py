@@ -90,6 +90,15 @@ def test_rejected_published_manifests_cannot_be_reintroduced(release, role):
         validate_release(release)
 
 
+def test_os_only_kafka_candidate_with_compromised_java_root_is_rejected(release):
+    evidence = json.loads((ROOT / "docs/evidence/aws_runtime_image_remediation_2026-11-16.json").read_text())
+    review = evidence["kafka_jre_ca_review"]
+    assert review["pre_correction_compromised_g3_root_present"]
+    release["kafka_image"] = f"{REGISTRY}/blockchain-runtime-producer@{review['rejected_intermediate_manifest']}"
+    with pytest.raises(ValueError, match="REJECTED_IMAGE_RELEASE"):
+        validate_release(release)
+
+
 @pytest.mark.parametrize("key,value", [
     ("LANG", "en_US.UTF-8"), ("LC_ALL", "en_US.UTF-8"),
     ("LANGUAGE", "../../untrusted"), ("LANGUAGE", "en_US:en"),

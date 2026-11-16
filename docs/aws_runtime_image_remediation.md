@@ -16,6 +16,19 @@ The selected upstream image uses Alpine 3.24, replacing the expired 3.21 base.
 Its UID/GID remains 1000:1000; EBS mapping, single-broker topology and retention
 limits are unchanged. No production Kafka data or metadata was migrated.
 
+The first Kafka OS-patched candidate still bundled Java 21.0.12.1 with a
+compromised CA root. It is not a publication candidate. The final derivative
+also replaces that JRE with a separately pinned Temurin **21.0.13+9** Alpine
+runtime. Its 118-anchor store was independently inspected: the three roots
+checked for Spark are absent and Amazon/ISRG positive controls are present.
+Its exact store hash is
+`628b436e6698c364c5498a32c5bff91806bea7a9b501f75e2289ddc60b4ca7ef`.
+The upstream launch script's two old application CDS references are removed
+with an exact-count guard; only the two stale image-build `.jsa` files are
+removed. The replacement JRE's normal default CDS remains available. This
+changes no Kafka logs, EBS filesystem or cluster metadata. Actual broker
+restart/checkpoint recovery and a dedicated Java/CA/CDS smoke are required.
+
 Producer/Spark use digest-pinned Python **3.12.16 / Debian 13** and apply
 available OS updates. Spark retains **PySpark 4.0.1, Hadoop 3.4.1 and Java 17**.
 Its self-contained Temurin 17 JRE is copied from a separately pinned official
@@ -42,7 +55,9 @@ It is a mitigation, not a package fix or risk-acceptance decision.
 
 The release validator and local publication planner now reject all three exact
 manifests from the failed first ECR release. Changing labels cannot make those
-digests acceptable. Unknown/new digests still require independent review.
+digests acceptable. They also reject the unpublished 83d4363 Kafka candidate
+whose OS patches left the old Java trust store. Unknown/new digests still
+require independent review.
 
 ## B. Why
 
@@ -68,6 +83,8 @@ used to force that alternative. Debian's tested glibc runtime is retained.
   ABI/envelope check supplied to the producer container over stdin.
 - `deploy/runtime/smoke_spark.py`: Java/classpath/Parquet and actual CA-store
   checks, using the trust-store hash from the exact committed input lock.
+- `deploy/runtime/smoke_kafka.sh`: Java 21 version, pinned CA-store and stale-CDS
+  checks under the non-root broker image user, without network or broker startup.
 - Runtime locale/quarantine/publication contracts and their adversarial tests.
 - [Sanitized scan/input evidence](evidence/aws_runtime_image_remediation_2026-11-16.json)
   and current-status links in the existing readiness reports.
@@ -78,7 +95,7 @@ existing producer ECR repository if separately approved for publication.
 
 ## D. Tests and validation
 
-All **228 focused contracts pass**, plus Ruff, secret scanning, Bash syntax and
+All **230 focused contracts pass**, plus Ruff, secret scanning, Bash syntax and
 whitespace checks. New cases reject historical failed digests in both the host
 release validator and publication planner, forged Kafka provenance/user labels,
 and unsafe/missing locale settings. Pin consistency and Java 17 are checked.

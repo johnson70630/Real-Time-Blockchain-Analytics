@@ -22,7 +22,7 @@ def test_cloud_image_pins_match_reviewed_platform_lock_and_java17():
     lock = json.loads((root / "deploy/runtime/images.lock.json").read_text())
     assert lock["platform"] == "linux/amd64"
     rows = {row["role"]: row for row in lock["sources"]}
-    assert set(rows) == {"python", "java17", "kafka"}
+    assert set(rows) == {"python", "java17", "kafka", "kafka_java21"}
     for row in rows.values():
         assert row["pinned_reference"].endswith("@" + row["index_digest"])
         for key in ("index_digest", "amd64_manifest_digest", "config_digest"):
@@ -46,6 +46,11 @@ def test_cloud_image_pins_match_reviewed_platform_lock_and_java17():
     assert "ARG KAFKA_BASE=" + images.KAFKA_SOURCE in kafka
     assert "RUN apk upgrade --no-cache" in kafka
     assert "USER 1000:1000" in kafka
+    assert "ARG JAVA21_BASE=" + rows["kafka_java21"]["pinned_reference"] in kafka
+    assert "COPY --from=java21 /opt/java/openjdk /opt/java/openjdk" in kafka
+    assert rows["kafka_java21"]["selected_environment"]["JAVA_VERSION"] == "jdk-21.0.13+9"
+    assert "rm -f /opt/kafka/storage.jsa /opt/kafka/kafka.jsa" in kafka
+    assert "sed -i" in kafka
     assert rows["kafka"]["upstream_tag"] == "apache/kafka:" + images.KAFKA_VERSION
     jars = json.loads((root / "deploy/runtime/jars.lock.json").read_text())
     clients = [row for row in jars if row["path"].startswith("org/apache/kafka/kafka-clients/")]
@@ -190,6 +195,13 @@ def test_rejected_manifest_cannot_be_planned_even_with_claimed_current_labels(in
     evidence = json.loads((images.ROOT / "docs/evidence/aws_runtime_ecr_publication_2026-11-16.json").read_text())
     rejected = next(row for row in evidence["images"] if row["role"] == role)
     inspected[role]["id"] = rejected["ecr_deployment_digest"]
+    with pytest.raises(ValueError, match="REJECTED_IMAGE_RELEASE"):
+        images.publication_plan(inspected, COMMIT)
+
+
+def test_os_only_kafka_candidate_is_rejected_by_publication_review(inspected):
+    evidence = json.loads((images.ROOT / "docs/evidence/aws_runtime_image_remediation_2026-11-16.json").read_text())
+    inspected["kafka"]["id"] = evidence["kafka_jre_ca_review"]["rejected_intermediate_manifest"]
     with pytest.raises(ValueError, match="REJECTED_IMAGE_RELEASE"):
         images.publication_plan(inspected, COMMIT)
 
