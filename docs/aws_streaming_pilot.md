@@ -1,5 +1,7 @@
 # Milestone 11.6C — first streaming pilot readiness
 
+Current offline follow-up: [LZ4 maintenance and unused Thrift removal](aws_runtime_thrift_lz4_remediation.md). Deployment remains blocked; no exceptions or AWS changes are authorized.
+
 Latest maintenance: [Guava, JLine and ZooKeeper updates](aws_runtime_client_library_remediation.md)
 reduces Spark library findings to 1 critical / 43 high, with no new high/critical
 pairs. The release remains blocked with no accepted exceptions.

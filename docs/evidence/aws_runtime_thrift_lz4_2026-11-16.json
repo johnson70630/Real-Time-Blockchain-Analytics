@@ -1,0 +1,186 @@
+{
+  "schema_version": 1,
+  "milestone": "11.6C",
+  "review_date_utc": "2026-11-16",
+  "base_commit": "47815e9e4234bb574ef0b2331c0d5de204cebedd",
+  "baseline_spark_manifest": "sha256:b856a163591c1a113b17e8a3970253b0912273852849da370614530f3c9a20b9",
+  "release_status": "BLOCKED_NO_ACCEPTED_EXCEPTIONS",
+  "lz4": {
+    "old_coordinate": "org.lz4:lz4-java:1.8.0",
+    "new_coordinate": "at.yawk.lz4:lz4-java:1.14.1",
+    "java_package": "net.jpountz",
+    "replacement": {
+      "old": {
+        "name": "lz4-java-1.8.0.jar",
+        "sha512": "98d59086a6021ca571d9c1d64b715e43044c730e1ac563f514c40cf44302615d30378b6d5cc69990446522de6260dc8e7b303e3990a3139dc326d058dfb6dbd9"
+      },
+      "new": {
+        "path": "at/yawk/lz4/lz4-java/1.14.1/lz4-java-1.14.1.jar",
+        "sha512": "89785ebf8d25eab274b7aac5da731bf953400207227aa66030907709c9b822a0a3b90b760de9efcdd2d7d191bbe884f040437881231c690bd1980bafac6aa505"
+      }
+    },
+    "checksum_provenance": {
+      "path": "at/yawk/lz4/lz4-java/1.14.1/lz4-java-1.14.1.jar",
+      "bytes": 839522,
+      "published_checksum_algorithm": "sha512",
+      "published_checksum": "89785ebf8d25eab274b7aac5da731bf953400207227aa66030907709c9b822a0a3b90b760de9efcdd2d7d191bbe884f040437881231c690bd1980bafac6aa505",
+      "sha512": "89785ebf8d25eab274b7aac5da731bf953400207227aa66030907709c9b822a0a3b90b760de9efcdd2d7d191bbe884f040437881231c690bd1980bafac6aa505",
+      "pom_sha256": "3cb6ed8495286a0224c6552a10275c8a0540db2aded10b9c0b861ed4c3f9c097"
+    },
+    "runtime_dependencies_added": []
+  },
+  "unused_rpc_removals": [
+    {
+      "path": "libthrift-0.16.0.jar",
+      "feature": "unused_thrift_rpc",
+      "sha512": "25e69530ea2883d39c7bbcd01f374d679eec9d7a05007fa5304802f38089f7910e027c608166fe576057a77759f39f669759abf3089b8940296c502974c43e30",
+      "size_bytes": 345167
+    },
+    {
+      "path": "libfb303-0.9.3.jar",
+      "feature": "unused_thrift_rpc",
+      "sha512": "e30ddf2b4651d08bfcf980f98263fa95cc0a37fb722a2972811c9f9437dbfba4ab20d81e142a991501a3c5409e2651c43b936321f85f1e5e9ab5ad55ca3d6a82",
+      "size_bytes": 313702
+    }
+  ],
+  "retained_parquet_thrift": {
+    "jar": "parquet-format-structures-1.15.2.jar",
+    "namespace": "shaded.parquet.org.apache.thrift",
+    "embedded_class_count": 73,
+    "standalone_rpc_required_for_tested_pilot": false,
+    "future_hive_thrift_profile_not_certified": true,
+    "sha512": "837da2ca1a85dad0cad29040a15f51f2cf0ba953e9e2fc1e9a4279e06af7f8d9966adc733d3ab4092359f836b315be0f04d9925498fc73b00e7e91e776c5aeda"
+  },
+  "profile": {
+    "downloaded_artifacts": 59,
+    "exact_replacements": 50,
+    "whole_jar_removals": 63,
+    "runtime_class_origins": 40,
+    "parquet_embedded_origin_checked_separately": true
+  },
+  "static_reference_audit": {
+    "root_jars_audited": 264,
+    "class_files_audited": 523556,
+    "direct_thrift_or_fb303_references": [],
+    "scope": "UTF8 constants: class names, JVM descriptors and literal fully-qualified names; does not certify constructed reflection strings or optional future features"
+  },
+  "static_reference_audit_sha256": "864cd4910900c731d8d1c6adcc2e886ad1b857e6bc5094b264dab8357ab8b6c1",
+  "legacy_fixture": {
+    "source_commit": "47815e9e4234bb574ef0b2331c0d5de204cebedd",
+    "source_manifest": "sha256:b856a163591c1a113b17e8a3970253b0912273852849da370614530f3c9a20b9",
+    "fixture_json_sha256": "dda56b23ff1c33758db78991ffeff0abee6422262e21be69e9bfbca29d977ea1",
+    "expected_ids": [
+      0,
+      1,
+      2
+    ],
+    "lz4_raw_sha256": "17d3bd274314c4914fcf11a45ba4e484fa37b4627aaa5e34f97305b93f2f1776",
+    "lz4_block_stream_sha256": "c8980d36529d0fe0514121776f349f5764bc9ef1fc2726f5dc90d0a4834f8188",
+    "parquet_data_embedded_in_committed_smoke": true
+  },
+  "prototype_scan": {
+    "prototype_manifest_digest": "sha256:419a144f74ad4fda4c4f2465927752d0983ebaea17f5d85ee549af29ba747646",
+    "report_sha256": "7e6deb4a40934326170354f77ea869a436101499d6f1cd1d3329d4c36092548e",
+    "findings_by_class": {
+      "os-pkgs": {
+        "LOW": 65,
+        "HIGH": 47,
+        "MEDIUM": 92,
+        "UNKNOWN": 5
+      },
+      "lang-pkgs": {
+        "HIGH": 38,
+        "MEDIUM": 56,
+        "CRITICAL": 1,
+        "LOW": 3
+      }
+    },
+    "publication_authorized": false,
+    "aws_calls_made": false
+  },
+  "baseline_scan_sha256": "b3615565f95c87ea031f49270483295e98099e49b8871d243673fcc23f2eee35",
+  "high_critical_comparison": {
+    "baseline_distinct_high_critical_pairs": 36,
+    "candidate_distinct_high_critical_pairs": 31,
+    "introduced_pairs": [],
+    "removed_pairs": [
+      [
+        "org.apache.thrift:libthrift",
+        "CVE-2026-43869"
+      ],
+      [
+        "org.apache.thrift:libthrift",
+        "CVE-2026-43871"
+      ],
+      [
+        "org.lz4:lz4-java",
+        "CVE-2025-12183"
+      ],
+      [
+        "org.lz4:lz4-java",
+        "CVE-2025-66566"
+      ],
+      [
+        "org.lz4:lz4-java",
+        "CVE-2026-106451"
+      ]
+    ]
+  },
+  "scanner": {
+    "name": "Trivy",
+    "version": "0.76.2",
+    "binary_sha256": "7a15c426f963473a485a4f315e21f8e2c881269d500bf0de35da13a4421fa108",
+    "vulnerability_db": {
+      "Version": 2,
+      "NextUpdate": "2026-11-17T01:11:02.624122856Z",
+      "UpdatedAt": "2026-11-16T01:11:02.624123452Z",
+      "DownloadedAt": "2026-11-16T06:29:57.145978Z"
+    },
+    "java_db": {
+      "Version": 1,
+      "NextUpdate": "2026-11-19T00:57:00.601023403Z",
+      "UpdatedAt": "2026-11-16T00:57:00.601024044Z",
+      "DownloadedAt": "2026-11-16T07:24:25.109375Z"
+    },
+    "offline_same_db_comparison": true,
+    "ignore_file": "",
+    "ignore_unfixed": false,
+    "severity_filter": null
+  },
+  "selected_package_detected_by_scanner": {
+    "name": "at.yawk.lz4:lz4-java",
+    "version": "1.14.1",
+    "purl": "pkg:maven/at.yawk.lz4/lz4-java@1.14.1"
+  },
+  "security_exceptions": [],
+  "sources": [
+    "https://github.com/lz4/lz4-java",
+    "https://github.com/yawkat/lz4-java",
+    "https://github.com/yawkat/lz4-java/security/advisories/GHSA-mcr4-qmvw-px4g",
+    "https://github.com/yawkat/lz4-java/security/advisories/GHSA-cmp6-m4wj-q63q",
+    "https://repo.maven.apache.org/maven2/at/yawk/lz4/lz4-java/1.14.1/lz4-java-1.14.1.pom"
+  ],
+  "publication_authorized": false,
+  "images_published": false,
+  "aws_calls_made": false,
+  "terraform_changed": false,
+  "production_infrastructure_changed": false,
+  "milestone_11_5d": "PAUSED",
+  "checkpoint_followup": "Exact committed image builds, scan identity checks, recovery and all six CI jobs must be observed after commit; prototype evidence is not an ECR publication receipt.",
+  "prototype_recovery": {
+    "base_commit": "47815e9e4234bb574ef0b2331c0d5de204cebedd",
+    "source_status": "UNCOMMITTED_PROTOTYPE",
+    "synthetic_recovery_passed": true,
+    "phases": [
+      "initial",
+      "kafka_restart",
+      "checkpoint_resume",
+      "repeat_without_duplicate_rows",
+      "offset_loss_fail_closed"
+    ],
+    "project": "blockchain-thrift-lz4-prototype-2d6f2143cc",
+    "aws_calls_made": false,
+    "publication_authorized": false
+  },
+  "prototype_owned_test_cleanup_passed": true
+}

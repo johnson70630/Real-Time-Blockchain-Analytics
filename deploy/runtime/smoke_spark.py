@@ -1,5 +1,6 @@
 """Network-disabled Java/Spark/classpath/CA-store and Parquet checks."""
 
+import base64
 import hashlib
 import json
 import os
@@ -233,6 +234,99 @@ try:
             decompressor.decompress(jvm.java.nio.ByteBuffer.wrap(frame), output)
             assert buffer_bytes(output) == payload
     print("NATIVE_SNAPPY_AND_AIRCOMPRESSOR_COMPATIBILITY_VERIFIED")
+    # Captured from 47815e9 with org.lz4 1.8.0. Preserve raw blocks and the
+    # lz4-java block stream framing used by Spark (not standard LZ4 frames).
+    lz4_payload = b"pilot-thrift-lz4-wire:" * 8
+    legacy_raw = bytes.fromhex(
+        "ff0770696c6f742d7468726966742d6c7a342d776972653a16008250776972653a"
+    )
+    legacy_block = bytes.fromhex(
+        "4c5a34426c6f636b2621000000b0000000e402dc08ff0770696c6f742d7468726966742d6c7a342d776972653a16008250776972653a4c5a34426c6f636b16000000000000000000000000"
+    )
+    lz4 = jvm.net.jpountz.lz4.LZ4Factory
+    hashes = jvm.net.jpountz.xxhash.XXHashFactory
+    native_lz4 = lz4.nativeInstance()
+    safe_lz4 = lz4.safeInstance()
+    assert native_lz4.fastCompressor().getClass().getName().endswith("JNICompressor")
+    assert (
+        native_lz4.safeDecompressor().getClass().getName().endswith("JNISafeDecompressor")
+    )
+    native_hash = hashes.nativeInstance().hash32()
+    assert native_hash.getClass().getName().endswith("XXHash32JNI")
+    expected_hash = hashes.safeInstance().hash32().hash(lz4_payload, 0, len(lz4_payload), 0)
+    assert native_hash.hash(lz4_payload, 0, len(lz4_payload), 0) == expected_hash
+    for factory in (safe_lz4, native_lz4):
+        frame = bytes(factory.fastCompressor().compress(lz4_payload))
+        for decoder in (safe_lz4.safeDecompressor(), native_lz4.safeDecompressor()):
+            for compressed in (frame, legacy_raw):
+                assert (
+                    bytes(decoder.decompress(compressed, len(lz4_payload))) == lz4_payload
+                )
+    # A bounded malformed-input check uses only the Java implementation.
+    try:
+        safe_lz4.safeDecompressor().decompress(b"\xf0", len(lz4_payload))
+    except Py4JJavaError as error:
+        assert error.java_exception.getClass().getName() == "net.jpountz.lz4.LZ4Exception"
+    else:
+        raise AssertionError("Truncated LZ4 input was accepted")
+    for encoded in (legacy_block,):
+        stream = jvm.net.jpountz.lz4.LZ4BlockInputStream(
+            jvm.java.io.ByteArrayInputStream(encoded)
+        )
+        try:
+            assert bytes(stream.readAllBytes()) == lz4_payload
+        finally:
+            stream.close()
+    output = jvm.java.io.ByteArrayOutputStream()
+    stream = jvm.net.jpountz.lz4.LZ4BlockOutputStream(output)
+    stream.write(lz4_payload)
+    stream.close()
+    stream = jvm.net.jpountz.lz4.LZ4BlockInputStream(
+        jvm.java.io.ByteArrayInputStream(output.toByteArray())
+    )
+    try:
+        assert bytes(stream.readAllBytes()) == lz4_payload
+    finally:
+        stream.close()
+    assert jvm.net.jpountz.util.Native.isLoaded()
+    print("LZ4_JAVA_JNI_XXHASH_AND_LEGACY_BLOCK_STREAM_VERIFIED")
+
+    # Parquet's generated structures use its relocated Thrift. Neither the
+    # standalone Thrift RPC nor Facebook monitoring service is needed here.
+    parquet_thrift = loader.loadClass(
+        "shaded.parquet.org.apache.thrift.protocol.TCompactProtocol"
+    )
+    assert str(
+        parquet_thrift.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()
+    ) == str(
+        Path(
+            "/usr/local/lib/python3.12/site-packages/pyspark/jars/parquet-format-structures-1.15.2.jar"
+        )
+    )
+    legacy_parquet = Path("/tmp/legacy-thrift.parquet")
+    legacy_parquet.write_bytes(
+        base64.b64decode(
+            "UEFSMRUAFTAVLBWKuZ2EBBwVBhUAFQgVCAAAGAAADQE8AQAAAAAAAAACAAAAAAAAABkRAhkYCAAA"
+            "AAAAAAAAGRgIAgAAAAAAAAAVAhkWABkWBhkWBgAZHBYIFVoWAAAAFQIZLEgMc3Bhcmtfc2NoZW1h"
+            "FQIAFQQlABgCaWQAFgYZHBkcJgAcFQQZJQAIGRgCaWQVAhYGFl4WWiYIPBgIAgAAAAAAAAAYCAAA"
+            "AAAAAAAAFgAoCAIAAAAAAAAAGAgAAAAAAAAAAAAZHBUAFQAVAgA8KRYGGRYGAAAWrAEVFBZiFUoA"
+            "Fl4WBiYIFloUAAAZLBgYb3JnLmFwYWNoZS5zcGFyay52ZXJzaW9uGAU0LjAuMQAYKW9yZy5hcGFj"
+            "aGUuc3Bhcmsuc3FsLnBhcnF1ZXQucm93Lm1ldGFkYXRhGFd7InR5cGUiOiJzdHJ1Y3QiLCJmaWVs"
+            "ZHMiOlt7Im5hbWUiOiJpZCIsInR5cGUiOiJsb25nIiwibnVsbGFibGUiOmZhbHNlLCJtZXRhZGF0"
+            "YSI6e319XX0AGEpwYXJxdWV0LW1yIHZlcnNpb24gMS4xNS4yIChidWlsZCA4NTllYWMxNjViMDhm"
+            "OTI3ZmExNDU5MGMzM2JjNWY0NzY0MDVmYjY4KRkcHAAAAIoBAABQQVIx",
+            validate=True,
+        )
+    )
+    assert sorted(row.id for row in spark.read.parquet(str(legacy_parquet)).collect()) == [
+        0,
+        1,
+        2,
+    ]
+    assert sorted(row.id for row in spark.range(32).repartition(3).collect()) == list(
+        range(32)
+    )
+    print("PARQUET_RELOCATED_THRIFT_LEGACY_READ_AND_LZ4_SHUFFLE_VERIFIED")
     for name in (
         "org.apache.spark.sql.kafka010.KafkaSourceProvider",
         "org.apache.hadoop.fs.s3a.S3AFileSystem",

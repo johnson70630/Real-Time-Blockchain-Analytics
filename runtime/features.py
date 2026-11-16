@@ -11,6 +11,7 @@ EXCLUDED = (
     "hive_thriftserver",
     "embedded_derby",
     "legacy_codehaus_json",
+    "unused_thrift_rpc",
 )
 MANIFEST = Path("/opt/pilot/streaming-profile.json")
 JARS = Path("/usr/local/lib/python3.12/site-packages/pyspark/jars")
@@ -21,6 +22,8 @@ FORBIDDEN_CLASSES = (
     "org.apache.hadoop.hive.metastore.HiveMetaStoreClient",
     "org.apache.derby.iapi.jdbc.AutoloadedDriver",
     "org.codehaus.jackson.map.ObjectMapper",
+    "org.apache.thrift.protocol.TCompactProtocol",
+    "com.facebook.fb303.FacebookService",
 )
 
 
@@ -45,6 +48,8 @@ def feature(path):
         return "embedded_derby"
     if path.startswith(("jackson-core-asl-", "jackson-mapper-asl-")):
         return "legacy_codehaus_json"
+    if path.startswith(("libthrift-", "libfb303-")):
+        return "unused_thrift_rpc"
     return None
 
 

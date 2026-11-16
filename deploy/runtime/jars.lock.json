@@ -230,5 +230,9 @@
   {
     "path": "software/amazon/s3/analyticsaccelerator/analyticsaccelerator-s3/1.3.1/analyticsaccelerator-s3-1.3.1.jar",
     "sha512": "a0a16fa26c8c10a149eb5d0823cef53005e3f02cf8ba2fa5c3ea2a87479885568bc55bf2355131c8198f6870f43daa9ce9fe4927b86415bf5e37cc45cf6d0204"
+  },
+  {
+    "path": "at/yawk/lz4/lz4-java/1.14.1/lz4-java-1.14.1.jar",
+    "sha512": "89785ebf8d25eab274b7aac5da731bf953400207227aa66030907709c9b822a0a3b90b760de9efcdd2d7d191bbe884f040437881231c690bd1980bafac6aa505"
   }
 ]

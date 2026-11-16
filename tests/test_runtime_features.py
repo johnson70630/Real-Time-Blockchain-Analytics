@@ -25,6 +25,8 @@ def prepared(tmp_path):
         "spark-hive-thriftserver_2.13-4.0.1.jar",
         "derby-1.jar",
         "jackson-mapper-asl-1.jar",
+        "libthrift-0.16.0.jar",
+        "libfb303-0.9.3.jar",
     ):
         path = target / name
         path.parent.mkdir(exist_ok=True)
@@ -40,7 +42,7 @@ def prepared(tmp_path):
         )
     for name in (
         "hive-storage-api-2.8.1.jar",
-        "libthrift-0.16.0.jar",
+        "parquet-format-structures-1.15.2.jar",
         "spark-sql_2.13-4.0.1.jar",
     ):
         (target / name).write_bytes(b"shared dependency")
@@ -60,7 +62,9 @@ def test_exact_removal_preserves_shared_serialization_and_is_idempotent(prepared
         prune_features.apply(lock, target=target, manifest=manifest)
     assert not features.inventory(target)
     assert (target / "hive-storage-api-2.8.1.jar").read_bytes() == b"shared dependency"
-    assert (target / "libthrift-0.16.0.jar").read_bytes() == b"shared dependency"
+    assert (target / "parquet-format-structures-1.15.2.jar").read_bytes() == (
+        b"shared dependency"
+    )
     assert json.loads(manifest.read_text()) == lock
 
 
@@ -188,7 +192,28 @@ def test_runtime_rejects_restored_modules_and_classes(prepared, monkeypatch, fai
 def test_committed_profile_matches_cloud_build_and_retains_storage_api():
     lock = json.loads((ROOT / "deploy/runtime/spark-features.lock.json").read_text())
     names = features.validate(lock)
-    assert len(names) == 61
-    assert not any("hive-storage-api" in name or "libthrift" in name for name in names)
+    assert len(names) == 63
+    assert not any(
+        "hive-storage-api" in name or "parquet-format-structures" in name
+        for name in names
+    )
+    assert {"libthrift-0.16.0.jar", "libfb303-0.9.3.jar"} <= names
     assert "spark-connect_2.13-4.0.1.jar" in names
     assert "connect-repl/spark-connect-client-jvm_2.13-4.0.1.jar" in names
+
+
+@pytest.mark.parametrize("resource", features.FORBIDDEN_CLASSES)
+def test_every_excluded_resource_is_checked_including_standalone_rpc(
+    prepared, monkeypatch, resource
+):
+    target, lock, manifest = prepared
+    prune_features.apply(lock, target=target, manifest=manifest)
+    monkeypatch.setattr(features, "JARS", target)
+    monkeypatch.setattr(features, "MANIFEST", manifest)
+    loader = NS(
+        getResources=lambda name: NS(
+            hasMoreElements=lambda: name == resource.replace(".", "/") + ".class"
+        )
+    )
+    with pytest.raises(RuntimeError, match="PILOT_STREAMING_FEATURE_PROFILE_REQUIRED"):
+        features.verify_profile(loader)

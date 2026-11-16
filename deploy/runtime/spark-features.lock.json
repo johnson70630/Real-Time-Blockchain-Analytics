@@ -7,7 +7,8 @@
     "hive_catalog",
     "hive_thriftserver",
     "embedded_derby",
-    "legacy_codehaus_json"
+    "legacy_codehaus_json",
+    "unused_thrift_rpc"
   ],
   "removals": [
     {
@@ -375,6 +376,18 @@
       "sha512": "ef0008842a0cfe9c91aa0f2de703dca5fd040b2a1422ea12374367ddc29a35837dbb153d3a54707ad25938bbad144ad8c685ea48a21c2aed31ab232cbbb2605b",
       "size_bytes": 735184,
       "feature": "hive_catalog"
+    },
+    {
+      "path": "libthrift-0.16.0.jar",
+      "feature": "unused_thrift_rpc",
+      "sha512": "25e69530ea2883d39c7bbcd01f374d679eec9d7a05007fa5304802f38089f7910e027c608166fe576057a77759f39f669759abf3089b8940296c502974c43e30",
+      "size_bytes": 345167
+    },
+    {
+      "path": "libfb303-0.9.3.jar",
+      "feature": "unused_thrift_rpc",
+      "sha512": "e30ddf2b4651d08bfcf980f98263fa95cc0a37fb722a2972811c9f9437dbfba4ab20d81e142a991501a3c5409e2651c43b936321f85f1e5e9ab5ad55ca3d6a82",
+      "size_bytes": 313702
     }
   ]
 }

@@ -30,6 +30,7 @@ def fake_spark(override, shadow=None, *, version="4.0.1", java="17", hadoop="3.4
         "failureaccess": "1.0.3",
         "jline": "3.30.16",
         "zookeeper": "3.9.7",
+        "lz4": "1.14.1",
     }
     paths = {
         name: str(override / f"{artifact}-{families[family]}.jar")

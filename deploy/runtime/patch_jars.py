@@ -27,6 +27,7 @@ PREFIXES = (
     "failureaccess-",
     "jline-",
     "zookeeper-",
+    "lz4-java-",
 )
 LEGACY_JSON_PREFIXES = ("jackson-core-asl-", "jackson-mapper-asl-")
 SEPARATE_API_PREFIXES = LEGACY_JSON_PREFIXES + ("jline-2.",)
@@ -39,6 +40,7 @@ NORMAL_FAMILIES = {
     "failureaccess",
     "jline",
     "zookeeper",
+    "lz4",
 }
 JACKSON_ARTIFACTS = {
     "jackson-annotations": "com/fasterxml/jackson/core/",
@@ -66,6 +68,7 @@ def family(name):
         ("failureaccess-", "failureaccess"),
         ("jline-", "jline"),
         ("zookeeper-", "zookeeper"),
+        ("lz4-java-", "lz4"),
     ):
         if name.startswith(prefix):
             return group
@@ -106,6 +109,7 @@ def validate(lock):
             "failureaccess",
             "jline",
             "zookeeper",
+            "lz4",
         }
         or lock.get("components") != COMPONENTS
         or lock["families"]["hadoop"] != COMPONENTS["hadoop"]
@@ -152,6 +156,7 @@ def validate(lock):
             "zookeeper": "org/apache/zookeeper/"
             if artifact in {"zookeeper", "zookeeper-jute"}
             else None,
+            "lz4": "at/yawk/lz4/" if artifact == "lz4-java" else None,
         }[group]
         if (
             prefix is None

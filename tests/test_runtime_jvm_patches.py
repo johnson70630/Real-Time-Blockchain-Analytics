@@ -49,6 +49,7 @@ def prepared(tmp_path):
             "failureaccess": "1.0.3",
             "jline": "3.30.16",
             "zookeeper": "3.9.7",
+            "lz4": "1.14.1",
         },
         "components": {
             "hadoop": "3.4.3",
@@ -266,6 +267,7 @@ def test_matched_hadoop_client_is_not_duplicated_into_override_directory(
         ("jline", "org/jline", "jline"),
         ("zookeeper", "org/apache/zookeeper", "zookeeper"),
         ("zookeeper-jute", "org/apache/zookeeper", "zookeeper"),
+        ("lz4-java", "at/yawk/lz4", "lz4"),
     ],
 )
 def test_normal_directory_patches_preserve_legacy_json_and_avoid_duplicate_copies(
@@ -327,7 +329,7 @@ def test_jline2_cannot_be_replaced_as_jline3(prepared):
 
 
 @pytest.mark.parametrize(
-    "artifact", ["guava", "failureaccess", "jline", "zookeeper", "zookeeper-jute"]
+    "artifact", ["guava", "failureaccess", "jline", "zookeeper", "zookeeper-jute", "lz4-java"]
 )
 @pytest.mark.parametrize("change", ["old_version", "duplicate"])
 def test_download_inventory_cannot_reintroduce_old_or_duplicate_client_jars(
@@ -343,3 +345,11 @@ def test_download_inventory_cannot_reintroduce_old_or_duplicate_client_jars(
     downloads.append(row)
     with pytest.raises(ValueError, match="JVM download inventory"):
         patch_jars.validate_downloads(lock, downloads)
+
+
+def test_lz4_replacement_requires_the_reviewed_maintainer_coordinate():
+    lock = json.loads((ROOT / "deploy/runtime/spark-jvm-patches.lock.json").read_text())
+    row = next(r for r in lock["replacements"] if r["old"]["name"].startswith("lz4-java-"))
+    row["new"]["path"] = row["new"]["path"].replace("at/yawk/lz4/", "org/lz4/")
+    with pytest.raises(ValueError, match="inconsistent"):
+        patch_jars.validate(lock)

@@ -30,8 +30,9 @@ def apply(lock, *, target=None, manifest):
     if actual:
         if actual != names:
             raise ValueError("Unexpected or partially pruned feature inventory")
-        # Check every input before removing any file. Shared serialization JARs
-        # (notably hive-storage-api and libthrift) remain intact.
+        # Check every input before removing any file. Keep hive-storage-api and
+        # Parquet's relocated Thrift intact; standalone RPC modules are unused
+        # by this in-memory streaming profile.
         for row in lock["removals"]:
             path = target / row["path"]
             if path.stat().st_size != row["size_bytes"]:

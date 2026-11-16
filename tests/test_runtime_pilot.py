@@ -557,3 +557,10 @@ def test_deadline_and_service_never_enable_automatic_boot():
     assert "ExecStopPost=/usr/bin/systemctl --no-block poweroff" in service
     assert "OnActiveSec=150min" in timer
     assert "[Install]" not in service + timer
+
+
+def test_old_thrift_lz4_manifest_remains_rejected(release):
+    evidence = json.loads((ROOT / "docs/evidence/aws_runtime_thrift_lz4_2026-11-16.json").read_text())
+    release["spark_image"] = f"{REGISTRY}/blockchain-runtime-spark@{evidence['baseline_spark_manifest']}"
+    with pytest.raises(ValueError, match="REJECTED_IMAGE_RELEASE"):
+        validate_release(release)

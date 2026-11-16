@@ -1,5 +1,7 @@
 # Milestone 11.6C — Guava, JLine and ZooKeeper maintenance
 
+Current offline follow-up: [LZ4 maintenance and unused Thrift removal](aws_runtime_thrift_lz4_remediation.md). Deployment remains blocked; no exceptions or AWS changes are authorized.
+
 Reviewed 2026-11-16 UTC. **The release remains blocked.** This offline checkpoint
 patches five standalone libraries, accepts no exceptions, publishes no images
 and authorizes no paid pilot. Milestone 11.5D remains paused.

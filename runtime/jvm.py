@@ -57,6 +57,9 @@ CONNECTOR_CLASSES = (
     ),
 )
 NORMAL_CLASSES = (
+    ("net.jpountz.lz4.LZ4Factory", "lz4-java", "lz4"),
+    ("net.jpountz.xxhash.XXHashFactory", "lz4-java", "lz4"),
+    ("net.jpountz.util.Native", "lz4-java", "lz4"),
     ("com.google.common.collect.ImmutableMap", "guava", "guava"),
     (
         "com.google.common.util.concurrent.internal.InternalFutureFailureAccess",

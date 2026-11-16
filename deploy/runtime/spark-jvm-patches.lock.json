@@ -13,7 +13,8 @@
     "guava": "33.7.2-jre",
     "failureaccess": "1.0.3",
     "jline": "3.30.16",
-    "zookeeper": "3.9.7"
+    "zookeeper": "3.9.7",
+    "lz4": "1.14.1"
   },
   "replacements": [
     {
@@ -504,6 +505,16 @@
       "new": {
         "path": "org/apache/zookeeper/zookeeper-jute/3.9.7/zookeeper-jute-3.9.7.jar",
         "sha512": "7b0fdbf0812b926cdffe401a8988f9be3185eb29500b617388f8c874350fb2db9aa82b3916f4d2aa1b0a4f54b7a87d08120f1c12c8e750f27eda8aa9d78e8e36"
+      }
+    },
+    {
+      "old": {
+        "name": "lz4-java-1.8.0.jar",
+        "sha512": "98d59086a6021ca571d9c1d64b715e43044c730e1ac563f514c40cf44302615d30378b6d5cc69990446522de6260dc8e7b303e3990a3139dc326d058dfb6dbd9"
+      },
+      "new": {
+        "path": "at/yawk/lz4/lz4-java/1.14.1/lz4-java-1.14.1.jar",
+        "sha512": "89785ebf8d25eab274b7aac5da731bf953400207227aa66030907709c9b822a0a3b90b760de9efcdd2d7d191bbe884f040437881231c690bd1980bafac6aa505"
       }
     }
   ],
