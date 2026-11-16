@@ -94,7 +94,11 @@ def build_context(repo: Path, output: Path, jar_cache: Path | None = None) -> di
         with os.fdopen(descriptor, "wb") as destination, tarfile.open(
             fileobj=io.BytesIO(data)
         ) as original, tarfile.open(
-            fileobj=destination, mode="w", format=tarfile.PAX_FORMAT
+            fileobj=destination, mode="w", format=tarfile.PAX_FORMAT,
+            # Like git archive, begin with a global provenance header. Docker
+            # sniffs only 1024 bytes: a per-file PAX header needs the following
+            # file header too, which would lie beyond that lookahead window.
+            pax_headers={"comment": commit},
         ) as archive:
             for member in original:
                 if member.name.rstrip("/") == JAR_CONTEXT_PREFIX or member.name.startswith(JAR_CONTEXT_PREFIX + "/"):

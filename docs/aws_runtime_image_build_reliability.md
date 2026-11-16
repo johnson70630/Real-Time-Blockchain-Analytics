@@ -22,6 +22,12 @@ between hash verification and archive creation. The resulting receipt hashes
 the complete context and records artifact count/bytes. The raw-archive API
 without a cache remains available for source-only inspection.
 
+The first cached-context build exposed Docker's 1024-byte stdin format probe:
+a leading per-file PAX header requires a subsequent file header beyond that
+probe. Preserve a global commit-provenance header, as Git's own archive does,
+so Docker recognizes the archive. A header regression contract and actual
+local Docker build validate this compatibility; dependency integrity is unchanged.
+
 Spark installs from a read-only BuildKit bind mount of that verified context
 directory with `--offline`. It checks hashes again and atomically promotes
 readable JAR files. The cache is not copied into an extra image layer, and no
@@ -61,7 +67,7 @@ Maven availability and cannot bypass a provider block.
 
 ## D. Validation
 
-All **211 focused contracts pass**, with full Ruff, secret scanning, Bash syntax
+All **212 focused contracts pass**, with full Ruff, secret scanning, Bash syntax
 and whitespace checks. Offline cases cover warm-cache no-network behavior, corrupt/missing/symlink/
 oversized cache rejection, committed-versus-dirty lock files, unlisted private
 file exclusion, reproducibility, partial-read recovery, bounded retries,

@@ -55,6 +55,23 @@ def test_verified_dependency_context_is_repeatable_and_excludes_unlisted_cache_f
         assert json.load(archive.extractfile("deploy/runtime/jars.lock.json"))[0]["sha512"] == hashlib.sha512(content).hexdigest()
 
 
+def test_cached_context_starts_with_global_header_for_docker_stdin_detection(tmp_path):
+    repo, cache, _ = committed_jar_repo(tmp_path)
+    output = tmp_path / "context.tar"
+    receipt = images.build_context(repo, output, cache)
+    # Docker's Go tar reader sees only the first 1024 bytes when deciding
+    # whether stdin is an archive. A global header is returned immediately;
+    # a per-file extended header requires another header outside that window.
+    prefix = output.read_bytes()[:1024]
+    header = tarfile.TarInfo.frombuf(prefix[:512], "utf-8", "strict")
+    assert header.type == tarfile.XGLTYPE
+    assert 0 < header.size <= 512
+    assert b"comment=" + receipt["source_commit"].encode() + b"\n" in prefix[512:]
+    with tarfile.open(output) as archive:
+        assert archive.pax_headers["comment"] == receipt["source_commit"]
+        assert archive.extractfile(".dockerignore").read() == b"committed input\n"
+
+
 @pytest.mark.parametrize("kind", ["corrupt", "missing", "symlink", "oversize"])
 def test_untrusted_cached_artifacts_fail_before_context_creation(tmp_path, monkeypatch, kind):
     repo, cache, content = committed_jar_repo(tmp_path)
