@@ -8,8 +8,12 @@ All 23 existing resource IDs were preserved. No streaming application has been
 deployed. The saved recovery plan is consumed and must not be reapplied.
 The subsequent approved [SSM access test](aws_runtime_access_test_result.md)
 passed and ended with verified stop at 2026-11-16 01:25:02 UTC. The local client
-is installed. Guest inspection found missing Compose and incomplete bootstrap;
-host-software recovery remains a separate approval before streaming deployment.
+is installed. Guest inspection found missing Compose and incomplete bootstrap.
+The subsequent approved [host-software recovery](aws_runtime_host_recovery_result.md)
+installed verified Compose 5.1.3, enabled Docker, verified zero containers and
+ended with EC2 stopped at 2026-11-16 01:44:02 UTC. Kafka EBS remains untouched;
+its [exact-volume initialization proposal](aws_runtime_ebs_initialization_review.md)
+requires separate destructive-storage and paid-window approval.
 The earlier state-only untaint and planning are historical completed steps;
 see the [plan result](aws_runtime_recovery_plan_result.md),
 [recovery history](aws_runtime_recovery_review.md) and
@@ -56,8 +60,8 @@ Remaining sequence:
 2. The approved fresh runtime-only init/plan and boundary review are complete.
 3. The separately approved five-create apply is complete; EC2 remains stopped.
    No start, replacement or IAM expansion is authorized by that approval.
-4. Review the narrow host-software recovery proposal, then separately approve
-   initialization of the exact Kafka EBS volume, image publication,
+4. Host software recovery is complete. Separately approve initialization of
+   the exact Kafka EBS volume, image publication,
    secret/read permissions and application deployment before those actions.
 5. Smoke-test the isolated streaming path, test Kafka/Spark recovery, drain and
    stop gracefully, and verify retained-resource costs and cleanup scope.
@@ -246,8 +250,8 @@ version and exact reviewed content, with EC2 stopped before and after; see the
 [private session-document result](aws_runtime_ssm_document_review.md).
 The policy revision is operator-attested; its JSON was not independently read.
 The client is now installed and live shell/data-channel access passed in the
-approved, closed test window. Compose is missing; a narrow guest-software
-recovery is proposed in the access result. Explicit session resume/terminate API
+approved, closed test window. The separately approved Compose/Docker recovery
+is complete with the instance stopped. Explicit session resume/terminate API
 tests remain unperformed. A new paid window needs new approval. The local assume
 profile now requests four hours; this does not extend the document's 60-minute
 shell limit or authorize runtime.

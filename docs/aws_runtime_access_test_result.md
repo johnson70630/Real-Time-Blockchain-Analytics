@@ -5,6 +5,9 @@ readiness is blocked by incomplete guest bootstrap. EC2 is stopped.**
 The operator approved one supervised 30-minute access window, normal shutdown
 by minute 20, and read-only guest checks. This window is closed; it does not
 authorize another start or any repair. Milestone 11.5D remains paused.
+The separately approved later [host recovery](aws_runtime_host_recovery_result.md)
+resolved Compose/Docker enablement and also ended with verified stop. The
+findings below describe this earlier access window.
 
 ## A. What was implemented and executed
 
@@ -131,7 +134,7 @@ usage/taxes. No ECR publication, secret, streaming or cleanup occurred.
 5. Application deployment, real S3 smoke/recovery tests and full stop/drain
    acceptance still need their own approved streaming window.
 
-## I. Prepared next step: host software recovery only
+## I. Historical next-step proposal: host software recovery only
 
 Propose a **new, supervised 15-minute** start/SSM/normal-stop window for the same
 instance. Request normal stop by minute 10 and confirm stopped by minute 15.
@@ -160,7 +163,8 @@ This does not rerun the full user-data script, reset cloud-init, install/update
 OS packages, format/mount storage, pull images or deploy applications/secrets.
 No AWS resource creation, IAM edit, Terraform plan/apply/import/state action,
 Snowflake operation or main merge is proposed. Any additional finding pauses
-that repair rather than broadening its scope. **Not executed or approved.**
+that repair rather than broadening its scope. This proposal was subsequently
+approved and completed; see the separate host-recovery result linked above.
 
 ## J. Production infrastructure changes
 
