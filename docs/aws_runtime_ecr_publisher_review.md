@@ -51,6 +51,9 @@ operational approval below is limited to the three reviewed artifacts.
 - Build producer/Spark from the final checkpoint's Git archive, verify AMD64,
   revision/role/non-root labels and actual Java 17/Spark 4.0.1 classpath smoke.
   Inspect the digest-pinned upstream Kafka AMD64 image separately.
+- The [build-cache reliability fix](aws_runtime_image_build_reliability.md)
+  verifies public JAR bytes against the committed lock before context/image use;
+  it must be included in the final frozen build after the earlier HTTP 429.
 
 Before requesting actual publication, the local review must name exactly:
 
@@ -101,6 +104,9 @@ images; it does not clean these proposed tagged artifacts automatically.
 
 Before publication, reverify STS/account, exact repo settings, BASIC scan mode,
 source/artifact IDs and absence of conflicting immutable destination tags.
+Use the reviewed local references with explicit AMD64 selection and recheck
+their recorded identities; Docker's platform-inspection identity is not always
+directly addressable by CLI image-ID lookup. Never substitute an unreviewed tag.
 If any differs, stop. Push only the reviewed Linux/AMD64 image content and
 compare the returned manifest/config digest against that reviewed image.
 Capture ECR's returned digest for each role and use only digest references in

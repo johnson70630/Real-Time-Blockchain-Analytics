@@ -3,11 +3,15 @@
 from __future__ import annotations
 
 import argparse
+from contextlib import ExitStack
 import hashlib
+import io
 import json
 import os
 import re
 import subprocess
+import tarfile
+import tempfile
 from pathlib import Path
 
 from runtime.bundle import _git
@@ -28,6 +32,8 @@ LOCAL_IMAGES = {
     "kafka": KAFKA_SOURCE,
 }
 ROOT = Path(__file__).resolve().parents[1]
+JAR_CONTEXT_PREFIX = "deploy/runtime/verified-jars"
+MAX_JAR_CACHE_BYTES = 1024**3
 
 
 def _write_new(path: Path, data: bytes) -> None:
@@ -36,13 +42,77 @@ def _write_new(path: Path, data: bytes) -> None:
         handle.write(data)
 
 
-def build_context(repo: Path, output: Path) -> dict:
+def build_context(repo: Path, output: Path, jar_cache: Path | None = None) -> dict:
     commit = _git(repo, "rev-parse", "--verify", "HEAD^{commit}").decode().strip()
     if not re.fullmatch("[0-9a-f]{40}", commit):
         raise ValueError("SOURCE_COMMIT_INVALID")
     data = _git(repo, "archive", "--format=tar", commit, "--", *BUILD_PATHS)
-    _write_new(output, data)
-    return {"source_commit": commit, "context_sha256": hashlib.sha256(data).hexdigest()}
+    if jar_cache is None:
+        _write_new(output, data)
+        return {"source_commit": commit, "context_sha256": hashlib.sha256(data).hexdigest()}
+    if jar_cache.is_symlink() or not jar_cache.is_dir():
+        raise ValueError("VERIFIED_JAR_CACHE_REQUIRED")
+    # Trust the committed lock, not a dirty worktree or a restored cache key.
+    lock = json.loads(_git(repo, "show", f"{commit}:deploy/runtime/jars.lock.json"))
+    with ExitStack() as stack:
+        dependencies = []
+        names = set()
+        total = 0
+        for artifact in lock:
+            path = artifact["path"]
+            name = path.rsplit("/", 1)[-1]
+            if (
+                ".." in path or path.startswith("/") or not name.endswith(".jar")
+                or name in names or not re.fullmatch("[0-9a-f]{128}", artifact["sha512"])
+            ):
+                raise ValueError("JAR_LOCK_INVALID")
+            names.add(name)
+            cached = jar_cache / name
+            if cached.is_symlink() or not cached.is_file():
+                raise ValueError("JAR_CACHE_FILE_INVALID")
+            if total + cached.stat().st_size > MAX_JAR_CACHE_BYTES:
+                raise ValueError("JAR_CACHE_TOO_LARGE")
+            # Snapshot while hashing so a cache-file swap cannot alter the tar.
+            staged = stack.enter_context(tempfile.TemporaryFile())
+            digest = hashlib.sha512()
+            size = 0
+            with cached.open("rb") as source:
+                while chunk := source.read(1024 * 1024):
+                    size += len(chunk)
+                    if total + size > MAX_JAR_CACHE_BYTES:
+                        raise ValueError("JAR_CACHE_TOO_LARGE")
+                    digest.update(chunk)
+                    staged.write(chunk)
+            if digest.hexdigest() != artifact["sha512"]:
+                raise ValueError("JAR_CACHE_CHECKSUM_MISMATCH")
+            staged.seek(0)
+            total += size
+            member = tarfile.TarInfo(f"{JAR_CONTEXT_PREFIX}/{name}")
+            member.size, member.mode, member.mtime = size, 0o644, 0
+            dependencies.append((member, staged))
+        descriptor = os.open(output, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(descriptor, "wb") as destination, tarfile.open(
+            fileobj=io.BytesIO(data)
+        ) as original, tarfile.open(
+            fileobj=destination, mode="w", format=tarfile.PAX_FORMAT
+        ) as archive:
+            for member in original:
+                if member.name.rstrip("/") == JAR_CONTEXT_PREFIX or member.name.startswith(JAR_CONTEXT_PREFIX + "/"):
+                    raise ValueError("JAR_CONTEXT_TRACKED_PATH_CONFLICT")
+                archive.addfile(member, original.extractfile(member) if member.isfile() else None)
+            directory = tarfile.TarInfo(JAR_CONTEXT_PREFIX)
+            directory.type, directory.mode, directory.mtime = tarfile.DIRTYPE, 0o755, 0
+            archive.addfile(directory)
+            for member, staged in dependencies:
+                archive.addfile(member, staged)
+    digest = hashlib.sha256()
+    with output.open("rb") as source:
+        while chunk := source.read(1024 * 1024):
+            digest.update(chunk)
+    return {
+        "source_commit": commit, "context_sha256": digest.hexdigest(),
+        "verified_maven_artifacts": len(dependencies), "verified_maven_bytes": total,
+    }
 
 
 def publication_plan(inspections: dict, commit: str) -> dict:
@@ -82,6 +152,7 @@ def publication_plan(inspections: dict, commit: str) -> dict:
         images.append(
             {
                 "role": role,
+                "local_reference": LOCAL_IMAGES[role],
                 "local_image_id": image_id,
                 "platform": "linux/amd64",
                 "source_commit": commit if role != "kafka" else None,
@@ -155,10 +226,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("action", choices=["context", "plan"])
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--jar-cache", type=Path)
     args = parser.parse_args()
     try:
         if args.action == "context":
-            result = build_context(ROOT, args.output)
+            result = build_context(ROOT, args.output, args.jar_cache)
         else:
             commit = (
                 _git(ROOT, "rev-parse", "--verify", "HEAD^{commit}").decode().strip()

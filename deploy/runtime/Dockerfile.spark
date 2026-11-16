@@ -12,7 +12,8 @@ RUN python -m pip install --no-cache-dir --require-hashes -r /tmp/requirements.t
     && useradd --uid 10001 --create-home pilot
 COPY deploy/runtime/jars.lock.json /tmp/jars.lock.json
 COPY deploy/runtime/fetch_jars.py /tmp/fetch_jars.py
-RUN python /tmp/fetch_jars.py /tmp/jars.lock.json
+RUN --mount=type=bind,source=deploy/runtime/verified-jars,target=/tmp/verified-jars,ro \
+    python /tmp/fetch_jars.py /tmp/jars.lock.json --cache /tmp/verified-jars --offline
 COPY config /app/config
 COPY spark /app/spark
 COPY runtime /app/runtime

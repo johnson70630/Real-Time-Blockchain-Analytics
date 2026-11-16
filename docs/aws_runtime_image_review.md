@@ -6,6 +6,9 @@ stopped. See the [new publisher permission/publication proposal](aws_runtime_ecr
 Its IAM expansion and live uploads are unapproved. The existing image builder
 and planner described below remain offline-only; older private reviews are
 preserved and must not substitute for a fresh frozen-source artifact plan.
+The [Maven-cache reliability fix](aws_runtime_image_build_reliability.md)
+augments committed source with only checksum-verified public JARs; it replaces
+repeated connector downloads inside clean Docker builds.
 
 ## A. What was implemented
 
@@ -79,7 +82,8 @@ tests alone do not establish that actual images are ready for publication.
 
 ## E. Security review
 
-Only selected committed application/build paths enter the context; the existing
+Only selected committed application/build paths and independently verified
+public dependencies named by the committed lock enter the context; the existing
 `.dockerignore` still excludes sensitive file patterns. Review the committed
 source and run secret scanning first: this is not a secret detector. The
 planner projects seven metadata fields and never prints container environment
