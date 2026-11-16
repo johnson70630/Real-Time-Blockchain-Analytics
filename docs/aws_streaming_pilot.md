@@ -6,6 +6,10 @@ The separately approved five-resource recovery apply succeeded on 2026-11-15:
 but uninitialized.** See the [completion result](aws_runtime_remaining_apply_result.md).
 All 23 existing resource IDs were preserved. No streaming application has been
 deployed. The saved recovery plan is consumed and must not be reapplied.
+The subsequent approved [SSM access test](aws_runtime_access_test_result.md)
+passed and ended with verified stop at 2026-11-16 01:25:02 UTC. The local client
+is installed. Guest inspection found missing Compose and incomplete bootstrap;
+host-software recovery remains a separate approval before streaming deployment.
 The earlier state-only untaint and planning are historical completed steps;
 see the [plan result](aws_runtime_recovery_plan_result.md),
 [recovery history](aws_runtime_recovery_review.md) and
@@ -28,7 +32,7 @@ boundary policy readback independently matches the repository. The older saved
 infrastructure plan omits that boundary and must not be used for this design.
 Its replacement includes the exact boundary. The operator reports the approved
 SSM supplement attached and retargeted to the verified private session document;
-live session authorization and secret access remain later gates.
+live shell/data-channel access passed. Secret access remains a later gate.
 
 Current milestone: **11.6C, first AWS streaming demo preparation**. Offline
 application/deployment components are implemented and tested. The planning-user
@@ -52,7 +56,8 @@ Remaining sequence:
 2. The approved fresh runtime-only init/plan and boundary review are complete.
 3. The separately approved five-create apply is complete; EC2 remains stopped.
    No start, replacement or IAM expansion is authorized by that approval.
-4. Approve initialization of the exact Kafka EBS volume, image publication,
+4. Review the narrow host-software recovery proposal, then separately approve
+   initialization of the exact Kafka EBS volume, image publication,
    secret/read permissions and application deployment before those actions.
 5. Smoke-test the isolated streaming path, test Kafka/Spark recovery, drain and
    stop gracefully, and verify retained-resource costs and cleanup scope.
@@ -239,10 +244,13 @@ the private document and revision of the existing policy's two document ARNs.
 Read-only verification on 2026-11-16 UTC confirms the custom document's owner,
 version and exact reviewed content, with EC2 stopped before and after; see the
 [private session-document result](aws_runtime_ssm_document_review.md).
-The policy revision is operator-attested; its JSON and live session/channel
-authorization were not independently verified. Plugin setup and the supervised
-start window remain gates. The operator reports a four-hour human-role maximum;
-this does not extend the document's 60-minute shell limit or authorize runtime.
+The policy revision is operator-attested; its JSON was not independently read.
+The client is now installed and live shell/data-channel access passed in the
+approved, closed test window. Compose is missing; a narrow guest-software
+recovery is proposed in the access result. Explicit session resume/terminate API
+tests remain unperformed. A new paid window needs new approval. The local assume
+profile now requests four hours; this does not extend the document's 60-minute
+shell limit or authorize runtime.
 
 ## EBS first initialization — separate exact-volume approval
 

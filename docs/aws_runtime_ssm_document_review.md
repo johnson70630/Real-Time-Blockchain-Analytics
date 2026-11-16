@@ -8,25 +8,31 @@ document creation. Read-only verification now passes. EC2 stayed stopped.
 See [sanitized verification evidence](evidence/aws_runtime_ssm_document_2026-11-16.json).
 The original proposal below is retained as historical review evidence.
 
+**Subsequent access result:** the approved local client is installed and the
+live SSM shell/data channel passed. The supervised window closed with EC2
+stopped at 2026-11-16 01:25:02 UTC. Docker Compose is missing; no repair was
+performed. See the [access result and next recovery proposal](aws_runtime_access_test_result.md).
+
 | Report item | Current result |
 |---|---|
 | A. Implemented | Operator-created `blockchain-runtime-demo-shell` in us-west-2; operator reports the existing SSM policy retargeted to it. |
 | B. Purpose | Explicit, inspectable project shell settings for the exact demo node, without SSH ingress or changes to account defaults. |
 | C. Files | This result, sanitized evidence, and current-status links in the operator and pilot reviews. Reviewed JSON files remain unchanged. |
 | D. Validation | Expected STS identity; document owner/account, Active status, Session type, EC2 target and default/latest version 1 verified. Parsed live JSON exactly matches the reviewed artifact. Instance stopped before and after. All 71 offline policy/document tests, focused Ruff, repository secret scan and whitespace checks pass. |
-| E. Security | No startup commands, forwarding or added IAM actions. Live policy JSON and sharing permissions were not independently read; policy update is operator-attested. Session/channel authorization remains untested. |
+| E. Security | No startup commands, forwarding or added IAM actions. Live policy JSON and sharing permissions were not independently read; policy update is operator-attested. Subsequent live shell/data-channel access passed; explicit resume/terminate API tests remain unperformed. |
 | F. Git / CI | Documentation/evidence checkpoint on develop; hosted CI status is reported separately in the conversation. Main and README remain unchanged. |
-| G. Cost | No compute started or application deployed. Retained disks and alarms remain approximately USD 10.60/month before other usage and taxes; not a spending limit. |
-| H. Blockers | Session Manager client installation, live access test, approved paid window, exact-volume initialization, image publication and secret-access design remain outstanding. |
-| I. Next step | Install the separately reviewed, signed local Session Manager client after installation authorization. EC2 start and session opening require their own approved window. |
-| J. Infrastructure | Administrator reports the approved IAM policy revision and document creation. Assistant verification made only read calls; no Terraform/state, EC2 mutation, formatting, secret, image publication or Snowflake operation. |
+| G. Cost | Document creation/readback started no compute. The later access window has separate costs in its result report. Retained disks and alarms remain approximately USD 10.60/month before other usage and taxes; not a spending limit. |
+| H. Blockers | Client installation and the access test are complete. Missing Compose/incomplete bootstrap, exact-volume initialization, image publication, secret-access design and streaming deployment remain outstanding. |
+| I. Next step | Review the narrow host-software recovery proposal in the access report. Its guest mutations and a new paid window require separate approval. |
+| J. Infrastructure | Administrator reports the approved IAM policy revision and document creation. Document verification used only read calls. The separately approved later EC2 start/SSM/stop is recorded in the access result; no Terraform/state, formatting, secret, image publication or Snowflake operation occurred. |
 
 The verified document uses a 15-minute idle timeout and 60-minute shell limit.
 These limits do not stop EC2. The operator also reports increasing the human
 deployer role's maximum credential duration to four hours; that IAM setting was
-not independently read. The local `blockchain-demo-assume` profile still
-requests 3600 seconds at this inspection. Requesting 14400 seconds is a separate
-local configuration step; existing credentials retain their original expiry.
+not independently read. The local `blockchain-demo-assume` profile requested
+3600 seconds at the document inspection. The operator subsequently changed it
+to 14400 seconds and renewed MFA; both the profile and sufficient cached-session
+duration were checked before the access test.
 Neither setting changes the EC2 workload role or the reviewed shell document.
 
 Milestone 11.5D remains paused. The runtime/platform Terraform states were not

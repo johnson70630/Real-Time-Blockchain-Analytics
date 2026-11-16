@@ -5,9 +5,11 @@ attached and its document references retargeted. The separately approved private
 document now exists in us-west-2; read-only verification confirms its owner,
 version and exact reviewed content with EC2 stopped. See the
 [private-document result and historical proposal](aws_runtime_ssm_document_review.md).
-Live IAM policy JSON and session/channel authorization remain unverified.
+Live IAM policy JSON remains independently unread. Subsequent live SSM shell
+and data-channel access passed; the approved window closed with EC2 stopped.
+See the [access result and host-recovery proposal](aws_runtime_access_test_result.md).
 The operator reports a four-hour maximum role duration; the local assume profile
-still requests one hour at this inspection.
+now requests four hours and a fresh MFA session was checked before access.
 The original offline proposal below is retained as historical review evidence;
 its six-action policy file remains unchanged. Milestone 11.5D remains paused.
 
