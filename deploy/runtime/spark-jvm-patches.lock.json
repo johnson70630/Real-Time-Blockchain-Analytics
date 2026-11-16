@@ -1,11 +1,12 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "pyspark_version": "4.0.1",
   "families": {
     "netty": "4.1.140.Final",
     "tcnative": "2.0.85.Final",
     "bouncycastle": "1.87",
-    "jersey": "3.0.18"
+    "jersey": "3.0.18",
+    "hadoop": "3.4.3"
   },
   "replacements": [
     {
@@ -347,6 +348,32 @@
         "path": "io/netty/netty-transport-native-unix-common/4.1.140.Final/netty-transport-native-unix-common-4.1.140.Final.jar",
         "sha512": "3490e30e92b4096a2b04857e0dab57c8187d3a46dcfd1d9b8195e4b7bd685f3b84128694851839c00c560ebc9aae54137bb6447181893639aaf2be92f45aa908"
       }
+    },
+    {
+      "old": {
+        "name": "hadoop-client-api-3.4.1.jar",
+        "sha512": "d505c0f8cfffcfe0090c69de854c971c7d88646f1f9f31af43ad3934a686dc06ae39250c3c99998ea57a27fc226a0fa5fb4da39867cac3997577ad7ffb01b239"
+      },
+      "new": {
+        "path": "org/apache/hadoop/hadoop-client-api/3.4.3/hadoop-client-api-3.4.3.jar",
+        "sha512": "60c55f5498c3285c306509be03ec41a08570bdf7698ae75db4cf6848810c7de09debf68495072914867b19ae7cc11853382417566ac9d5b25976750d02d614f1"
+      }
+    },
+    {
+      "old": {
+        "name": "hadoop-client-runtime-3.4.1.jar",
+        "sha512": "6363e4b786f49c7f7e1efe733000399e781e4827e26f8f22259f2e32f907a37401283aaf5fea201584c6cc8ddba8716c0d305917bb628e3438ed199cb1a3e00a"
+      },
+      "new": {
+        "path": "org/apache/hadoop/hadoop-client-runtime/3.4.3/hadoop-client-runtime-3.4.3.jar",
+        "sha512": "a9aab2c9253325e2daa0782163ced3419943a3c16a05d1cc3b4a60f52ea539f4dde7c30405f549a9c6559db9f3fc2ee16703b05b16bfe5315ad5405baebb2c72"
+      }
     }
-  ]
+  ],
+  "components": {
+    "hadoop": "3.4.3",
+    "aws_sdk": "2.35.4",
+    "wildfly_openssl": "2.2.5.Final",
+    "analytics_accelerator": "1.3.1"
+  }
 }

@@ -20,18 +20,6 @@
     "sha512": "399510f759fb48255c6298f3545c9b644372fbc9d7245e80e6b51f49da0ac9275d104092c537ac047d5a1312c7d191dee8d655ca8d760b59ce1452bf4370a6e0"
   },
   {
-    "path": "org/apache/hadoop/hadoop-aws/3.4.1/hadoop-aws-3.4.1.jar",
-    "sha512": "2e3037e3e0305f6d82de6ab92a2fd66fb6858081da447cef3397cea7f2e0bdea4af8a7d43700c7a34bfcbaecd0629f6c449bcba18647e790b2957324809de5ce"
-  },
-  {
-    "path": "software/amazon/awssdk/bundle/2.24.6/bundle-2.24.6.jar",
-    "sha512": "b33188b9bdebe1b698da090b8f39ec5a7f5ba81bc6dfe15a722c55ec6cad3880377bcc37c71bbc57e1bd3c4aaa33acf09683259a8b6e669c5ee59e9363976aaf"
-  },
-  {
-    "path": "org/wildfly/openssl/wildfly-openssl/1.1.3.Final/wildfly-openssl-1.1.3.Final.jar",
-    "sha512": "fc54bcde83071d37e61896652c0db0c33d26281d87d2a58c3d7e2feecf3d83404e21241056841ecc32957fbe8b73fb7507bc869d67db044c9285641ab6ee60c7"
-  },
-  {
     "path": "org/bouncycastle/bcprov-jdk18on/1.87/bcprov-jdk18on-1.87.jar",
     "sha512": "fec4187f2d152ec10dcbb6928407bfa6dacea393d716bd024cbed907251d181e4eeda389501792435d6b5dac13a468b2f230c2fac80dd6382b9c0a6e4d85ff71"
   },
@@ -166,5 +154,29 @@
   {
     "path": "io/netty/netty-transport-native-unix-common/4.1.140.Final/netty-transport-native-unix-common-4.1.140.Final.jar",
     "sha512": "3490e30e92b4096a2b04857e0dab57c8187d3a46dcfd1d9b8195e4b7bd685f3b84128694851839c00c560ebc9aae54137bb6447181893639aaf2be92f45aa908"
+  },
+  {
+    "path": "org/apache/hadoop/hadoop-client-api/3.4.3/hadoop-client-api-3.4.3.jar",
+    "sha512": "60c55f5498c3285c306509be03ec41a08570bdf7698ae75db4cf6848810c7de09debf68495072914867b19ae7cc11853382417566ac9d5b25976750d02d614f1"
+  },
+  {
+    "path": "org/apache/hadoop/hadoop-client-runtime/3.4.3/hadoop-client-runtime-3.4.3.jar",
+    "sha512": "a9aab2c9253325e2daa0782163ced3419943a3c16a05d1cc3b4a60f52ea539f4dde7c30405f549a9c6559db9f3fc2ee16703b05b16bfe5315ad5405baebb2c72"
+  },
+  {
+    "path": "org/apache/hadoop/hadoop-aws/3.4.3/hadoop-aws-3.4.3.jar",
+    "sha512": "b69fc8eef9f457e72d2fe8524ca351a1cdf8e7f1abdb27974c9d0a458b660d7562f40e157dbee56f15940db9eb912641d414e4837d8439f51a3da9c1937c09a5"
+  },
+  {
+    "path": "software/amazon/awssdk/bundle/2.35.4/bundle-2.35.4.jar",
+    "sha512": "92117c93e34c8c8f5c7e27c0f29f9ae027a2d8ff186da7e40b4815cfeb1607b4cc121fd20fa7b58ee4cb692a4f5e919953e11263d831cc9b2b69c6bed124f6db"
+  },
+  {
+    "path": "org/wildfly/openssl/wildfly-openssl/2.2.5.Final/wildfly-openssl-2.2.5.Final.jar",
+    "sha512": "376f4ef1673d0c54cbf391f9024c2bb3d765b357dd73143b8436e2240aa334764a22f8ed357e6964dd2e248d9db7ea1bd2ad19fcb582c3629201db8f1f54ebb1"
+  },
+  {
+    "path": "software/amazon/s3/analyticsaccelerator/analyticsaccelerator-s3/1.3.1/analyticsaccelerator-s3-1.3.1.jar",
+    "sha512": "a0a16fa26c8c10a149eb5d0823cef53005e3f02cf8ba2fa5c3ea2a87479885568bc55bf2355131c8198f6870f43daa9ce9fe4927b86415bf5e37cc45cf6d0204"
   }
 ]

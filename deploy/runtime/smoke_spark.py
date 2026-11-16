@@ -12,6 +12,7 @@ from runtime.jvm import verify_class_origins
 spark = (
     SparkSession.builder.master("local[1]")
     .config("spark.ui.enabled", "false")
+    .config("spark.hadoop.fs.s3a.input.stream.type", "classic")
     .getOrCreate()
 )
 try:
@@ -20,7 +21,7 @@ try:
     assert jvm.java.lang.System.getProperty("java.specification.version") == "17"
     assert jvm.java.lang.System.getProperty("java.vendor") == "Eclipse Adoptium"
     assert jvm.java.awt.GraphicsEnvironment.isHeadless()
-    assert jvm.org.apache.hadoop.util.VersionInfo.getVersion() == "3.4.1"
+    assert jvm.org.apache.hadoop.util.VersionInfo.getVersion() == "3.4.3"
     assert jvm.org.apache.kafka.common.utils.AppInfoParser.getVersion() == "3.9.2"
     assert jvm.java.nio.charset.Charset.defaultCharset().name() == "UTF-8"
     security = verify_class_origins(spark)
@@ -88,6 +89,7 @@ try:
     asynchronous.close()
     configuration = jvm.org.apache.hadoop.conf.Configuration(False)
     configuration.set("fs.s3a.endpoint.region", "us-west-2")
+    configuration.set("fs.s3a.input.stream.type", "classic")
     configuration.set("fs.s3a.bucket.probe", "0")
     configuration.set(
         "fs.s3a.aws.credentials.provider",

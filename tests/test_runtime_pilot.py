@@ -118,6 +118,13 @@ def test_shadowed_or_pre_remediation_spark_cannot_be_released(release, field):
         validate_release(release)
 
 
+def test_old_hadoop_spark_manifest_cannot_be_released(release):
+    evidence = json.loads((ROOT / "docs/evidence/aws_runtime_hadoop343_2026-11-16.json").read_text())
+    release["spark_image"] = f"{REGISTRY}/blockchain-runtime-spark@{evidence['baseline_spark_manifest']}"
+    with pytest.raises(ValueError, match="REJECTED_IMAGE_RELEASE"):
+        validate_release(release)
+
+
 @pytest.mark.parametrize("key,value", [
     ("LANG", "en_US.UTF-8"), ("LC_ALL", "en_US.UTF-8"),
     ("LANGUAGE", "../../untrusted"), ("LANGUAGE", "en_US:en"),
@@ -487,7 +494,8 @@ def test_images_pin_base_python_dependencies_and_connector_hashes():
     assert connectors == {
         "spark-sql-kafka-0-10_2.13-4.0.1.jar", "spark-token-provider-kafka-0-10_2.13-4.0.1.jar",
         "kafka-clients-3.9.2.jar", "commons-pool2-2.12.0.jar", "jsr305-3.0.0.jar",
-        "hadoop-aws-3.4.1.jar", "bundle-2.24.6.jar", "wildfly-openssl-1.1.3.Final.jar",
+        "hadoop-aws-3.4.3.jar", "bundle-2.35.4.jar", "wildfly-openssl-2.2.5.Final.jar",
+        "analyticsaccelerator-s3-1.3.1.jar",
     }
     assert all(row["new"] in jars for row in patches["replacements"])
     assert all(len(artifact["sha512"]) == 128 for artifact in jars)

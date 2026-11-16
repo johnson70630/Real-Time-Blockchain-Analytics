@@ -1,6 +1,10 @@
 # Milestone 11.6C — first streaming pilot readiness
 
-Latest offline work: [coordinated JVM family remediation](aws_runtime_jvm_family_remediation.md)
+Latest offline work: [matched Hadoop 3.4.3 remediation](aws_runtime_hadoop343_remediation.md)
+updates the client/S3A/SDK cohort and reduces Spark library findings to 4 critical /
+78 high. The release remains blocked; no exceptions or deployment are approved.
+
+Previous offline work: [coordinated JVM family remediation](aws_runtime_jvm_family_remediation.md)
 reduces Spark's library findings and rejects actual classpath shadowing before S3 work.
 The security gate remains blocked; no finding or deployment has been approved.
 

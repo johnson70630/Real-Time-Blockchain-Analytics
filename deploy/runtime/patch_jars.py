@@ -12,7 +12,21 @@ else:
     import fetch_jars
 
 
-PREFIXES = ("netty-", "bcprov-", "bcpkix-", "bcutil-", "jersey-")
+PREFIXES = (
+    "netty-",
+    "bcprov-",
+    "bcpkix-",
+    "bcutil-",
+    "jersey-",
+    "hadoop-client-api-",
+    "hadoop-client-runtime-",
+)
+COMPONENTS = {
+    "hadoop": "3.4.3",
+    "aws_sdk": "2.35.4",
+    "wildfly_openssl": "2.2.5.Final",
+    "analytics_accelerator": "1.3.1",
+}
 
 
 def family(name):
@@ -24,15 +38,19 @@ def family(name):
         return "bouncycastle"
     if name.startswith("jersey-"):
         return "jersey"
+    if name.startswith(("hadoop-client-api-", "hadoop-client-runtime-")):
+        return "hadoop"
     raise ValueError("Unreviewed JVM family")
 
 
 def validate(lock):
     if (
-        lock.get("schema_version") != 1
+        lock.get("schema_version") != 2
         or lock.get("pyspark_version") != "4.0.1"
         or set(lock.get("families", {}))
-        != {"netty", "tcnative", "bouncycastle", "jersey"}
+        != {"netty", "tcnative", "bouncycastle", "jersey", "hadoop"}
+        or lock.get("components") != COMPONENTS
+        or lock["families"]["hadoop"] != COMPONENTS["hadoop"]
         or not 1 <= len(lock.get("replacements", [])) <= 100
     ):
         raise ValueError("Invalid JVM patch scope")
@@ -62,6 +80,7 @@ def validate(lock):
             "tcnative": "io/netty/",
             "bouncycastle": "org/bouncycastle/",
             "jersey": "org/glassfish/jersey/",
+            "hadoop": "org/apache/hadoop/",
         }[group]
         if (
             group != family(destination)
@@ -134,15 +153,44 @@ def apply(lock, *, cache, target=None):
     print(f"SPARK_JVM_PATCHES_APPLIED replacements={len(new_names)}")
 
 
+def validate_downloads(lock, downloads):
+    """Reject an SDK/connector mismatch before changing the bundled clients."""
+    validate(lock)
+    required = {
+        "hadoop-client-api": ("org/apache/hadoop", COMPONENTS["hadoop"]),
+        "hadoop-client-runtime": ("org/apache/hadoop", COMPONENTS["hadoop"]),
+        "hadoop-aws": ("org/apache/hadoop", COMPONENTS["hadoop"]),
+        "bundle": ("software/amazon/awssdk", COMPONENTS["aws_sdk"]),
+        "wildfly-openssl": ("org/wildfly/openssl", COMPONENTS["wildfly_openssl"]),
+        "analyticsaccelerator-s3": (
+            "software/amazon/s3/analyticsaccelerator",
+            COMPONENTS["analytics_accelerator"],
+        ),
+    }
+    for artifact, (group, version) in required.items():
+        expected = f"{group}/{artifact}/{version}/{artifact}-{version}.jar"
+        matches = [row for row in downloads if row["path"].split("/")[-3] == artifact]
+        if len(matches) != 1 or matches[0]["path"] != expected:
+            raise ValueError("Unmatched Hadoop/S3 dependency cohort")
+    if any(row["new"] not in downloads for row in lock["replacements"]):
+        raise ValueError("JVM replacement missing from download lock")
+
+
 def stage_overrides(lock, *, target, output):
     """Give patched families explicit precedence over unmodified shaded bundles."""
-    _, names = validate(lock)
+    validate(lock)
+    # The matched Hadoop clients use the normal JAR directory after replacement.
+    # Avoid duplicate copies; startup verifies their actual class origins there.
+    overrides = [
+        row for row in lock["replacements"] if family(row["old"]["name"]) != "hadoop"
+    ]
+    names = {row["new"]["path"].rsplit("/", 1)[-1] for row in overrides}
     if target.is_symlink() or not target.is_dir() or output.is_symlink():
         raise ValueError("Regular JVM override directories required")
     output.mkdir(parents=True, exist_ok=True)
     if any(p.name not in names | {"patches.lock.json"} for p in output.iterdir()):
         raise ValueError("Unexpected JVM override content")
-    for row in lock["replacements"]:
+    for row in overrides:
         new = row["new"]
         name = new["path"].rsplit("/", 1)[-1]
         source, destination = target / name, output / name
@@ -164,8 +212,10 @@ if __name__ == "__main__":
     parser.add_argument("lock", type=Path)
     parser.add_argument("--cache", type=Path, required=True)
     parser.add_argument("--overrides", type=Path, required=True)
+    parser.add_argument("--downloads", type=Path, required=True)
     args = parser.parse_args()
     lock = json.loads(args.lock.read_text())
+    validate_downloads(lock, json.loads(args.downloads.read_text()))
     apply(lock, cache=args.cache)
     import pyspark
 

@@ -34,9 +34,21 @@ def prepared(tmp_path):
             }
         )
     lock = {
-        "schema_version": 1,
+        "schema_version": 2,
         "pyspark_version": "4.0.1",
-        "families": {"netty": "2", "tcnative": "2", "bouncycastle": "2", "jersey": "2"},
+        "families": {
+            "netty": "2",
+            "tcnative": "2",
+            "bouncycastle": "2",
+            "jersey": "2",
+            "hadoop": "3.4.3",
+        },
+        "components": {
+            "hadoop": "3.4.3",
+            "aws_sdk": "2.35.4",
+            "wildfly_openssl": "2.2.5.Final",
+            "analytics_accelerator": "1.3.1",
+        },
         "replacements": replacements,
     }
     (target / "unrelated.jar").write_bytes(b"preserve")
@@ -140,6 +152,42 @@ def test_committed_family_patches_are_covered_by_download_lock():
     patch_jars.validate(lock)
     downloads = json.loads((ROOT / "deploy/runtime/jars.lock.json").read_text())
     assert all(row["new"] in downloads for row in lock["replacements"])
+    patch_jars.validate_downloads(lock, downloads)
+
+
+@pytest.mark.parametrize(
+    "artifact",
+    [
+        "hadoop-client-api",
+        "hadoop-client-runtime",
+        "hadoop-aws",
+        "bundle",
+        "wildfly-openssl",
+        "analyticsaccelerator-s3",
+    ],
+)
+@pytest.mark.parametrize("failure", ["missing", "old_version", "duplicate"])
+def test_mixed_or_missing_s3_cohort_is_rejected(artifact, failure):
+    lock = json.loads((ROOT / "deploy/runtime/spark-jvm-patches.lock.json").read_text())
+    downloads = json.loads((ROOT / "deploy/runtime/jars.lock.json").read_text())
+    row = next(item for item in downloads if item["path"].split("/")[-3] == artifact)
+    if failure == "missing":
+        downloads.remove(row)
+    elif failure == "old_version":
+        version = row["path"].split("/")[-2]
+        row["path"] = row["path"].replace(version, "0.0.1")
+    else:
+        downloads.append(copy.deepcopy(row))
+    with pytest.raises(ValueError, match="dependency cohort"):
+        patch_jars.validate_downloads(lock, downloads)
+
+
+def test_unsupported_sdk_pair_fails_before_file_replacement(prepared):
+    target, cache, lock = prepared
+    lock["components"]["aws_sdk"] = "2.24.6"
+    with pytest.raises(ValueError, match="scope"):
+        patch_jars.apply(lock, target=target, cache=cache)
+    assert (target / "netty-common-1.jar").exists()
 
 
 def test_override_files_and_manifest_are_integrity_checked(prepared, tmp_path):
@@ -165,3 +213,33 @@ def test_override_manifest_symlink_cannot_overwrite_another_file(prepared, tmp_p
     with pytest.raises(ValueError, match="manifest"):
         patch_jars.stage_overrides(lock, target=target, output=output)
     assert unrelated.read_text() == "preserve"
+
+
+def test_matched_hadoop_client_is_not_duplicated_into_override_directory(
+    prepared, tmp_path
+):
+    target, cache, lock = prepared
+    old, new = b"old API", b"matched new API"
+    (target / "hadoop-client-api-3.4.1.jar").write_bytes(old)
+    (cache / "hadoop-client-api-3.4.3.jar").write_bytes(new)
+    lock["replacements"].append(
+        {
+            "old": {
+                "name": "hadoop-client-api-3.4.1.jar",
+                "sha512": hashlib.sha512(old).hexdigest(),
+            },
+            "new": {
+                "path": "org/apache/hadoop/hadoop-client-api/3.4.3/hadoop-client-api-3.4.3.jar",
+                "sha512": hashlib.sha512(new).hexdigest(),
+            },
+        }
+    )
+    patch_jars.apply(lock, target=target, cache=cache)
+    output = tmp_path / "overrides"
+    patch_jars.stage_overrides(lock, target=target, output=output)
+    assert (target / "hadoop-client-api-3.4.3.jar").read_bytes() == new
+    assert not (output / "hadoop-client-api-3.4.3.jar").exists()
+    assert (
+        json.loads((output / "patches.lock.json").read_text())["components"]["hadoop"]
+        == "3.4.3"
+    )

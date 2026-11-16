@@ -174,6 +174,7 @@ def run_stream(stop: Event):
         .config("spark.sql.session.timeZone", "UTC")
         .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
         .config("spark.hadoop.fs.s3a.endpoint.region", REGION)
+        .config("spark.hadoop.fs.s3a.input.stream.type", "classic")
         .config(
             "spark.hadoop.fs.s3a.aws.credentials.provider",
             "org.apache.hadoop.fs.s3a.auth.IAMInstanceCredentialsProvider",

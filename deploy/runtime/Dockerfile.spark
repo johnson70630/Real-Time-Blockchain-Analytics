@@ -26,7 +26,7 @@ COPY deploy/runtime/spark-jvm-patches.lock.json /tmp/spark-jvm-patches.lock.json
 COPY deploy/runtime/patch_jars.py /tmp/patch_jars.py
 RUN --mount=type=bind,source=deploy/runtime/verified-jars,target=/tmp/verified-jars,ro \
     python /tmp/fetch_jars.py /tmp/jars.lock.json --cache-only /tmp/reviewed-jars --cache /tmp/verified-jars --offline \
-    && python /tmp/patch_jars.py /tmp/spark-jvm-patches.lock.json --cache /tmp/reviewed-jars --overrides /opt/pilot/jvm-overrides \
+    && python /tmp/patch_jars.py /tmp/spark-jvm-patches.lock.json --cache /tmp/reviewed-jars --overrides /opt/pilot/jvm-overrides --downloads /tmp/jars.lock.json \
     && python /tmp/fetch_jars.py /tmp/jars.lock.json --cache /tmp/reviewed-jars --offline \
     && rm -rf /tmp/reviewed-jars
 COPY config /app/config

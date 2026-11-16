@@ -1,5 +1,11 @@
 # Milestone 11.6C — coordinated JVM family remediation
 
+Follow-up: [matched Hadoop 3.4.3 remediation](aws_runtime_hadoop343_remediation.md)
+updates Hadoop's embedded Avro and its coordinated S3 dependency set. The new
+review reports 4 critical / 78 high library occurrences with no new high/critical
+package-advisory pairs. The release remains blocked; counts below preserve this
+earlier checkpoint.
+
 Reviewed 2026-11-16 UTC. **The release remains blocked.** This checkpoint fixes
 compatible standalone dependencies and an observed classpath problem. It does
 not approve remaining findings, publication or an AWS pilot. Milestone 11.5D is paused.
