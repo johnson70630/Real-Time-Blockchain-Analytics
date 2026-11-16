@@ -16,8 +16,12 @@ ended with EC2 stopped at 2026-11-16 01:44:02 UTC. The separately approved later
 initialization formatted only vol-02c9fb14a9c568fb5 once, verified a UUID-based
 mount and ended with EC2 stopped at 04:50:40 UTC. Recorded filesystem UUID:
 `da1454d8-1bea-41a3-89d7-87bd570a47bd`. Mount-on-next-boot is not yet tested.
-The formatting approval is consumed and must never be reused. The next
-[publisher proposal](aws_runtime_ecr_publisher_review.md) is offline/unapproved.
+The formatting approval is consumed and must never be reused. The separately
+approved [image publication](aws_runtime_ecr_publication_result.md) completed:
+three exact c917f2a release artifacts are in ECR and manifest hashes verified.
+All BASIC scans completed; producer/Spark each have 16 HIGH findings and Kafka
+has 10 CRITICAL/57 HIGH. This candidate is blocked from deployment. No further
+publication, remediation exception, secret/IAM change or EC2 start is approved.
 The earlier state-only untaint and planning are historical completed steps;
 see the [plan result](aws_runtime_recovery_plan_result.md),
 [recovery history](aws_runtime_recovery_review.md) and
@@ -65,8 +69,10 @@ Remaining sequence:
 3. The separately approved five-create apply is complete; EC2 remains stopped.
    No start, replacement or IAM expansion is authorized by that approval.
 4. Host software recovery and one-time Kafka XFS initialization are complete.
-   Verify mount persistence on the next approved start. Separately approve image publication,
-   secret/read permissions and application deployment before those actions.
+   The first three-image publication is complete, but its vulnerability gate
+   failed. Remediate/review replacements offline and obtain fresh publication
+   approval. Verify mount persistence on the next approved start. Secret/read
+   permissions and application deployment also require separate approval.
 5. Smoke-test the isolated streaming path, test Kafka/Spark recovery, drain and
    stop gracefully, and verify retained-resource costs and cleanup scope.
 
@@ -110,8 +116,10 @@ infrastructure-only planning change makes `approved_secret_arns` optional,
 omits its IAM statement when empty, and rejects wildcard/wrong-account/Region
 ARNs. It adds no resource definitions. Use only
 `infra/terraform/environments/runtime/`. The completed authenticated plan
-proposes **28 creates, 0 updates, 0 deletes**, plus the EC2-managed encrypted
-30-GiB gp3 root volume. Nothing has been applied:
+historically proposed **28 creates, 0 updates, 0 deletes**, plus the EC2-managed
+encrypted 30-GiB gp3 root volume. That foundation was subsequently applied and
+recovered as recorded above; the table describes existing resources, not a new
+apply proposal. No Terraform operation is authorized by image publication:
 
 | Category | Exact resource addresses / configuration |
 |---|---|
@@ -170,9 +178,9 @@ Docker network. The Spark classpath smoke runs with `--network none`.
 |---|---|
 | Python base, linux/amd64 | `python:3.12-slim-bookworm@sha256:0f086103b026048cc50cb5da25ec435c023c5241a83fc44daea593377abc61c4` |
 | Official Kafka 3.9.1 multi-platform source | `apache/kafka@sha256:4ceccc577f03f51f6af8dbfda55194d0d892f4fa7913ffbded567ce3895622ed` |
-| Producer ECR deployment digest | **Unavailable: no ECR publication was authorized or performed** |
-| Spark ECR deployment digest | **Unavailable: no ECR publication was authorized or performed** |
-| Mirrored Kafka ECR deployment digest | **Unavailable: no ECR publication was authorized or performed** |
+| Producer ECR deployment digest | `sha256:daa2cab53f201ac58435a557a2e1d2d006a4a442dc0a0c7c22fb9a81167f88e0` — vulnerability gate blocked |
+| Spark ECR deployment digest | `sha256:85c0b8ebf842847215698fe24efe05db04d0b6525d587955eb58209897843c38` — vulnerability gate blocked |
+| Mirrored Kafka ECR deployment digest | `sha256:5862db4a63a6dd7d46fd14771b10a1b39e069c2c47f17d8e4640f960720a0ead` — vulnerability gate blocked |
 
 Mirror the reviewed **amd64** Kafka image into the existing
 `blockchain-runtime-producer` repository under an immutable `kafka-3.9.1-...`

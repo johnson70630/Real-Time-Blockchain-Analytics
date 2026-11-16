@@ -2,10 +2,13 @@
 
 **Current status:** GitHub billing/CI access is restored; the foundation, SSM
 access, host software and one-time Kafka filesystem setup are complete. EC2 is
-stopped. See the [new publisher permission/publication proposal](aws_runtime_ecr_publisher_review.md).
-Its IAM expansion and live uploads are unapproved. The existing image builder
+stopped. The separately approved publisher scope is now complete: three images
+are uploaded and verified, but HIGH/CRITICAL scan findings block deployment.
+See the [publication result](aws_runtime_ecr_publication_result.md). The existing image builder
 and planner described below remain offline-only; older private reviews are
-preserved and must not substitute for a fresh frozen-source artifact plan.
+preserved. The published source is frozen at c917f2a; older reviews must not
+substitute for its exact artifact/scan evidence. The review below records the
+original offline tooling, not authorization for further publication.
 The [Maven-cache reliability fix](aws_runtime_image_build_reliability.md)
 augments committed source with only checksum-verified public JARs; it replaces
 repeated connector downloads inside clean Docker builds.

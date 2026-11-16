@@ -1,0 +1,1708 @@
+{
+  "source_commit": "c917f2ac7a0ecd34d5ddd82997e5166fa07ea006",
+  "publication_user_approved": true,
+  "policy_attachment_operator_reported": true,
+  "iam_mutations_by_helper": false,
+  "ec2_start_performed": false,
+  "terraform_calls_made": false,
+  "secret_calls_made": false,
+  "images": [
+    {
+      "role": "producer",
+      "repository": "blockchain-runtime-producer",
+      "tag": "producer-c917f2ac7a0ecd34d5ddd82997e5166fa07ea006",
+      "local_manifest_digest": "sha256:daa2cab53f201ac58435a557a2e1d2d006a4a442dc0a0c7c22fb9a81167f88e0",
+      "ecr_deployment_digest": "sha256:daa2cab53f201ac58435a557a2e1d2d006a4a442dc0a0c7c22fb9a81167f88e0",
+      "digest_reference": "209479274979.dkr.ecr.us-west-2.amazonaws.com/blockchain-runtime-producer@sha256:daa2cab53f201ac58435a557a2e1d2d006a4a442dc0a0c7c22fb9a81167f88e0",
+      "manifest_hash_verified": true,
+      "manifest_media_type": "application/vnd.oci.image.manifest.v1+json",
+      "config_digest": "sha256:a3d94e270651b5d48cbbb7082a52801b6208f671e15f02c5883f136d7bcbaa94",
+      "image_size_in_bytes": 69686302,
+      "manual_basic_scan_started": false,
+      "scan_status": "COMPLETE",
+      "finding_severity_counts": {
+        "HIGH": 16,
+        "MEDIUM": 17,
+        "LOW": 5,
+        "UNDEFINED": 1
+      },
+      "findings_more_pages": false,
+      "os_scan_release_gate_passed": false,
+      "scan_completed_at": "2026-11-15T22:02:04-08:00",
+      "vulnerability_source_updated_at": "2026-11-15T22:02:04-08:00",
+      "findings": [
+        {
+          "cve": "CVE-2026-84243",
+          "severity": "HIGH",
+          "source_package": "glibc",
+          "package_version": "2.36-9+deb12u14",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-84243"
+        },
+        {
+          "cve": "CVE-2026-112314",
+          "severity": "HIGH",
+          "source_package": "krb5",
+          "package_version": "1.20.1-2+deb12u5",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-112314"
+        },
+        {
+          "cve": "CVE-2026-112320",
+          "severity": "HIGH",
+          "source_package": "krb5",
+          "package_version": "1.20.1-2+deb12u5",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-112320"
+        },
+        {
+          "cve": "CVE-2026-112321",
+          "severity": "HIGH",
+          "source_package": "krb5",
+          "package_version": "1.20.1-2+deb12u5",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-112321"
+        },
+        {
+          "cve": "CVE-2026-112322",
+          "severity": "HIGH",
+          "source_package": "krb5",
+          "package_version": "1.20.1-2+deb12u5",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-112322"
+        },
+        {
+          "cve": "CVE-2026-112323",
+          "severity": "HIGH",
+          "source_package": "krb5",
+          "package_version": "1.20.1-2+deb12u5",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-112323"
+        },
+        {
+          "cve": "CVE-2026-119079",
+          "severity": "HIGH",
+          "source_package": "krb5",
+          "package_version": "1.20.1-2+deb12u5",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-119079"
+        },
+        {
+          "cve": "CVE-2025-6020",
+          "severity": "HIGH",
+          "source_package": "pam",
+          "package_version": "1.5.2-6+deb12u2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-6020"
+        },
+        {
+          "cve": "CVE-2026-119373",
+          "severity": "HIGH",
+          "source_package": "sqlite3",
+          "package_version": "3.40.1-2+deb12u2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-119373"
+        },
+        {
+          "cve": "CVE-2026-119374",
+          "severity": "HIGH",
+          "source_package": "sqlite3",
+          "package_version": "3.40.1-2+deb12u2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-119374"
+        },
+        {
+          "cve": "CVE-2026-119379",
+          "severity": "HIGH",
+          "source_package": "sqlite3",
+          "package_version": "3.40.1-2+deb12u2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-119379"
+        },
+        {
+          "cve": "CVE-2026-53613",
+          "severity": "HIGH",
+          "source_package": "util-linux",
+          "package_version": "2.38.1-5+deb12u3",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-53613"
+        },
+        {
+          "cve": "CVE-2026-53615",
+          "severity": "HIGH",
+          "source_package": "util-linux",
+          "package_version": "2.38.1-5+deb12u3",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-53615"
+        },
+        {
+          "cve": "CVE-2026-78410",
+          "severity": "HIGH",
+          "source_package": "util-linux",
+          "package_version": "2.38.1-5+deb12u3",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-78410"
+        },
+        {
+          "cve": "CVE-2026-76844",
+          "severity": "HIGH",
+          "source_package": "zlib",
+          "package_version": "1.2.13.dfsg-1",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-76844"
+        },
+        {
+          "cve": "CVE-2026-85091",
+          "severity": "HIGH",
+          "source_package": "zlib",
+          "package_version": "1.2.13.dfsg-1",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-85091"
+        },
+        {
+          "cve": "CVE-2026-115456",
+          "severity": "LOW",
+          "source_package": "gcc-12",
+          "package_version": "12.2.0-14+deb12u1",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-115456"
+        },
+        {
+          "cve": "CVE-2026-100290",
+          "severity": "LOW",
+          "source_package": "glibc",
+          "package_version": "2.36-9+deb12u14",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-100290"
+        },
+        {
+          "cve": "CVE-2026-95818",
+          "severity": "LOW",
+          "source_package": "glibc",
+          "package_version": "2.36-9+deb12u14",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-95818"
+        },
+        {
+          "cve": "CVE-2026-97399",
+          "severity": "LOW",
+          "source_package": "glibc",
+          "package_version": "2.36-9+deb12u14",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-97399"
+        },
+        {
+          "cve": "CVE-2026-119377",
+          "severity": "LOW",
+          "source_package": "sqlite3",
+          "package_version": "3.40.1-2+deb12u2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-119377"
+        },
+        {
+          "cve": "CVE-2026-125709",
+          "severity": "MEDIUM",
+          "source_package": "gcc-12",
+          "package_version": "12.2.0-14+deb12u1",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-125709"
+        },
+        {
+          "cve": "CVE-2026-115819",
+          "severity": "MEDIUM",
+          "source_package": "glibc",
+          "package_version": "2.36-9+deb12u14",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-115819"
+        },
+        {
+          "cve": "CVE-2026-86805",
+          "severity": "MEDIUM",
+          "source_package": "glibc",
+          "package_version": "2.36-9+deb12u14",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-86805"
+        },
+        {
+          "cve": "CVE-2026-112315",
+          "severity": "MEDIUM",
+          "source_package": "krb5",
+          "package_version": "1.20.1-2+deb12u5",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-112315"
+        },
+        {
+          "cve": "CVE-2026-112316",
+          "severity": "MEDIUM",
+          "source_package": "krb5",
+          "package_version": "1.20.1-2+deb12u5",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-112316"
+        },
+        {
+          "cve": "CVE-2026-112317",
+          "severity": "MEDIUM",
+          "source_package": "krb5",
+          "package_version": "1.20.1-2+deb12u5",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-112317"
+        },
+        {
+          "cve": "CVE-2026-112318",
+          "severity": "MEDIUM",
+          "source_package": "krb5",
+          "package_version": "1.20.1-2+deb12u5",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-112318"
+        },
+        {
+          "cve": "CVE-2026-112319",
+          "severity": "MEDIUM",
+          "source_package": "krb5",
+          "package_version": "1.20.1-2+deb12u5",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-112319"
+        },
+        {
+          "cve": "CVE-2026-85231",
+          "severity": "MEDIUM",
+          "source_package": "libtirpc",
+          "package_version": "1.3.3+ds-1",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-85231"
+        },
+        {
+          "cve": "CVE-2026-85977",
+          "severity": "MEDIUM",
+          "source_package": "libtirpc",
+          "package_version": "1.3.3+ds-1",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-85977"
+        },
+        {
+          "cve": "CVE-2026-119371",
+          "severity": "MEDIUM",
+          "source_package": "sqlite3",
+          "package_version": "3.40.1-2+deb12u2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-119371"
+        },
+        {
+          "cve": "CVE-2026-119372",
+          "severity": "MEDIUM",
+          "source_package": "sqlite3",
+          "package_version": "3.40.1-2+deb12u2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-119372"
+        },
+        {
+          "cve": "CVE-2026-119375",
+          "severity": "MEDIUM",
+          "source_package": "sqlite3",
+          "package_version": "3.40.1-2+deb12u2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-119375"
+        },
+        {
+          "cve": "CVE-2026-119376",
+          "severity": "MEDIUM",
+          "source_package": "sqlite3",
+          "package_version": "3.40.1-2+deb12u2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-119376"
+        },
+        {
+          "cve": "CVE-2026-119378",
+          "severity": "MEDIUM",
+          "source_package": "sqlite3",
+          "package_version": "3.40.1-2+deb12u2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-119378"
+        },
+        {
+          "cve": "CVE-2026-119591",
+          "severity": "MEDIUM",
+          "source_package": "sqlite3",
+          "package_version": "3.40.1-2+deb12u2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-119591"
+        },
+        {
+          "cve": "CVE-2026-13595",
+          "severity": "MEDIUM",
+          "source_package": "util-linux",
+          "package_version": "2.38.1-5+deb12u3",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-13595"
+        },
+        {
+          "cve": "CVE-2026-91094",
+          "severity": "UNDEFINED",
+          "source_package": "dpkg",
+          "package_version": "1.21.23",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-91094"
+        }
+      ],
+      "release_eligible": false
+    },
+    {
+      "role": "spark",
+      "repository": "blockchain-runtime-spark",
+      "tag": "spark-c917f2ac7a0ecd34d5ddd82997e5166fa07ea006",
+      "local_manifest_digest": "sha256:85c0b8ebf842847215698fe24efe05db04d0b6525d587955eb58209897843c38",
+      "ecr_deployment_digest": "sha256:85c0b8ebf842847215698fe24efe05db04d0b6525d587955eb58209897843c38",
+      "digest_reference": "209479274979.dkr.ecr.us-west-2.amazonaws.com/blockchain-runtime-spark@sha256:85c0b8ebf842847215698fe24efe05db04d0b6525d587955eb58209897843c38",
+      "manifest_hash_verified": true,
+      "manifest_media_type": "application/vnd.oci.image.manifest.v1+json",
+      "config_digest": "sha256:a107ed54fc1b9302ae6cd0e67651620a4119e7614970bbb52abc3b2335897b12",
+      "image_size_in_bytes": 1057080972,
+      "manual_basic_scan_started": false,
+      "scan_status": "COMPLETE",
+      "finding_severity_counts": {
+        "HIGH": 16,
+        "MEDIUM": 33,
+        "LOW": 9,
+        "UNDEFINED": 1
+      },
+      "findings_more_pages": false,
+      "os_scan_release_gate_passed": false,
+      "scan_completed_at": "2026-11-15T22:06:06-08:00",
+      "vulnerability_source_updated_at": "2026-11-15T22:06:06-08:00",
+      "findings": [
+        {
+          "cve": "CVE-2026-84243",
+          "severity": "HIGH",
+          "source_package": "glibc",
+          "package_version": "2.36-9+deb12u14",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-84243"
+        },
+        {
+          "cve": "CVE-2026-112314",
+          "severity": "HIGH",
+          "source_package": "krb5",
+          "package_version": "1.20.1-2+deb12u5",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-112314"
+        },
+        {
+          "cve": "CVE-2026-112320",
+          "severity": "HIGH",
+          "source_package": "krb5",
+          "package_version": "1.20.1-2+deb12u5",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-112320"
+        },
+        {
+          "cve": "CVE-2026-112321",
+          "severity": "HIGH",
+          "source_package": "krb5",
+          "package_version": "1.20.1-2+deb12u5",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-112321"
+        },
+        {
+          "cve": "CVE-2026-112322",
+          "severity": "HIGH",
+          "source_package": "krb5",
+          "package_version": "1.20.1-2+deb12u5",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-112322"
+        },
+        {
+          "cve": "CVE-2026-112323",
+          "severity": "HIGH",
+          "source_package": "krb5",
+          "package_version": "1.20.1-2+deb12u5",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-112323"
+        },
+        {
+          "cve": "CVE-2026-119079",
+          "severity": "HIGH",
+          "source_package": "krb5",
+          "package_version": "1.20.1-2+deb12u5",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-119079"
+        },
+        {
+          "cve": "CVE-2025-6020",
+          "severity": "HIGH",
+          "source_package": "pam",
+          "package_version": "1.5.2-6+deb12u2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-6020"
+        },
+        {
+          "cve": "CVE-2026-119373",
+          "severity": "HIGH",
+          "source_package": "sqlite3",
+          "package_version": "3.40.1-2+deb12u2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-119373"
+        },
+        {
+          "cve": "CVE-2026-119374",
+          "severity": "HIGH",
+          "source_package": "sqlite3",
+          "package_version": "3.40.1-2+deb12u2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-119374"
+        },
+        {
+          "cve": "CVE-2026-119379",
+          "severity": "HIGH",
+          "source_package": "sqlite3",
+          "package_version": "3.40.1-2+deb12u2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-119379"
+        },
+        {
+          "cve": "CVE-2026-53613",
+          "severity": "HIGH",
+          "source_package": "util-linux",
+          "package_version": "2.38.1-5+deb12u3",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-53613"
+        },
+        {
+          "cve": "CVE-2026-53615",
+          "severity": "HIGH",
+          "source_package": "util-linux",
+          "package_version": "2.38.1-5+deb12u3",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-53615"
+        },
+        {
+          "cve": "CVE-2026-78410",
+          "severity": "HIGH",
+          "source_package": "util-linux",
+          "package_version": "2.38.1-5+deb12u3",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-78410"
+        },
+        {
+          "cve": "CVE-2026-76844",
+          "severity": "HIGH",
+          "source_package": "zlib",
+          "package_version": "1.2.13.dfsg-1",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-76844"
+        },
+        {
+          "cve": "CVE-2026-85091",
+          "severity": "HIGH",
+          "source_package": "zlib",
+          "package_version": "1.2.13.dfsg-1",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-85091"
+        },
+        {
+          "cve": "CVE-2026-105326",
+          "severity": "LOW",
+          "source_package": "cups",
+          "package_version": "2.4.2-3+deb12u9",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-105326"
+        },
+        {
+          "cve": "CVE-2026-55453",
+          "severity": "LOW",
+          "source_package": "cups",
+          "package_version": "2.4.2-3+deb12u9",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-55453"
+        },
+        {
+          "cve": "CVE-2026-55467",
+          "severity": "LOW",
+          "source_package": "cups",
+          "package_version": "2.4.2-3+deb12u9",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-55467"
+        },
+        {
+          "cve": "CVE-2026-87876",
+          "severity": "LOW",
+          "source_package": "cups",
+          "package_version": "2.4.2-3+deb12u9",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-87876"
+        },
+        {
+          "cve": "CVE-2026-115456",
+          "severity": "LOW",
+          "source_package": "gcc-12",
+          "package_version": "12.2.0-14+deb12u1",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-115456"
+        },
+        {
+          "cve": "CVE-2026-100290",
+          "severity": "LOW",
+          "source_package": "glibc",
+          "package_version": "2.36-9+deb12u14",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-100290"
+        },
+        {
+          "cve": "CVE-2026-95818",
+          "severity": "LOW",
+          "source_package": "glibc",
+          "package_version": "2.36-9+deb12u14",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-95818"
+        },
+        {
+          "cve": "CVE-2026-97399",
+          "severity": "LOW",
+          "source_package": "glibc",
+          "package_version": "2.36-9+deb12u14",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-97399"
+        },
+        {
+          "cve": "CVE-2026-119377",
+          "severity": "LOW",
+          "source_package": "sqlite3",
+          "package_version": "3.40.1-2+deb12u2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-119377"
+        },
+        {
+          "cve": "CVE-2026-107655",
+          "severity": "MEDIUM",
+          "source_package": "cups",
+          "package_version": "2.4.2-3+deb12u9",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-107655"
+        },
+        {
+          "cve": "CVE-2026-107885",
+          "severity": "MEDIUM",
+          "source_package": "cups",
+          "package_version": "2.4.2-3+deb12u9",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-107885"
+        },
+        {
+          "cve": "CVE-2026-107886",
+          "severity": "MEDIUM",
+          "source_package": "cups",
+          "package_version": "2.4.2-3+deb12u9",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-107886"
+        },
+        {
+          "cve": "CVE-2026-107888",
+          "severity": "MEDIUM",
+          "source_package": "cups",
+          "package_version": "2.4.2-3+deb12u9",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-107888"
+        },
+        {
+          "cve": "CVE-2026-107890",
+          "severity": "MEDIUM",
+          "source_package": "cups",
+          "package_version": "2.4.2-3+deb12u9",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-107890"
+        },
+        {
+          "cve": "CVE-2026-34979",
+          "severity": "MEDIUM",
+          "source_package": "cups",
+          "package_version": "2.4.2-3+deb12u9",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-34979"
+        },
+        {
+          "cve": "CVE-2026-34980",
+          "severity": "MEDIUM",
+          "source_package": "cups",
+          "package_version": "2.4.2-3+deb12u9",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-34980"
+        },
+        {
+          "cve": "CVE-2026-39314",
+          "severity": "MEDIUM",
+          "source_package": "cups",
+          "package_version": "2.4.2-3+deb12u9",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-39314"
+        },
+        {
+          "cve": "CVE-2026-39316",
+          "severity": "MEDIUM",
+          "source_package": "cups",
+          "package_version": "2.4.2-3+deb12u9",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-39316"
+        },
+        {
+          "cve": "CVE-2026-41079",
+          "severity": "MEDIUM",
+          "source_package": "cups",
+          "package_version": "2.4.2-3+deb12u9",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-41079"
+        },
+        {
+          "cve": "CVE-2026-55480",
+          "severity": "MEDIUM",
+          "source_package": "cups",
+          "package_version": "2.4.2-3+deb12u9",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-55480"
+        },
+        {
+          "cve": "CVE-2026-61702",
+          "severity": "MEDIUM",
+          "source_package": "cups",
+          "package_version": "2.4.2-3+deb12u9",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-61702"
+        },
+        {
+          "cve": "CVE-2026-87875",
+          "severity": "MEDIUM",
+          "source_package": "cups",
+          "package_version": "2.4.2-3+deb12u9",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-87875"
+        },
+        {
+          "cve": "CVE-2026-120749",
+          "severity": "MEDIUM",
+          "source_package": "dbus",
+          "package_version": "1.14.10-1~deb12u1",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-120749"
+        },
+        {
+          "cve": "CVE-2026-128886",
+          "severity": "MEDIUM",
+          "source_package": "dbus",
+          "package_version": "1.14.10-1~deb12u1",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-128886"
+        },
+        {
+          "cve": "CVE-2026-128987",
+          "severity": "MEDIUM",
+          "source_package": "dbus",
+          "package_version": "1.14.10-1~deb12u1",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-128987"
+        },
+        {
+          "cve": "CVE-2026-125709",
+          "severity": "MEDIUM",
+          "source_package": "gcc-12",
+          "package_version": "12.2.0-14+deb12u1",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-125709"
+        },
+        {
+          "cve": "CVE-2026-115819",
+          "severity": "MEDIUM",
+          "source_package": "glibc",
+          "package_version": "2.36-9+deb12u14",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-115819"
+        },
+        {
+          "cve": "CVE-2026-86805",
+          "severity": "MEDIUM",
+          "source_package": "glibc",
+          "package_version": "2.36-9+deb12u14",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-86805"
+        },
+        {
+          "cve": "CVE-2026-112315",
+          "severity": "MEDIUM",
+          "source_package": "krb5",
+          "package_version": "1.20.1-2+deb12u5",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-112315"
+        },
+        {
+          "cve": "CVE-2026-112316",
+          "severity": "MEDIUM",
+          "source_package": "krb5",
+          "package_version": "1.20.1-2+deb12u5",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-112316"
+        },
+        {
+          "cve": "CVE-2026-112317",
+          "severity": "MEDIUM",
+          "source_package": "krb5",
+          "package_version": "1.20.1-2+deb12u5",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-112317"
+        },
+        {
+          "cve": "CVE-2026-112318",
+          "severity": "MEDIUM",
+          "source_package": "krb5",
+          "package_version": "1.20.1-2+deb12u5",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-112318"
+        },
+        {
+          "cve": "CVE-2026-112319",
+          "severity": "MEDIUM",
+          "source_package": "krb5",
+          "package_version": "1.20.1-2+deb12u5",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-112319"
+        },
+        {
+          "cve": "CVE-2026-85231",
+          "severity": "MEDIUM",
+          "source_package": "libtirpc",
+          "package_version": "1.3.3+ds-1",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-85231"
+        },
+        {
+          "cve": "CVE-2026-85977",
+          "severity": "MEDIUM",
+          "source_package": "libtirpc",
+          "package_version": "1.3.3+ds-1",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-85977"
+        },
+        {
+          "cve": "CVE-2026-119371",
+          "severity": "MEDIUM",
+          "source_package": "sqlite3",
+          "package_version": "3.40.1-2+deb12u2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-119371"
+        },
+        {
+          "cve": "CVE-2026-119372",
+          "severity": "MEDIUM",
+          "source_package": "sqlite3",
+          "package_version": "3.40.1-2+deb12u2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-119372"
+        },
+        {
+          "cve": "CVE-2026-119375",
+          "severity": "MEDIUM",
+          "source_package": "sqlite3",
+          "package_version": "3.40.1-2+deb12u2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-119375"
+        },
+        {
+          "cve": "CVE-2026-119376",
+          "severity": "MEDIUM",
+          "source_package": "sqlite3",
+          "package_version": "3.40.1-2+deb12u2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-119376"
+        },
+        {
+          "cve": "CVE-2026-119378",
+          "severity": "MEDIUM",
+          "source_package": "sqlite3",
+          "package_version": "3.40.1-2+deb12u2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-119378"
+        },
+        {
+          "cve": "CVE-2026-119591",
+          "severity": "MEDIUM",
+          "source_package": "sqlite3",
+          "package_version": "3.40.1-2+deb12u2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-119591"
+        },
+        {
+          "cve": "CVE-2026-13595",
+          "severity": "MEDIUM",
+          "source_package": "util-linux",
+          "package_version": "2.38.1-5+deb12u3",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-13595"
+        },
+        {
+          "cve": "CVE-2026-91094",
+          "severity": "UNDEFINED",
+          "source_package": "dpkg",
+          "package_version": "1.21.23",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-91094"
+        }
+      ],
+      "release_eligible": false
+    },
+    {
+      "role": "kafka",
+      "repository": "blockchain-runtime-producer",
+      "tag": "kafka-3.9.1-c917f2ac7a0ecd34d5ddd82997e5166fa07ea006",
+      "local_manifest_digest": "sha256:5862db4a63a6dd7d46fd14771b10a1b39e069c2c47f17d8e4640f960720a0ead",
+      "ecr_deployment_digest": "sha256:5862db4a63a6dd7d46fd14771b10a1b39e069c2c47f17d8e4640f960720a0ead",
+      "digest_reference": "209479274979.dkr.ecr.us-west-2.amazonaws.com/blockchain-runtime-producer@sha256:5862db4a63a6dd7d46fd14771b10a1b39e069c2c47f17d8e4640f960720a0ead",
+      "manifest_hash_verified": true,
+      "manifest_media_type": "application/vnd.oci.image.manifest.v1+json",
+      "config_digest": "sha256:44a48f9d78af26959fa4d61accb9be35f939a79bfdae05cad6df4baca8e22eeb",
+      "image_size_in_bytes": 203630090,
+      "manual_basic_scan_started": true,
+      "scan_status": "COMPLETE",
+      "finding_severity_counts": {
+        "HIGH": 57,
+        "MEDIUM": 46,
+        "LOW": 10,
+        "CRITICAL": 10
+      },
+      "findings_more_pages": false,
+      "os_scan_release_gate_passed": false,
+      "scan_completed_at": "2026-11-15T22:06:42-08:00",
+      "vulnerability_source_updated_at": "2026-11-15T22:06:42-08:00",
+      "findings": [
+        {
+          "cve": "CVE-2026-111497",
+          "severity": "CRITICAL",
+          "source_package": "brotli",
+          "package_version": "1.1.0-r2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-111497"
+        },
+        {
+          "cve": "CVE-2026-33845",
+          "severity": "CRITICAL",
+          "source_package": "gnutls",
+          "package_version": "3.8.8-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-33845"
+        },
+        {
+          "cve": "CVE-2026-42010",
+          "severity": "CRITICAL",
+          "source_package": "gnutls",
+          "package_version": "3.8.8-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-42010"
+        },
+        {
+          "cve": "CVE-2025-15467",
+          "severity": "CRITICAL",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-15467"
+        },
+        {
+          "cve": "CVE-2025-9230",
+          "severity": "CRITICAL",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-9230"
+        },
+        {
+          "cve": "CVE-2026-31789",
+          "severity": "CRITICAL",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-31789"
+        },
+        {
+          "cve": "CVE-2026-34182",
+          "severity": "CRITICAL",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-34182"
+        },
+        {
+          "cve": "CVE-2026-63073",
+          "severity": "CRITICAL",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-63073"
+        },
+        {
+          "cve": "CVE-2026-75803",
+          "severity": "CRITICAL",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-75803"
+        },
+        {
+          "cve": "CVE-2026-4738",
+          "severity": "CRITICAL",
+          "source_package": "zlib",
+          "package_version": "1.3.1-r2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-4738"
+        },
+        {
+          "cve": "CVE-2025-59375",
+          "severity": "HIGH",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-59375"
+        },
+        {
+          "cve": "CVE-2026-102633",
+          "severity": "HIGH",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-102633"
+        },
+        {
+          "cve": "CVE-2026-113351",
+          "severity": "HIGH",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-113351"
+        },
+        {
+          "cve": "CVE-2026-115506",
+          "severity": "HIGH",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-115506"
+        },
+        {
+          "cve": "CVE-2026-117610",
+          "severity": "HIGH",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-117610"
+        },
+        {
+          "cve": "CVE-2026-118370",
+          "severity": "HIGH",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-118370"
+        },
+        {
+          "cve": "CVE-2026-25210",
+          "severity": "HIGH",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-25210"
+        },
+        {
+          "cve": "CVE-2026-41080",
+          "severity": "HIGH",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-41080"
+        },
+        {
+          "cve": "CVE-2026-45186",
+          "severity": "HIGH",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-45186"
+        },
+        {
+          "cve": "CVE-2026-66046",
+          "severity": "HIGH",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-66046"
+        },
+        {
+          "cve": "CVE-2026-76641",
+          "severity": "HIGH",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-76641"
+        },
+        {
+          "cve": "CVE-2026-76956",
+          "severity": "HIGH",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-76956"
+        },
+        {
+          "cve": "CVE-2026-76957",
+          "severity": "HIGH",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-76957"
+        },
+        {
+          "cve": "CVE-2026-77214",
+          "severity": "HIGH",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-77214"
+        },
+        {
+          "cve": "CVE-2026-93990",
+          "severity": "HIGH",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-93990"
+        },
+        {
+          "cve": "CVE-2025-68973",
+          "severity": "HIGH",
+          "source_package": "gnupg",
+          "package_version": "2.4.7-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-68973"
+        },
+        {
+          "cve": "CVE-2025-32988",
+          "severity": "HIGH",
+          "source_package": "gnutls",
+          "package_version": "3.8.8-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-32988"
+        },
+        {
+          "cve": "CVE-2025-32990",
+          "severity": "HIGH",
+          "source_package": "gnutls",
+          "package_version": "3.8.8-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-32990"
+        },
+        {
+          "cve": "CVE-2026-1584",
+          "severity": "HIGH",
+          "source_package": "gnutls",
+          "package_version": "3.8.8-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-1584"
+        },
+        {
+          "cve": "CVE-2026-33846",
+          "severity": "HIGH",
+          "source_package": "gnutls",
+          "package_version": "3.8.8-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-33846"
+        },
+        {
+          "cve": "CVE-2026-3833",
+          "severity": "HIGH",
+          "source_package": "gnutls",
+          "package_version": "3.8.8-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-3833"
+        },
+        {
+          "cve": "CVE-2026-42009",
+          "severity": "HIGH",
+          "source_package": "gnutls",
+          "package_version": "3.8.8-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-42009"
+        },
+        {
+          "cve": "CVE-2026-42011",
+          "severity": "HIGH",
+          "source_package": "gnutls",
+          "package_version": "3.8.8-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-42011"
+        },
+        {
+          "cve": "CVE-2026-42012",
+          "severity": "HIGH",
+          "source_package": "gnutls",
+          "package_version": "3.8.8-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-42012"
+        },
+        {
+          "cve": "CVE-2026-42013",
+          "severity": "HIGH",
+          "source_package": "gnutls",
+          "package_version": "3.8.8-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-42013"
+        },
+        {
+          "cve": "CVE-2026-5260",
+          "severity": "HIGH",
+          "source_package": "gnutls",
+          "package_version": "3.8.8-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-5260"
+        },
+        {
+          "cve": "CVE-2025-64720",
+          "severity": "HIGH",
+          "source_package": "libpng",
+          "package_version": "1.6.47-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-64720"
+        },
+        {
+          "cve": "CVE-2025-65018",
+          "severity": "HIGH",
+          "source_package": "libpng",
+          "package_version": "1.6.47-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-65018"
+        },
+        {
+          "cve": "CVE-2025-66293",
+          "severity": "HIGH",
+          "source_package": "libpng",
+          "package_version": "1.6.47-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-66293"
+        },
+        {
+          "cve": "CVE-2026-22695",
+          "severity": "HIGH",
+          "source_package": "libpng",
+          "package_version": "1.6.47-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-22695"
+        },
+        {
+          "cve": "CVE-2026-22801",
+          "severity": "HIGH",
+          "source_package": "libpng",
+          "package_version": "1.6.47-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-22801"
+        },
+        {
+          "cve": "CVE-2026-25646",
+          "severity": "HIGH",
+          "source_package": "libpng",
+          "package_version": "1.6.47-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-25646"
+        },
+        {
+          "cve": "CVE-2026-33416",
+          "severity": "HIGH",
+          "source_package": "libpng",
+          "package_version": "1.6.47-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-33416"
+        },
+        {
+          "cve": "CVE-2026-33636",
+          "severity": "HIGH",
+          "source_package": "libpng",
+          "package_version": "1.6.47-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-33636"
+        },
+        {
+          "cve": "CVE-2025-13151",
+          "severity": "HIGH",
+          "source_package": "libtasn1",
+          "package_version": "4.20.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-13151"
+        },
+        {
+          "cve": "CVE-2026-107891",
+          "severity": "HIGH",
+          "source_package": "musl",
+          "package_version": "1.2.5-r9",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-107891"
+        },
+        {
+          "cve": "CVE-2026-40200",
+          "severity": "HIGH",
+          "source_package": "musl",
+          "package_version": "1.2.5-r9",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-40200"
+        },
+        {
+          "cve": "CVE-2025-69419",
+          "severity": "HIGH",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-69419"
+        },
+        {
+          "cve": "CVE-2025-69420",
+          "severity": "HIGH",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-69420"
+        },
+        {
+          "cve": "CVE-2025-69421",
+          "severity": "HIGH",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-69421"
+        },
+        {
+          "cve": "CVE-2026-28387",
+          "severity": "HIGH",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-28387"
+        },
+        {
+          "cve": "CVE-2026-28388",
+          "severity": "HIGH",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-28388"
+        },
+        {
+          "cve": "CVE-2026-28389",
+          "severity": "HIGH",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-28389"
+        },
+        {
+          "cve": "CVE-2026-28390",
+          "severity": "HIGH",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-28390"
+        },
+        {
+          "cve": "CVE-2026-31790",
+          "severity": "HIGH",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-31790"
+        },
+        {
+          "cve": "CVE-2026-34183",
+          "severity": "HIGH",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-34183"
+        },
+        {
+          "cve": "CVE-2026-45445",
+          "severity": "HIGH",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-45445"
+        },
+        {
+          "cve": "CVE-2026-45447",
+          "severity": "HIGH",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-45447"
+        },
+        {
+          "cve": "CVE-2026-63072",
+          "severity": "HIGH",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-63072"
+        },
+        {
+          "cve": "CVE-2026-63076",
+          "severity": "HIGH",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-63076"
+        },
+        {
+          "cve": "CVE-2026-72897",
+          "severity": "HIGH",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-72897"
+        },
+        {
+          "cve": "CVE-2026-84782",
+          "severity": "HIGH",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-84782"
+        },
+        {
+          "cve": "CVE-2026-84784",
+          "severity": "HIGH",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-84784"
+        },
+        {
+          "cve": "CVE-2026-9076",
+          "severity": "HIGH",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-9076"
+        },
+        {
+          "cve": "CVE-2026-2100",
+          "severity": "HIGH",
+          "source_package": "p11-kit",
+          "package_version": "0.25.5-r2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-2100"
+        },
+        {
+          "cve": "CVE-2025-6965",
+          "severity": "HIGH",
+          "source_package": "sqlite",
+          "package_version": "3.48.0-r2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-6965"
+        },
+        {
+          "cve": "CVE-2026-85091",
+          "severity": "HIGH",
+          "source_package": "zlib",
+          "package_version": "1.3.1-r2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-85091"
+        },
+        {
+          "cve": "CVE-2024-58251",
+          "severity": "LOW",
+          "source_package": "busybox",
+          "package_version": "1.37.0-r12",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2024-58251"
+        },
+        {
+          "cve": "CVE-2025-46394",
+          "severity": "LOW",
+          "source_package": "busybox",
+          "package_version": "1.37.0-r12",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-46394"
+        },
+        {
+          "cve": "CVE-2026-24515",
+          "severity": "LOW",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-24515"
+        },
+        {
+          "cve": "CVE-2026-3832",
+          "severity": "LOW",
+          "source_package": "gnutls",
+          "package_version": "3.8.8-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-3832"
+        },
+        {
+          "cve": "CVE-2026-5419",
+          "severity": "LOW",
+          "source_package": "gnutls",
+          "package_version": "3.8.8-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-5419"
+        },
+        {
+          "cve": "CVE-2026-42768",
+          "severity": "LOW",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-42768"
+        },
+        {
+          "cve": "CVE-2026-42770",
+          "severity": "LOW",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-42770"
+        },
+        {
+          "cve": "CVE-2026-54872",
+          "severity": "LOW",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-54872"
+        },
+        {
+          "cve": "CVE-2026-54875",
+          "severity": "LOW",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-54875"
+        },
+        {
+          "cve": "CVE-2026-77696",
+          "severity": "LOW",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-77696"
+        },
+        {
+          "cve": "CVE-2026-32776",
+          "severity": "MEDIUM",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-32776"
+        },
+        {
+          "cve": "CVE-2026-32777",
+          "severity": "MEDIUM",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-32777"
+        },
+        {
+          "cve": "CVE-2026-32778",
+          "severity": "MEDIUM",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-32778"
+        },
+        {
+          "cve": "CVE-2026-50219",
+          "severity": "MEDIUM",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-50219"
+        },
+        {
+          "cve": "CVE-2026-56131",
+          "severity": "MEDIUM",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-56131"
+        },
+        {
+          "cve": "CVE-2026-56132",
+          "severity": "MEDIUM",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-56132"
+        },
+        {
+          "cve": "CVE-2026-56403",
+          "severity": "MEDIUM",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-56403"
+        },
+        {
+          "cve": "CVE-2026-56404",
+          "severity": "MEDIUM",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-56404"
+        },
+        {
+          "cve": "CVE-2026-56405",
+          "severity": "MEDIUM",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-56405"
+        },
+        {
+          "cve": "CVE-2026-56406",
+          "severity": "MEDIUM",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-56406"
+        },
+        {
+          "cve": "CVE-2026-56407",
+          "severity": "MEDIUM",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-56407"
+        },
+        {
+          "cve": "CVE-2026-56408",
+          "severity": "MEDIUM",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-56408"
+        },
+        {
+          "cve": "CVE-2026-56409",
+          "severity": "MEDIUM",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-56409"
+        },
+        {
+          "cve": "CVE-2026-56410",
+          "severity": "MEDIUM",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-56410"
+        },
+        {
+          "cve": "CVE-2026-56411",
+          "severity": "MEDIUM",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-56411"
+        },
+        {
+          "cve": "CVE-2026-56412",
+          "severity": "MEDIUM",
+          "source_package": "expat",
+          "package_version": "2.7.0-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-56412"
+        },
+        {
+          "cve": "CVE-2025-68972",
+          "severity": "MEDIUM",
+          "source_package": "gnupg",
+          "package_version": "2.4.7-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-68972"
+        },
+        {
+          "cve": "CVE-2024-12243",
+          "severity": "MEDIUM",
+          "source_package": "gnutls",
+          "package_version": "3.8.8-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2024-12243"
+        },
+        {
+          "cve": "CVE-2025-14831",
+          "severity": "MEDIUM",
+          "source_package": "gnutls",
+          "package_version": "3.8.8-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-14831"
+        },
+        {
+          "cve": "CVE-2025-32989",
+          "severity": "MEDIUM",
+          "source_package": "gnutls",
+          "package_version": "3.8.8-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-32989"
+        },
+        {
+          "cve": "CVE-2025-6395",
+          "severity": "MEDIUM",
+          "source_package": "gnutls",
+          "package_version": "3.8.8-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-6395"
+        },
+        {
+          "cve": "CVE-2025-9820",
+          "severity": "MEDIUM",
+          "source_package": "gnutls",
+          "package_version": "3.8.8-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-9820"
+        },
+        {
+          "cve": "CVE-2026-42014",
+          "severity": "MEDIUM",
+          "source_package": "gnutls",
+          "package_version": "3.8.8-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-42014"
+        },
+        {
+          "cve": "CVE-2026-42015",
+          "severity": "MEDIUM",
+          "source_package": "gnutls",
+          "package_version": "3.8.8-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-42015"
+        },
+        {
+          "cve": "CVE-2025-64505",
+          "severity": "MEDIUM",
+          "source_package": "libpng",
+          "package_version": "1.6.47-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-64505"
+        },
+        {
+          "cve": "CVE-2025-64506",
+          "severity": "MEDIUM",
+          "source_package": "libpng",
+          "package_version": "1.6.47-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-64506"
+        },
+        {
+          "cve": "CVE-2026-34757",
+          "severity": "MEDIUM",
+          "source_package": "libpng",
+          "package_version": "1.6.47-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-34757"
+        },
+        {
+          "cve": "CVE-2026-40930",
+          "severity": "MEDIUM",
+          "source_package": "libpng",
+          "package_version": "1.6.47-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-40930"
+        },
+        {
+          "cve": "CVE-2026-6042",
+          "severity": "MEDIUM",
+          "source_package": "musl",
+          "package_version": "1.2.5-r9",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-6042"
+        },
+        {
+          "cve": "CVE-2025-15468",
+          "severity": "MEDIUM",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-15468"
+        },
+        {
+          "cve": "CVE-2025-66199",
+          "severity": "MEDIUM",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-66199"
+        },
+        {
+          "cve": "CVE-2025-68160",
+          "severity": "MEDIUM",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-68160"
+        },
+        {
+          "cve": "CVE-2025-69418",
+          "severity": "MEDIUM",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-69418"
+        },
+        {
+          "cve": "CVE-2025-9231",
+          "severity": "MEDIUM",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-9231"
+        },
+        {
+          "cve": "CVE-2025-9232",
+          "severity": "MEDIUM",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-9232"
+        },
+        {
+          "cve": "CVE-2026-22795",
+          "severity": "MEDIUM",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-22795"
+        },
+        {
+          "cve": "CVE-2026-22796",
+          "severity": "MEDIUM",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-22796"
+        },
+        {
+          "cve": "CVE-2026-35189",
+          "severity": "MEDIUM",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-35189"
+        },
+        {
+          "cve": "CVE-2026-42766",
+          "severity": "MEDIUM",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-42766"
+        },
+        {
+          "cve": "CVE-2026-45446",
+          "severity": "MEDIUM",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-45446"
+        },
+        {
+          "cve": "CVE-2026-75804",
+          "severity": "MEDIUM",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-75804"
+        },
+        {
+          "cve": "CVE-2026-75805",
+          "severity": "MEDIUM",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-75805"
+        },
+        {
+          "cve": "CVE-2026-75806",
+          "severity": "MEDIUM",
+          "source_package": "openssl",
+          "package_version": "3.3.3-r0",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-75806"
+        },
+        {
+          "cve": "CVE-2025-29088",
+          "severity": "MEDIUM",
+          "source_package": "sqlite",
+          "package_version": "3.48.0-r2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2025-29088"
+        },
+        {
+          "cve": "CVE-2026-22184",
+          "severity": "MEDIUM",
+          "source_package": "zlib",
+          "package_version": "1.3.1-r2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-22184"
+        },
+        {
+          "cve": "CVE-2026-27171",
+          "severity": "MEDIUM",
+          "source_package": "zlib",
+          "package_version": "1.3.1-r2",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-27171"
+        }
+      ],
+      "release_eligible": false
+    }
+  ],
+  "registry_scanning": {
+    "scanType": "BASIC",
+    "rules": []
+  },
+  "preflight_ec2_state": "stopped",
+  "temporary_registry_auth_removed": true,
+  "final_ec2_state": "stopped",
+  "all_three_uploaded_and_verified": true,
+  "all_os_scan_gates_passed": false,
+  "registry_reported_total_bytes": 1330397364,
+  "completed_at_utc": "2026-11-16T06:07:02.008355+00:00",
+  "operator_policy_attachment": {
+    "name": "blockchain-runtime-ecr-publisher",
+    "role": "blockchain-runtime-deployer",
+    "policy_file_sha256": "605689b0836195b09e79215b234fae5e264adb9554f8e9cbcf869e9d0a9d7ac8",
+    "document_live_readback_available": false,
+    "effective_ecr_access_verified": true
+  },
+  "image_source_validation": {
+    "context_sha256": "17ae82d039a7c0343b4f459453a5d17a2e2ae0f85a40802014bef8c3762a6126",
+    "focused_contracts_passed": 212,
+    "source_ci_run": 43811882656,
+    "source_ci_all_six_jobs": "success",
+    "publisher_offline_adversarial_guards_passed": 8,
+    "publisher_helper_sha256": "4e36406e6400cf972f5051f0c1d45df561a5c72f4bd96cef45b32dd0c4ed4cbe"
+  },
+  "os_inventory": [
+    {
+      "role": "producer",
+      "os_release": {
+        "PRETTY_NAME": "Debian GNU/Linux 12 (bookworm)",
+        "VERSION_ID": "12",
+        "ID": "debian"
+      },
+      "network": "none",
+      "application_started": false
+    },
+    {
+      "role": "spark",
+      "os_release": {
+        "PRETTY_NAME": "Debian GNU/Linux 12 (bookworm)",
+        "VERSION_ID": "12",
+        "ID": "debian"
+      },
+      "network": "none",
+      "application_started": false
+    },
+    {
+      "role": "kafka",
+      "os_release": {
+        "ID": "alpine",
+        "VERSION_ID": "3.21.3",
+        "PRETTY_NAME": "Alpine Linux v3.21"
+      },
+      "network": "none",
+      "application_started": false
+    }
+  ],
+  "cost_reference": {
+    "reported_image_bytes_sum": 1330397364,
+    "decimal_gb": 1.330397364,
+    "usd_per_gb_month_reference": 0.1,
+    "approximate_storage_usd_per_month": 0.133,
+    "not_invoice_or_cap": true,
+    "shared_layer_deduplication_not_subtracted": true,
+    "credits_not_assumed": true
+  },
+  "release_status": "BLOCKED_UNRESOLVED_HIGH_CRITICAL_FINDINGS",
+  "milestone_11_5D": "PAUSED"
+}

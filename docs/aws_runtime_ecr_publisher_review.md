@@ -1,8 +1,12 @@
 # Milestone 11.6C: bounded image publisher proposal
 
-**Offline proposal; IAM expansion and image publication are not approved.**
-EC2 remains stopped after the completed one-time filesystem initialization.
-Milestone 11.5D remains paused.
+**Historical proposal: this exact scope was approved and completed on 2026-11-16.**
+The operator reported attaching the reviewed policy; three images were uploaded
+and verified. All scans completed, but HIGH/CRITICAL findings block release.
+See the [publication result](aws_runtime_ecr_publication_result.md) and exact
+digest/scan evidence. EC2 is stopped. Do not replay publication or reuse this
+approval for replacement image bytes. The proposal below is retained as the
+reviewed scope; Milestone 11.5D remains paused.
 
 ## A. What was prepared
 
