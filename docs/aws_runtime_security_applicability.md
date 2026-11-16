@@ -1,5 +1,10 @@
 # Milestone 11.6C — library security and applicability review
 
+Follow-up: [JVM family remediation](aws_runtime_jvm_family_remediation.md) patches
+standalone families, verifies actual class origins and reduces Spark library
+findings to 5 critical / 82 high. Shaded/optional findings and the security gate
+remain open. The counts below preserve the earlier review's exact baseline.
+
 Reviewed 2026-11-16 UTC. **The AWS streaming release remains blocked.**
 This is an offline implementation checkpoint, not an exception approval or
 deployment authorization. Milestone 11.5D remains paused.

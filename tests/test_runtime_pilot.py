@@ -110,6 +110,14 @@ def test_library_rejected_app_manifests_cannot_be_released(release, role):
         validate_release(release)
 
 
+@pytest.mark.parametrize("field", ["baseline_spark_manifest", "rejected_shadow_prototype_manifest"])
+def test_shadowed_or_pre_remediation_spark_cannot_be_released(release, field):
+    evidence = json.loads((ROOT / "docs/evidence/aws_runtime_jvm_families_2026-11-16.json").read_text())
+    release["spark_image"] = f"{REGISTRY}/blockchain-runtime-spark@{evidence[field]}"
+    with pytest.raises(ValueError, match="REJECTED_IMAGE_RELEASE"):
+        validate_release(release)
+
+
 @pytest.mark.parametrize("key,value", [
     ("LANG", "en_US.UTF-8"), ("LC_ALL", "en_US.UTF-8"),
     ("LANGUAGE", "../../untrusted"), ("LANGUAGE", "en_US:en"),
@@ -472,7 +480,16 @@ def test_images_pin_base_python_dependencies_and_connector_hashes():
                 version = value.split()[0].rstrip("\\")
                 assert pins[name] == version
     jars = json.loads((ROOT / "deploy/runtime/jars.lock.json").read_text())
-    assert len(jars) == 8
+    patches = json.loads((ROOT / "deploy/runtime/spark-jvm-patches.lock.json").read_text())
+    connectors = {row["path"].rsplit("/", 1)[-1] for row in jars} - {
+        row["new"]["path"].rsplit("/", 1)[-1] for row in patches["replacements"]
+    }
+    assert connectors == {
+        "spark-sql-kafka-0-10_2.13-4.0.1.jar", "spark-token-provider-kafka-0-10_2.13-4.0.1.jar",
+        "kafka-clients-3.9.2.jar", "commons-pool2-2.12.0.jar", "jsr305-3.0.0.jar",
+        "hadoop-aws-3.4.1.jar", "bundle-2.24.6.jar", "wildfly-openssl-1.1.3.Final.jar",
+    }
+    assert all(row["new"] in jars for row in patches["replacements"])
     assert all(len(artifact["sha512"]) == 128 for artifact in jars)
     spark_image = (ROOT / "deploy/runtime/Dockerfile.spark").read_text()
     assert "eclipse-temurin:17-jre-noble@sha256:" in spark_image

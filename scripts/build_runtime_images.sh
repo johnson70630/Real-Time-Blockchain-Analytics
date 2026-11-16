@@ -30,12 +30,19 @@ for role in producer spark kafka; do
 done
 tar -xOf "$context_dir/context.tar" deploy/runtime/smoke_producer.py | \
   "${docker_local[@]}" run --rm -i --network none --read-only \
+    --cap-drop ALL --security-opt no-new-privileges:true \
     --entrypoint python blockchain-pilot-producer:offline -
 expected_ca_sha="$(tar -xOf "$context_dir/context.tar" deploy/runtime/images.lock.json | python3 -c 'import json,sys; print(next(row["trust_store_sha256"] for row in json.load(sys.stdin)["sources"] if row["role"]=="java17"))')"
 tar -xOf "$context_dir/context.tar" deploy/runtime/smoke_spark.py | \
   "${docker_local[@]}" run --rm -i --network none --read-only --tmpfs /tmp:size=2g,mode=1777,exec \
+    --cap-drop ALL --security-opt no-new-privileges:true \
     --entrypoint python blockchain-pilot-spark:offline - "$expected_ca_sha"
+tar -xOf "$context_dir/context.tar" deploy/runtime/smoke_jvm_shadow.py | \
+  "${docker_local[@]}" run --rm -i --network none --read-only --tmpfs /tmp:size=2g,mode=1777,exec \
+    --cap-drop ALL --security-opt no-new-privileges:true \
+    --env PYSPARK_SUBMIT_ARGS=pyspark-shell --entrypoint python blockchain-pilot-spark:offline -
 expected_kafka_ca_sha="$(tar -xOf "$context_dir/context.tar" deploy/runtime/images.lock.json | python3 -c 'import json,sys; print(next(row["trust_store_sha256"] for row in json.load(sys.stdin)["sources"] if row["role"]=="kafka_java21"))')"
 tar -xOf "$context_dir/context.tar" deploy/runtime/smoke_kafka.sh | \
   "${docker_local[@]}" run --rm -i --network none --read-only \
+    --cap-drop ALL --security-opt no-new-privileges:true \
     --entrypoint /bin/sh blockchain-pilot-kafka:offline -s -- "$expected_kafka_ca_sha"

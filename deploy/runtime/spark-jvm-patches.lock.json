@@ -1,0 +1,352 @@
+{
+  "schema_version": 1,
+  "pyspark_version": "4.0.1",
+  "families": {
+    "netty": "4.1.140.Final",
+    "tcnative": "2.0.85.Final",
+    "bouncycastle": "1.87",
+    "jersey": "3.0.18"
+  },
+  "replacements": [
+    {
+      "old": {
+        "name": "bcprov-jdk18on-1.80.jar",
+        "sha512": "0773042bd35e22a582cbe89f4be8a8476487b6e030ee83e86038d43cba0d6c775e91c51ad31f126e19b440ced6c03f73e4fdac79fc17b664d0c84b4e859fa90d"
+      },
+      "new": {
+        "path": "org/bouncycastle/bcprov-jdk18on/1.87/bcprov-jdk18on-1.87.jar",
+        "sha512": "fec4187f2d152ec10dcbb6928407bfa6dacea393d716bd024cbed907251d181e4eeda389501792435d6b5dac13a468b2f230c2fac80dd6382b9c0a6e4d85ff71"
+      }
+    },
+    {
+      "old": {
+        "name": "jersey-client-3.0.16.jar",
+        "sha512": "54f8783a0318f6bf87227ef03ff2df97d21a3c8c8120b991446ffe08ce827aa015e53b672318a06d7664fc9bb44f22ee70f0b4824cdea1b6ca01dd81fad9f395"
+      },
+      "new": {
+        "path": "org/glassfish/jersey/core/jersey-client/3.0.18/jersey-client-3.0.18.jar",
+        "sha512": "d4a0608543ae8d0f72df3447b128783cc87a10027d8e268c46fd3edd6375628901cb9482457de3b6fcc9e619516638a3137ef5a60161fa09e058cfaa125560c1"
+      }
+    },
+    {
+      "old": {
+        "name": "jersey-common-3.0.16.jar",
+        "sha512": "8952a1ce6d6483494ef66e6ab14bc2a592394285a727c1013cb232f9105c6a3cb56f2b2b8ba17eb80bcfd90102a0999a97906d70349d27c1a4eac79314db8ce5"
+      },
+      "new": {
+        "path": "org/glassfish/jersey/core/jersey-common/3.0.18/jersey-common-3.0.18.jar",
+        "sha512": "3dbf6d92718ce8a2f8d8ef656f6509241853b64a3441c7a3c7a8180358b5e66dacc1f28fa2b532eeee9a8598640bf99c47c4379feb764b41d05ed3fa5a0b6a44"
+      }
+    },
+    {
+      "old": {
+        "name": "jersey-container-servlet-3.0.16.jar",
+        "sha512": "884be55793e6d0e486fa3994beb694d940f59cd50a6d1a946a18c75bda9ff7ad73936b8b820f3346db5b5bf22ebc76562a295bc51ef48047b58010744c268bdd"
+      },
+      "new": {
+        "path": "org/glassfish/jersey/containers/jersey-container-servlet/3.0.18/jersey-container-servlet-3.0.18.jar",
+        "sha512": "fca819f7dc407eae1e0182f99c5a721c5476a1f27db6d5a19ab2b842439cfdd05118592bf9ec7b2f92c06e01cd0e8285dc0bb73f56b50db149563d3e0ba11420"
+      }
+    },
+    {
+      "old": {
+        "name": "jersey-container-servlet-core-3.0.16.jar",
+        "sha512": "2ac19821828e086d67a0dd804f87864ffc795f95e65d336b0577dc574f124c67e56fbcbc84e2d40017fefaffdcd8af190053735688d69624a7d88d8255af5b37"
+      },
+      "new": {
+        "path": "org/glassfish/jersey/containers/jersey-container-servlet-core/3.0.18/jersey-container-servlet-core-3.0.18.jar",
+        "sha512": "eabb4268d301f2f24712f5b9b0ae4a72e6244be223a8a18cb5a9fd65f34e065274b6949c77b22e073a3f78564b90ba9c7b8762b78838b6150e0e08dddbea2f3a"
+      }
+    },
+    {
+      "old": {
+        "name": "jersey-hk2-3.0.16.jar",
+        "sha512": "2aef66dfd1982fdd4a5c17a6bc02664e29f180f399a8ce26808de4b4a317fb109e75dcb4547a83a4b5c9730c9c51c8a2f413edec970c18ce9f15934e347ca4f6"
+      },
+      "new": {
+        "path": "org/glassfish/jersey/inject/jersey-hk2/3.0.18/jersey-hk2-3.0.18.jar",
+        "sha512": "707161f94b3f04c377429bfebb04b06306e009440287d21a6cb6ad86d8894bbfb0fdd7bc3b333adbcfec9530f7e3558710e9cf6ccb58212ce1099e532a419cb1"
+      }
+    },
+    {
+      "old": {
+        "name": "jersey-server-3.0.16.jar",
+        "sha512": "dd6214bd1dd40ec19664f34ce88fe82d71936dc1ab32997a618a09c9ec12638c647780eed23c374d1eded31d341129006c364457f9063420a2f50ebd9b41227e"
+      },
+      "new": {
+        "path": "org/glassfish/jersey/core/jersey-server/3.0.18/jersey-server-3.0.18.jar",
+        "sha512": "7f72bbc703a80ba425c43b0a40b4ffa69959a06fd40ceeb5c2c948a6fb262dcab731721ba9a4cd7d0c3330d77d33b9895e5dd07d71eb8bd3619657ab14cec576"
+      }
+    },
+    {
+      "old": {
+        "name": "netty-all-4.1.118.Final.jar",
+        "sha512": "8be07b687ed91ecde1f3533ac18068787507451842f5db3b58dbc5f7747c08e10eed632308f2b7a8432f64b8b2bbd6f00c17fea4783998771a7dff9165d25ab9"
+      },
+      "new": {
+        "path": "io/netty/netty-all/4.1.140.Final/netty-all-4.1.140.Final.jar",
+        "sha512": "f59de33be846cb63e923cc162ed08f005f23ab973d68e512fa2bf11cc5eb167f28cdae8cbb70f15072b50590cdeccd9973a7f69d2bc48c86f12cdf7ba316f0f9"
+      }
+    },
+    {
+      "old": {
+        "name": "netty-buffer-4.1.118.Final.jar",
+        "sha512": "4c3488a737318781e6d1e84709721be1352a03b575e7f1792e334cf9afa912f7a2d38996e2f91693e7ee2794859c9f12cbf52d27a6ee5ad3a10bb2a00a22f2eb"
+      },
+      "new": {
+        "path": "io/netty/netty-buffer/4.1.140.Final/netty-buffer-4.1.140.Final.jar",
+        "sha512": "2fdae24e53cf8de51baecc57b3584b6be86af72bc0de2c215675faf72fc9b91aa1e1fbab99885c002b069369b958d967f317fa63b03edc7ae7d0d0619cb926d7"
+      }
+    },
+    {
+      "old": {
+        "name": "netty-codec-4.1.118.Final.jar",
+        "sha512": "e34ccbc3e041130224f81a84253464a3a89a6da9d9f7fcbf42ac628a7184f03e38f125427810325d0a98f7218704750f856adef2b766d9fccb0f49719f7d71e4"
+      },
+      "new": {
+        "path": "io/netty/netty-codec/4.1.140.Final/netty-codec-4.1.140.Final.jar",
+        "sha512": "3ad191af0c0ab24f13611e9d87cc7f95b782670587d288c3cd5b392c5f7eabcb8a05eeae51cb4ed9a2e7a5f770f8a330d6552a273cf2d9e9e6b975f197d8dc33"
+      }
+    },
+    {
+      "old": {
+        "name": "netty-codec-dns-4.1.118.Final.jar",
+        "sha512": "705b852704e9201da4f8e0696e656270495b87badbadd182780eaa3019e46267a9eabe7f214fb65a161b156e981d372c04c34dc4aaf6e2262ebe7b268a53b631"
+      },
+      "new": {
+        "path": "io/netty/netty-codec-dns/4.1.140.Final/netty-codec-dns-4.1.140.Final.jar",
+        "sha512": "5a12b0e165a7f96a3baa5f90efd2bcf76f37c2318f398c1747d97fd8e301ff9c3874a4817dea71d820e1d159c9af9e2968497b36264c14cb102a68b0c3c5fd0a"
+      }
+    },
+    {
+      "old": {
+        "name": "netty-codec-http-4.1.118.Final.jar",
+        "sha512": "c76d8a8741f55207e996c7c580cd4fec45bf2efc16057e31fa2ac9004f09a00886b45c309f9b397f100b46293862f7cc593d6aba4ad86ed6197292abac7dfee1"
+      },
+      "new": {
+        "path": "io/netty/netty-codec-http/4.1.140.Final/netty-codec-http-4.1.140.Final.jar",
+        "sha512": "3abcec864668a00f8b07eccfcc551fa19d532da4745ae4c7b32cc786fdab9dbbea63faa7e4f0cb6e1deb8da0faf3b5c84012b70d00736abf988c615bdf668a31"
+      }
+    },
+    {
+      "old": {
+        "name": "netty-codec-http2-4.1.118.Final.jar",
+        "sha512": "249d58bcdb5c9c0f33afc56dfec3fe6d7a97d53fc84c6844f79f5afd81c1345e1109b06914d1a825e69c6f2f4811f616a190b88abcb113792900306da8afe50e"
+      },
+      "new": {
+        "path": "io/netty/netty-codec-http2/4.1.140.Final/netty-codec-http2-4.1.140.Final.jar",
+        "sha512": "eb282768a842e4bcb8b8a410d72b902392b197e892ce525768c3f6a7d757208f791daaa3cd6df0962b561900b89c88d0815ab53f4cacaf77da78291a97cd1311"
+      }
+    },
+    {
+      "old": {
+        "name": "netty-codec-socks-4.1.118.Final.jar",
+        "sha512": "88498dc0c469e1a426460280b7a3df29e507770435fd64dd3d087f40020f4ea11e22295b19b94e17d31d81007b4d62f4e646a44b47ab79c4dfae2c888bcb72d6"
+      },
+      "new": {
+        "path": "io/netty/netty-codec-socks/4.1.140.Final/netty-codec-socks-4.1.140.Final.jar",
+        "sha512": "c0b1a583a208c46f35d8253a7504827a8b581d393680af4c3269cc937d81bdcdc5909847c3baae3643d71e79bc24b49293614b40d1c317d1be68ecd940d6c3d3"
+      }
+    },
+    {
+      "old": {
+        "name": "netty-common-4.1.118.Final.jar",
+        "sha512": "322543f66a74a4725fef6a7940adefb917b4aaa5a271a679cdbba83e6a8a1ce664c901e7efa03fd7ed64c72d6785e4a8f85c21aa82f3cf0c51bf38bbb9be8194"
+      },
+      "new": {
+        "path": "io/netty/netty-common/4.1.140.Final/netty-common-4.1.140.Final.jar",
+        "sha512": "8576ec7fe421a35559f36075a4a6dc37444e01c62186cc985fb527d9e8d0b3063cdf65e126de3add4fa4906012252fd2ccc303b48f44afe28cca1faea993d313"
+      }
+    },
+    {
+      "old": {
+        "name": "netty-handler-4.1.118.Final.jar",
+        "sha512": "7b47fe6c959886408271cf65d2bba5746d9e06c9934d384a1d00ae7eab006639f64bcb65a9cead4e9da732c8f66aafcb0de208c0f00232504dc10ffcbf759828"
+      },
+      "new": {
+        "path": "io/netty/netty-handler/4.1.140.Final/netty-handler-4.1.140.Final.jar",
+        "sha512": "a3f9ad79fcb5605eb8c84e1c7385c87f85efd99673bdab3c740d25a9a26e17d06294a787efbd1b6cfd3fb33407a8de25dcafdcef9f9d9587d71a123ae6f28ac0"
+      }
+    },
+    {
+      "old": {
+        "name": "netty-handler-proxy-4.1.118.Final.jar",
+        "sha512": "99bb2c944b76b23033c39403cedf3116f28531344b4145754c2423ed098d7ee54fd4a7e91a49ccfdc04d0962274ec7d4f8893e65cb3569dbd463e78e3b7e64d4"
+      },
+      "new": {
+        "path": "io/netty/netty-handler-proxy/4.1.140.Final/netty-handler-proxy-4.1.140.Final.jar",
+        "sha512": "59c3269744d573971d8223a77d551e9843cc23c824dd8556fcdc9c86550f09e4d707047224e571cdfb49e56e42ff30f1ef181c69fd0b1c596e5d20ea4c333c7c"
+      }
+    },
+    {
+      "old": {
+        "name": "netty-resolver-4.1.118.Final.jar",
+        "sha512": "83d639dc94276062f13dffdabefa65fc008b028b6bbe9c2f5a037f411233ca4cded60607ed9125699c6e8e107302ee2bf2a6c4b82c927a1aa6bc4a7f14192831"
+      },
+      "new": {
+        "path": "io/netty/netty-resolver/4.1.140.Final/netty-resolver-4.1.140.Final.jar",
+        "sha512": "eff8d920df0b322cfd69aa48dd4d4725718b22a8ae08425c22e443c432b87b8c3d203c5de71639214b369c8ea62e8e61324d8ce91002e1b9305f7867baec88e7"
+      }
+    },
+    {
+      "old": {
+        "name": "netty-resolver-dns-4.1.118.Final.jar",
+        "sha512": "ce5623e831b1bd683d997ea93f18fd9aaff0da4b51a6ef94c1e12b2cc71543f71f5bfe4d25ba5afc5231985ac99fc4ebffc623cd634882fbe3d6a21d89e24a97"
+      },
+      "new": {
+        "path": "io/netty/netty-resolver-dns/4.1.140.Final/netty-resolver-dns-4.1.140.Final.jar",
+        "sha512": "2abd1915ec7a7778f4b38dd4758f420f3223922e246af0c67169b663d09dfd917f4c0852e2644aaaf74acf09c0bfbfb14a1424ec94eab62d2e76dfef7da66bfd"
+      }
+    },
+    {
+      "old": {
+        "name": "netty-tcnative-boringssl-static-2.0.70.Final-linux-aarch_64.jar",
+        "sha512": "16f4d1177029fc5241f2eb2de61ff1677f21ce65cdb8be35baf5fd49842c9154fbca3d4eafce6a2ee7d80b3c8114a0aa9240a52795a1dbb3d22baa9201b4cc5c"
+      },
+      "new": {
+        "path": "io/netty/netty-tcnative-boringssl-static/2.0.85.Final/netty-tcnative-boringssl-static-2.0.85.Final-linux-aarch_64.jar",
+        "sha512": "c8bda8dcaf97838dc12157bc8b23ec09a45e41e2fb052beb9145de1419691403076fa69bcf75c7687175b0cc0890fb72783216b00a30c9bde468d00dc17030c6"
+      }
+    },
+    {
+      "old": {
+        "name": "netty-tcnative-boringssl-static-2.0.70.Final-linux-x86_64.jar",
+        "sha512": "115739789746abd0de7f4ce605f4a57f1307353552186dc57046c37e5fdd0ef9dcf89c3498e691465186bc325fdf0e9af45a5216e13378fa53956f63e8ac3eb0"
+      },
+      "new": {
+        "path": "io/netty/netty-tcnative-boringssl-static/2.0.85.Final/netty-tcnative-boringssl-static-2.0.85.Final-linux-x86_64.jar",
+        "sha512": "eb8e927b6e3b7a4450f4e8e87efb29d50d43bd1974ba926b6da4b19d429cbd5afbd90a002f5ad235f6becabd61ca33ad14c08c88c5d96fbe18512cc9e6d417ad"
+      }
+    },
+    {
+      "old": {
+        "name": "netty-tcnative-boringssl-static-2.0.70.Final-osx-aarch_64.jar",
+        "sha512": "51385142c8bad72c9bdb4cc21b0214a778e8aaf3a4712134b87add9ec7d0881be9b697a7531b729734f75e51a6491c2cc771092c07bd8098af53cb3d3f9268e6"
+      },
+      "new": {
+        "path": "io/netty/netty-tcnative-boringssl-static/2.0.85.Final/netty-tcnative-boringssl-static-2.0.85.Final-osx-aarch_64.jar",
+        "sha512": "2408951142714054b275fa610df37793f74d8047a8dcb82139640114d84d545ef1a31af7693d67bcb88dbf06fdef2c7b8116ddb9595204ae4ff5a999f1445d5d"
+      }
+    },
+    {
+      "old": {
+        "name": "netty-tcnative-boringssl-static-2.0.70.Final-osx-x86_64.jar",
+        "sha512": "68c1ae9974a6740c3e42a971c657cb3af1a86bcc32c402eeb77cdebd1648944668b8548803ccfa9c52a5b2259f982766f57808bad0b143e5b565e33528365195"
+      },
+      "new": {
+        "path": "io/netty/netty-tcnative-boringssl-static/2.0.85.Final/netty-tcnative-boringssl-static-2.0.85.Final-osx-x86_64.jar",
+        "sha512": "419b04057d8ffc7c8b4c562aaaf45c4b90bb020ccd291f9130ca2d8435fa8f58c212cfed5dca5a5b00cdbaa67c10a0e2d9e44d8788a0b22cdcb67c50d36d509b"
+      }
+    },
+    {
+      "old": {
+        "name": "netty-tcnative-boringssl-static-2.0.70.Final-windows-x86_64.jar",
+        "sha512": "bd7877247153088a590b9fba8bfa9b8a1852e2e2cfc97ef7199cc3527d2c206c109f468c2fcddb598fd1854df04d41c5e7ac913facda96867dfbc6422d71e929"
+      },
+      "new": {
+        "path": "io/netty/netty-tcnative-boringssl-static/2.0.85.Final/netty-tcnative-boringssl-static-2.0.85.Final-windows-x86_64.jar",
+        "sha512": "1234d263c2bceeae4096b1dea008aa46a5ea5d7528b072570d9a9ff57aeaa93acb1d6d4eec56f3297c8eabff8901b64ab883a4ca7a99de8f3057993720233bb1"
+      }
+    },
+    {
+      "old": {
+        "name": "netty-tcnative-classes-2.0.70.Final.jar",
+        "sha512": "12551a5f377c55c11a68587cb631a08228a1d5be1b7a4c843f2b8a09057b7e39e1ba1b7d387b7b94e615ea83a31568298ffaecdb82ff6aa01dd0316a8c4b3232"
+      },
+      "new": {
+        "path": "io/netty/netty-tcnative-classes/2.0.85.Final/netty-tcnative-classes-2.0.85.Final.jar",
+        "sha512": "e2a2415d512c24af5786386dbbaea31fdbed3f09bc9ec23a85c804a2f731618b9602fe70cfdf068b20022bd9fe4c65f6a66f0b9a66a21e4a3663f48a1950cc02"
+      }
+    },
+    {
+      "old": {
+        "name": "netty-transport-4.1.118.Final.jar",
+        "sha512": "7bebb7fe9831be0920cc103342a34348aded91a5165463607f6089b04b51abee738e864c72264dfb1d9ba09d1dd610c972d0d4e53ff854903d33b674a8f577df"
+      },
+      "new": {
+        "path": "io/netty/netty-transport/4.1.140.Final/netty-transport-4.1.140.Final.jar",
+        "sha512": "24482a3c99dc8944c6d6a1250d44dc436f9104c0e005e47b85b78f6ea93d28f38168cca38f0cdebe206fcb40cdfce5aabeef94db514e60f4b4d4ed6e732cefcd"
+      }
+    },
+    {
+      "old": {
+        "name": "netty-transport-classes-epoll-4.1.118.Final.jar",
+        "sha512": "be2b34f0d2a117be27a65330ee155eac8b5c063fd1e508054c1066a9d919e9a6f4678fe5848d31bd64569807670685444fa9fd4d5afad23beb2fd491f9a177d0"
+      },
+      "new": {
+        "path": "io/netty/netty-transport-classes-epoll/4.1.140.Final/netty-transport-classes-epoll-4.1.140.Final.jar",
+        "sha512": "f52fff0db252dc0cc4f9405fb06caa791a525ec2d064b3150f42a7ae6a13008e2b5214fec767b6eac48f4f4ab1084a0b91fa82a34b18465a1e1ac59c9ba1a84a"
+      }
+    },
+    {
+      "old": {
+        "name": "netty-transport-classes-kqueue-4.1.118.Final.jar",
+        "sha512": "92a729ff90ffc2e80a72f9bbbcb0b4c0df5daa7483036949a8cda48933c490e773678cc55cda5bde29156ae25ec5a55d9b580bd238c649ac9841932e37d182e8"
+      },
+      "new": {
+        "path": "io/netty/netty-transport-classes-kqueue/4.1.140.Final/netty-transport-classes-kqueue-4.1.140.Final.jar",
+        "sha512": "6943101ecf11c624296258228e859fb59438d9f378d4b7814db1a1b6d45b97976af0a81ac44d9ec346b5c856ec0609a59fd89b181132b5bce3c29a26eaa834b4"
+      }
+    },
+    {
+      "old": {
+        "name": "netty-transport-native-epoll-4.1.118.Final-linux-aarch_64.jar",
+        "sha512": "8e05e372292cb55dd463ff6cb570857809536cc962acc773a36c9fd71dfe3710276e13502b1e93bd07b30be045b4b72543030bde394c9a890a409e90e31331fe"
+      },
+      "new": {
+        "path": "io/netty/netty-transport-native-epoll/4.1.140.Final/netty-transport-native-epoll-4.1.140.Final-linux-aarch_64.jar",
+        "sha512": "2eb063399f65b5b401b309d7ca75dd19107b8d8be35837048fdb93778a30f36871f969f02ad877965ca29cb35f53ed16a06069ba471acc94e8f9fb4568a2b643"
+      }
+    },
+    {
+      "old": {
+        "name": "netty-transport-native-epoll-4.1.118.Final-linux-riscv64.jar",
+        "sha512": "51376cfda2daf8bdb7e86fc8ba4b9d734472af4528d9b551288aeae66814012d16244b347fa0fda8183d0fcb67e25262b9b48fd8cc328aec10da4f19013532d6"
+      },
+      "new": {
+        "path": "io/netty/netty-transport-native-epoll/4.1.140.Final/netty-transport-native-epoll-4.1.140.Final-linux-riscv64.jar",
+        "sha512": "18ef11631f18a5e1511f875f870e44415b6c6fb92ecf26bee271adc420d3485bc2df431cda2109332b753443e1c0d947a96a90a736cb803f506bc1cc3bbc62c0"
+      }
+    },
+    {
+      "old": {
+        "name": "netty-transport-native-epoll-4.1.118.Final-linux-x86_64.jar",
+        "sha512": "a56680c19f2dbb897ceae99aa94a9e61cd956ed255d57c33a2b42d3f75162561dd48e62452677acf83858546a4052e7df7a303d8e191d357b0350ac8ae0cdb2e"
+      },
+      "new": {
+        "path": "io/netty/netty-transport-native-epoll/4.1.140.Final/netty-transport-native-epoll-4.1.140.Final-linux-x86_64.jar",
+        "sha512": "639b0e864311695a08a4e5692daf888cee9db855e8b0f3622a4cdd92aa1c7436763da13598158854247d2b548a85223192e0ce85c6ea56cf74f3af15d3240da7"
+      }
+    },
+    {
+      "old": {
+        "name": "netty-transport-native-kqueue-4.1.118.Final-osx-aarch_64.jar",
+        "sha512": "5f369afaf41963cca0a63bd20853d279f0c6f98a58273a7b36171a738b469bf44e49ad34cd1c97094ec3ebb6de73c10c650119dee9e5ad172f3be8ca2a321306"
+      },
+      "new": {
+        "path": "io/netty/netty-transport-native-kqueue/4.1.140.Final/netty-transport-native-kqueue-4.1.140.Final-osx-aarch_64.jar",
+        "sha512": "e824b91a39436c60834ada7d9ce55a71e22eddda6a3f0ccc8f8714760d7375eb220d8539cea223355d7eba720e96e7af6ada60a51d78369ee70275628efb5726"
+      }
+    },
+    {
+      "old": {
+        "name": "netty-transport-native-kqueue-4.1.118.Final-osx-x86_64.jar",
+        "sha512": "c5d3b22d7f3a7f0508b0a26ab9b60432ad0c2ff0758152d455fe9696c1aff303e41937dcd32fa6cfff83b8f69bebbf1895c1b3293b58dbba7d908e602584ad8e"
+      },
+      "new": {
+        "path": "io/netty/netty-transport-native-kqueue/4.1.140.Final/netty-transport-native-kqueue-4.1.140.Final-osx-x86_64.jar",
+        "sha512": "0d1b8e3393cc47ff7fc81b07d7295b85bb0cd3416c12100063081867c0d17dc32b09aa3de846965c3900a74e49728b6b23c0d4c212c826fc18332346febb83d3"
+      }
+    },
+    {
+      "old": {
+        "name": "netty-transport-native-unix-common-4.1.118.Final.jar",
+        "sha512": "3b4226f9b8d133e61b73a06bf273adff07fbe73356d18cd81f323ea3480590302c2c0289c9c3a7421767255fc96c99c3ce19dfa38016a39b06fff20ad9b31a91"
+      },
+      "new": {
+        "path": "io/netty/netty-transport-native-unix-common/4.1.140.Final/netty-transport-native-unix-common-4.1.140.Final.jar",
+        "sha512": "3490e30e92b4096a2b04857e0dab57c8187d3a46dcfd1d9b8195e4b7bd685f3b84128694851839c00c560ebc9aae54137bb6447181893639aaf2be92f45aa908"
+      }
+    }
+  ]
+}

@@ -1,6 +1,10 @@
 # Milestone 11.6C — first streaming pilot readiness
 
-Latest review: [library security and applicability](aws_runtime_security_applicability.md)
+Latest offline work: [coordinated JVM family remediation](aws_runtime_jvm_family_remediation.md)
+reduces Spark's library findings and rejects actual classpath shadowing before S3 work.
+The security gate remains blocked; no finding or deployment has been approved.
+
+Previous review: [library security and applicability](aws_runtime_security_applicability.md)
 adds isolated producer Python fixes and identifies unresolved Spark JVM critical/high
 findings. The release remains blocked; no exceptions are accepted or images published.
 

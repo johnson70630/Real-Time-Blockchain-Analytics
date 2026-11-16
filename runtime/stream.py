@@ -161,6 +161,7 @@ def healthy(path=STATUS, *, now=None) -> bool:
 
 def run_stream(stop: Event):
     from pyspark.sql import SparkSession
+    from runtime.jvm import verify_class_origins
 
     root = f"s3a://{BUCKET}/{PILOT_PREFIX}"
     output, checkpoint = f"{root}/bronze/swaps", f"{root}/checkpoints/swaps_bronze"
@@ -168,6 +169,7 @@ def run_stream(stop: Event):
         SparkSession.builder.appName("PilotUniswapBronze")
         .master("local[2]")
         .config("spark.ui.enabled", "false")
+        .config("spark.sql.catalogImplementation", "in-memory")
         .config("spark.sql.shuffle.partitions", "2")
         .config("spark.sql.session.timeZone", "UTC")
         .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
@@ -182,12 +184,7 @@ def run_stream(stop: Event):
     try:
         spark.sparkContext.setLogLevel("WARN")
         jvm = spark.sparkContext._jvm
-        if jvm.java.lang.System.getProperty("java.specification.version") != "17":
-            raise RuntimeError("JAVA_17_REQUIRED")
-        if spark.version != "4.0.1":
-            raise RuntimeError("SPARK_4_0_1_REQUIRED")
-        if jvm.org.apache.hadoop.util.VersionInfo.getVersion() != "3.4.1":
-            raise RuntimeError("HADOOP_3_4_1_REQUIRED")
+        verify_class_origins(spark)
         path = jvm.org.apache.hadoop.fs.Path
         fs = path(root).getFileSystem(spark.sparkContext._jsc.hadoopConfiguration())
         # Verifies role-based S3 read/list before starting any write.

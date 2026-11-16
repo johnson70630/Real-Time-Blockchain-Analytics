@@ -215,6 +215,14 @@ def test_library_rejected_app_cannot_be_planned_with_new_labels(inspected, role)
         images.publication_plan(inspected, COMMIT)
 
 
+@pytest.mark.parametrize("field", ["baseline_spark_manifest", "rejected_shadow_prototype_manifest"])
+def test_shadowed_or_pre_remediation_spark_cannot_be_planned(inspected, field):
+    evidence = json.loads((images.ROOT / "docs/evidence/aws_runtime_jvm_families_2026-11-16.json").read_text())
+    inspected["spark"]["id"] = evidence[field]
+    with pytest.raises(ValueError, match="REJECTED_IMAGE_RELEASE"):
+        images.publication_plan(inspected, COMMIT)
+
+
 @pytest.mark.parametrize(
     "role,field,value",
     [

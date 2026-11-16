@@ -24,6 +24,10 @@ REJECTED_IMAGE_DIGESTS = frozenset({
     # Unpublished 8805edd app candidates: Python/JVM library review failed.
     "sha256:4f3eba5a4885ad26e8ac2699ef103d0eba4e447922be4089f657593d72b46772",
     "sha256:7d943ca6e3598bcab11f3729610c846f4d4d0736e3702b6b19e1faa8939288a9",
+    # 43d3b4b Spark retained the same unresolved library findings.
+    "sha256:9a86cb4ac24c570a5683ed9f1a2ab94e46b2877dfef4470a6c53f31143653e43",
+    # Unpublished family-patch prototype: an older AWS-bundled Netty shadowed it.
+    "sha256:31394fda18b6324806d91302ed273e9b7dc579ac10e3a8964b1afe43c85879e6",
 })
 
 
