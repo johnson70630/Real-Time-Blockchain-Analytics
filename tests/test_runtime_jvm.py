@@ -23,11 +23,20 @@ def fake_spark(override, shadow=None, *, version="4.0.1", java="17", hadoop="3.4
         "bouncycastle": "1.87",
         "jersey": "3.0.18",
         "hadoop": "3.4.3",
+        "jackson": "2.18.12",
+        "aircompressor": "2.0.3",
+        "snappy": "1.1.10.12",
     }
     paths = {
         name: str(override / f"{artifact}-{families[family]}.jar")
         for name, artifact, family in jvm.CLASSES
     }
+    paths.update(
+        {
+            name: str(jvm.JARS / f"{artifact}-{families[family]}.jar")
+            for name, artifact, family in jvm.NORMAL_CLASSES
+        }
+    )
     paths.update(
         {
             name: str(jvm.JARS / f"{artifact}-{COMPONENTS[component]}.jar")
@@ -88,7 +97,9 @@ def reviewed_streaming_profile(tmp_path, monkeypatch):
 
 
 @pytest.mark.parametrize(
-    "shadow", [None] + [row[0] for row in jvm.CLASSES + jvm.CONNECTOR_CLASSES]
+    "shadow",
+    [None]
+    + [row[0] for row in jvm.CLASSES + jvm.NORMAL_CLASSES + jvm.CONNECTOR_CLASSES],
 )
 def test_actual_class_sources_are_required(tmp_path, monkeypatch, shadow):
     monkeypatch.setattr(jvm, "OVERRIDES", tmp_path)

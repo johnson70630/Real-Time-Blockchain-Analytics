@@ -34,6 +34,8 @@ REJECTED_IMAGE_DIGESTS = frozenset({
     "sha256:652b347f1455dbd397336fc2334a3e5d90c95ea10229dc49a4459a68675cd5de",
     # 3dfef13 Spark retained the unresolved relocated SDK Netty finding.
     "sha256:4da1dc74633cfab7d585cd986c91b73250a469217e3534fa327470a4ae31bb6f",
+    # f209652 Spark retained the old standalone JSON/compression dependencies.
+    "sha256:5b652614cbcfec3514c6f437ab32878a9ebdd55bbc70b7f07734d59b116f5339",
 })
 
 

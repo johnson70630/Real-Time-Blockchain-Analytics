@@ -1,51 +1,35 @@
 [
   {
-    "path": "org/apache/spark/spark-sql-kafka-0-10_2.13/4.0.1/spark-sql-kafka-0-10_2.13-4.0.1.jar",
-    "sha512": "52a2e2a3cdb4399312dba8dc43db57d20203db0bda29d3c78d8be170b13f82c9cebbce5eef8599acb90c74f0ed62e2fbce37c60f33c9b674d630db4816e925a2"
+    "path": "com/fasterxml/jackson/core/jackson-annotations/2.18.12/jackson-annotations-2.18.12.jar",
+    "sha512": "6fa38be03509e610c2651e3954e4f6d8a5c9402ebb06b4d83c2e5beb537a9d513d798a2674f22bacb8fe6ea71e97250b7ef08fff4f6db49d879a60751ff7c898"
   },
   {
-    "path": "org/apache/spark/spark-token-provider-kafka-0-10_2.13/4.0.1/spark-token-provider-kafka-0-10_2.13-4.0.1.jar",
-    "sha512": "38a899b299bd0c0412b8d8ba8954e1bcc99a2bab9027269e7f5fddd8c4c1d56337a0fb23db38ab24017922f7c5f26a0d47aad3b912dce1588202198f56cfd9cc"
+    "path": "com/fasterxml/jackson/core/jackson-core/2.18.12/jackson-core-2.18.12.jar",
+    "sha512": "8c049f2efec8b9cd3156e7124f8ec07d154a372d9d51dd24ac3e1ef5d63f0093f81cda2e0e7ec7216b76f55f64d57e030d793d16f574fe4d53538f6da4265872"
   },
   {
-    "path": "org/apache/kafka/kafka-clients/3.9.2/kafka-clients-3.9.2.jar",
-    "sha512": "dd824c9a31f38a5a6d2b2c7ac03e9f31d8c5a7f1d8a6baefbe7d55552f4ab961ec831f040bb87a3c52dab6d464ee0954c31d256c1ea323140139465697806369"
+    "path": "com/fasterxml/jackson/core/jackson-databind/2.18.12/jackson-databind-2.18.12.jar",
+    "sha512": "7c2a3059d49400bf6564999bc53de5f6bf46f9fe9ac8bcba7455dacda7be1e8916d8763d4cb88a73aa6837c4df86eae694e4af8db5b250e58ba707cc1cc7fc48"
   },
   {
-    "path": "org/apache/commons/commons-pool2/2.12.0/commons-pool2-2.12.0.jar",
-    "sha512": "08fb9fda3eddfb9c2ba85df3ae882225f9974fc43c18f4cb45de0483fde8a99b59683dbc8e4696eea1db671cb0686dcf0fce66f58aa45d63786f8362ec3c5ac2"
+    "path": "com/fasterxml/jackson/dataformat/jackson-dataformat-yaml/2.18.12/jackson-dataformat-yaml-2.18.12.jar",
+    "sha512": "8303f3b4a0f019c27308f43f9efd1b55c144fd71a37ee25398906f7066e74248b2b159ce52daa01dab4b4c4d984988927884627178873b252ee2de2f29e6770f"
+  },
+  {
+    "path": "com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.18.12/jackson-datatype-jsr310-2.18.12.jar",
+    "sha512": "95d3b770fe8b7d69e0eb4a66ba528ee4f5cfe6a4f825c5dc35f02555fa58d1fa831c60a8313268f90aea68b08ad9dfdad41f611fa00ae1d2e6c5638b37464c8d"
+  },
+  {
+    "path": "com/fasterxml/jackson/module/jackson-module-scala_2.13/2.18.12/jackson-module-scala_2.13-2.18.12.jar",
+    "sha512": "9f6fcacaeb1a791d35d8c46b143bbd2b4972ba03a345665b8108b58e377cf7418abe82078f5c774ecc13bade5ffd57e74b60a22585e5185471da9b417ee0a019"
   },
   {
     "path": "com/google/code/findbugs/jsr305/3.0.0/jsr305-3.0.0.jar",
     "sha512": "399510f759fb48255c6298f3545c9b644372fbc9d7245e80e6b51f49da0ac9275d104092c537ac047d5a1312c7d191dee8d655ca8d760b59ce1452bf4370a6e0"
   },
   {
-    "path": "org/bouncycastle/bcprov-jdk18on/1.87/bcprov-jdk18on-1.87.jar",
-    "sha512": "fec4187f2d152ec10dcbb6928407bfa6dacea393d716bd024cbed907251d181e4eeda389501792435d6b5dac13a468b2f230c2fac80dd6382b9c0a6e4d85ff71"
-  },
-  {
-    "path": "org/glassfish/jersey/core/jersey-client/3.0.18/jersey-client-3.0.18.jar",
-    "sha512": "d4a0608543ae8d0f72df3447b128783cc87a10027d8e268c46fd3edd6375628901cb9482457de3b6fcc9e619516638a3137ef5a60161fa09e058cfaa125560c1"
-  },
-  {
-    "path": "org/glassfish/jersey/core/jersey-common/3.0.18/jersey-common-3.0.18.jar",
-    "sha512": "3dbf6d92718ce8a2f8d8ef656f6509241853b64a3441c7a3c7a8180358b5e66dacc1f28fa2b532eeee9a8598640bf99c47c4379feb764b41d05ed3fa5a0b6a44"
-  },
-  {
-    "path": "org/glassfish/jersey/containers/jersey-container-servlet/3.0.18/jersey-container-servlet-3.0.18.jar",
-    "sha512": "fca819f7dc407eae1e0182f99c5a721c5476a1f27db6d5a19ab2b842439cfdd05118592bf9ec7b2f92c06e01cd0e8285dc0bb73f56b50db149563d3e0ba11420"
-  },
-  {
-    "path": "org/glassfish/jersey/containers/jersey-container-servlet-core/3.0.18/jersey-container-servlet-core-3.0.18.jar",
-    "sha512": "eabb4268d301f2f24712f5b9b0ae4a72e6244be223a8a18cb5a9fd65f34e065274b6949c77b22e073a3f78564b90ba9c7b8762b78838b6150e0e08dddbea2f3a"
-  },
-  {
-    "path": "org/glassfish/jersey/inject/jersey-hk2/3.0.18/jersey-hk2-3.0.18.jar",
-    "sha512": "707161f94b3f04c377429bfebb04b06306e009440287d21a6cb6ad86d8894bbfb0fdd7bc3b333adbcfec9530f7e3558710e9cf6ccb58212ce1099e532a419cb1"
-  },
-  {
-    "path": "org/glassfish/jersey/core/jersey-server/3.0.18/jersey-server-3.0.18.jar",
-    "sha512": "7f72bbc703a80ba425c43b0a40b4ffa69959a06fd40ceeb5c2c948a6fb262dcab731721ba9a4cd7d0c3330d77d33b9895e5dd07d71eb8bd3619657ab14cec576"
+    "path": "io/airlift/aircompressor/2.0.3/aircompressor-2.0.3.jar",
+    "sha512": "726f9c919b8bc517b247954b93701e10dd68fa2d62bef6a5aad4a6dc9e1137bae97755d4dbd0bf799513e1a7fcaae733ede7ade42b6d9bdca6f93784297539c0"
   },
   {
     "path": "io/netty/netty-all/4.1.140.Final/netty-all-4.1.140.Final.jar",
@@ -54,10 +38,6 @@
   {
     "path": "io/netty/netty-buffer/4.1.140.Final/netty-buffer-4.1.140.Final.jar",
     "sha512": "2fdae24e53cf8de51baecc57b3584b6be86af72bc0de2c215675faf72fc9b91aa1e1fbab99885c002b069369b958d967f317fa63b03edc7ae7d0d0619cb926d7"
-  },
-  {
-    "path": "io/netty/netty-codec/4.1.140.Final/netty-codec-4.1.140.Final.jar",
-    "sha512": "3ad191af0c0ab24f13611e9d87cc7f95b782670587d288c3cd5b392c5f7eabcb8a05eeae51cb4ed9a2e7a5f770f8a330d6552a273cf2d9e9e6b975f197d8dc33"
   },
   {
     "path": "io/netty/netty-codec-dns/4.1.140.Final/netty-codec-dns-4.1.140.Final.jar",
@@ -76,24 +56,28 @@
     "sha512": "c0b1a583a208c46f35d8253a7504827a8b581d393680af4c3269cc937d81bdcdc5909847c3baae3643d71e79bc24b49293614b40d1c317d1be68ecd940d6c3d3"
   },
   {
-    "path": "io/netty/netty-common/4.1.140.Final/netty-common-4.1.140.Final.jar",
-    "sha512": "8576ec7fe421a35559f36075a4a6dc37444e01c62186cc985fb527d9e8d0b3063cdf65e126de3add4fa4906012252fd2ccc303b48f44afe28cca1faea993d313"
+    "path": "io/netty/netty-codec/4.1.140.Final/netty-codec-4.1.140.Final.jar",
+    "sha512": "3ad191af0c0ab24f13611e9d87cc7f95b782670587d288c3cd5b392c5f7eabcb8a05eeae51cb4ed9a2e7a5f770f8a330d6552a273cf2d9e9e6b975f197d8dc33"
   },
   {
-    "path": "io/netty/netty-handler/4.1.140.Final/netty-handler-4.1.140.Final.jar",
-    "sha512": "a3f9ad79fcb5605eb8c84e1c7385c87f85efd99673bdab3c740d25a9a26e17d06294a787efbd1b6cfd3fb33407a8de25dcafdcef9f9d9587d71a123ae6f28ac0"
+    "path": "io/netty/netty-common/4.1.140.Final/netty-common-4.1.140.Final.jar",
+    "sha512": "8576ec7fe421a35559f36075a4a6dc37444e01c62186cc985fb527d9e8d0b3063cdf65e126de3add4fa4906012252fd2ccc303b48f44afe28cca1faea993d313"
   },
   {
     "path": "io/netty/netty-handler-proxy/4.1.140.Final/netty-handler-proxy-4.1.140.Final.jar",
     "sha512": "59c3269744d573971d8223a77d551e9843cc23c824dd8556fcdc9c86550f09e4d707047224e571cdfb49e56e42ff30f1ef181c69fd0b1c596e5d20ea4c333c7c"
   },
   {
-    "path": "io/netty/netty-resolver/4.1.140.Final/netty-resolver-4.1.140.Final.jar",
-    "sha512": "eff8d920df0b322cfd69aa48dd4d4725718b22a8ae08425c22e443c432b87b8c3d203c5de71639214b369c8ea62e8e61324d8ce91002e1b9305f7867baec88e7"
+    "path": "io/netty/netty-handler/4.1.140.Final/netty-handler-4.1.140.Final.jar",
+    "sha512": "a3f9ad79fcb5605eb8c84e1c7385c87f85efd99673bdab3c740d25a9a26e17d06294a787efbd1b6cfd3fb33407a8de25dcafdcef9f9d9587d71a123ae6f28ac0"
   },
   {
     "path": "io/netty/netty-resolver-dns/4.1.140.Final/netty-resolver-dns-4.1.140.Final.jar",
     "sha512": "2abd1915ec7a7778f4b38dd4758f420f3223922e246af0c67169b663d09dfd917f4c0852e2644aaaf74acf09c0bfbfb14a1424ec94eab62d2e76dfef7da66bfd"
+  },
+  {
+    "path": "io/netty/netty-resolver/4.1.140.Final/netty-resolver-4.1.140.Final.jar",
+    "sha512": "eff8d920df0b322cfd69aa48dd4d4725718b22a8ae08425c22e443c432b87b8c3d203c5de71639214b369c8ea62e8e61324d8ce91002e1b9305f7867baec88e7"
   },
   {
     "path": "io/netty/netty-tcnative-boringssl-static/2.0.85.Final/netty-tcnative-boringssl-static-2.0.85.Final-linux-aarch_64.jar",
@@ -118,10 +102,6 @@
   {
     "path": "io/netty/netty-tcnative-classes/2.0.85.Final/netty-tcnative-classes-2.0.85.Final.jar",
     "sha512": "e2a2415d512c24af5786386dbbaea31fdbed3f09bc9ec23a85c804a2f731618b9602fe70cfdf068b20022bd9fe4c65f6a66f0b9a66a21e4a3663f48a1950cc02"
-  },
-  {
-    "path": "io/netty/netty-transport/4.1.140.Final/netty-transport-4.1.140.Final.jar",
-    "sha512": "24482a3c99dc8944c6d6a1250d44dc436f9104c0e005e47b85b78f6ea93d28f38168cca38f0cdebe206fcb40cdfce5aabeef94db514e60f4b4d4ed6e732cefcd"
   },
   {
     "path": "io/netty/netty-transport-classes-epoll/4.1.140.Final/netty-transport-classes-epoll-4.1.140.Final.jar",
@@ -156,6 +136,18 @@
     "sha512": "3490e30e92b4096a2b04857e0dab57c8187d3a46dcfd1d9b8195e4b7bd685f3b84128694851839c00c560ebc9aae54137bb6447181893639aaf2be92f45aa908"
   },
   {
+    "path": "io/netty/netty-transport/4.1.140.Final/netty-transport-4.1.140.Final.jar",
+    "sha512": "24482a3c99dc8944c6d6a1250d44dc436f9104c0e005e47b85b78f6ea93d28f38168cca38f0cdebe206fcb40cdfce5aabeef94db514e60f4b4d4ed6e732cefcd"
+  },
+  {
+    "path": "org/apache/commons/commons-pool2/2.12.0/commons-pool2-2.12.0.jar",
+    "sha512": "08fb9fda3eddfb9c2ba85df3ae882225f9974fc43c18f4cb45de0483fde8a99b59683dbc8e4696eea1db671cb0686dcf0fce66f58aa45d63786f8362ec3c5ac2"
+  },
+  {
+    "path": "org/apache/hadoop/hadoop-aws/3.4.3/hadoop-aws-3.4.3.jar",
+    "sha512": "b69fc8eef9f457e72d2fe8524ca351a1cdf8e7f1abdb27974c9d0a458b660d7562f40e157dbee56f15940db9eb912641d414e4837d8439f51a3da9c1937c09a5"
+  },
+  {
     "path": "org/apache/hadoop/hadoop-client-api/3.4.3/hadoop-client-api-3.4.3.jar",
     "sha512": "60c55f5498c3285c306509be03ec41a08570bdf7698ae75db4cf6848810c7de09debf68495072914867b19ae7cc11853382417566ac9d5b25976750d02d614f1"
   },
@@ -164,16 +156,56 @@
     "sha512": "a9aab2c9253325e2daa0782163ced3419943a3c16a05d1cc3b4a60f52ea539f4dde7c30405f549a9c6559db9f3fc2ee16703b05b16bfe5315ad5405baebb2c72"
   },
   {
-    "path": "org/apache/hadoop/hadoop-aws/3.4.3/hadoop-aws-3.4.3.jar",
-    "sha512": "b69fc8eef9f457e72d2fe8524ca351a1cdf8e7f1abdb27974c9d0a458b660d7562f40e157dbee56f15940db9eb912641d414e4837d8439f51a3da9c1937c09a5"
+    "path": "org/apache/kafka/kafka-clients/3.9.2/kafka-clients-3.9.2.jar",
+    "sha512": "dd824c9a31f38a5a6d2b2c7ac03e9f31d8c5a7f1d8a6baefbe7d55552f4ab961ec831f040bb87a3c52dab6d464ee0954c31d256c1ea323140139465697806369"
   },
   {
-    "path": "software/amazon/awssdk/bundle/2.35.4/bundle-2.35.4.jar",
-    "sha512": "92117c93e34c8c8f5c7e27c0f29f9ae027a2d8ff186da7e40b4815cfeb1607b4cc121fd20fa7b58ee4cb692a4f5e919953e11263d831cc9b2b69c6bed124f6db"
+    "path": "org/apache/spark/spark-sql-kafka-0-10_2.13/4.0.1/spark-sql-kafka-0-10_2.13-4.0.1.jar",
+    "sha512": "52a2e2a3cdb4399312dba8dc43db57d20203db0bda29d3c78d8be170b13f82c9cebbce5eef8599acb90c74f0ed62e2fbce37c60f33c9b674d630db4816e925a2"
+  },
+  {
+    "path": "org/apache/spark/spark-token-provider-kafka-0-10_2.13/4.0.1/spark-token-provider-kafka-0-10_2.13-4.0.1.jar",
+    "sha512": "38a899b299bd0c0412b8d8ba8954e1bcc99a2bab9027269e7f5fddd8c4c1d56337a0fb23db38ab24017922f7c5f26a0d47aad3b912dce1588202198f56cfd9cc"
+  },
+  {
+    "path": "org/bouncycastle/bcprov-jdk18on/1.87/bcprov-jdk18on-1.87.jar",
+    "sha512": "fec4187f2d152ec10dcbb6928407bfa6dacea393d716bd024cbed907251d181e4eeda389501792435d6b5dac13a468b2f230c2fac80dd6382b9c0a6e4d85ff71"
+  },
+  {
+    "path": "org/glassfish/jersey/containers/jersey-container-servlet-core/3.0.18/jersey-container-servlet-core-3.0.18.jar",
+    "sha512": "eabb4268d301f2f24712f5b9b0ae4a72e6244be223a8a18cb5a9fd65f34e065274b6949c77b22e073a3f78564b90ba9c7b8762b78838b6150e0e08dddbea2f3a"
+  },
+  {
+    "path": "org/glassfish/jersey/containers/jersey-container-servlet/3.0.18/jersey-container-servlet-3.0.18.jar",
+    "sha512": "fca819f7dc407eae1e0182f99c5a721c5476a1f27db6d5a19ab2b842439cfdd05118592bf9ec7b2f92c06e01cd0e8285dc0bb73f56b50db149563d3e0ba11420"
+  },
+  {
+    "path": "org/glassfish/jersey/core/jersey-client/3.0.18/jersey-client-3.0.18.jar",
+    "sha512": "d4a0608543ae8d0f72df3447b128783cc87a10027d8e268c46fd3edd6375628901cb9482457de3b6fcc9e619516638a3137ef5a60161fa09e058cfaa125560c1"
+  },
+  {
+    "path": "org/glassfish/jersey/core/jersey-common/3.0.18/jersey-common-3.0.18.jar",
+    "sha512": "3dbf6d92718ce8a2f8d8ef656f6509241853b64a3441c7a3c7a8180358b5e66dacc1f28fa2b532eeee9a8598640bf99c47c4379feb764b41d05ed3fa5a0b6a44"
+  },
+  {
+    "path": "org/glassfish/jersey/core/jersey-server/3.0.18/jersey-server-3.0.18.jar",
+    "sha512": "7f72bbc703a80ba425c43b0a40b4ffa69959a06fd40ceeb5c2c948a6fb262dcab731721ba9a4cd7d0c3330d77d33b9895e5dd07d71eb8bd3619657ab14cec576"
+  },
+  {
+    "path": "org/glassfish/jersey/inject/jersey-hk2/3.0.18/jersey-hk2-3.0.18.jar",
+    "sha512": "707161f94b3f04c377429bfebb04b06306e009440287d21a6cb6ad86d8894bbfb0fdd7bc3b333adbcfec9530f7e3558710e9cf6ccb58212ce1099e532a419cb1"
   },
   {
     "path": "org/wildfly/openssl/wildfly-openssl/2.2.5.Final/wildfly-openssl-2.2.5.Final.jar",
     "sha512": "376f4ef1673d0c54cbf391f9024c2bb3d765b357dd73143b8436e2240aa334764a22f8ed357e6964dd2e248d9db7ea1bd2ad19fcb582c3629201db8f1f54ebb1"
+  },
+  {
+    "path": "org/xerial/snappy/snappy-java/1.1.10.12/snappy-java-1.1.10.12.jar",
+    "sha512": "5d73255ab430f91d189b45bad30b91000ca4a666ab9be14cdc75264b3bfdc62d328117b2305cd19abbb8216546174565fd2c9910ca3e7e9dec02f88403c2904a"
+  },
+  {
+    "path": "software/amazon/awssdk/bundle/2.35.4/bundle-2.35.4.jar",
+    "sha512": "92117c93e34c8c8f5c7e27c0f29f9ae027a2d8ff186da7e40b4815cfeb1607b4cc121fd20fa7b58ee4cb692a4f5e919953e11263d831cc9b2b69c6bed124f6db"
   },
   {
     "path": "software/amazon/s3/analyticsaccelerator/analyticsaccelerator-s3/1.3.1/analyticsaccelerator-s3-1.3.1.jar",

@@ -1,5 +1,9 @@
 # Milestone 11.6C — SDK review and cloud launch correction
 
+Latest maintenance: [standalone JSON and compression remediation](aws_runtime_standalone_remediation.md)
+updates aligned Jackson modules and compression libraries, reducing Spark library
+findings to 1 critical / 49 high. The release remains blocked with no exceptions.
+
 Reviewed 2026-11-16 UTC. **The release remains blocked.** This checkpoint fixes
 a cloud startup configuration error and records the SDK finding's compatibility
 and applicability evidence. It accepts no exception, publishes no image and

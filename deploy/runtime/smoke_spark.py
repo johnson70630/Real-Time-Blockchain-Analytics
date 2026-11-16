@@ -8,6 +8,7 @@ import zipfile
 from pathlib import Path
 
 from pyspark.sql import SparkSession
+from py4j.protocol import Py4JJavaError
 from runtime.jvm import verify_class_origins
 from runtime.features import FORBIDDEN_CLASSES, verify_profile
 
@@ -100,6 +101,97 @@ try:
         "SPARK_JVM_SECURITY_FAMILIES_VERIFIED " + json.dumps(security, sort_keys=True)
     )
     loader = jvm.java.lang.Thread.currentThread().getContextClassLoader()
+    mapper = jvm.com.fasterxml.jackson.databind.ObjectMapper()
+    assert str(mapper.version()) == security["families"]["jackson"]
+    mapper.registerModule(jvm.com.fasterxml.jackson.datatype.jsr310.JavaTimeModule())
+    mapper.disable(
+        jvm.com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS
+    )
+    instant = jvm.java.time.Instant.parse("2026-01-01T00:00:00Z")
+    assert mapper.writeValueAsString(instant) == '"2026-01-01T00:00:00Z"'
+    scala_module = (
+        loader.loadClass("com.fasterxml.jackson.module.scala.DefaultScalaModule$")
+        .getField("MODULE$")
+        .get(None)
+    )
+    mapper.registerModule(scala_module)
+    values = jvm.java.util.LinkedHashMap()
+    values.put("chain", "arbitrum")
+    values.put("count", 3)
+    scala_values = jvm.scala.jdk.javaapi.CollectionConverters.asScala(values)
+    assert (
+        mapper.readTree(mapper.writeValueAsString(scala_values)).get("count").asInt()
+        == 3
+    )
+    yaml = jvm.com.fasterxml.jackson.databind.ObjectMapper(
+        jvm.com.fasterxml.jackson.dataformat.yaml.YAMLFactory()
+    )
+    assert (
+        yaml.readTree("chain: arbitrum\ncount: 3\n").get("chain").asText() == "arbitrum"
+    )
+    constraints = (
+        jvm.com.fasterxml.jackson.core.StreamReadConstraints.builder()
+        .maxNestingDepth(5)
+        .build()
+    )
+    factory = (
+        jvm.com.fasterxml.jackson.core.JsonFactory.builder()
+        .streamReadConstraints(constraints)
+        .build()
+    )
+    parser = factory.createParser("[[[[[[0]]]]]]")
+    try:
+        try:
+            while parser.nextToken() is not None:
+                pass
+        except Py4JJavaError as error:
+            assert (
+                error.java_exception.getClass().getName()
+                == "com.fasterxml.jackson.core.exc.StreamConstraintsException"
+            )
+        else:
+            raise AssertionError("Configured JSON nesting limit was not enforced")
+    finally:
+        parser.close()
+    print("JACKSON_JSON_YAML_TIME_SCALA_AND_LIMITS_VERIFIED")
+
+    payload = b"pilot-codec-compatibility:" * 8
+    # Captured from the f209652 image's Snappy 1.1.10.7 / Aircompressor 2.0.2.
+    # Fixed synthetic frames verify existing data remains readable after update.
+    legacy_snappy = bytes.fromhex(
+        "d0016470696c6f742d636f6465632d636f6d7061746962696c6974793afe1a00fe1a00d61a00"
+    )
+    legacy_lz4 = bytes.fromhex(
+        "ff0b70696c6f742d636f6465632d636f6d7061746962696c6974793a1a009e506c6974793a"
+    )
+    snappy = jvm.org.xerial.snappy.Snappy
+    assert bytes(snappy.uncompress(snappy.compress(payload))) == payload
+    assert bytes(snappy.uncompress(legacy_snappy)) == payload
+
+    def buffer_bytes(buffer):
+        return bytes(int(buffer.get(i)) & 255 for i in range(buffer.position()))
+
+    for compressor, decompressor, legacy in (
+        (
+            jvm.io.airlift.compress.snappy.SnappyCompressor(),
+            jvm.io.airlift.compress.snappy.SnappyDecompressor(),
+            legacy_snappy,
+        ),
+        (
+            jvm.io.airlift.compress.lz4.Lz4Compressor(),
+            jvm.io.airlift.compress.lz4.Lz4Decompressor(),
+            legacy_lz4,
+        ),
+    ):
+        compressed = jvm.java.nio.ByteBuffer.allocate(
+            compressor.maxCompressedLength(len(payload))
+        )
+        compressor.compress(jvm.java.nio.ByteBuffer.wrap(payload), compressed)
+        for frame in (buffer_bytes(compressed), legacy):
+            output = jvm.java.nio.ByteBuffer.allocate(len(payload))
+            decompressor.decompress(jvm.java.nio.ByteBuffer.wrap(frame), output)
+            assert buffer_bytes(output) == payload
+    print("NATIVE_SNAPPY_AND_AIRCOMPRESSOR_COMPATIBILITY_VERIFIED")
     for name in (
         "org.apache.spark.sql.kafka010.KafkaSourceProvider",
         "org.apache.hadoop.fs.s3a.S3AFileSystem",
@@ -186,7 +278,9 @@ try:
     )
 
     spark.range(3).write.parquet("/tmp/smoke.parquet")
-    assert spark.read.parquet("/tmp/smoke.parquet").count() == 3
+    assert sorted(
+        row.id for row in spark.read.parquet("/tmp/smoke.parquet").collect()
+    ) == [0, 1, 2]
 finally:
     spark.stop()
 print("JAVA_SPARK_S3A_KAFKA_PARQUET_VERIFIED")

@@ -155,6 +155,13 @@ def test_unaccepted_sdk_review_does_not_authorize_baseline_release(release):
         validate_release(release)
 
 
+def test_old_standalone_dependency_manifest_cannot_be_released(release):
+    evidence = json.loads((ROOT / "docs/evidence/aws_runtime_standalone_2026-11-16.json").read_text())
+    release["spark_image"] = f"{REGISTRY}/blockchain-runtime-spark@{evidence['baseline_spark_manifest']}"
+    with pytest.raises(ValueError, match="REJECTED_IMAGE_RELEASE"):
+        validate_release(release)
+
+
 @pytest.mark.parametrize("key,value", [
     ("LANG", "en_US.UTF-8"), ("LC_ALL", "en_US.UTF-8"),
     ("LANGUAGE", "../../untrusted"), ("LANGUAGE", "en_US:en"),

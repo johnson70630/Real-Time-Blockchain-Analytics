@@ -20,7 +20,20 @@ PREFIXES = (
     "jersey-",
     "hadoop-client-api-",
     "hadoop-client-runtime-",
+    "jackson-",
+    "aircompressor-",
+    "snappy-java-",
 )
+LEGACY_JSON_PREFIXES = ("jackson-core-asl-", "jackson-mapper-asl-")
+NORMAL_FAMILIES = {"hadoop", "jackson", "aircompressor", "snappy"}
+JACKSON_ARTIFACTS = {
+    "jackson-annotations": "com/fasterxml/jackson/core/",
+    "jackson-core": "com/fasterxml/jackson/core/",
+    "jackson-databind": "com/fasterxml/jackson/core/",
+    "jackson-dataformat-yaml": "com/fasterxml/jackson/dataformat/",
+    "jackson-datatype-jsr310": "com/fasterxml/jackson/datatype/",
+    "jackson-module-scala_2.13": "com/fasterxml/jackson/module/",
+}
 COMPONENTS = {
     "hadoop": "3.4.3",
     "aws_sdk": "2.35.4",
@@ -30,6 +43,14 @@ COMPONENTS = {
 
 
 def family(name):
+    if name.startswith(LEGACY_JSON_PREFIXES):
+        raise ValueError("Legacy JSON belongs to the separate feature-removal profile")
+    if name.startswith("jackson-"):
+        return "jackson"
+    if name.startswith("aircompressor-"):
+        return "aircompressor"
+    if name.startswith("snappy-java-"):
+        return "snappy"
     if name.startswith("netty-tcnative-"):
         return "tcnative"
     if name.startswith("netty-"):
@@ -48,7 +69,16 @@ def validate(lock):
         lock.get("schema_version") != 2
         or lock.get("pyspark_version") != "4.0.1"
         or set(lock.get("families", {}))
-        != {"netty", "tcnative", "bouncycastle", "jersey", "hadoop"}
+        != {
+            "netty",
+            "tcnative",
+            "bouncycastle",
+            "jersey",
+            "hadoop",
+            "jackson",
+            "aircompressor",
+            "snappy",
+        }
         or lock.get("components") != COMPONENTS
         or lock["families"]["hadoop"] != COMPONENTS["hadoop"]
         or not 1 <= len(lock.get("replacements", [])) <= 100
@@ -81,9 +111,13 @@ def validate(lock):
             "bouncycastle": "org/bouncycastle/",
             "jersey": "org/glassfish/jersey/",
             "hadoop": "org/apache/hadoop/",
+            "jackson": JACKSON_ARTIFACTS.get(artifact),
+            "aircompressor": "io/airlift/",
+            "snappy": "org/xerial/snappy/",
         }[group]
         if (
-            group != family(destination)
+            prefix is None
+            or group != family(destination)
             or name == destination
             or not destination.startswith(start)
             or not re.fullmatch(r"(?:-[A-Za-z0-9_-]+)?\.jar", suffix)
@@ -122,7 +156,9 @@ def apply(lock, *, cache, target=None):
     actual = {
         p.name
         for p in target.iterdir()
-        if p.name.startswith(PREFIXES) and p.name.endswith(".jar")
+        if p.name.startswith(PREFIXES)
+        and p.name.endswith(".jar")
+        and not p.name.startswith(LEGACY_JSON_PREFIXES)
     }
     if actual == new_names:
         for row in lock["replacements"]:
@@ -179,10 +215,12 @@ def validate_downloads(lock, downloads):
 def stage_overrides(lock, *, target, output):
     """Give patched families explicit precedence over unmodified shaded bundles."""
     validate(lock)
-    # The matched Hadoop clients use the normal JAR directory after replacement.
-    # Avoid duplicate copies; startup verifies their actual class origins there.
+    # Hadoop, Jackson and compression libraries use the normal JAR directory.
+    # Startup verifies their actual origins; avoid redundant scanner occurrences.
     overrides = [
-        row for row in lock["replacements"] if family(row["old"]["name"]) != "hadoop"
+        row
+        for row in lock["replacements"]
+        if family(row["old"]["name"]) not in NORMAL_FAMILIES
     ]
     names = {row["new"]["path"].rsplit("/", 1)[-1] for row in overrides}
     if target.is_symlink() or not target.is_dir() or output.is_symlink():

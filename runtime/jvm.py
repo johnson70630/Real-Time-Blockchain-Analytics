@@ -55,6 +55,28 @@ CONNECTOR_CLASSES = (
         "analytics_accelerator",
     ),
 )
+NORMAL_CLASSES = (
+    ("com.fasterxml.jackson.annotation.JsonCreator", "jackson-annotations", "jackson"),
+    ("com.fasterxml.jackson.core.JsonFactory", "jackson-core", "jackson"),
+    ("com.fasterxml.jackson.databind.ObjectMapper", "jackson-databind", "jackson"),
+    (
+        "com.fasterxml.jackson.dataformat.yaml.YAMLFactory",
+        "jackson-dataformat-yaml",
+        "jackson",
+    ),
+    (
+        "com.fasterxml.jackson.datatype.jsr310.JavaTimeModule",
+        "jackson-datatype-jsr310",
+        "jackson",
+    ),
+    (
+        "com.fasterxml.jackson.module.scala.DefaultScalaModule",
+        "jackson-module-scala_2.13",
+        "jackson",
+    ),
+    ("io.airlift.compress.snappy.SnappyDecompressor", "aircompressor", "aircompressor"),
+    ("org.xerial.snappy.Snappy", "snappy-java", "snappy"),
+)
 
 
 def verify_classloader(jvm):
@@ -67,13 +89,20 @@ def verify_classloader(jvm):
         raise RuntimeError("REVIEWED_SPARK_JAVA_HADOOP_VERSIONS_REQUIRED")
     loader = jvm.java.lang.Thread.currentThread().getContextClassLoader()
     origins = {}
-    expected_classes = [
-        (name, OVERRIDES / f"{artifact}-{lock['families'][family]}.jar")
-        for name, artifact, family in CLASSES
-    ] + [
-        (name, JARS / f"{artifact}-{lock['components'][component]}.jar")
-        for name, artifact, component in CONNECTOR_CLASSES
-    ]
+    expected_classes = (
+        [
+            (name, OVERRIDES / f"{artifact}-{lock['families'][family]}.jar")
+            for name, artifact, family in CLASSES
+        ]
+        + [
+            (name, JARS / f"{artifact}-{lock['families'][family]}.jar")
+            for name, artifact, family in NORMAL_CLASSES
+        ]
+        + [
+            (name, JARS / f"{artifact}-{lock['components'][component]}.jar")
+            for name, artifact, component in CONNECTOR_CLASSES
+        ]
+    )
     for name, expected in expected_classes:
         cls = loader.loadClass(name)
         location = cls.getProtectionDomain().getCodeSource().getLocation()

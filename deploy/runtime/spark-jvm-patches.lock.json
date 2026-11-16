@@ -6,9 +6,22 @@
     "tcnative": "2.0.85.Final",
     "bouncycastle": "1.87",
     "jersey": "3.0.18",
-    "hadoop": "3.4.3"
+    "hadoop": "3.4.3",
+    "jackson": "2.18.12",
+    "aircompressor": "2.0.3",
+    "snappy": "1.1.10.12"
   },
   "replacements": [
+    {
+      "old": {
+        "name": "aircompressor-2.0.2.jar",
+        "sha512": "db5379867ff66f5570f48f42093f9172df23ef75f124fae4ec2dec74ee977ad081139f9dc0a663aae261439cb435a5c545edb7122d1bac40223401fe93fb431d"
+      },
+      "new": {
+        "path": "io/airlift/aircompressor/2.0.3/aircompressor-2.0.3.jar",
+        "sha512": "726f9c919b8bc517b247954b93701e10dd68fa2d62bef6a5aad4a6dc9e1137bae97755d4dbd0bf799513e1a7fcaae733ede7ade42b6d9bdca6f93784297539c0"
+      }
+    },
     {
       "old": {
         "name": "bcprov-jdk18on-1.80.jar",
@@ -17,6 +30,86 @@
       "new": {
         "path": "org/bouncycastle/bcprov-jdk18on/1.87/bcprov-jdk18on-1.87.jar",
         "sha512": "fec4187f2d152ec10dcbb6928407bfa6dacea393d716bd024cbed907251d181e4eeda389501792435d6b5dac13a468b2f230c2fac80dd6382b9c0a6e4d85ff71"
+      }
+    },
+    {
+      "old": {
+        "name": "hadoop-client-api-3.4.1.jar",
+        "sha512": "d505c0f8cfffcfe0090c69de854c971c7d88646f1f9f31af43ad3934a686dc06ae39250c3c99998ea57a27fc226a0fa5fb4da39867cac3997577ad7ffb01b239"
+      },
+      "new": {
+        "path": "org/apache/hadoop/hadoop-client-api/3.4.3/hadoop-client-api-3.4.3.jar",
+        "sha512": "60c55f5498c3285c306509be03ec41a08570bdf7698ae75db4cf6848810c7de09debf68495072914867b19ae7cc11853382417566ac9d5b25976750d02d614f1"
+      }
+    },
+    {
+      "old": {
+        "name": "hadoop-client-runtime-3.4.1.jar",
+        "sha512": "6363e4b786f49c7f7e1efe733000399e781e4827e26f8f22259f2e32f907a37401283aaf5fea201584c6cc8ddba8716c0d305917bb628e3438ed199cb1a3e00a"
+      },
+      "new": {
+        "path": "org/apache/hadoop/hadoop-client-runtime/3.4.3/hadoop-client-runtime-3.4.3.jar",
+        "sha512": "a9aab2c9253325e2daa0782163ced3419943a3c16a05d1cc3b4a60f52ea539f4dde7c30405f549a9c6559db9f3fc2ee16703b05b16bfe5315ad5405baebb2c72"
+      }
+    },
+    {
+      "old": {
+        "name": "jackson-annotations-2.18.2.jar",
+        "sha512": "d375e5761052e202e409400637cdc9ce0f45cf01a90628f36ca3c81757ac30695cc6e60146cbf14685c5c50912ad932564eb794ea76ab8461ce1786a02eab867"
+      },
+      "new": {
+        "path": "com/fasterxml/jackson/core/jackson-annotations/2.18.12/jackson-annotations-2.18.12.jar",
+        "sha512": "6fa38be03509e610c2651e3954e4f6d8a5c9402ebb06b4d83c2e5beb537a9d513d798a2674f22bacb8fe6ea71e97250b7ef08fff4f6db49d879a60751ff7c898"
+      }
+    },
+    {
+      "old": {
+        "name": "jackson-core-2.18.2.jar",
+        "sha512": "2223f6d8235c6831b488dd2723a4569e4dab6c2371f0e39f867b57a3a443e093d1fce05dc070a350fa306d7e952888cb09c7c816254147b01083d122964fc3a5"
+      },
+      "new": {
+        "path": "com/fasterxml/jackson/core/jackson-core/2.18.12/jackson-core-2.18.12.jar",
+        "sha512": "8c049f2efec8b9cd3156e7124f8ec07d154a372d9d51dd24ac3e1ef5d63f0093f81cda2e0e7ec7216b76f55f64d57e030d793d16f574fe4d53538f6da4265872"
+      }
+    },
+    {
+      "old": {
+        "name": "jackson-databind-2.18.2.jar",
+        "sha512": "bbdfaaffaaab2a032a754cd9dade06552e9f79fd39ae396873315415219b37e0675fde0a02953efe0701e17be4c282b118a96fcb752f53ca37ab89624f0a52ac"
+      },
+      "new": {
+        "path": "com/fasterxml/jackson/core/jackson-databind/2.18.12/jackson-databind-2.18.12.jar",
+        "sha512": "7c2a3059d49400bf6564999bc53de5f6bf46f9fe9ac8bcba7455dacda7be1e8916d8763d4cb88a73aa6837c4df86eae694e4af8db5b250e58ba707cc1cc7fc48"
+      }
+    },
+    {
+      "old": {
+        "name": "jackson-dataformat-yaml-2.18.2.jar",
+        "sha512": "65e764410a1d89f75b351451f1b77c856f6268775c94f66aa4ab351d357747f0cdf4d533b88697fff585f4ce0bbff7ad6437146761238f08cc37000573c68cb2"
+      },
+      "new": {
+        "path": "com/fasterxml/jackson/dataformat/jackson-dataformat-yaml/2.18.12/jackson-dataformat-yaml-2.18.12.jar",
+        "sha512": "8303f3b4a0f019c27308f43f9efd1b55c144fd71a37ee25398906f7066e74248b2b159ce52daa01dab4b4c4d984988927884627178873b252ee2de2f29e6770f"
+      }
+    },
+    {
+      "old": {
+        "name": "jackson-datatype-jsr310-2.18.2.jar",
+        "sha512": "bc1cb3e193996ba0b876baefa99122672bbe617f2de582f5208609efb1bb5886832857406de5b0fd7969fce8c07dba0a672b3f077bac2f7efbc3d0cc252c1ee9"
+      },
+      "new": {
+        "path": "com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.18.12/jackson-datatype-jsr310-2.18.12.jar",
+        "sha512": "95d3b770fe8b7d69e0eb4a66ba528ee4f5cfe6a4f825c5dc35f02555fa58d1fa831c60a8313268f90aea68b08ad9dfdad41f611fa00ae1d2e6c5638b37464c8d"
+      }
+    },
+    {
+      "old": {
+        "name": "jackson-module-scala_2.13-2.18.2.jar",
+        "sha512": "cdbf806280ad9e49f9b208993c465d3c3f8f53ba8b9e23258af206b3608aab7094ef63039306316ce4ca328c097a05d0db9efea830d98427c79a4289912179f0"
+      },
+      "new": {
+        "path": "com/fasterxml/jackson/module/jackson-module-scala_2.13/2.18.12/jackson-module-scala_2.13-2.18.12.jar",
+        "sha512": "9f6fcacaeb1a791d35d8c46b143bbd2b4972ba03a345665b8108b58e377cf7418abe82078f5c774ecc13bade5ffd57e74b60a22585e5185471da9b417ee0a019"
       }
     },
     {
@@ -351,22 +444,12 @@
     },
     {
       "old": {
-        "name": "hadoop-client-api-3.4.1.jar",
-        "sha512": "d505c0f8cfffcfe0090c69de854c971c7d88646f1f9f31af43ad3934a686dc06ae39250c3c99998ea57a27fc226a0fa5fb4da39867cac3997577ad7ffb01b239"
+        "name": "snappy-java-1.1.10.7.jar",
+        "sha512": "22a6ebb8e8ad4d8a149b0c67d8658ac1535d7014857064c4f7ed4999e29c6186de8a80b50dd9b59f631fa1c24970524fdbbb84083c80c59eb0c72d4efb041fef"
       },
       "new": {
-        "path": "org/apache/hadoop/hadoop-client-api/3.4.3/hadoop-client-api-3.4.3.jar",
-        "sha512": "60c55f5498c3285c306509be03ec41a08570bdf7698ae75db4cf6848810c7de09debf68495072914867b19ae7cc11853382417566ac9d5b25976750d02d614f1"
-      }
-    },
-    {
-      "old": {
-        "name": "hadoop-client-runtime-3.4.1.jar",
-        "sha512": "6363e4b786f49c7f7e1efe733000399e781e4827e26f8f22259f2e32f907a37401283aaf5fea201584c6cc8ddba8716c0d305917bb628e3438ed199cb1a3e00a"
-      },
-      "new": {
-        "path": "org/apache/hadoop/hadoop-client-runtime/3.4.3/hadoop-client-runtime-3.4.3.jar",
-        "sha512": "a9aab2c9253325e2daa0782163ced3419943a3c16a05d1cc3b4a60f52ea539f4dde7c30405f549a9c6559db9f3fc2ee16703b05b16bfe5315ad5405baebb2c72"
+        "path": "org/xerial/snappy/snappy-java/1.1.10.12/snappy-java-1.1.10.12.jar",
+        "sha512": "5d73255ab430f91d189b45bad30b91000ca4a666ab9be14cdc75264b3bfdc62d328117b2305cd19abbb8216546174565fd2c9910ca3e7e9dec02f88403c2904a"
       }
     }
   ],

@@ -42,6 +42,9 @@ def prepared(tmp_path):
             "bouncycastle": "2",
             "jersey": "2",
             "hadoop": "3.4.3",
+            "jackson": "2.18.12",
+            "aircompressor": "2.0.3",
+            "snappy": "1.1.10.12",
         },
         "components": {
             "hadoop": "3.4.3",
@@ -243,3 +246,53 @@ def test_matched_hadoop_client_is_not_duplicated_into_override_directory(
         json.loads((output / "patches.lock.json").read_text())["components"]["hadoop"]
         == "3.4.3"
     )
+
+
+@pytest.mark.parametrize(
+    "artifact,group,family",
+    [
+        *[
+            (artifact, group.rstrip("/"), "jackson")
+            for artifact, group in patch_jars.JACKSON_ARTIFACTS.items()
+        ],
+        ("aircompressor", "io/airlift", "aircompressor"),
+        ("snappy-java", "org/xerial/snappy", "snappy"),
+    ],
+)
+def test_normal_directory_patches_preserve_legacy_json_and_avoid_duplicate_copies(
+    prepared, tmp_path, artifact, group, family
+):
+    target, cache, lock = prepared
+    version = lock["families"][family]
+    name = f"{artifact}-{version}.jar"
+    old = f"{artifact}-1.0.jar"
+    (target / old).write_bytes(b"old component")
+    (cache / name).write_bytes(b"patched component")
+    lock["replacements"].append(
+        {
+            "old": {
+                "name": old,
+                "sha512": hashlib.sha512(b"old component").hexdigest(),
+            },
+            "new": {
+                "path": f"{group}/{artifact}/{version}/{name}",
+                "sha512": hashlib.sha512(b"patched component").hexdigest(),
+            },
+        }
+    )
+    legacy = target / "jackson-core-asl-1.9.13.jar"
+    legacy.write_bytes(b"separate feature removal")
+    patch_jars.apply(lock, cache=cache, target=target)
+    output = tmp_path / "overrides"
+    patch_jars.stage_overrides(lock, target=target, output=output)
+    assert (target / name).read_bytes() == b"patched component"
+    assert not (output / name).exists()
+    assert legacy.read_bytes() == b"separate feature removal"
+
+
+def test_legacy_codehaus_json_cannot_be_replaced_as_modern_jackson(prepared):
+    target, cache, lock = prepared
+    lock["replacements"][-1]["old"]["name"] = "jackson-core-asl-1.9.13.jar"
+    with pytest.raises(ValueError, match="Legacy JSON"):
+        patch_jars.apply(lock, cache=cache, target=target)
+    assert (target / "netty-common-1.jar").exists()
