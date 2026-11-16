@@ -1,5 +1,9 @@
 # Milestone 11.6C — first streaming pilot readiness
 
+Latest review: [SDK applicability and cloud launch correction](aws_runtime_sdk_review.md)
+fixes Compose dropping the reviewed classpaths and verifies the SDK namespace
+separately. Findings remain open; no exception or deployment is approved.
+
 Latest profile review: [minimal cloud streaming distribution](aws_runtime_streaming_profile.md)
 removes unused server/catalog modules and reduces Spark library findings to
 1 critical / 60 high. The release remains blocked; no exceptions, publication

@@ -237,6 +237,14 @@ def test_full_optional_feature_distribution_cannot_be_planned(inspected):
         images.publication_plan(inspected, COMMIT)
 
 
+def test_unaccepted_sdk_review_cannot_clear_baseline_image_for_publication(inspected):
+    evidence = json.loads((images.ROOT / "docs/evidence/aws_runtime_sdk_review_2026-11-16.json").read_text())
+    assert evidence["accepted_exceptions"] == []
+    inspected["spark"]["id"] = evidence["baseline_spark_manifest"]
+    with pytest.raises(ValueError, match="REJECTED_IMAGE_RELEASE"):
+        images.publication_plan(inspected, COMMIT)
+
+
 @pytest.mark.parametrize(
     "role,field,value",
     [

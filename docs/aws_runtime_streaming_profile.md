@@ -1,5 +1,9 @@
 # Milestone 11.6C — minimal cloud streaming distribution
 
+Latest review: [SDK applicability and cloud launch correction](aws_runtime_sdk_review.md)
+fixes Compose dropping the reviewed classpaths and verifies the SDK namespace
+separately. Findings remain open; no exception or deployment is approved.
+
 Reviewed 2026-11-16 UTC. **The release remains blocked.** This offline checkpoint
 removes unused executable modules from the cloud image and accepts no security
 exceptions. It authorizes neither image publication nor an AWS pilot. Milestone

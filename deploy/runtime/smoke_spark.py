@@ -27,6 +27,19 @@ try:
     assert jvm.org.apache.kafka.common.utils.AppInfoParser.getVersion() == "3.9.2"
     assert jvm.java.nio.charset.Charset.defaultCharset().name() == "UTF-8"
     security = verify_class_origins(spark)
+    assert spark.sparkContext.getConf().get("spark.driver.memory") == "3g"
+    assert jvm.java.lang.Runtime.getRuntime().maxMemory() == 3 * 1024**3
+    print("CLOUD_SPARK_LAUNCH_CONFIGURATION_VERIFIED")
+    # Exercise a TLS client context in the SDK's own namespace. This is linkage
+    # and role evidence, not a fix or an exception for its retained server code.
+    relocated_tls = jvm.software.amazon.awssdk.thirdparty.io.netty.handler.ssl
+    client_context = (
+        relocated_tls.SslContextBuilder.forClient()
+        .sslProvider(relocated_tls.SslProvider.JDK)
+        .build()
+    )
+    assert client_context.isClient()
+    print("SDK_RELOCATED_NETTY_CLIENT_CONTEXT_VERIFIED")
     assert security["streaming_profile"]["profile"] == "local_streaming_pilot"
     assert not security["streaming_profile"]["excluded_classes_resolvable"]
     print("SPARK_STREAMING_FEATURE_PROFILE_VERIFIED")

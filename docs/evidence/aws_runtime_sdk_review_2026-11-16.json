@@ -1,0 +1,345 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-11-16T21:47:08.877185+00:00",
+  "milestone": "11.6C",
+  "scope": "OFFLINE_SDK_APPLICABILITY_AND_CLOUD_LAUNCH_CORRECTION",
+  "baseline_source_commit": "3dfef1328239124fb1a0c863790ad183b140bbe6",
+  "baseline_spark_manifest": "sha256:4da1dc74633cfab7d585cd986c91b73250a469217e3534fa327470a4ae31bb6f",
+  "baseline_ci": {
+    "run_id": 43839583156,
+    "all_six_jobs": "success"
+  },
+  "sdk_version": "2.35.4",
+  "sdk_bundle_sha512": "92117c93e34c8c8f5c7e27c0f29f9ae027a2d8ff186da7e40b4815cfeb1607b4cc121fd20fa7b58ee4cb692a4f5e919953e11263d831cc9b2b69c6bed124f6db",
+  "sdk_bundle_inventory": {
+    "relocated_netty_class_count": 2490,
+    "unshaded_netty_class_count": 0,
+    "representative_class_sha256": {
+      "software/amazon/awssdk/http/nio/netty/NettyNioAsyncHttpClient.class": "8cf7e98ea5c6a6125f0af79f6ab8d45a7c0ead28ac57aeb7b55f2d97982ad97f",
+      "software/amazon/awssdk/thirdparty/io/netty/handler/ssl/SslClientHelloHandler.class": "7866adf7ca855bd58e6c33376033a587474d0d0685a6f512ce0445cbefa3f7d0",
+      "software/amazon/awssdk/thirdparty/org/apache/http/conn/ssl/SSLConnectionSocketFactory.class": "71d3b65cca8d90791986d878ba28d90bb24065109afeecda57138d3f26dc0026"
+    },
+    "netty_handler_properties": "artifactId=netty-handler\ngroupId=io.netty\nversion=4.1.126.Final\n"
+  },
+  "hadoop_shaded_dependency": {
+    "class": "org/apache/hadoop/fs/s3a/impl/ConfigureShadedAWSSocketFactory.class",
+    "class_sha256": "10bacd482fae8494578c39bc2e80b8732e80eeafa1eadcf418cbda49e563560a",
+    "shaded_class_references": [
+      "software/amazon/awssdk/thirdparty/org/apache/http/conn/socket/ConnectionSocketFactory",
+      "software/amazon/awssdk/thirdparty/org/apache/http/conn/ssl/SSLConnectionSocketFactory"
+    ]
+  },
+  "public_maven_metadata_review": {
+    "hadoop_release_candidates": [
+      "3.4.3",
+      "3.5.0"
+    ],
+    "latest_sdk_versions": [
+      "2.57.11",
+      "2.57.12",
+      "2.57.13",
+      "2.58.0",
+      "2.59.0",
+      "2.59.1"
+    ],
+    "dependencies": [
+      {
+        "hadoop": "3.4.3",
+        "properties": {
+          "avro.version": "1.11.4",
+          "jackson2.version": "2.12.7",
+          "jackson2.databind.version": "2.12.7.1",
+          "netty4.version": "4.1.127.Final",
+          "aws-java-sdk.version": "1.12.720",
+          "aws-java-sdk-v2.version": "2.35.4",
+          "amazon-s3-analyticsaccelerator-s3.version": "1.3.1",
+          "aws.eventstream.version": "1.0.1",
+          "openssl-wildfly.version": "2.2.5.Final"
+        }
+      },
+      {
+        "hadoop": "3.5.0",
+        "properties": {
+          "avro.version": "1.11.5",
+          "jackson2.version": "2.18.6",
+          "jackson2.databind.version": "2.18.6",
+          "netty4.version": "4.1.130.Final",
+          "aws-java-sdk.version": "1.12.720",
+          "aws-java-sdk-v2.version": "2.35.4",
+          "amazon-s3-analyticsaccelerator-s3.version": "1.3.1",
+          "aws.eventstream.version": "1.0.1",
+          "openssl-wildfly.version": "2.2.5.Final"
+        }
+      },
+      {
+        "sdk": "2.35.4",
+        "properties": {
+          "jackson.version": "2.15.2",
+          "jackson.databind.version": "2.15.2",
+          "jacksonjr.version": "2.17.3",
+          "netty.version": "4.1.126.Final",
+          "netty-open-ssl-version": "2.0.73.Final",
+          "httpcomponents.httpclient.version": "4.5.13",
+          "reactive-streams.version": "1.0.4"
+        }
+      },
+      {
+        "sdk": "2.59.1",
+        "properties": {
+          "jackson.version": "2.21.8",
+          "jackson.databind.version": "2.21.8",
+          "jacksonjr.version": "2.21.8",
+          "jackson.annotations.version": "2.21",
+          "netty.version": "4.1.138.Final",
+          "netty-open-ssl-version": "2.0.84.Final",
+          "httpcomponents.httpclient.version": "4.5.13",
+          "reactive-streams.version": "1.0.4"
+        }
+      }
+    ],
+    "public_inputs": [
+      {
+        "url": "https://repo.maven.apache.org/maven2/org/apache/hadoop/hadoop-aws/maven-metadata.xml",
+        "sha256": "bbdb66b26e50cc4cf986fc70ebb57121198491090097de4c528263b223acbe87"
+      },
+      {
+        "url": "https://repo.maven.apache.org/maven2/org/apache/hadoop/hadoop-project/3.4.3/hadoop-project-3.4.3.pom",
+        "sha256": "cf2ff6c15b0465825f31a86532189f6ba058bad7b18e64525092ec8818a6db3e"
+      },
+      {
+        "url": "https://repo.maven.apache.org/maven2/org/apache/hadoop/hadoop-project/3.5.0/hadoop-project-3.5.0.pom",
+        "sha256": "592faadca05d91d7339323b02494d39955a8f08909ecbe893518debbf58453d7"
+      },
+      {
+        "url": "https://repo.maven.apache.org/maven2/software/amazon/awssdk/bundle/maven-metadata.xml",
+        "sha256": "8df9b363ed7c3aa4cec3bec4c877368be49eaeb9c724fbc5b7d016612b0155df"
+      },
+      {
+        "url": "https://repo.maven.apache.org/maven2/software/amazon/awssdk/aws-sdk-java-pom/2.35.4/aws-sdk-java-pom-2.35.4.pom",
+        "sha256": "2ddeb357ba57569fa927f7b6193accfc54db4245eaafcfaa7ce1da298201d79b"
+      },
+      {
+        "url": "https://repo.maven.apache.org/maven2/software/amazon/awssdk/aws-sdk-java-pom/2.59.1/aws-sdk-java-pom-2.59.1.pom",
+        "sha256": "38f964c59aae3b768943aecabf36616dee7fa57384e1fc5bdf0e457dd790eed1"
+      }
+    ],
+    "aws_api_calls_made": false
+  },
+  "public_source_archive_review": [
+    {
+      "url": "https://repo.maven.apache.org/maven2/software/amazon/awssdk/netty-nio-client/2.35.4/netty-nio-client-2.35.4-sources.jar",
+      "sha256": "5c57a4c47fdd5806c46ad117919aaa4bde64761c3573b66748e48b8ae90b7551",
+      "source_path": "software/amazon/awssdk/http/nio/netty/internal/SslContextProvider.java",
+      "source_sha256": "a7674575b5e45e0862b0d781011f2de5a227c84b61e2b433965850f818ebd8cb",
+      "uses_for_client": true,
+      "imports_shaded_apache_ssl_socket_factory": false
+    },
+    {
+      "url": "https://repo.maven.apache.org/maven2/org/apache/hadoop/hadoop-aws/3.4.3/hadoop-aws-3.4.3-sources.jar",
+      "sha256": "6b65235f03fa95ef1feee59ea6d0effddfa05128ec65692117ea054518ae0715",
+      "source_path": "org/apache/hadoop/fs/s3a/impl/ConfigureShadedAWSSocketFactory.java",
+      "source_sha256": "de638d53cf2b99676eddd391ab2376e74bc669fa3d6ac1a6a759e321a516607d",
+      "uses_for_client": false,
+      "imports_shaded_apache_ssl_socket_factory": true
+    }
+  ],
+  "netty_advisory": {
+    "id": "CVE-2026-75595",
+    "url": "https://github.com/netty/netty/security/advisories/GHSA-c4c3-7fpv-j4q5",
+    "upstream_repository_severity_observed": "High",
+    "scanner_severity_retained": "CRITICAL",
+    "patched_versions": [
+      "4.1.137.Final",
+      "4.2.17.Final"
+    ],
+    "exploit_conditions": [
+      "inbound TLS server uses SNI-specific mutual TLS as sole authentication gate",
+      "permissive default/fallback TLS context",
+      "no secondary peer-certificate verification"
+    ],
+    "candidate_disposition": "SERVER_CONDITIONS_NOT_CONFIGURED_IN_PROPOSED_OUTBOUND_PILOT_REQUIRES_REVIEW",
+    "candidate_is_inference": true,
+    "accepted": false,
+    "proposed_maximum_demo_seconds": 3600,
+    "proposed_maximum_validity_days": 7,
+    "approved_digest": null,
+    "approved_expiration": null,
+    "changes_requiring_fresh_review": [
+      "image or SDK hash",
+      "listener or TLS role",
+      "classpath",
+      "ingress configuration",
+      "additional workload"
+    ]
+  },
+  "cloud_launch_correction": {
+    "prior_override": "--driver-memory 3g pyspark-shell",
+    "prior_effect": "Compose replaced image classpaths; runtime guard would reject cloud startup before application S3 work.",
+    "compose_inherits_image_launch_settings": true,
+    "planned_driver_heap_bytes": 3221225472,
+    "jvm_actual_heap_assertion": "passed",
+    "actual_class_origin_count": 19,
+    "sdk_relocated_tls_client_context": "passed_network_disabled",
+    "sdk_tls_context_provider_tested": "JDK; client-mode construction only, no remote handshake"
+  },
+  "prototype": {
+    "prototype_manifest_digest": "sha256:0aad2f9b4b9dbebdf74275f9feb9bc74bad7c95fc917264dc02326d4068af90e",
+    "report_sha256": "a1fe41a838b467ef75858bf6c60c69a68f6c1a4e1b66fef44c585acd2bf57c9a",
+    "findings_by_class": {
+      "os-pkgs": {
+        "LOW": 65,
+        "HIGH": 47,
+        "MEDIUM": 92,
+        "UNKNOWN": 5
+      },
+      "lang-pkgs": {
+        "HIGH": 60,
+        "MEDIUM": 73,
+        "CRITICAL": 1,
+        "LOW": 4
+      }
+    },
+    "publication_authorized": false,
+    "aws_calls_made": false,
+    "source_status": "UNCOMMITTED_PROTOTYPE_NOT_PUBLISHABLE",
+    "source_file_sha256": {
+      "deploy/runtime/Dockerfile.spark": "be3d577bae5c1adf6d11d34dffd3beb5d04e63334a5270daac13721cfd0e9397",
+      "deploy/runtime/compose.yaml": "0be90cee5d4c2ec6dcd0b8dab6852ac1dce4594982c81b43a7ceed061d9fef79",
+      "deploy/runtime/smoke_spark.py": "129acf5b6d35528cee1b77a4ccacb118a65e9b486e269c1dff24bd82fc086803",
+      "runtime/jvm.py": "0ee5384c2311ec469453266b8f93939219a643d95673d73ce5ac89970780544b"
+    },
+    "actual_class_origins": {
+      "class_origins": {
+        "io.netty.buffer.ByteBuf": "/opt/pilot/jvm-overrides/netty-buffer-4.1.140.Final.jar",
+        "io.netty.channel.Channel": "/opt/pilot/jvm-overrides/netty-transport-4.1.140.Final.jar",
+        "io.netty.channel.epoll.Epoll": "/opt/pilot/jvm-overrides/netty-transport-classes-epoll-4.1.140.Final.jar",
+        "io.netty.handler.codec.ByteToMessageDecoder": "/opt/pilot/jvm-overrides/netty-codec-4.1.140.Final.jar",
+        "io.netty.handler.codec.http.HttpObject": "/opt/pilot/jvm-overrides/netty-codec-http-4.1.140.Final.jar",
+        "io.netty.handler.ssl.SslClientHelloHandler": "/opt/pilot/jvm-overrides/netty-handler-4.1.140.Final.jar",
+        "io.netty.internal.tcnative.Library": "/opt/pilot/jvm-overrides/netty-tcnative-classes-2.0.85.Final.jar",
+        "io.netty.util.Version": "/opt/pilot/jvm-overrides/netty-common-4.1.140.Final.jar",
+        "org.apache.hadoop.fs.s3a.S3AFileSystem": "/usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-aws-3.4.3.jar",
+        "org.apache.hadoop.shaded.org.apache.avro.Schema": "/usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.3.jar",
+        "org.apache.hadoop.util.VersionInfo": "/usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-api-3.4.3.jar",
+        "org.bouncycastle.jce.provider.BouncyCastleProvider": "/opt/pilot/jvm-overrides/bcprov-jdk18on-1.87.jar",
+        "org.glassfish.jersey.client.JerseyClient": "/opt/pilot/jvm-overrides/jersey-client-3.0.18.jar",
+        "org.wildfly.openssl.OpenSSLProvider": "/usr/local/lib/python3.12/site-packages/pyspark/jars/wildfly-openssl-2.2.5.Final.jar",
+        "software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient": "/usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.35.4.jar",
+        "software.amazon.awssdk.services.s3.S3Client": "/usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.35.4.jar",
+        "software.amazon.awssdk.thirdparty.io.netty.handler.ssl.SslClientHelloHandler": "/usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.35.4.jar",
+        "software.amazon.awssdk.thirdparty.org.apache.http.conn.ssl.SSLConnectionSocketFactory": "/usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.35.4.jar",
+        "software.amazon.s3.analyticsaccelerator.S3SeekableInputStreamFactory": "/usr/local/lib/python3.12/site-packages/pyspark/jars/analyticsaccelerator-s3-1.3.1.jar"
+      },
+      "components": {
+        "analytics_accelerator": "1.3.1",
+        "aws_sdk": "2.35.4",
+        "hadoop": "3.4.3",
+        "wildfly_openssl": "2.2.5.Final"
+      },
+      "families": {
+        "bouncycastle": "1.87",
+        "hadoop": "3.4.3",
+        "jersey": "3.0.18",
+        "netty": "4.1.140.Final",
+        "tcnative": "2.0.85.Final"
+      },
+      "s3a_input_stream": "classic",
+      "streaming_profile": {
+        "excluded_classes_resolvable": false,
+        "excluded_features": [
+          "spark_connect",
+          "hive_catalog",
+          "hive_thriftserver",
+          "embedded_derby",
+          "legacy_codehaus_json"
+        ],
+        "profile": "local_streaming_pilot",
+        "removed_jars": 61
+      }
+    },
+    "positive_smoke_sha256": "08a4e336f66d3cb257f3651fc7bddfccb5218f6ddf3a063e50e1a01ceeb3a26b",
+    "negative_shadow_smoke_sha256": "06bc77e08bf650a69b499473a608ffaed9cb1442f4855c961a1f14e263624906",
+    "recovery": {
+      "base_commit": "3dfef1328239124fb1a0c863790ad183b140bbe6",
+      "source_status": "UNCOMMITTED_PROTOTYPE",
+      "synthetic_recovery_passed": true,
+      "phases": [
+        "initial",
+        "kafka_restart",
+        "checkpoint_resume",
+        "repeat_without_duplicate_rows",
+        "offset_loss_fail_closed"
+      ],
+      "project": "blockchain-sdk-prototype-e2b6e40414",
+      "aws_calls_made": false,
+      "publication_authorized": false
+    },
+    "recovery_log_sha256": {
+      "initial": "dcf8f3a713bc248411074a919a8442912c602405c8e68a9009291e16ae630357",
+      "resume": "ad2304f84e411a82c1192ee3211c40df889f07389e8590b4726c10a214377a11",
+      "repeat": "220f36ff2e574d4455d658065e5b3fd2efa0faff18f25be5116a723ab9c60e59",
+      "loss": "11bff4b8eb741cb638ffa4ed4250527bc98fd52d91f494e73f1f083087fb481e",
+      "owned-test-cleanup": "609928121b08ba45c99effc1b47ceaa02aa2a3ded22db5ea0b494ea29ad107d5"
+    },
+    "network_for_smokes": "none",
+    "read_only_rootfs": true,
+    "capabilities": "all_dropped",
+    "no_new_privileges": true
+  },
+  "baseline_scan_sha256": "6fe8e11143f0e716f1d55a830ced5a14f70fdef5b882607cdbb2623ae7d62042",
+  "prototype_scan_sha256": "a1fe41a838b467ef75858bf6c60c69a68f6c1a4e1b66fef44c585acd2bf57c9a",
+  "scanner_database_snapshot": {
+    "name": "Trivy",
+    "version": "0.76.2",
+    "binary_sha256": "7a15c426f963473a485a4f315e21f8e2c881269d500bf0de35da13a4421fa108",
+    "vulnerability_database": {
+      "Version": 2,
+      "NextUpdate": "2026-11-17T01:11:02.624122856Z",
+      "UpdatedAt": "2026-11-16T01:11:02.624123452Z",
+      "DownloadedAt": "2026-11-16T06:29:57.145978Z"
+    },
+    "java_database": {
+      "Version": 1,
+      "NextUpdate": "2026-11-19T00:57:00.601023403Z",
+      "UpdatedAt": "2026-11-16T00:57:00.601024044Z",
+      "DownloadedAt": "2026-11-16T07:24:25.109375Z"
+    },
+    "package_types": [
+      "os",
+      "library"
+    ],
+    "offline_scan": true,
+    "ignore_unfixed": false,
+    "ignorefile": ""
+  },
+  "library_high_critical_unique_pairs": 41,
+  "introduced_or_removed_high_critical_pairs": [],
+  "critical_findings": [
+    {
+      "VulnerabilityID": "CVE-2026-75595",
+      "PkgName": "io.netty:netty-handler",
+      "PkgPath": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.35.4.jar",
+      "InstalledVersion": "4.1.126.Final",
+      "FixedVersion": "4.2.17.Final, 4.1.137.Final",
+      "Severity": "CRITICAL"
+    }
+  ],
+  "accepted_exceptions": [],
+  "findings_suppressed": false,
+  "release_gate": "BLOCKED",
+  "sdk_2_59_1_binary_installed_or_scanned": false,
+  "dependency_locks_changed": false,
+  "aws_api_calls_made": false,
+  "images_published": false,
+  "production_infrastructure_changed": false,
+  "terraform_changes": false,
+  "readme_changed": false,
+  "platform_python_lock_changed": false,
+  "offline_validation": {
+    "focused_tests_passed": 336,
+    "ruff": "passed",
+    "all_files_secret_scan": "passed",
+    "shell_syntax": "passed",
+    "diff_check": "passed"
+  }
+}

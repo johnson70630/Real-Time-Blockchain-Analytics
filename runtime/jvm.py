@@ -33,6 +33,21 @@ CONNECTOR_CLASSES = (
     ),
     ("org.apache.hadoop.fs.s3a.S3AFileSystem", "hadoop-aws", "hadoop"),
     ("software.amazon.awssdk.services.s3.S3Client", "bundle", "aws_sdk"),
+    (
+        "software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient",
+        "bundle",
+        "aws_sdk",
+    ),
+    (
+        "software.amazon.awssdk.thirdparty.io.netty.handler.ssl.SslClientHelloHandler",
+        "bundle",
+        "aws_sdk",
+    ),
+    (
+        "software.amazon.awssdk.thirdparty.org.apache.http.conn.ssl.SSLConnectionSocketFactory",
+        "bundle",
+        "aws_sdk",
+    ),
     ("org.wildfly.openssl.OpenSSLProvider", "wildfly-openssl", "wildfly_openssl"),
     (
         "software.amazon.s3.analyticsaccelerator.S3SeekableInputStreamFactory",

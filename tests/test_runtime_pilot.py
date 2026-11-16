@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import json
 import logging
+import re
+import shlex
 import subprocess
 import tomllib
 from pathlib import Path
@@ -80,6 +82,19 @@ def test_cloud_environment_and_no_inherited_credentials():
         validate_environment(dict(env, DATA_LAKE_PREFIX="production"))
 
 
+def test_cloud_spark_cannot_drop_image_classpath_by_overriding_launch_arguments():
+    compose = yaml.safe_load((ROOT / "deploy/runtime/compose.yaml").read_text())
+    assert "PYSPARK_SUBMIT_ARGS" not in compose["services"]["spark"]["environment"]
+    dockerfile = (ROOT / "deploy/runtime/Dockerfile.spark").read_text()
+    value = re.search(r'^ENV PYSPARK_SUBMIT_ARGS="([^"]+)"$', dockerfile, re.MULTILINE)
+    assert value is not None
+    args = shlex.split(value.group(1))
+    assert args[args.index("--driver-memory") + 1] == "3g"
+    assert args[args.index("--driver-class-path") + 1] == "/opt/pilot/jvm-overrides/*"
+    assert "spark.executor.extraClassPath=/opt/pilot/jvm-overrides/*" in args
+    assert args[-1] == "pyspark-shell"
+
+
 @pytest.mark.parametrize("role", ["producer", "spark", "kafka"])
 def test_rejected_published_manifests_cannot_be_reintroduced(release, role):
     evidence = json.loads((ROOT / "docs/evidence/aws_runtime_ecr_publication_2026-11-16.json").read_text())
@@ -127,6 +142,14 @@ def test_old_hadoop_spark_manifest_cannot_be_released(release):
 
 def test_full_optional_feature_distribution_cannot_be_released(release):
     evidence = json.loads((ROOT / "docs/evidence/aws_runtime_streaming_profile_2026-11-16.json").read_text())
+    release["spark_image"] = f"{REGISTRY}/blockchain-runtime-spark@{evidence['baseline_spark_manifest']}"
+    with pytest.raises(ValueError, match="REJECTED_IMAGE_RELEASE"):
+        validate_release(release)
+
+
+def test_unaccepted_sdk_review_does_not_authorize_baseline_release(release):
+    evidence = json.loads((ROOT / "docs/evidence/aws_runtime_sdk_review_2026-11-16.json").read_text())
+    assert evidence["accepted_exceptions"] == []
     release["spark_image"] = f"{REGISTRY}/blockchain-runtime-spark@{evidence['baseline_spark_manifest']}"
     with pytest.raises(ValueError, match="REJECTED_IMAGE_RELEASE"):
         validate_release(release)

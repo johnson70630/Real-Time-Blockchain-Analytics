@@ -7,9 +7,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 SPARK_LOCAL_IP=127.0.0.1 SPARK_
     JAVA_HOME=/opt/java/openjdk LANG=C.UTF-8 LC_ALL=C.UTF-8 LANGUAGE="" \
     JAVA_TOOL_OPTIONS="-Djava.awt.headless=true"
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
-# The AWS bundle also contains unshaded Netty classes. Put the reviewed families
-# first for both the Python-launched driver and any executor classloader.
-ENV PYSPARK_SUBMIT_ARGS="--driver-class-path /opt/pilot/jvm-overrides/* --conf spark.executor.extraClassPath=/opt/pilot/jvm-overrides/* pyspark-shell"
+# Canonical cloud launch settings: Compose inherits this complete configuration.
+# Standalone patched families and the SDK's relocated copies are checked separately.
+ENV PYSPARK_SUBMIT_ARGS="--driver-memory 3g --driver-class-path /opt/pilot/jvm-overrides/* --conf spark.executor.extraClassPath=/opt/pilot/jvm-overrides/* pyspark-shell"
 WORKDIR /app
 COPY --from=java17 /opt/java/openjdk /opt/java/openjdk
 RUN apt-get update \

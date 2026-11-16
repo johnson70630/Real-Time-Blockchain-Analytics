@@ -120,7 +120,6 @@ services:
     environment:
       <<: *environment
       SPARK_LOCAL_IP: 127.0.0.1
-      PYSPARK_SUBMIT_ARGS: --driver-memory 3g pyspark-shell
     volumes:
       - type: bind
         source: /run/blockchain-runtime/pilot

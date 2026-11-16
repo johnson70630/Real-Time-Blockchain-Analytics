@@ -32,6 +32,8 @@ REJECTED_IMAGE_DIGESTS = frozenset({
     "sha256:95ea3fce6ff6acad3b6a4765e7a7563eba3ba35183491fe3633d661fb4081872",
     # 1b3fb7d Spark retained Connect, Derby and legacy Jackson vulnerabilities.
     "sha256:652b347f1455dbd397336fc2334a3e5d90c95ea10229dc49a4459a68675cd5de",
+    # 3dfef13 Spark retained the unresolved relocated SDK Netty finding.
+    "sha256:4da1dc74633cfab7d585cd986c91b73250a469217e3534fa327470a4ae31bb6f",
 })
 
 
