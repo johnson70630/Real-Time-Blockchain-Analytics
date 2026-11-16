@@ -8,6 +8,7 @@ from runtime.features import verify_profile
 
 OVERRIDES = Path("/opt/pilot/jvm-overrides")
 JARS = Path("/usr/local/lib/python3.12/site-packages/pyspark/jars")
+NORMAL_CLASSIFIERS = {"jline": "-jdk8"}
 CLASSES = (
     ("io.netty.util.Version", "netty-common", "netty"),
     ("io.netty.buffer.ByteBuf", "netty-buffer", "netty"),
@@ -56,6 +57,20 @@ CONNECTOR_CLASSES = (
     ),
 )
 NORMAL_CLASSES = (
+    ("com.google.common.collect.ImmutableMap", "guava", "guava"),
+    (
+        "com.google.common.util.concurrent.internal.InternalFutureFailureAccess",
+        "failureaccess",
+        "failureaccess",
+    ),
+    ("org.jline.terminal.Terminal", "jline", "jline"),
+    ("org.jline.reader.impl.DefaultParser", "jline", "jline"),
+    ("org.jline.builtins.Options", "jline", "jline"),
+    ("org.jline.builtins.telnet.Telnet", "jline", "jline"),
+    ("org.apache.zookeeper.ZooKeeper", "zookeeper", "zookeeper"),
+    ("org.apache.zookeeper.client.ZKClientConfig", "zookeeper", "zookeeper"),
+    ("org.apache.jute.BinaryInputArchive", "zookeeper-jute", "zookeeper"),
+    ("org.apache.zookeeper.data.Id", "zookeeper-jute", "zookeeper"),
     ("com.fasterxml.jackson.annotation.JsonCreator", "jackson-annotations", "jackson"),
     ("com.fasterxml.jackson.core.JsonFactory", "jackson-core", "jackson"),
     ("com.fasterxml.jackson.databind.ObjectMapper", "jackson-databind", "jackson"),
@@ -95,7 +110,11 @@ def verify_classloader(jvm):
             for name, artifact, family in CLASSES
         ]
         + [
-            (name, JARS / f"{artifact}-{lock['families'][family]}.jar")
+            (
+                name,
+                JARS
+                / f"{artifact}-{lock['families'][family]}{NORMAL_CLASSIFIERS.get(artifact, '')}.jar",
+            )
             for name, artifact, family in NORMAL_CLASSES
         ]
         + [

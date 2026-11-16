@@ -45,6 +45,10 @@ def prepared(tmp_path):
             "jackson": "2.18.12",
             "aircompressor": "2.0.3",
             "snappy": "1.1.10.12",
+            "guava": "33.7.2-jre",
+            "failureaccess": "1.0.3",
+            "jline": "3.30.16",
+            "zookeeper": "3.9.7",
         },
         "components": {
             "hadoop": "3.4.3",
@@ -257,6 +261,11 @@ def test_matched_hadoop_client_is_not_duplicated_into_override_directory(
         ],
         ("aircompressor", "io/airlift", "aircompressor"),
         ("snappy-java", "org/xerial/snappy", "snappy"),
+        ("guava", "com/google/guava", "guava"),
+        ("failureaccess", "com/google/guava", "failureaccess"),
+        ("jline", "org/jline", "jline"),
+        ("zookeeper", "org/apache/zookeeper", "zookeeper"),
+        ("zookeeper-jute", "org/apache/zookeeper", "zookeeper"),
     ],
 )
 def test_normal_directory_patches_preserve_legacy_json_and_avoid_duplicate_copies(
@@ -265,7 +274,7 @@ def test_normal_directory_patches_preserve_legacy_json_and_avoid_duplicate_copie
     target, cache, lock = prepared
     version = lock["families"][family]
     name = f"{artifact}-{version}.jar"
-    old = f"{artifact}-1.0.jar"
+    old = f"{artifact}-1.0{'-jre' if family == 'guava' else ''}.jar"
     (target / old).write_bytes(b"old component")
     (cache / name).write_bytes(b"patched component")
     lock["replacements"].append(
@@ -282,12 +291,15 @@ def test_normal_directory_patches_preserve_legacy_json_and_avoid_duplicate_copie
     )
     legacy = target / "jackson-core-asl-1.9.13.jar"
     legacy.write_bytes(b"separate feature removal")
+    jline2 = target / "jline-2.14.6.jar"
+    jline2.write_bytes(b"separate JLine API")
     patch_jars.apply(lock, cache=cache, target=target)
     output = tmp_path / "overrides"
     patch_jars.stage_overrides(lock, target=target, output=output)
     assert (target / name).read_bytes() == b"patched component"
     assert not (output / name).exists()
     assert legacy.read_bytes() == b"separate feature removal"
+    assert jline2.read_bytes() == b"separate JLine API"
 
 
 def test_legacy_codehaus_json_cannot_be_replaced_as_modern_jackson(prepared):
@@ -296,3 +308,38 @@ def test_legacy_codehaus_json_cannot_be_replaced_as_modern_jackson(prepared):
     with pytest.raises(ValueError, match="Legacy JSON"):
         patch_jars.apply(lock, cache=cache, target=target)
     assert (target / "netty-common-1.jar").exists()
+
+
+@pytest.mark.parametrize("version", ["33.7.2-android", "33.7.2"])
+def test_guava_requires_the_reviewed_jre_variant(version):
+    lock = json.loads((ROOT / "deploy/runtime/spark-jvm-patches.lock.json").read_text())
+    lock["families"]["guava"] = version
+    with pytest.raises(ValueError, match="Guava JRE"):
+        patch_jars.validate(lock)
+
+
+def test_jline2_cannot_be_replaced_as_jline3(prepared):
+    target, cache, lock = prepared
+    lock["replacements"][-1]["old"]["name"] = "jline-2.14.6.jar"
+    with pytest.raises(ValueError, match="separate API"):
+        patch_jars.apply(lock, cache=cache, target=target)
+    assert (target / "netty-common-1.jar").exists()
+
+
+@pytest.mark.parametrize(
+    "artifact", ["guava", "failureaccess", "jline", "zookeeper", "zookeeper-jute"]
+)
+@pytest.mark.parametrize("change", ["old_version", "duplicate"])
+def test_download_inventory_cannot_reintroduce_old_or_duplicate_client_jars(
+    artifact, change
+):
+    lock = json.loads((ROOT / "deploy/runtime/spark-jvm-patches.lock.json").read_text())
+    downloads = json.loads((ROOT / "deploy/runtime/jars.lock.json").read_text())
+    row = copy.deepcopy(
+        next(r for r in downloads if r["path"].split("/")[-3] == artifact)
+    )
+    if change == "old_version":
+        row["path"] = row["path"].replace(row["path"].split("/")[-2], "0.0.1")
+    downloads.append(row)
+    with pytest.raises(ValueError, match="JVM download inventory"):
+        patch_jars.validate_downloads(lock, downloads)

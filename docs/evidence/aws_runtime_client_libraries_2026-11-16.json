@@ -1,0 +1,1148 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-11-16T22:45:14.845653+00:00",
+  "milestone": "11.6C",
+  "scope": "OFFLINE_GUAVA_JLINE_ZOOKEEPER_MAINTENANCE",
+  "baseline_source_commit": "9285013eaf3c605bcccab4df7fab13d004eb0d22",
+  "baseline_spark_manifest": "sha256:004307f9a5a3986cd6c2e70fb3147fbce23e2953dff1eadf95ccb87cf6a547ba",
+  "baseline_ci": {
+    "run_id": 43968456998,
+    "all_six_jobs": "success"
+  },
+  "families": {
+    "netty": "4.1.140.Final",
+    "tcnative": "2.0.85.Final",
+    "bouncycastle": "1.87",
+    "jersey": "3.0.18",
+    "hadoop": "3.4.3",
+    "jackson": "2.18.12",
+    "aircompressor": "2.0.3",
+    "snappy": "1.1.10.12",
+    "guava": "33.7.2-jre",
+    "failureaccess": "1.0.3",
+    "jline": "3.30.16",
+    "zookeeper": "3.9.7"
+  },
+  "matched_hadoop_s3_components_unchanged": {
+    "hadoop": "3.4.3",
+    "aws_sdk": "2.35.4",
+    "wildfly_openssl": "2.2.5.Final",
+    "analytics_accelerator": "1.3.1"
+  },
+  "replacement_count": 49,
+  "override_replacement_count": 34,
+  "normal_directory_replacement_count": 15,
+  "download_artifact_count": 58,
+  "verified_cache_bytes": 783667723,
+  "verified_cache_limit_bytes": 1073741824,
+  "additional_input_bytes": 6170791,
+  "published_checksum_provenance": [
+    {
+      "path": "com/google/guava/guava/33.7.2-jre/guava-33.7.2-jre.jar",
+      "bytes": 3057659,
+      "published_checksum_algorithm": "sha512",
+      "published_checksum": "bd663dc02f2293a552d82829518435b8cfcd77b7c73eeb638aef93918ef7613ad2a869003b09d1afb4446fa74308041daa7a6aea85c1bedb17db1f5f0c2c5c0b",
+      "sha512": "bd663dc02f2293a552d82829518435b8cfcd77b7c73eeb638aef93918ef7613ad2a869003b09d1afb4446fa74308041daa7a6aea85c1bedb17db1f5f0c2c5c0b"
+    },
+    {
+      "path": "com/google/guava/failureaccess/1.0.3/failureaccess-1.0.3.jar",
+      "bytes": 10763,
+      "published_checksum_algorithm": "sha1",
+      "published_checksum": "aeaffd00d57023a2c947393ed251f0354f0985fc",
+      "sha512": "72be228e7805da5623e42bf024ded7d9147023c66b22f4dbd04ac6898201af46ee82e1f92ea51eb0595f1b49151c4b8ecb862653d4906c17609c42544ee97abf"
+    },
+    {
+      "path": "org/jline/jline/3.30.16/jline-3.30.16-jdk8.jar",
+      "bytes": 1468912,
+      "published_checksum_algorithm": "sha512",
+      "published_checksum": "4f3c0521ac1a7ae91011de3a5d19c5b0daeb8b8abc46df28553f660e5e0566290f8754f6b865bd782be98646ce9283cd370ad00721cab035e763ad4ef8434105",
+      "sha512": "4f3c0521ac1a7ae91011de3a5d19c5b0daeb8b8abc46df28553f660e5e0566290f8754f6b865bd782be98646ce9283cd370ad00721cab035e763ad4ef8434105"
+    },
+    {
+      "path": "org/apache/zookeeper/zookeeper/3.9.7/zookeeper-3.9.7.jar",
+      "bytes": 1373194,
+      "published_checksum_algorithm": "sha1",
+      "published_checksum": "b4996e55d14e203e99240fa98167ae498b273b82",
+      "sha512": "97f75e00dbff75c258baaf89c1886b9ffab8fd72197ff3393db749b2eea9ee7651ea1493b802dfbc33e150c60a5086dd2202e09389b5b48fccbc888b48b78f69"
+    },
+    {
+      "path": "org/apache/zookeeper/zookeeper-jute/3.9.7/zookeeper-jute-3.9.7.jar",
+      "bytes": 260263,
+      "published_checksum_algorithm": "sha1",
+      "published_checksum": "8b76562d77af431718737de40b10cf7b2e099cd2",
+      "sha512": "7b0fdbf0812b926cdffe401a8988f9be3185eb29500b617388f8c874350fb2db9aa82b3916f4d2aa1b0a4f54b7a87d08120f1c12c8e750f27eda8aa9d78e8e36"
+    }
+  ],
+  "metadata_review": [
+    {
+      "path": "com/google/guava/guava/33.7.2-jre/guava-33.7.2-jre.pom",
+      "sha256": "5d1501a97230f90df54ea33164831a61c6714a8b2a4c6a04e90bb729581bbabc",
+      "properties": {},
+      "dependencies": [
+        {
+          "groupId": "com.google.guava",
+          "artifactId": "failureaccess",
+          "version": "${failureaccess.version}"
+        },
+        {
+          "groupId": "com.google.guava",
+          "artifactId": "listenablefuture",
+          "version": "${listenablefuture.version}"
+        },
+        {
+          "groupId": "org.jspecify",
+          "artifactId": "jspecify"
+        },
+        {
+          "groupId": "com.google.errorprone",
+          "artifactId": "error_prone_annotations"
+        },
+        {
+          "groupId": "com.google.j2objc",
+          "artifactId": "j2objc-annotations"
+        }
+      ]
+    },
+    {
+      "path": "com/google/guava/guava-parent/33.7.2-jre/guava-parent-33.7.2-jre.pom",
+      "sha256": "a81570d53c8710355e0216a4405afa93834b17c4cdd0ed9aa8beede3a132bbbe",
+      "properties": {
+        "surefire.toolchain.version": "${java.specification.version}",
+        "animal-sniffer-maven-plugin.version": "1.27",
+        "asm.version": "9.10.1",
+        "build-helper-maven-plugin.version": "3.6.1",
+        "caliper.version": "1.0-beta-3",
+        "central-publishing-maven-plugin.version": "0.11.0",
+        "error_prone_annotations.version": "2.50.0",
+        "error_prone_core.version": "2.50.0",
+        "exec-maven-plugin.version": "3.5.0",
+        "failureaccess.version": "1.0.3",
+        "gummy-bears-api-24-version": "0.15.0",
+        "gwt-maven-plugin.version": "1.1.0",
+        "gwt.version": "2.13.0",
+        "j2objc.version": "3.1",
+        "java18-signature.version": "1.0",
+        "javahome-resolver-maven-plugin.version": "1.0.2",
+        "jimfs.version": "1.3.1",
+        "jspecify.version": "1.0.1",
+        "jsr305.version": "3.0.2",
+        "junit.version": "4.13.2",
+        "listenablefuture.version": "9999.0-empty-to-avoid-conflict-with-guava",
+        "maven-antrun-plugin.version": "3.2.0",
+        "maven-assembly-plugin.version": "3.8.0",
+        "maven-bundle-plugin.version": "5.1.9",
+        "maven-clean-plugin.version": "3.5.0",
+        "maven-compiler-plugin.version": "3.15.0",
+        "maven-dependency-plugin.version": "3.11.0",
+        "maven-deploy-plugin.version": "3.1.4",
+        "maven-enforcer-plugin.version": "3.6.3",
+        "maven-gpg-plugin.version": "3.0.1",
+        "maven-install-plugin.version": "3.1.4",
+        "maven-jar-plugin.version": "3.5.0",
+        "maven-javadoc-plugin.version": "3.12.0",
+        "maven-release-plugin.version": "3.3.1",
+        "maven-resources-plugin.version": "3.5.0",
+        "maven-site-plugin.version": "3.22.0",
+        "maven-source-plugin.version": "3.4.0",
+        "maven-surefire-plugin.version": "3.5.6",
+        "maven-toolchains-plugin.version": "3.2.0",
+        "mockito.version": "4.11.0",
+        "test-parameter-injector.version": "1.22",
+        "toolchains-maven-plugin.version": "4.5.0",
+        "truth.version": "1.4.5",
+        "otherVariant.version": "33.7.2-android"
+      },
+      "dependencies": []
+    },
+    {
+      "path": "org/jline/jline/3.30.16/jline-3.30.16.pom",
+      "sha256": "c68e5ef577568ebd1c4c76765d437920c8594d49651afe05047e0c41d208149b",
+      "properties": {},
+      "dependencies": [
+        {
+          "groupId": "org.fusesource.jansi",
+          "artifactId": "jansi",
+          "version": "2.4.3",
+          "scope": "compile",
+          "optional": "true"
+        },
+        {
+          "groupId": "net.java.dev.jna",
+          "artifactId": "jna",
+          "version": "5.19.1",
+          "scope": "compile",
+          "optional": "true"
+        },
+        {
+          "groupId": "com.googlecode.juniversalchardet",
+          "artifactId": "juniversalchardet",
+          "version": "1.0.3",
+          "scope": "compile",
+          "optional": "true"
+        },
+        {
+          "groupId": "org.apache.sshd",
+          "artifactId": "sshd-core",
+          "version": "2.19.0",
+          "scope": "compile",
+          "optional": "true"
+        },
+        {
+          "groupId": "org.apache.sshd",
+          "artifactId": "sshd-scp",
+          "version": "2.19.0",
+          "scope": "compile",
+          "optional": "true"
+        },
+        {
+          "groupId": "org.apache.sshd",
+          "artifactId": "sshd-sftp",
+          "version": "2.19.0",
+          "scope": "compile",
+          "optional": "true"
+        },
+        {
+          "groupId": "com.google.code.findbugs",
+          "artifactId": "jsr305",
+          "version": "3.0.2",
+          "scope": "compile",
+          "optional": "true"
+        },
+        {
+          "groupId": "org.jline",
+          "artifactId": "jline-terminal",
+          "version": "3.30.16",
+          "scope": "test"
+        },
+        {
+          "groupId": "org.jline",
+          "artifactId": "jline-terminal-jni",
+          "version": "3.30.16",
+          "scope": "test"
+        },
+        {
+          "groupId": "org.jline",
+          "artifactId": "jline-terminal-jansi",
+          "version": "3.30.16",
+          "scope": "test"
+        },
+        {
+          "groupId": "org.jline",
+          "artifactId": "jline-terminal-jna",
+          "version": "3.30.16",
+          "scope": "test"
+        },
+        {
+          "groupId": "org.jline",
+          "artifactId": "jline-terminal-ffm",
+          "version": "3.30.16",
+          "scope": "test"
+        },
+        {
+          "groupId": "org.jline",
+          "artifactId": "jline-reader",
+          "version": "3.30.16",
+          "scope": "test"
+        },
+        {
+          "groupId": "org.jline",
+          "artifactId": "jline-builtins",
+          "version": "3.30.16",
+          "scope": "test"
+        },
+        {
+          "groupId": "org.jline",
+          "artifactId": "jline-console",
+          "version": "3.30.16",
+          "scope": "test"
+        },
+        {
+          "groupId": "org.jline",
+          "artifactId": "jline-remote-ssh",
+          "version": "3.30.16",
+          "scope": "test"
+        },
+        {
+          "groupId": "org.jline",
+          "artifactId": "jline-remote-telnet",
+          "version": "3.30.16",
+          "scope": "test"
+        },
+        {
+          "groupId": "org.jline",
+          "artifactId": "jline-style",
+          "version": "3.30.16",
+          "scope": "test"
+        }
+      ]
+    },
+    {
+      "path": "org/apache/zookeeper/zookeeper/3.9.7/zookeeper-3.9.7.pom",
+      "sha256": "ba773e30b76271e63d8de4a102028e5af02d31a2fd5a15a8f0db2d59abcb80ff",
+      "properties": {},
+      "dependencies": [
+        {
+          "groupId": "com.github.spotbugs",
+          "artifactId": "spotbugs-annotations",
+          "scope": "provided",
+          "optional": "true"
+        },
+        {
+          "groupId": "org.hamcrest",
+          "artifactId": "hamcrest-library",
+          "scope": "test"
+        },
+        {
+          "groupId": "org.apache.commons",
+          "artifactId": "commons-collections4",
+          "scope": "test"
+        },
+        {
+          "groupId": "org.apache.zookeeper",
+          "artifactId": "zookeeper-jute",
+          "version": "${project.version}"
+        },
+        {
+          "groupId": "commons-cli",
+          "artifactId": "commons-cli",
+          "scope": "provided"
+        },
+        {
+          "groupId": "org.apache.yetus",
+          "artifactId": "audience-annotations"
+        },
+        {
+          "groupId": "io.netty",
+          "artifactId": "netty-handler"
+        },
+        {
+          "groupId": "io.netty",
+          "artifactId": "netty-transport-native-epoll"
+        },
+        {
+          "groupId": "io.netty",
+          "artifactId": "netty-tcnative-boringssl-static"
+        },
+        {
+          "groupId": "org.slf4j",
+          "artifactId": "slf4j-api"
+        },
+        {
+          "groupId": "ch.qos.logback",
+          "artifactId": "logback-classic",
+          "scope": "runtime",
+          "optional": "true"
+        },
+        {
+          "groupId": "org.eclipse.jetty",
+          "artifactId": "jetty-server",
+          "scope": "provided"
+        },
+        {
+          "groupId": "org.eclipse.jetty",
+          "artifactId": "jetty-servlet",
+          "scope": "provided"
+        },
+        {
+          "groupId": "org.eclipse.jetty",
+          "artifactId": "jetty-client",
+          "scope": "provided"
+        },
+        {
+          "groupId": "com.fasterxml.jackson.core",
+          "artifactId": "jackson-databind",
+          "scope": "provided"
+        },
+        {
+          "groupId": "org.bouncycastle",
+          "artifactId": "bcprov-jdk18on",
+          "scope": "test"
+        },
+        {
+          "groupId": "org.bouncycastle",
+          "artifactId": "bcpkix-jdk18on",
+          "scope": "test"
+        },
+        {
+          "groupId": "org.jline",
+          "artifactId": "jline",
+          "scope": "provided"
+        },
+        {
+          "groupId": "io.dropwizard.metrics",
+          "artifactId": "metrics-core",
+          "scope": "provided"
+        },
+        {
+          "groupId": "org.apache.kerby",
+          "artifactId": "kerb-core",
+          "scope": "test"
+        },
+        {
+          "groupId": "org.apache.kerby",
+          "artifactId": "kerb-simplekdc",
+          "scope": "test"
+        },
+        {
+          "groupId": "org.apache.kerby",
+          "artifactId": "kerby-config",
+          "scope": "test"
+        },
+        {
+          "groupId": "org.mockito",
+          "artifactId": "mockito-core",
+          "scope": "test"
+        },
+        {
+          "groupId": "org.jmockit",
+          "artifactId": "jmockit",
+          "scope": "test"
+        },
+        {
+          "groupId": "org.junit.jupiter",
+          "artifactId": "junit-jupiter-api",
+          "scope": "test"
+        },
+        {
+          "groupId": "org.junit.jupiter",
+          "artifactId": "junit-jupiter-engine",
+          "scope": "test"
+        },
+        {
+          "groupId": "org.junit.jupiter",
+          "artifactId": "junit-jupiter-params",
+          "scope": "test"
+        },
+        {
+          "groupId": "org.junit.platform",
+          "artifactId": "junit-platform-runner",
+          "scope": "test"
+        },
+        {
+          "groupId": "org.burningwave",
+          "artifactId": "tools",
+          "scope": "test"
+        },
+        {
+          "groupId": "org.xerial.snappy",
+          "artifactId": "snappy-java",
+          "scope": "provided"
+        },
+        {
+          "groupId": "commons-io",
+          "artifactId": "commons-io",
+          "scope": "compile"
+        }
+      ]
+    },
+    {
+      "path": "org/apache/zookeeper/parent/3.9.7/parent-3.9.7.pom",
+      "sha256": "6f9a1806505578da55bea6d5ad6bccf2d452ae2aee775756bb1252bbdf5ef864",
+      "properties": {
+        "surefire.version": "2.22.1",
+        "slf4j.version": "2.0.13",
+        "logback-version": "1.3.15",
+        "audience-annotations.version": "0.12.0",
+        "jmockit.version": "1.48",
+        "junit.version": "5.6.2",
+        "junit-platform.version": "1.6.2",
+        "mockito.version": "4.9.0",
+        "hamcrest.version": "2.2",
+        "commons-cli.version": "1.5.0",
+        "netty.version": "4.1.138.Final",
+        "jetty.version": "9.4.58.v20250814",
+        "jackson.version": "2.22.3",
+        "jline.version": "3.30.14",
+        "snappy.version": "1.1.10.5",
+        "kerby.version": "2.0.0",
+        "bouncycastle.version": "1.75",
+        "commons-collections.version": "4.4",
+        "dropwizard.version": "4.1.12.1",
+        "spotbugsannotations.version": "4.0.2",
+        "checkstyle.version": "8.39",
+        "enforcer.version": "3.0.0-M3",
+        "commons-io.version": "2.17.0",
+        "burningwave.mockdns.version": "0.25.4",
+        "clover-maven-plugin.version": "4.4.1",
+        "sonar-maven-plugin.version": "3.7.0.1746"
+      },
+      "dependencies": []
+    }
+  ],
+  "retained_client_dependencies": [
+    "netty-4.1.140.Final",
+    "tcnative-2.0.85.Final",
+    "slf4j-api-2.0.16",
+    "commons-io-2.18.0",
+    "audience-annotations-0.12.0"
+  ],
+  "guava_required_runtime_companion": "failureaccess-1.0.3",
+  "guava_annotation_libraries_unchanged": true,
+  "optional_annotation_reflection_jpms_terminal_ssh_and_server_features_not_certified": true,
+  "jline2_separate_api_preserved": true,
+  "jline3_classifier_preserved": "jdk8",
+  "guava_variant_preserved": "jre",
+  "initial_guard_rejection": {
+    "manifest_digest": "sha256:20509155b1da6b8a2471e5d79749c7e1a854c49f714518d5b5736422294c4fa1",
+    "reason": "Guard expected unclassified JLine path; fixed to match the reviewed jdk8 filename. Cross-manifest filename test added.",
+    "smoke_sha256": "5285909da07ae9096102f409ebfa4ea6e2c91a3c159915ee4ece0289705e0a05",
+    "source_status": "UNCOMMITTED_PROTOTYPE_NOT_PUBLISHABLE",
+    "application_s3_work_started": false
+  },
+  "prototype": {
+    "prototype_manifest_digest": "sha256:25fe4ec2e1de16bd0c6462b7fccc6acea441e5b0e19f06c88a0687fd67f93c26",
+    "report_sha256": "e51ffa1187e1498434ee3b0e1e468b33e0e3c82dc44f3e6285c4b062a0fd9fdf",
+    "findings_by_class": {
+      "os-pkgs": {
+        "LOW": 65,
+        "HIGH": 47,
+        "MEDIUM": 92,
+        "UNKNOWN": 5
+      },
+      "lang-pkgs": {
+        "HIGH": 43,
+        "MEDIUM": 60,
+        "CRITICAL": 1,
+        "LOW": 4
+      }
+    },
+    "publication_authorized": false,
+    "aws_calls_made": false,
+    "source_status": "UNCOMMITTED_PROTOTYPE_NOT_PUBLISHABLE",
+    "image_input_source_sha256": {
+      "deploy/runtime/patch_jars.py": "c701edb49ad220f398adc3343bce7ce90287b9615ac3da4b31202b960f1e50a4",
+      "deploy/runtime/jars.lock.json": "ed1d907bb8d2cb6d4fc7aa379a38e116e52c84b6bb5618a1e6819e394d241a7a",
+      "deploy/runtime/spark-jvm-patches.lock.json": "6052102e9dd9bbad62848dbb59fc4e3bff22ffd9dabdf0ccd9ac430cfa76a1e7",
+      "deploy/runtime/smoke_spark.py": "de650e16b9570281410c07cae43e3ffb6f65e48046b79d5536ea74b8b7511664",
+      "runtime/jvm.py": "427a7c18a58cc76b0c8f6c4156ae2314be0c54d020f4c05d382a3906bb45ca9d"
+    },
+    "actual_class_origins": {
+      "class_origins": {
+        "com.fasterxml.jackson.annotation.JsonCreator": "/usr/local/lib/python3.12/site-packages/pyspark/jars/jackson-annotations-2.18.12.jar",
+        "com.fasterxml.jackson.core.JsonFactory": "/usr/local/lib/python3.12/site-packages/pyspark/jars/jackson-core-2.18.12.jar",
+        "com.fasterxml.jackson.databind.ObjectMapper": "/usr/local/lib/python3.12/site-packages/pyspark/jars/jackson-databind-2.18.12.jar",
+        "com.fasterxml.jackson.dataformat.yaml.YAMLFactory": "/usr/local/lib/python3.12/site-packages/pyspark/jars/jackson-dataformat-yaml-2.18.12.jar",
+        "com.fasterxml.jackson.datatype.jsr310.JavaTimeModule": "/usr/local/lib/python3.12/site-packages/pyspark/jars/jackson-datatype-jsr310-2.18.12.jar",
+        "com.fasterxml.jackson.module.scala.DefaultScalaModule": "/usr/local/lib/python3.12/site-packages/pyspark/jars/jackson-module-scala_2.13-2.18.12.jar",
+        "com.google.common.collect.ImmutableMap": "/usr/local/lib/python3.12/site-packages/pyspark/jars/guava-33.7.2-jre.jar",
+        "com.google.common.util.concurrent.internal.InternalFutureFailureAccess": "/usr/local/lib/python3.12/site-packages/pyspark/jars/failureaccess-1.0.3.jar",
+        "io.airlift.compress.snappy.SnappyDecompressor": "/usr/local/lib/python3.12/site-packages/pyspark/jars/aircompressor-2.0.3.jar",
+        "io.netty.buffer.ByteBuf": "/opt/pilot/jvm-overrides/netty-buffer-4.1.140.Final.jar",
+        "io.netty.channel.Channel": "/opt/pilot/jvm-overrides/netty-transport-4.1.140.Final.jar",
+        "io.netty.channel.epoll.Epoll": "/opt/pilot/jvm-overrides/netty-transport-classes-epoll-4.1.140.Final.jar",
+        "io.netty.handler.codec.ByteToMessageDecoder": "/opt/pilot/jvm-overrides/netty-codec-4.1.140.Final.jar",
+        "io.netty.handler.codec.http.HttpObject": "/opt/pilot/jvm-overrides/netty-codec-http-4.1.140.Final.jar",
+        "io.netty.handler.ssl.SslClientHelloHandler": "/opt/pilot/jvm-overrides/netty-handler-4.1.140.Final.jar",
+        "io.netty.internal.tcnative.Library": "/opt/pilot/jvm-overrides/netty-tcnative-classes-2.0.85.Final.jar",
+        "io.netty.util.Version": "/opt/pilot/jvm-overrides/netty-common-4.1.140.Final.jar",
+        "org.apache.hadoop.fs.s3a.S3AFileSystem": "/usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-aws-3.4.3.jar",
+        "org.apache.hadoop.shaded.org.apache.avro.Schema": "/usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.3.jar",
+        "org.apache.hadoop.util.VersionInfo": "/usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-api-3.4.3.jar",
+        "org.apache.jute.BinaryInputArchive": "/usr/local/lib/python3.12/site-packages/pyspark/jars/zookeeper-jute-3.9.7.jar",
+        "org.apache.zookeeper.ZooKeeper": "/usr/local/lib/python3.12/site-packages/pyspark/jars/zookeeper-3.9.7.jar",
+        "org.apache.zookeeper.client.ZKClientConfig": "/usr/local/lib/python3.12/site-packages/pyspark/jars/zookeeper-3.9.7.jar",
+        "org.apache.zookeeper.data.Id": "/usr/local/lib/python3.12/site-packages/pyspark/jars/zookeeper-jute-3.9.7.jar",
+        "org.bouncycastle.jce.provider.BouncyCastleProvider": "/opt/pilot/jvm-overrides/bcprov-jdk18on-1.87.jar",
+        "org.glassfish.jersey.client.JerseyClient": "/opt/pilot/jvm-overrides/jersey-client-3.0.18.jar",
+        "org.jline.builtins.Options": "/usr/local/lib/python3.12/site-packages/pyspark/jars/jline-3.30.16-jdk8.jar",
+        "org.jline.builtins.telnet.Telnet": "/usr/local/lib/python3.12/site-packages/pyspark/jars/jline-3.30.16-jdk8.jar",
+        "org.jline.reader.impl.DefaultParser": "/usr/local/lib/python3.12/site-packages/pyspark/jars/jline-3.30.16-jdk8.jar",
+        "org.jline.terminal.Terminal": "/usr/local/lib/python3.12/site-packages/pyspark/jars/jline-3.30.16-jdk8.jar",
+        "org.wildfly.openssl.OpenSSLProvider": "/usr/local/lib/python3.12/site-packages/pyspark/jars/wildfly-openssl-2.2.5.Final.jar",
+        "org.xerial.snappy.Snappy": "/usr/local/lib/python3.12/site-packages/pyspark/jars/snappy-java-1.1.10.12.jar",
+        "software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient": "/usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.35.4.jar",
+        "software.amazon.awssdk.services.s3.S3Client": "/usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.35.4.jar",
+        "software.amazon.awssdk.thirdparty.io.netty.handler.ssl.SslClientHelloHandler": "/usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.35.4.jar",
+        "software.amazon.awssdk.thirdparty.org.apache.http.conn.ssl.SSLConnectionSocketFactory": "/usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.35.4.jar",
+        "software.amazon.s3.analyticsaccelerator.S3SeekableInputStreamFactory": "/usr/local/lib/python3.12/site-packages/pyspark/jars/analyticsaccelerator-s3-1.3.1.jar"
+      },
+      "components": {
+        "analytics_accelerator": "1.3.1",
+        "aws_sdk": "2.35.4",
+        "hadoop": "3.4.3",
+        "wildfly_openssl": "2.2.5.Final"
+      },
+      "families": {
+        "aircompressor": "2.0.3",
+        "bouncycastle": "1.87",
+        "failureaccess": "1.0.3",
+        "guava": "33.7.2-jre",
+        "hadoop": "3.4.3",
+        "jackson": "2.18.12",
+        "jersey": "3.0.18",
+        "jline": "3.30.16",
+        "netty": "4.1.140.Final",
+        "snappy": "1.1.10.12",
+        "tcnative": "2.0.85.Final",
+        "zookeeper": "3.9.7"
+      },
+      "s3a_input_stream": "classic",
+      "streaming_profile": {
+        "excluded_classes_resolvable": false,
+        "excluded_features": [
+          "spark_connect",
+          "hive_catalog",
+          "hive_thriftserver",
+          "embedded_derby",
+          "legacy_codehaus_json"
+        ],
+        "profile": "local_streaming_pilot",
+        "removed_jars": 61
+      }
+    },
+    "positive_smoke_sha256": "7b6ba1a664e481491d91456ff497817d85a1860747cad55f7953614ddf120210",
+    "negative_shadow_smoke_sha256": "0af4ddaad9cb2c322627d0b3025293d4d31d1463fa5359e18ecadfdbf0077eaf",
+    "curator_state_asserted": "LATENT",
+    "zookeeper_client_started": false,
+    "jline_listener_started": false,
+    "recovery": {
+      "base_commit": "9285013eaf3c605bcccab4df7fab13d004eb0d22",
+      "source_status": "UNCOMMITTED_PROTOTYPE",
+      "synthetic_recovery_passed": true,
+      "phases": [
+        "initial",
+        "kafka_restart",
+        "checkpoint_resume",
+        "repeat_without_duplicate_rows",
+        "offset_loss_fail_closed"
+      ],
+      "project": "blockchain-client-prototype-cdf4738cff",
+      "aws_calls_made": false,
+      "publication_authorized": false
+    },
+    "recovery_log_sha256": {
+      "initial": "ed5cb0c49421da830e0940ce0158e5dccefb1f0443bde8316a3bb1daf383d6e9",
+      "resume": "753c765d1131df9b3d4aa740bf48945712ca18be669ba61435636aef7cd7e534",
+      "repeat": "6e391ce2b868abc3478220285c41451623785b72d0b5b0195adc4e297ad46c63",
+      "loss": "9f5239aee98e41358c1d8ec13c46aa8244b81d9dd049729fbcc6bdd899fd64b4",
+      "owned-test-cleanup": "6e4ca617c162c5428b206a9099891e69ee512c163bf2fe9200f9c961ac4000f3"
+    },
+    "smoke_network": "none",
+    "read_only_rootfs": true,
+    "capabilities": "all_dropped",
+    "no_new_privileges": true
+  },
+  "scanner": {
+    "name": "Trivy",
+    "version": "0.76.2",
+    "binary_sha256": "7a15c426f963473a485a4f315e21f8e2c881269d500bf0de35da13a4421fa108",
+    "vulnerability_database": {
+      "Version": 2,
+      "NextUpdate": "2026-11-17T01:11:02.624122856Z",
+      "UpdatedAt": "2026-11-16T01:11:02.624123452Z",
+      "DownloadedAt": "2026-11-16T06:29:57.145978Z"
+    },
+    "java_database": {
+      "Version": 1,
+      "NextUpdate": "2026-11-19T00:57:00.601023403Z",
+      "UpdatedAt": "2026-11-16T00:57:00.601024044Z",
+      "DownloadedAt": "2026-11-16T07:24:25.109375Z"
+    },
+    "package_types": [
+      "os",
+      "library"
+    ],
+    "offline_scan": true,
+    "ignore_unfixed": false,
+    "ignorefile": ""
+  },
+  "baseline_scan_sha256": "9ec27596fb338083b6844845b918fb8bd3eb83aca74a9d14ce6d7d274c3f0b74",
+  "prototype_scan_sha256": "e51ffa1187e1498434ee3b0e1e468b33e0e3c82dc44f3e6285c4b062a0fd9fdf",
+  "library_comparison": {
+    "baseline_unique_high_critical_pairs": 38,
+    "candidate_unique_high_critical_pairs": 36,
+    "introduced_pairs": [],
+    "removed_pairs": [
+      [
+        "org.apache.zookeeper:zookeeper",
+        "CVE-2026-24281"
+      ],
+      [
+        "org.apache.zookeeper:zookeeper",
+        "CVE-2026-24308"
+      ]
+    ]
+  },
+  "remaining_findings_by_group": {
+    "HADOOP_CLIENT_RUNTIME": {
+      "HIGH": 12
+    },
+    "PARQUET_JACKSON": {
+      "HIGH": 8
+    },
+    "SPARK_BUNDLES": {
+      "HIGH": 3
+    },
+    "SDK_BUNDLE": {
+      "HIGH": 15,
+      "CRITICAL": 1
+    },
+    "OTHER_STANDALONE": {
+      "HIGH": 5
+    }
+  },
+  "remaining_high_critical_occurrences": [
+    {
+      "VulnerabilityID": "CVE-2025-52999",
+      "PkgName": "com.fasterxml.jackson.core:jackson-core",
+      "InstalledVersion": "2.12.7",
+      "FixedVersion": "2.15.0",
+      "Severity": "HIGH",
+      "jar": "hadoop-client-runtime-3.4.3.jar",
+      "route": "HADOOP_CLIENT_RUNTIME",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-68494",
+      "PkgName": "com.fasterxml.jackson.core:jackson-core",
+      "InstalledVersion": "2.12.7",
+      "FixedVersion": "2.18.8, 2.21.4",
+      "Severity": "HIGH",
+      "jar": "hadoop-client-runtime-3.4.3.jar",
+      "route": "HADOOP_CLIENT_RUNTIME",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-89425",
+      "PkgName": "com.fasterxml.jackson.core:jackson-core",
+      "InstalledVersion": "2.12.7",
+      "FixedVersion": "2.21.7, 2.22.3, 2.18.11",
+      "Severity": "HIGH",
+      "jar": "hadoop-client-runtime-3.4.3.jar",
+      "route": "HADOOP_CLIENT_RUNTIME",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-68494",
+      "PkgName": "com.fasterxml.jackson.core:jackson-core",
+      "InstalledVersion": "2.18.1",
+      "FixedVersion": "2.18.8, 2.21.4",
+      "Severity": "HIGH",
+      "jar": "parquet-jackson-1.15.2.jar",
+      "route": "PARQUET_JACKSON",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-89407",
+      "PkgName": "com.fasterxml.jackson.core:jackson-core",
+      "InstalledVersion": "2.18.1",
+      "FixedVersion": "2.18.11, 2.21.7, 2.22.3",
+      "Severity": "HIGH",
+      "jar": "parquet-jackson-1.15.2.jar",
+      "route": "PARQUET_JACKSON",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-89425",
+      "PkgName": "com.fasterxml.jackson.core:jackson-core",
+      "InstalledVersion": "2.18.1",
+      "FixedVersion": "2.21.7, 2.22.3, 2.18.11",
+      "Severity": "HIGH",
+      "jar": "parquet-jackson-1.15.2.jar",
+      "route": "PARQUET_JACKSON",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-54512",
+      "PkgName": "com.fasterxml.jackson.core:jackson-databind",
+      "InstalledVersion": "2.12.7.1",
+      "FixedVersion": "2.18.8, 3.1.4, 2.21.4",
+      "Severity": "HIGH",
+      "jar": "hadoop-client-runtime-3.4.3.jar",
+      "route": "HADOOP_CLIENT_RUNTIME",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-54513",
+      "PkgName": "com.fasterxml.jackson.core:jackson-databind",
+      "InstalledVersion": "2.12.7.1",
+      "FixedVersion": "2.18.8, 2.21.4, 3.1.4",
+      "Severity": "HIGH",
+      "jar": "hadoop-client-runtime-3.4.3.jar",
+      "route": "HADOOP_CLIENT_RUNTIME",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-91776",
+      "PkgName": "com.fasterxml.jackson.core:jackson-databind",
+      "InstalledVersion": "2.12.7.1",
+      "FixedVersion": "2.18.11, 2.21.7, 2.22.3",
+      "Severity": "HIGH",
+      "jar": "hadoop-client-runtime-3.4.3.jar",
+      "route": "HADOOP_CLIENT_RUNTIME",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-91777",
+      "PkgName": "com.fasterxml.jackson.core:jackson-databind",
+      "InstalledVersion": "2.12.7.1",
+      "FixedVersion": "2.21.7, 2.18.11, 2.22.3",
+      "Severity": "HIGH",
+      "jar": "hadoop-client-runtime-3.4.3.jar",
+      "route": "HADOOP_CLIENT_RUNTIME",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-54512",
+      "PkgName": "com.fasterxml.jackson.core:jackson-databind",
+      "InstalledVersion": "2.18.1",
+      "FixedVersion": "2.18.8, 3.1.4, 2.21.4",
+      "Severity": "HIGH",
+      "jar": "parquet-jackson-1.15.2.jar",
+      "route": "PARQUET_JACKSON",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-54513",
+      "PkgName": "com.fasterxml.jackson.core:jackson-databind",
+      "InstalledVersion": "2.18.1",
+      "FixedVersion": "2.18.8, 2.21.4, 3.1.4",
+      "Severity": "HIGH",
+      "jar": "parquet-jackson-1.15.2.jar",
+      "route": "PARQUET_JACKSON",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-68497",
+      "PkgName": "com.fasterxml.jackson.core:jackson-databind",
+      "InstalledVersion": "2.18.1",
+      "FixedVersion": "2.18.10, 2.21.6, 2.22.2",
+      "Severity": "HIGH",
+      "jar": "parquet-jackson-1.15.2.jar",
+      "route": "PARQUET_JACKSON",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-91776",
+      "PkgName": "com.fasterxml.jackson.core:jackson-databind",
+      "InstalledVersion": "2.18.1",
+      "FixedVersion": "2.18.11, 2.21.7, 2.22.3",
+      "Severity": "HIGH",
+      "jar": "parquet-jackson-1.15.2.jar",
+      "route": "PARQUET_JACKSON",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-91777",
+      "PkgName": "com.fasterxml.jackson.core:jackson-databind",
+      "InstalledVersion": "2.18.1",
+      "FixedVersion": "2.21.7, 2.18.11, 2.22.3",
+      "Severity": "HIGH",
+      "jar": "parquet-jackson-1.15.2.jar",
+      "route": "PARQUET_JACKSON",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-102554",
+      "PkgName": "com.google.guava:guava",
+      "InstalledVersion": "33.4.0-jre",
+      "FixedVersion": "33.7.2",
+      "Severity": "HIGH",
+      "jar": "spark-network-common_2.13-4.0.1.jar",
+      "route": "SPARK_BUNDLES",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-102554",
+      "PkgName": "com.google.guava:guava",
+      "InstalledVersion": "33.4.8-jre",
+      "FixedVersion": "33.7.2",
+      "Severity": "HIGH",
+      "jar": "hadoop-client-runtime-3.4.3.jar",
+      "route": "HADOOP_CLIENT_RUNTIME",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-42583",
+      "PkgName": "io.netty:netty-codec",
+      "InstalledVersion": "4.1.126.Final",
+      "FixedVersion": "4.1.133.Final",
+      "Severity": "HIGH",
+      "jar": "bundle-2.35.4.jar",
+      "route": "SDK_BUNDLE",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-59901",
+      "PkgName": "io.netty:netty-codec",
+      "InstalledVersion": "4.1.126.Final",
+      "FixedVersion": "4.1.136.Final",
+      "Severity": "HIGH",
+      "jar": "bundle-2.35.4.jar",
+      "route": "SDK_BUNDLE",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-33870",
+      "PkgName": "io.netty:netty-codec-http",
+      "InstalledVersion": "4.1.126.Final",
+      "FixedVersion": "4.1.132.Final, 4.2.10.Final",
+      "Severity": "HIGH",
+      "jar": "bundle-2.35.4.jar",
+      "route": "SDK_BUNDLE",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-42584",
+      "PkgName": "io.netty:netty-codec-http",
+      "InstalledVersion": "4.1.126.Final",
+      "FixedVersion": "4.2.13.Final, 4.1.133.Final",
+      "Severity": "HIGH",
+      "jar": "bundle-2.35.4.jar",
+      "route": "SDK_BUNDLE",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-42587",
+      "PkgName": "io.netty:netty-codec-http",
+      "InstalledVersion": "4.1.126.Final",
+      "FixedVersion": "4.2.13.Final, 4.1.133.Final",
+      "Severity": "HIGH",
+      "jar": "bundle-2.35.4.jar",
+      "route": "SDK_BUNDLE",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-55831",
+      "PkgName": "io.netty:netty-codec-http",
+      "InstalledVersion": "4.1.126.Final",
+      "FixedVersion": "4.2.16.Final, 4.1.136.Final",
+      "Severity": "HIGH",
+      "jar": "bundle-2.35.4.jar",
+      "route": "SDK_BUNDLE",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-55833",
+      "PkgName": "io.netty:netty-codec-http",
+      "InstalledVersion": "4.1.126.Final",
+      "FixedVersion": "4.2.16.Final, 4.1.136.Final",
+      "Severity": "HIGH",
+      "jar": "bundle-2.35.4.jar",
+      "route": "SDK_BUNDLE",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-56745",
+      "PkgName": "io.netty:netty-codec-http",
+      "InstalledVersion": "4.1.126.Final",
+      "FixedVersion": "4.2.16.Final, 4.1.136.Final",
+      "Severity": "HIGH",
+      "jar": "bundle-2.35.4.jar",
+      "route": "SDK_BUNDLE",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-33871",
+      "PkgName": "io.netty:netty-codec-http2",
+      "InstalledVersion": "4.1.126.Final",
+      "FixedVersion": "4.1.132.Final, 4.2.11.Final",
+      "Severity": "HIGH",
+      "jar": "bundle-2.35.4.jar",
+      "route": "SDK_BUNDLE",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-42587",
+      "PkgName": "io.netty:netty-codec-http2",
+      "InstalledVersion": "4.1.126.Final",
+      "FixedVersion": "4.2.13.Final, 4.1.133.Final",
+      "Severity": "HIGH",
+      "jar": "bundle-2.35.4.jar",
+      "route": "SDK_BUNDLE",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-56819",
+      "PkgName": "io.netty:netty-codec-http2",
+      "InstalledVersion": "4.1.126.Final",
+      "FixedVersion": "4.2.16.Final, 4.1.136.Final",
+      "Severity": "HIGH",
+      "jar": "bundle-2.35.4.jar",
+      "route": "SDK_BUNDLE",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-75595",
+      "PkgName": "io.netty:netty-handler",
+      "InstalledVersion": "4.1.126.Final",
+      "FixedVersion": "4.2.17.Final, 4.1.137.Final",
+      "Severity": "CRITICAL",
+      "jar": "bundle-2.35.4.jar",
+      "route": "SDK_BUNDLE",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-44249",
+      "PkgName": "io.netty:netty-handler",
+      "InstalledVersion": "4.1.126.Final",
+      "FixedVersion": "4.2.15.Final, 4.1.135.Final",
+      "Severity": "HIGH",
+      "jar": "bundle-2.35.4.jar",
+      "route": "SDK_BUNDLE",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-45416",
+      "PkgName": "io.netty:netty-handler",
+      "InstalledVersion": "4.1.126.Final",
+      "FixedVersion": "4.2.15.Final, 4.1.135.Final",
+      "Severity": "HIGH",
+      "jar": "bundle-2.35.4.jar",
+      "route": "SDK_BUNDLE",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-50010",
+      "PkgName": "io.netty:netty-handler",
+      "InstalledVersion": "4.1.126.Final",
+      "FixedVersion": "4.2.15.Final, 4.1.135.Final",
+      "Severity": "HIGH",
+      "jar": "bundle-2.35.4.jar",
+      "route": "SDK_BUNDLE",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-43869",
+      "PkgName": "org.apache.thrift:libthrift",
+      "InstalledVersion": "0.16.0",
+      "FixedVersion": "0.23.0",
+      "Severity": "HIGH",
+      "jar": "libthrift-0.16.0.jar",
+      "route": "OTHER_STANDALONE",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-43871",
+      "PkgName": "org.apache.thrift:libthrift",
+      "InstalledVersion": "0.16.0",
+      "FixedVersion": "0.24.0",
+      "Severity": "HIGH",
+      "jar": "libthrift-0.16.0.jar",
+      "route": "OTHER_STANDALONE",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-2332",
+      "PkgName": "org.eclipse.jetty:jetty-http",
+      "InstalledVersion": "11.0.24",
+      "FixedVersion": "12.1.7, 12.0.33, 11.0.29, 10.0.28, 9.4.60",
+      "Severity": "HIGH",
+      "jar": "spark-core_2.13-4.0.1.jar",
+      "route": "SPARK_BUNDLES",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-2332",
+      "PkgName": "org.eclipse.jetty:jetty-http",
+      "InstalledVersion": "9.4.57.v20241219",
+      "FixedVersion": "12.1.7, 12.0.33, 11.0.29, 10.0.28, 9.4.60",
+      "Severity": "HIGH",
+      "jar": "hadoop-client-runtime-3.4.3.jar",
+      "route": "HADOOP_CLIENT_RUNTIME",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-10050",
+      "PkgName": "org.eclipse.jetty:jetty-security",
+      "InstalledVersion": "11.0.24",
+      "FixedVersion": "9.4.63, 10.0.31, 11.0.31, 12.0.36, 12.1.10",
+      "Severity": "HIGH",
+      "jar": "spark-core_2.13-4.0.1.jar",
+      "route": "SPARK_BUNDLES",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-77422",
+      "PkgName": "org.jline:jline-builtins",
+      "InstalledVersion": "3.9.0",
+      "FixedVersion": "4.3.1, 3.30.15",
+      "Severity": "HIGH",
+      "jar": "hadoop-client-runtime-3.4.3.jar",
+      "route": "HADOOP_CLIENT_RUNTIME",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-56740",
+      "PkgName": "org.jline:jline-remote-telnet",
+      "InstalledVersion": "3.9.0",
+      "FixedVersion": "4.2.1, 4.0.16, 3.30.14",
+      "Severity": "HIGH",
+      "jar": "hadoop-client-runtime-3.4.3.jar",
+      "route": "HADOOP_CLIENT_RUNTIME",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-56741",
+      "PkgName": "org.jline:jline-remote-telnet",
+      "InstalledVersion": "3.9.0",
+      "FixedVersion": "4.2.1, 4.0.16, 3.30.14",
+      "Severity": "HIGH",
+      "jar": "hadoop-client-runtime-3.4.3.jar",
+      "route": "HADOOP_CLIENT_RUNTIME",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2025-12183",
+      "PkgName": "org.lz4:lz4-java",
+      "InstalledVersion": "1.8.0",
+      "FixedVersion": "1.8.1",
+      "Severity": "HIGH",
+      "jar": "lz4-java-1.8.0.jar",
+      "route": "OTHER_STANDALONE",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2025-66566",
+      "PkgName": "org.lz4:lz4-java",
+      "InstalledVersion": "1.8.0",
+      "FixedVersion": null,
+      "Severity": "HIGH",
+      "jar": "lz4-java-1.8.0.jar",
+      "route": "OTHER_STANDALONE",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-106451",
+      "PkgName": "org.lz4:lz4-java",
+      "InstalledVersion": "1.8.0",
+      "FixedVersion": null,
+      "Severity": "HIGH",
+      "jar": "lz4-java-1.8.0.jar",
+      "route": "OTHER_STANDALONE",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    },
+    {
+      "VulnerabilityID": "GHSA-443w-3rq3-5m5h",
+      "PkgName": "software.amazon.awssdk:cloudfront",
+      "InstalledVersion": "2.35.4",
+      "FixedVersion": "2.41.30",
+      "Severity": "HIGH",
+      "jar": "bundle-2.35.4.jar",
+      "route": "SDK_BUNDLE",
+      "status": "OPEN_NO_ACCEPTED_EXCEPTION"
+    }
+  ],
+  "vendor_security_references": [
+    "https://github.com/google/guava/releases/tag/v33.7.2",
+    "https://github.com/jline/jline3/releases/tag/jline-3.30.16",
+    "https://zookeeper.apache.org/security/"
+  ],
+  "vendor_review_beyond_frozen_scanner_minimum_versions": true,
+  "accepted_exceptions": [],
+  "findings_suppressed": false,
+  "release_gate": "BLOCKED",
+  "aws_api_calls_made": false,
+  "images_published": false,
+  "production_infrastructure_changed": false,
+  "terraform_changes": false,
+  "readme_changed": false,
+  "platform_python_lock_changed": false,
+  "offline_validation": {
+    "focused_tests_passed": 386,
+    "ruff": "passed",
+    "all_files_secret_scan": "passed",
+    "shell_syntax": "passed",
+    "diff_check": "passed"
+  }
+}

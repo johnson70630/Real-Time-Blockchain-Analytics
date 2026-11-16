@@ -101,6 +101,47 @@ try:
         "SPARK_JVM_SECURITY_FAMILIES_VERIFIED " + json.dumps(security, sort_keys=True)
     )
     loader = jvm.java.lang.Thread.currentThread().getContextClassLoader()
+    immutable = jvm.com.google.common.collect.ImmutableMap.of("chain", "arbitrum")
+    assert immutable.get("chain") == "arbitrum"
+    cache = jvm.com.google.common.cache.CacheBuilder.newBuilder().maximumSize(2).build()
+    for key in ("one", "two", "three"):
+        cache.put(key, key)
+    cache.cleanUp()
+    assert cache.size() == 2
+    future = jvm.com.google.common.util.concurrent.SettableFuture.create()
+    assert future.set("offline-ready")
+    assert future.get() == "offline-ready"
+    print("GUAVA_COLLECTION_CACHE_AND_FAILUREACCESS_VERIFIED")
+
+    parsed = jvm.org.jline.reader.impl.DefaultParser().parse("pilot arbitrum", 14)
+    assert list(parsed.words()) == ["pilot", "arbitrum"]
+    assert str(jvm.org.jline.utils.AttributedString("offline-pilot")) == "offline-pilot"
+    print("JLINE_PARSER_VERIFIED_WITHOUT_LISTENERS")
+
+    output_archive_stream = jvm.java.io.ByteArrayOutputStream()
+    output_archive = jvm.org.apache.jute.BinaryOutputArchive.getArchive(
+        output_archive_stream
+    )
+    identity = jvm.org.apache.zookeeper.data.Id("digest", "synthetic-offline-id")
+    identity.serialize(output_archive, "identity")
+    input_archive = jvm.org.apache.jute.BinaryInputArchive.getArchive(
+        jvm.java.io.ByteArrayInputStream(output_archive_stream.toByteArray())
+    )
+    decoded_identity = jvm.org.apache.zookeeper.data.Id()
+    decoded_identity.deserialize(input_archive, "identity")
+    assert decoded_identity.getScheme() == "digest"
+    assert decoded_identity.getId() == "synthetic-offline-id"
+    client_config = jvm.org.apache.zookeeper.client.ZKClientConfig()
+    assert client_config is not None
+    curator = (
+        jvm.org.apache.curator.framework.CuratorFrameworkFactory.builder()
+        .connectString("127.0.0.1:2181")
+        .retryPolicy(jvm.org.apache.curator.retry.ExponentialBackoffRetry(100, 1))
+        .build()
+    )
+    assert str(curator.getState()) == "LATENT"
+    curator.close()
+    print("ZOOKEEPER_JUTE_CURATOR_LINKAGE_VERIFIED_WITHOUT_STARTING_CLIENT")
     mapper = jvm.com.fasterxml.jackson.databind.ObjectMapper()
     assert str(mapper.version()) == security["families"]["jackson"]
     mapper.registerModule(jvm.com.fasterxml.jackson.datatype.jsr310.JavaTimeModule())

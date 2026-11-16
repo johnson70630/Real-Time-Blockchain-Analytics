@@ -26,6 +26,10 @@ def fake_spark(override, shadow=None, *, version="4.0.1", java="17", hadoop="3.4
         "jackson": "2.18.12",
         "aircompressor": "2.0.3",
         "snappy": "1.1.10.12",
+        "guava": "33.7.2-jre",
+        "failureaccess": "1.0.3",
+        "jline": "3.30.16",
+        "zookeeper": "3.9.7",
     }
     paths = {
         name: str(override / f"{artifact}-{families[family]}.jar")
@@ -33,7 +37,10 @@ def fake_spark(override, shadow=None, *, version="4.0.1", java="17", hadoop="3.4
     }
     paths.update(
         {
-            name: str(jvm.JARS / f"{artifact}-{families[family]}.jar")
+            name: str(
+                jvm.JARS
+                / f"{artifact}-{families[family]}{jvm.NORMAL_CLASSIFIERS.get(artifact, '')}.jar"
+            )
             for name, artifact, family in jvm.NORMAL_CLASSES
         }
     )
@@ -114,6 +121,33 @@ def test_actual_class_sources_are_required(tmp_path, monkeypatch, shadow):
             jvm.verify_class_origins(spark)
     else:
         assert jvm.verify_class_origins(spark)["families"] == families
+
+
+def test_normal_class_origins_match_the_reviewed_artifact_filenames(
+    tmp_path, monkeypatch
+):
+    from pathlib import Path
+
+    lock = json.loads(
+        (
+            Path(__file__).resolve().parents[1]
+            / "deploy/runtime/spark-jvm-patches.lock.json"
+        ).read_text()
+    )
+    filenames = {
+        row["new"]["path"].split("/")[-3]: row["new"]["path"].split("/")[-1]
+        for row in lock["replacements"]
+    }
+    monkeypatch.setattr(jvm, "OVERRIDES", tmp_path)
+    spark, families = fake_spark(tmp_path)
+    (tmp_path / "patches.lock.json").write_text(
+        json.dumps(
+            {"pyspark_version": "4.0.1", "families": families, "components": COMPONENTS}
+        )
+    )
+    origins = jvm.verify_class_origins(spark)["class_origins"]
+    for name, artifact, _ in jvm.NORMAL_CLASSES:
+        assert Path(origins[name]).name == filenames[artifact]
 
 
 @pytest.mark.parametrize("version,java", [("4.0.5", "17"), ("4.0.1", "21")])

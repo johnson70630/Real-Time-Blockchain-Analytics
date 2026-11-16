@@ -1,5 +1,9 @@
 # Milestone 11.6C — standalone JSON and compression maintenance
 
+Latest maintenance: [Guava, JLine and ZooKeeper updates](aws_runtime_client_library_remediation.md)
+reduces Spark library findings to 1 critical / 43 high, with no new high/critical
+pairs. The release remains blocked with no accepted exceptions.
+
 Reviewed 2026-11-16 UTC. **The release remains blocked.** This offline checkpoint
 updates compatible standalone libraries. It accepts no vulnerability exceptions,
 publishes no images and authorizes no paid pilot. Milestone 11.5D remains paused.

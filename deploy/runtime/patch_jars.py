@@ -23,9 +23,23 @@ PREFIXES = (
     "jackson-",
     "aircompressor-",
     "snappy-java-",
+    "guava-",
+    "failureaccess-",
+    "jline-",
+    "zookeeper-",
 )
 LEGACY_JSON_PREFIXES = ("jackson-core-asl-", "jackson-mapper-asl-")
-NORMAL_FAMILIES = {"hadoop", "jackson", "aircompressor", "snappy"}
+SEPARATE_API_PREFIXES = LEGACY_JSON_PREFIXES + ("jline-2.",)
+NORMAL_FAMILIES = {
+    "hadoop",
+    "jackson",
+    "aircompressor",
+    "snappy",
+    "guava",
+    "failureaccess",
+    "jline",
+    "zookeeper",
+}
 JACKSON_ARTIFACTS = {
     "jackson-annotations": "com/fasterxml/jackson/core/",
     "jackson-core": "com/fasterxml/jackson/core/",
@@ -45,6 +59,16 @@ COMPONENTS = {
 def family(name):
     if name.startswith(LEGACY_JSON_PREFIXES):
         raise ValueError("Legacy JSON belongs to the separate feature-removal profile")
+    if name.startswith("jline-2."):
+        raise ValueError("JLine 2 belongs to a separate API line")
+    for prefix, group in (
+        ("guava-", "guava"),
+        ("failureaccess-", "failureaccess"),
+        ("jline-", "jline"),
+        ("zookeeper-", "zookeeper"),
+    ):
+        if name.startswith(prefix):
+            return group
     if name.startswith("jackson-"):
         return "jackson"
     if name.startswith("aircompressor-"):
@@ -78,6 +102,10 @@ def validate(lock):
             "jackson",
             "aircompressor",
             "snappy",
+            "guava",
+            "failureaccess",
+            "jline",
+            "zookeeper",
         }
         or lock.get("components") != COMPONENTS
         or lock["families"]["hadoop"] != COMPONENTS["hadoop"]
@@ -102,6 +130,10 @@ def validate(lock):
         destination = path.rsplit("/", 1)[-1]
         group = family(name)
         version = lock["families"][group]
+        if group == "guava" and not re.fullmatch(
+            r"[0-9]+\.[0-9]+\.[0-9]+-jre", version
+        ):
+            raise ValueError("Reviewed Guava JRE variant required")
         artifact = path.split("/")[-3]
         start = f"{artifact}-{version}"
         suffix = destination.removeprefix(start)
@@ -114,6 +146,12 @@ def validate(lock):
             "jackson": JACKSON_ARTIFACTS.get(artifact),
             "aircompressor": "io/airlift/",
             "snappy": "org/xerial/snappy/",
+            "guava": "com/google/guava/",
+            "failureaccess": "com/google/guava/",
+            "jline": "org/jline/",
+            "zookeeper": "org/apache/zookeeper/"
+            if artifact in {"zookeeper", "zookeeper-jute"}
+            else None,
         }[group]
         if (
             prefix is None
@@ -122,7 +160,11 @@ def validate(lock):
             or not destination.startswith(start)
             or not re.fullmatch(r"(?:-[A-Za-z0-9_-]+)?\.jar", suffix)
             or not re.fullmatch(
-                re.escape(artifact) + r"-[0-9][A-Za-z0-9.]*" + re.escape(suffix), name
+                re.escape(artifact)
+                + r"-[0-9][A-Za-z0-9.]*"
+                + (r"-jre" if group == "guava" else "")
+                + re.escape(suffix),
+                name,
             )
             or not path.startswith(prefix)
             or not path.endswith(f"/{version}/{destination}")
@@ -158,7 +200,7 @@ def apply(lock, *, cache, target=None):
         for p in target.iterdir()
         if p.name.startswith(PREFIXES)
         and p.name.endswith(".jar")
-        and not p.name.startswith(LEGACY_JSON_PREFIXES)
+        and not p.name.startswith(SEPARATE_API_PREFIXES)
     }
     if actual == new_names:
         for row in lock["replacements"]:
@@ -191,7 +233,7 @@ def apply(lock, *, cache, target=None):
 
 def validate_downloads(lock, downloads):
     """Reject an SDK/connector mismatch before changing the bundled clients."""
-    validate(lock)
+    _, new_names = validate(lock)
     required = {
         "hadoop-client-api": ("org/apache/hadoop", COMPONENTS["hadoop"]),
         "hadoop-client-runtime": ("org/apache/hadoop", COMPONENTS["hadoop"]),
@@ -210,6 +252,14 @@ def validate_downloads(lock, downloads):
             raise ValueError("Unmatched Hadoop/S3 dependency cohort")
     if any(row["new"] not in downloads for row in lock["replacements"]):
         raise ValueError("JVM replacement missing from download lock")
+    managed = [
+        row["path"].rsplit("/", 1)[-1]
+        for row in downloads
+        if row["path"].rsplit("/", 1)[-1].startswith(PREFIXES)
+        and not row["path"].rsplit("/", 1)[-1].startswith(SEPARATE_API_PREFIXES)
+    ]
+    if set(managed) != new_names or len(managed) != len(new_names):
+        raise ValueError("Unmatched reviewed JVM download inventory")
 
 
 def stage_overrides(lock, *, target, output):

@@ -36,6 +36,8 @@ REJECTED_IMAGE_DIGESTS = frozenset({
     "sha256:4da1dc74633cfab7d585cd986c91b73250a469217e3534fa327470a4ae31bb6f",
     # f209652 Spark retained the old standalone JSON/compression dependencies.
     "sha256:5b652614cbcfec3514c6f437ab32878a9ebdd55bbc70b7f07734d59b116f5339",
+    # 9285013 Spark retained the earlier Guava/JLine/ZooKeeper client libraries.
+    "sha256:004307f9a5a3986cd6c2e70fb3147fbce23e2953dff1eadf95ccb87cf6a547ba",
 })
 
 

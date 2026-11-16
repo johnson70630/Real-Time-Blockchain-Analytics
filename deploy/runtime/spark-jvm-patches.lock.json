@@ -9,7 +9,11 @@
     "hadoop": "3.4.3",
     "jackson": "2.18.12",
     "aircompressor": "2.0.3",
-    "snappy": "1.1.10.12"
+    "snappy": "1.1.10.12",
+    "guava": "33.7.2-jre",
+    "failureaccess": "1.0.3",
+    "jline": "3.30.16",
+    "zookeeper": "3.9.7"
   },
   "replacements": [
     {
@@ -30,6 +34,26 @@
       "new": {
         "path": "org/bouncycastle/bcprov-jdk18on/1.87/bcprov-jdk18on-1.87.jar",
         "sha512": "fec4187f2d152ec10dcbb6928407bfa6dacea393d716bd024cbed907251d181e4eeda389501792435d6b5dac13a468b2f230c2fac80dd6382b9c0a6e4d85ff71"
+      }
+    },
+    {
+      "old": {
+        "name": "failureaccess-1.0.2.jar",
+        "sha512": "ff4ee76aa661708989d53d45576cff3beea9ebbd86481dbbf2ee8c81bb22f882097b430588312b711025f0e890f22c6799d722ccd422a6a7278de08660fe2f51"
+      },
+      "new": {
+        "path": "com/google/guava/failureaccess/1.0.3/failureaccess-1.0.3.jar",
+        "sha512": "72be228e7805da5623e42bf024ded7d9147023c66b22f4dbd04ac6898201af46ee82e1f92ea51eb0595f1b49151c4b8ecb862653d4906c17609c42544ee97abf"
+      }
+    },
+    {
+      "old": {
+        "name": "guava-33.4.0-jre.jar",
+        "sha512": "778bd20c3ad83dd17d742368814cf97f28f3ec5723ef952a634290dbe0b4ced8c2a8f878d710fed10223d4393c510df39583c78921c592f605a0bb7003d98f84"
+      },
+      "new": {
+        "path": "com/google/guava/guava/33.7.2-jre/guava-33.7.2-jre.jar",
+        "sha512": "bd663dc02f2293a552d82829518435b8cfcd77b7c73eeb638aef93918ef7613ad2a869003b09d1afb4446fa74308041daa7a6aea85c1bedb17db1f5f0c2c5c0b"
       }
     },
     {
@@ -170,6 +194,16 @@
       "new": {
         "path": "org/glassfish/jersey/core/jersey-server/3.0.18/jersey-server-3.0.18.jar",
         "sha512": "7f72bbc703a80ba425c43b0a40b4ffa69959a06fd40ceeb5c2c948a6fb262dcab731721ba9a4cd7d0c3330d77d33b9895e5dd07d71eb8bd3619657ab14cec576"
+      }
+    },
+    {
+      "old": {
+        "name": "jline-3.27.1-jdk8.jar",
+        "sha512": "c7ad231dbce643f47d8346707f7d445308bc89ac290123add940d1174ce5c2dc6201e2bfda6115da818747358d5f06da97bcc0497204245cdafe9a8954be06d9"
+      },
+      "new": {
+        "path": "org/jline/jline/3.30.16/jline-3.30.16-jdk8.jar",
+        "sha512": "4f3c0521ac1a7ae91011de3a5d19c5b0daeb8b8abc46df28553f660e5e0566290f8754f6b865bd782be98646ce9283cd370ad00721cab035e763ad4ef8434105"
       }
     },
     {
@@ -450,6 +484,26 @@
       "new": {
         "path": "org/xerial/snappy/snappy-java/1.1.10.12/snappy-java-1.1.10.12.jar",
         "sha512": "5d73255ab430f91d189b45bad30b91000ca4a666ab9be14cdc75264b3bfdc62d328117b2305cd19abbb8216546174565fd2c9910ca3e7e9dec02f88403c2904a"
+      }
+    },
+    {
+      "old": {
+        "name": "zookeeper-3.9.3.jar",
+        "sha512": "3e247ea73bafd5180feafc31af91cd396f6b3b82612f76590eee684285bac756fecfa164d3aebc22521bfbb46f19d52d4d209a214722f4293caee4118474b88f"
+      },
+      "new": {
+        "path": "org/apache/zookeeper/zookeeper/3.9.7/zookeeper-3.9.7.jar",
+        "sha512": "97f75e00dbff75c258baaf89c1886b9ffab8fd72197ff3393db749b2eea9ee7651ea1493b802dfbc33e150c60a5086dd2202e09389b5b48fccbc888b48b78f69"
+      }
+    },
+    {
+      "old": {
+        "name": "zookeeper-jute-3.9.3.jar",
+        "sha512": "c63f2ef2b6917d58264f82997dbf114624e1bbd34424e28027cf1fd10cf586da63ea1db717449e3ede0e3c3ddf8d7fdda4e54dbd47ec65b4be68396bec3e4d35"
+      },
+      "new": {
+        "path": "org/apache/zookeeper/zookeeper-jute/3.9.7/zookeeper-jute-3.9.7.jar",
+        "sha512": "7b0fdbf0812b926cdffe401a8988f9be3185eb29500b617388f8c874350fb2db9aa82b3916f4d2aa1b0a4f54b7a87d08120f1c12c8e750f27eda8aa9d78e8e36"
       }
     }
   ],

@@ -1,5 +1,9 @@
 # Milestone 11.6C — first streaming pilot readiness
 
+Latest maintenance: [Guava, JLine and ZooKeeper updates](aws_runtime_client_library_remediation.md)
+reduces Spark library findings to 1 critical / 43 high, with no new high/critical
+pairs. The release remains blocked with no accepted exceptions.
+
 Latest maintenance: [standalone JSON and compression remediation](aws_runtime_standalone_remediation.md)
 updates aligned Jackson modules and compression libraries, reducing Spark library
 findings to 1 critical / 49 high. The release remains blocked with no exceptions.
