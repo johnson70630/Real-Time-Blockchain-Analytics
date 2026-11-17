@@ -1,5 +1,7 @@
 # Milestone 11.6C — Exact secret-access apply verified
 
+Follow-up: [owner confirmed Arbitrum and offline demo proposal prepared](aws_runtime_demo_readiness.md). The pending-network statements below preserve this apply checkpoint's history; no secret correction was required based on the later owner attestation.
+
 **The approved saved plan was applied and verified: 0 create / 1 update /
 0 destroy. EC2 is stopped; application deployment is not approved.**
 Milestone 11.5D remains paused.

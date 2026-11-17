@@ -1,5 +1,9 @@
 # Milestone 11.6C — first streaming pilot readiness
 
+Current status: [owner confirmed Arbitrum; exact release and supervised-demo proposal](aws_runtime_demo_readiness.md). The network confirmation is an owner attestation; live chain/boot/ingestion checks and paid deployment approval remain pending.
+
+The earlier pending-network status below is preserved as checkpoint history.
+
 Current status: [exact saved-plan apply verified and source-network confirmation pending](aws_runtime_secret_apply_result.md). The workload grant is configured, EC2 is stopped, and no deployment or secret edit is approved.
 
 The earlier review/approval statements below are preserved as checkpoint history.

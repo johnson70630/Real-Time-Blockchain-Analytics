@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-17T21:59:50.899316+00:00",
+  "milestone": "11.6C",
+  "owner_network_attestation": {
+    "owner_message": "\u201cArbitrum",
+    "interpreted_network": "Arbitrum Mainnet / Arbitrum One",
+    "confirmation_context": "Owner was asked to inspect the existing secret hostname privately and return only the network",
+    "secret_value_received_or_read_by_assistant": false,
+    "independent_live_chain_verification": false,
+    "secret_correction_needed_based_on_attestation": false,
+    "does_not_authorize_deployment": true
+  },
+  "release_candidate": {
+    "path": "docs/evidence/aws_runtime_release_candidate_2026-11-17.json",
+    "sha256": "7f948e94cec7f7aebaf2aa4dab4ddd8e92a60f083f17bb9cefcff4db89cd200f",
+    "offline_contract": "PASS",
+    "cluster_id": "PROPOSED_ONCE; refuse deployment if existing Kafka metadata differs; never overwrite or reformat",
+    "authorization": "PENDING"
+  },
+  "operator_chain_preflight": {
+    "path": "scripts/check_runtime_chain.py",
+    "sha256": "36cdf29df027706eafabeac7adfd772448e19c154f41c067d139265aad067b26",
+    "deployment_status": "OFFLINE_ONLY",
+    "expected_chain_id": 42161,
+    "frozen_images_modified": false,
+    "frozen_nine_file_bundle_modified": false,
+    "secret_transport": "Instance-role GetSecretValue captured in memory; URL supplied to ephemeral container stdin, never argv/environment/logs",
+    "stdout": "Fixed success/failure messages only",
+    "not_atomic_with_controller_secret_read": true,
+    "requires_no_secret_edits_or_rotation_during_window": true,
+    "container_on_driver_timeout": "Fail the gate; inspect transient container and normally stop exact instance; no automatic retry"
+  },
+  "validation": {
+    "operator_tests": 12,
+    "combined_focused_tests": 83,
+    "negative_subtests": 22,
+    "ruff": "PASS",
+    "live_calls_by_operator_script": false
+  },
+  "public_price_refresh": {
+    "retrieved_at_utc": "2026-11-17T21:58:10.487106+00:00",
+    "source_method": "Unauthenticated streaming reads of exact AWS Price List CSV rate identities",
+    "rates": [
+      {
+        "name": "t3_xlarge_linux_hour",
+        "sku": "3ZD39ECB23FRWNNP",
+        "rate_code": "3ZD39ECB23FRWNNP.JRTCKXETXF.6YS6EN2CT7",
+        "usd_per_unit": "0.1664000000",
+        "billing_unit": "Hrs",
+        "effective_date": "2026-11-01",
+        "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/us-west-2/index.csv"
+      },
+      {
+        "name": "public_ipv4_hour",
+        "sku": "NBHXEKTE88TJDDQF",
+        "rate_code": "NBHXEKTE88TJDDQF.JRTCKXETXF.6YS6EN2CT7",
+        "usd_per_unit": "0.0050000000",
+        "billing_unit": "Hrs",
+        "effective_date": "2026-11-17",
+        "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonVPC/current/us-west-2/index.csv"
+      }
+    ]
+  },
+  "proposed_window": {
+    "account": "209479274979",
+    "region": "us-west-2",
+    "instance_id": "i-0ca1671a59751acc5",
+    "starts": 1,
+    "maximum_controller_invocations": 1,
+    "controller_duration_seconds_including_pull_and_startup": 3600,
+    "preflight_maximum_minutes": 45,
+    "normal_stop_target_minutes_from_start": 120,
+    "supervised_window_minutes": 150,
+    "compute_plus_ipv4_hour_usd": "0.1714000000",
+    "compute_plus_ipv4_150_minutes_usd": "0.42850000000",
+    "hard_spending_cap": false,
+    "guest_emergency_timer_minutes_from_activation": 150,
+    "guest_timer_starts_after_boot_not_at_launch": true,
+    "absolute_utc_window_required_at_execution": true,
+    "offline_recovery_not_live_recovery_evidence": true
+  },
+  "approvals": {
+    "paid_ec2_start": false,
+    "ssm_deployment": false,
+    "runtime_secret_retrieval": false,
+    "image_pull_and_transient_chain_container": false,
+    "one_streaming_demo_and_pilot_s3_writes": false,
+    "normal_stop_in_proposed_window": false,
+    "terraform_or_iam_changes": false,
+    "secret_edit": false,
+    "ebs_format_delete_or_metadata_reset": false,
+    "main_merge": false
+  },
+  "cloud_calls_this_checkpoint": "Unauthenticated public price downloads only; no authenticated AWS API calls",
+  "production_infrastructure_changed": false,
+  "milestone_11_5d": "PAUSED"
+}
