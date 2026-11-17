@@ -1,5 +1,9 @@
 # Milestone 11.6C — first streaming pilot readiness
 
+Current status: [exact saved-plan apply verified and source-network confirmation pending](aws_runtime_secret_apply_result.md). The workload grant is configured, EC2 is stopped, and no deployment or secret edit is approved.
+
+The earlier review/approval statements below are preserved as checkpoint history.
+
 Current status: [saved plan and four refresh observations requiring owner acceptance](aws_runtime_secret_plan_result.md). The plan is saved, the original drift stop is preserved, and no apply or EC2 start is approved.
 
 The earlier approval-scope notes below are preserved as checkpoint history.

@@ -1,5 +1,9 @@
 # Milestone 11.6C — Saved secret-access plan; observations need acceptance
 
+Current status: [exact saved-plan apply verified and source-network confirmation pending](aws_runtime_secret_apply_result.md). The workload grant is configured, EC2 is stopped, and no deployment or secret edit is approved.
+
+The earlier review/approval statements below are preserved as checkpoint history.
+
 **One runtime-only plan is saved. The strict drift gate stopped as designed.
 No apply is approved or performed.** Milestone 11.5D remains paused.
 
