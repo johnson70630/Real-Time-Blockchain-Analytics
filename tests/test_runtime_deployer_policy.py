@@ -16,6 +16,10 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1] / "docs/policies/runtime-deployer"
+SECRET_BOUNDARY_PATH = (
+    Path(__file__).resolve().parents[1]
+    / "infra/terraform/environments/runtime/policies/runtime-secret-boundary.proposed.json"
+)
 ACCOUNT = "209479274979"
 EC2 = f"arn:aws:ec2:us-west-2:{ACCOUNT}"
 IAM = f"arn:aws:iam::{ACCOUNT}"
@@ -72,12 +76,23 @@ def _allows(files, action, resource, context=None):
     for filename in files:
         policy = json.loads((ROOT / filename).read_text())
         for statement in policy["Statement"]:
-            if not any(fnmatch.fnmatchcase(action, a) for a in _list(statement["Action"])):
+            assert ("Action" in statement) != ("NotAction" in statement)
+            action_match = any(
+                fnmatch.fnmatchcase(action, a)
+                for a in _list(statement.get("Action", statement.get("NotAction")))
+            )
+            if "NotAction" in statement:
+                action_match = not action_match
+            if not action_match:
                 continue
-            if not any(
+            assert not ("Resource" in statement and "NotResource" in statement)
+            resource_match = any(
                 fnmatch.fnmatchcase(resource, r)
-                for r in _list(statement.get("Resource", "*"))
-            ):
+                for r in _list(statement.get("NotResource", statement.get("Resource", "*")))
+            )
+            if "NotResource" in statement:
+                resource_match = not resource_match
+            if not resource_match:
                 continue
             if not _conditions(statement.get("Condition", {}), context or {}):
                 continue
@@ -91,7 +106,7 @@ DEPLOY = ["deploy-control.json", "deploy-discovery-tags.json", "deploy-ec2.json"
 
 
 def test_policy_size_and_explicit_action_limits():
-    for path in ROOT.glob("*.json"):
+    for path in [*ROOT.glob("*.json"), SECRET_BOUNDARY_PATH]:
         policy = json.loads(path.read_text())
         limit = 2048 if path.name == "trust.json" else 6144
         assert len(json.dumps(policy, separators=(",", ":"))) <= limit
@@ -511,3 +526,77 @@ def test_ecr_authorization_token_is_the_only_unscoped_resource_action():
 def test_ecr_supplement_adds_no_deletion_policy_changes_or_unrelated_access(action):
     for resource in [*ECR_REPOSITORIES, "*", RUNTIME_ROLE, STATE]:
         assert not _allows(ECR_PUBLISHER, action, resource, REGION)
+
+
+# New candidate only: preserve the original administrator boundary as history.
+PILOT_SECRET = (
+    f"arn:aws:secretsmanager:us-west-2:{ACCOUNT}:secret:"
+    "blockchain-runtime/11-6c/alchemy-websocket-url-d44flr"
+)
+SECRET_BOUNDARY = [str(SECRET_BOUNDARY_PATH)]
+
+
+def test_secret_boundary_preserves_all_nonsecret_grants_and_role_state_denies():
+    old = json.loads((ROOT / "runtime-boundary.json").read_text())
+    candidate = json.loads(SECRET_BOUNDARY_PATH.read_text())
+    assert candidate["Statement"][:-4] == old["Statement"][:-1]
+    assert candidate["Statement"][-4] == {
+        "Sid": "NoRoleDelegation", "Effect": "Deny",
+        "Action": ["iam:*", "sts:AssumeRole"], "Resource": ["*"],
+    }
+    assert old["Statement"][-1]["Action"] == ["secretsmanager:*", "iam:*", "sts:AssumeRole"]
+    grant = candidate["Statement"][-3]
+    assert grant["Action"] == ["secretsmanager:GetSecretValue"]
+    assert grant["Resource"] == [PILOT_SECRET]
+    assert grant["Condition"] == {"StringEquals": REGION}
+
+
+@pytest.mark.parametrize("region", [None, "us-east-1", "us-west-2"])
+def test_candidate_boundary_get_value_requires_exact_region(region):
+    context = {} if region is None else {"aws:RequestedRegion": region}
+    assert _allows(SECRET_BOUNDARY, "secretsmanager:GetSecretValue", PILOT_SECRET, context) == (region == "us-west-2")
+
+
+@pytest.mark.parametrize("resource", [
+    "*", PILOT_SECRET + "extra", PILOT_SECRET.replace("d44flr", "ABC123"),
+    PILOT_SECRET.replace("us-west-2", "us-east-1"),
+    PILOT_SECRET.replace(ACCOUNT, "000000000000"),
+    f"arn:aws:secretsmanager:us-west-2:{ACCOUNT}:secret:unrelated-ABC123",
+])
+def test_candidate_boundary_denies_other_secret_reads(resource):
+    assert not _allows(SECRET_BOUNDARY, "secretsmanager:GetSecretValue", resource, REGION)
+
+
+@pytest.mark.parametrize("action", [
+    "secretsmanager:CreateSecret", "secretsmanager:PutSecretValue",
+    "secretsmanager:UpdateSecret", "secretsmanager:DeleteSecret",
+    "secretsmanager:RestoreSecret", "secretsmanager:RotateSecret",
+    "secretsmanager:CancelRotateSecret", "secretsmanager:ReplicateSecretToRegions",
+    "secretsmanager:PutResourcePolicy", "secretsmanager:DeleteResourcePolicy",
+    "secretsmanager:TagResource", "secretsmanager:UntagResource",
+    "secretsmanager:UpdateSecretVersionStage", "secretsmanager:DescribeSecret",
+    "secretsmanager:ListSecretVersionIds", "secretsmanager:BatchGetSecretValue",
+    "secretsmanager:ListSecrets",
+])
+def test_candidate_boundary_denies_secret_administration_even_with_other_grants(action, tmp_path):
+    # Add an overbroad grant to prove explicit Deny, not just absence of Allow.
+    extra = tmp_path / "overbroad.json"
+    extra.write_text(json.dumps({"Statement": [{
+        "Effect": "Allow", "Action": ["secretsmanager:*"], "Resource": ["*"],
+    }]}))
+    files = [str(SECRET_BOUNDARY_PATH), str(extra)]
+    for resource in (PILOT_SECRET, PILOT_SECRET + "-other", "*"):
+        assert not _allows(files, action, resource, REGION)
+
+
+def test_secret_boundary_and_identity_policy_both_required():
+    proposed = ["runtime-role-secret-read.proposed.json"]
+    assert _allows(SECRET_BOUNDARY, "secretsmanager:GetSecretValue", PILOT_SECRET, REGION)
+    assert _allows(proposed, "secretsmanager:GetSecretValue", PILOT_SECRET, REGION)
+    assert not _allows(["runtime-boundary.json"], "secretsmanager:GetSecretValue", PILOT_SECRET, REGION)
+    for files in (SECRET_BOUNDARY, proposed):
+        assert not _allows(files, "s3:PutObject", f"{DATA_BUCKET}/production-data/file", REGION)
+        assert not _allows(files, "s3:GetObject", STATE, REGION)
+        assert not _allows(files, "iam:PassRole", RUNTIME_ROLE, REGION)
+    assert _allows(SECRET_BOUNDARY, "s3:PutObject", f"{DATA_BUCKET}/{PILOT}/bronze/test", REGION)
+    assert not _allows(DEPLOY, "secretsmanager:GetSecretValue", PILOT_SECRET, REGION)

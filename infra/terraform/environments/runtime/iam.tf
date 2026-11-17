@@ -1,3 +1,14 @@
+locals {
+  # This is a review artifact, not a Terraform-managed boundary. Its live
+  # default version must be read back separately before supplying the receipt.
+  runtime_secret_boundary_candidate = jsondecode(file("${path.module}/policies/runtime-secret-boundary.proposed.json"))
+  runtime_secret_boundary_sha256    = sha256(jsonencode(local.runtime_secret_boundary_candidate))
+  runtime_secret_boundary_arns = one([
+    for statement in local.runtime_secret_boundary_candidate.Statement : statement.Resource
+    if statement.Sid == "ReadOnlyPilotAlchemySecret"
+  ])
+}
+
 data "aws_iam_policy_document" "runtime_assume_role" {
   statement {
     effect  = "Allow"
@@ -18,8 +29,26 @@ resource "aws_iam_role" "runtime" {
 
   lifecycle {
     precondition {
-      condition     = var.runtime_permissions_boundary_arn == null || nonsensitive(length(var.approved_secret_arns)) == 0
-      error_message = "The initial demo boundary excludes Secrets Manager. Review and approve a boundary update before enabling any secret access."
+      condition = (
+        var.runtime_permissions_boundary_arn == null ||
+        nonsensitive(length(var.approved_secret_arns)) == 0 ||
+        (
+          var.runtime_secret_boundary_review_sha256 == local.runtime_secret_boundary_sha256 &&
+          toset(var.approved_secret_arns) == toset(local.runtime_secret_boundary_arns)
+        )
+      )
+      error_message = "Secret access under the demo boundary requires the exact reviewed secret and a matching canonical SHA-256 receipt from its live default-policy readback."
+    }
+    precondition {
+      condition = (
+        var.runtime_secret_boundary_review_sha256 == null ||
+        (
+          var.runtime_permissions_boundary_arn != null &&
+          var.runtime_secret_boundary_review_sha256 == local.runtime_secret_boundary_sha256 &&
+          toset(var.approved_secret_arns) == toset(local.runtime_secret_boundary_arns)
+        )
+      )
+      error_message = "A boundary-review receipt is valid only for the selected demo boundary and exact reviewed secret; stale or mismatched receipts are forbidden."
     }
   }
 }
@@ -111,6 +140,12 @@ data "aws_iam_policy_document" "runtime" {
       effect    = "Allow"
       actions   = ["secretsmanager:GetSecretValue"]
       resources = var.approved_secret_arns
+
+      condition {
+        test     = "StringEquals"
+        variable = "aws:RequestedRegion"
+        values   = ["us-west-2"]
+      }
     }
   }
 

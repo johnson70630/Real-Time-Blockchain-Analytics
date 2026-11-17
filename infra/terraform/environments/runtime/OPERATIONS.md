@@ -24,9 +24,15 @@ The proposed [dedicated demo deployer](../../../../docs/aws_demo_deployer_setup.
 requires `runtime_permissions_boundary_arn` set to the exact administrator-owned
 `arn:aws:iam::209479274979:policy/blockchain-runtime-ec2-boundary` policy. Its
 default null preserves the previous foundation. The policy itself and the
-deployer are not created by this Terraform root. This initial boundary excludes
-Secrets Manager; Terraform rejects nonempty secret input while it is selected.
-Review and approve a boundary change before the streaming phase. Existing saved
+deployer are not created by this Terraform root. The initial boundary excludes
+Secrets Manager. The reviewed [secret-access proposal](../../../../docs/aws_runtime_secret_access_review.md)
+keeps this default behavior and introduces an explicit readback-receipt gate.
+Nonempty secret input under the demo boundary requires the exact reviewed ARN
+and `runtime_secret_boundary_review_sha256` matching the canonical JSON hash of
+the separately approved live default boundary. Read back that policy through
+IAM before supplying this receipt; a locally calculated input alone is not
+proof of live authorization. The proposed JSON file grants no live access.
+Review and approve the boundary change before the streaming phase. Existing saved
 plans omit the boundary; do not apply them for this design. A fresh authenticated
 runtime plan needs its own approved scope and review.
 

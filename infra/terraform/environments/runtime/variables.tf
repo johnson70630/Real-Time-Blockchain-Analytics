@@ -148,6 +148,17 @@ variable "approved_secret_arns" {
   }
 }
 
+variable "runtime_secret_boundary_review_sha256" {
+  description = "Canonical SHA-256 of the separately approved and read-back live default boundary document. Null keeps initial no-secret boundary behavior; this receipt alone grants no AWS permission."
+  type        = string
+  default     = null
+
+  validation {
+    condition     = var.runtime_secret_boundary_review_sha256 == null || can(regex("^[0-9a-f]{64}$", var.runtime_secret_boundary_review_sha256))
+    error_message = "Use null or a lowercase 64-character canonical SHA-256 boundary-readback receipt."
+  }
+}
+
 variable "docker_compose_download_url" {
   description = "Pinned HTTPS URL for the x86_64 Docker Compose plugin binary."
   type        = string

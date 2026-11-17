@@ -1,5 +1,9 @@
 # Milestone 11.6C — first streaming pilot readiness
 
+Current next step: [exact Alchemy secret-access review](aws_runtime_secret_access_review.md). The owner reported the approved secret created and confirmed its metadata settings. IAM changes, production Terraform actions and deployment remain unapproved.
+
+The prior acceptance/proposal notes below are preserved as checkpoint history.
+
 Current status: [conditional one-run security acceptance and next secret proposal](aws_runtime_pilot_security_acceptance.md). The owner accepted the exact 41-advisory scope; secret creation, IAM changes, EC2 start and deployment remain separately gated.
 
 The content below is preserved checkpoint history. Approval flags and status statements reflect the time of each original snapshot.

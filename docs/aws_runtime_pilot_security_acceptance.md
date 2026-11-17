@@ -1,5 +1,9 @@
 # Milestone 11.6C — Conditional security acceptance and secret proposal
 
+Current next step: [exact Alchemy secret-access review](aws_runtime_secret_access_review.md). The owner reported the approved secret created and confirmed its metadata settings. IAM changes, production Terraform actions and deployment remain unapproved.
+
+The prior acceptance/proposal notes below are preserved as checkpoint history.
+
 **The owner accepted the exact one-run security exception. Deployment is still
 blocked on credential/IAM readiness and separate paid-runtime approval.**
 Milestone 11.5D remains paused.
