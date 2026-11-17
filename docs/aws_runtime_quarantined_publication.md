@@ -1,5 +1,9 @@
 # Milestone 11.6C — Quarantined replacement image publication
 
+Current status: [conditional one-run security acceptance and next secret proposal](aws_runtime_pilot_security_acceptance.md). The owner accepted the exact 41-advisory scope; secret creation, IAM changes, EC2 start and deployment remain separately gated.
+
+The content below is preserved checkpoint history. Approval flags and status statements reflect the time of each original snapshot.
+
 **All uploads verified; deployment remains blocked.** Milestone 11.5D remains paused.
 Completed: 2026-11-17T02:04:50.544045+00:00.
 

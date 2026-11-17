@@ -1,5 +1,9 @@
 # Milestone 11.6C — Consolidated security decision
 
+Current status: [conditional one-run security acceptance and next secret proposal](aws_runtime_pilot_security_acceptance.md). The owner accepted the exact 41-advisory scope; secret creation, IAM changes, EC2 start and deployment remain separately gated.
+
+The content below is preserved checkpoint history. Approval flags and status statements reflect the time of each original snapshot.
+
 Latest scan-only publication: [verified ECR artifacts and scan status](aws_runtime_quarantined_publication.md). Images remain quarantined; no security exception or deployment is approved.
 
 **Status: owner decision required; no exception or deployment is approved.**
