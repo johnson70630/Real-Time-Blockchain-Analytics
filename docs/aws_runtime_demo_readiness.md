@@ -1,5 +1,7 @@
 # Milestone 11.6C — Arbitrum confirmation and proposed streaming window
 
+Execution outcome: [the owner approved this window; the private chain gate failed and EC2 was normally stopped before ingestion](aws_runtime_demo_abort_result.md). This start scope is consumed. The proposal below preserves its original pending status; it is not permission to retry.
+
 **Offline preparation only. The owner confirmed Arbitrum after privately checking
 the existing secret. No secret correction is needed based on that attestation.
 Paid start, deployment, runtime secret retrieval and ingestion remain unapproved.**

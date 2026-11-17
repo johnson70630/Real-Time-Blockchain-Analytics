@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import resource
 import shutil
 import subprocess
@@ -38,31 +39,164 @@ def verify_reply(raw):
         raise ValueError('INVALID_REPLY')
     reply = json.loads(raw)
     if (not isinstance(reply, dict) or reply.get('jsonrpc') != '2.0'
-        or type(reply.get('id')) is not int or reply['id'] != 1
-        or 'error' in reply or not isinstance(reply.get('result'), str)
-        or reply['result'].lower() != '0xa4b1'):
-        raise ValueError('WRONG_CHAIN_OR_INVALID_REPLY')
+        or type(reply.get('id')) is not int or reply['id'] != 1):
+        raise ValueError('INVALID_REPLY')
+    if 'error' in reply:
+        raise ValueError('RPC_ERROR_RESPONSE')
+    if not isinstance(reply.get('result'), str):
+        raise ValueError('INVALID_REPLY')
+    if reply['result'].lower() != '0xa4b1':
+        raise ValueError('WRONG_CHAIN')
+
+def failure_code(error):
+    name = type(error).__name__
+    if name == 'WebSocketBadStatusException':
+        status = getattr(error, 'status_code', None)
+        if type(status) is int and status in (400,401,403,404,429,500,502,503,504):
+            return 'HTTP_' + str(status)
+        return 'HTTP_ERROR'
+    if name in ('TimeoutError', 'WebSocketTimeoutException'):
+        return 'TIMEOUT'
+    if name in ('SSLCertVerificationError', 'SSLError'):
+        return 'TLS_ERROR'
+    if name in ('ModuleNotFoundError', 'ImportError'):
+        return 'IMPORT_ERROR'
+    if name in ('gaierror', 'ConnectionRefusedError', 'ConnectionResetError',
+                'WebSocketConnectionClosedException', 'OSError'):
+        return 'CONNECTION_ERROR'
+    if isinstance(error, ValueError):
+        code = error.args[0] if error.args else None
+        if isinstance(code, str) and code in ('INVALID_ENDPOINT', 'INVALID_REPLY',
+                                              'RPC_ERROR_RESPONSE', 'WRONG_CHAIN'):
+            return code
+        return 'INVALID_INPUT_OR_REPLY'
+    return 'CLIENT_ERROR'
 
 def main():
+    stage = 'CLIENT_IMPORT'
     try:
         import websocket
         websocket.enableTrace(False)
+        stage = 'SECRET_FORMAT'
         value = validate_endpoint(sys.stdin.read(4097))
+        stage = 'RPC_CONNECT'
         connection = websocket.create_connection(value, timeout=10)
         try:
+            stage = 'RPC_REQUEST'
             connection.send(json.dumps({'jsonrpc':'2.0','id':1,'method':'eth_chainId','params':[]}))
+            stage = 'RPC_REPLY'
             verify_reply(connection.recv())
         finally:
-            connection.close()
+            try:
+                connection.close()
+            except Exception:
+                pass  # Process exit closes the socket; preserve any original failure.
         print('ARBITRUM_CHAIN_ID_VERIFIED')
         return 0
-    except Exception:
-        print('CHAIN_PREFLIGHT_FAILED')
+    except Exception as error:
+        print('CHAIN_PREFLIGHT_FAILED stage=' + stage + ' code=' + failure_code(error))
         return 1
 
 if __name__ == '__main__':
     raise SystemExit(main())
 """
+
+CLIENT_STAGES = {
+    "CLIENT_IMPORT",
+    "SECRET_FORMAT",
+    "RPC_CONNECT",
+    "RPC_REQUEST",
+    "RPC_REPLY",
+}
+CLIENT_CODES = {
+    "INVALID_ENDPOINT",
+    "INVALID_REPLY",
+    "RPC_ERROR_RESPONSE",
+    "WRONG_CHAIN",
+    "HTTP_400",
+    "HTTP_401",
+    "HTTP_403",
+    "HTTP_404",
+    "HTTP_429",
+    "HTTP_500",
+    "HTTP_502",
+    "HTTP_503",
+    "HTTP_504",
+    "HTTP_ERROR",
+    "TIMEOUT",
+    "TLS_ERROR",
+    "IMPORT_ERROR",
+    "CONNECTION_ERROR",
+    "INVALID_INPUT_OR_REPLY",
+    "CLIENT_ERROR",
+}
+AWS_CODES = {
+    "AccessDenied",
+    "AccessDeniedException",
+    "DecryptionFailure",
+    "ResourceNotFoundException",
+    "InvalidRequestException",
+    "InvalidParameterException",
+    "UnrecognizedClientException",
+    "ExpiredToken",
+    "ExpiredTokenException",
+    "ThrottlingException",
+    "InternalServiceError",
+}
+HOST_GUARDS = {
+    "UNREVIEWED_RELEASE",
+    "RELEASE_SCOPE_MISMATCH",
+    "APPROVED_HOST_REQUIRED",
+    "SWAP_MUST_BE_DISABLED",
+    "HOST_TOOLS_MISSING",
+    "REVIEWED_AMD64_IMAGE_REQUIRED",
+    "SECRET_FORMAT_INVALID",
+    "CHAIN_PREFLIGHT_FAILED",
+}
+HOST_CODES = {"HOST_ERROR", "HOST_COMMAND_FAILED", "AWS_CLI_FAILED", "CONTAINER_FAILED"}
+HOST_CODES |= {
+    "CONTAINER_EXIT_" + str(value) for value in (1, 2, 125, 126, 127, 137, 143)
+}
+
+
+class PreflightFailure(RuntimeError):
+    """Only allowlisted constants may reach stdout; never use provider messages."""
+
+    def __init__(self, stage, code):
+        self.stage = (
+            stage
+            if isinstance(stage, str)
+            and stage
+            in CLIENT_STAGES
+            | {"HOST_PRECHECK", "IMAGE_IDENTITY", "SECRET_RETRIEVAL", "CONTAINER"}
+            else "HOST_PRECHECK"
+        )
+        self.code = (
+            code
+            if isinstance(code, str)
+            and code in CLIENT_CODES | AWS_CODES | HOST_CODES | HOST_GUARDS
+            else "HOST_ERROR"
+        )
+        super().__init__(self.stage + " " + self.code)
+
+
+def parse_failure(output):
+    """Validate a complete diagnostic line before an outer operator forwards it."""
+    match = re.fullmatch(
+        r"CHAIN_PREFLIGHT_FAILED stage=([A-Z_]+) code=([A-Za-z_0-9]+)\n?", output
+    )
+    if match:
+        safe = PreflightFailure(match[1], match[2])
+        if safe.stage == match[1] and safe.code == match[2]:
+            return safe
+    return None
+
+
+def client_failure(output):
+    safe = parse_failure(output)
+    if safe and safe.stage in CLIENT_STAGES and safe.code in CLIENT_CODES:
+        return safe
+    return None
 
 
 def clean_env():
@@ -80,18 +214,35 @@ def clean_env():
     }
 
 
-def run(args, *, data=None, timeout=30):
-    result = subprocess.run(
-        args,
-        input=data,
-        text=True,
-        capture_output=True,
-        env=clean_env(),
-        timeout=timeout,
-        check=False,
-    )
+def run(args, *, data=None, timeout=30, stage="HOST_PRECHECK"):
+    try:
+        result = subprocess.run(
+            args,
+            input=data,
+            text=True,
+            capture_output=True,
+            env=clean_env(),
+            timeout=timeout,
+            check=False,
+        )
+    except subprocess.TimeoutExpired:
+        raise PreflightFailure(stage, "TIMEOUT") from None
+    except Exception:
+        raise PreflightFailure(stage, "HOST_COMMAND_FAILED") from None
     if result.returncode:
-        raise RuntimeError("PREFLIGHT_COMMAND_FAILED")
+        if stage == "SECRET_RETRIEVAL":
+            match = re.search(r"An error occurred \(([A-Za-z]+)\)", result.stderr)
+            code = match[1] if match and match[1] in AWS_CODES else "AWS_CLI_FAILED"
+            raise PreflightFailure(stage, code)
+        if stage == "CONTAINER":
+            safe = client_failure(result.stdout)
+            if safe:
+                raise safe
+            code = "CONTAINER_EXIT_" + str(result.returncode)
+            raise PreflightFailure(
+                stage, code if code in HOST_CODES else "CONTAINER_FAILED"
+            )
+        raise PreflightFailure(stage, "HOST_COMMAND_FAILED")
     return result.stdout
 
 
@@ -134,7 +285,8 @@ def execute(release_path):
     if not all(tools.values()):
         raise RuntimeError("HOST_TOOLS_MISSING")
     architecture = run(
-        [tools["docker"], "image", "inspect", "--format", "{{.Architecture}}", IMAGE]
+        [tools["docker"], "image", "inspect", "--format", "{{.Architecture}}", IMAGE],
+        stage="IMAGE_IDENTITY",
     )
     if architecture.strip() != "amd64":
         raise RuntimeError("REVIEWED_AMD64_IMAGE_REQUIRED")
@@ -151,7 +303,8 @@ def execute(release_path):
             "SecretString",
             "--output",
             "json",
-        ]
+        ],
+        stage="SECRET_RETRIEVAL",
     )
     value = json.loads(payload)
     if not isinstance(value, str) or not 1 <= len(value) <= 4096:
@@ -183,6 +336,7 @@ def execute(release_path):
         ],
         data=value,
         timeout=45,
+        stage="CONTAINER",
     )
     if output.strip() != "ARBITRUM_CHAIN_ID_VERIFIED":
         raise RuntimeError("CHAIN_PREFLIGHT_FAILED")
@@ -199,8 +353,20 @@ def main():
     try:
         execute(args.release)
         return 0
-    except Exception:
-        print("CHAIN_PREFLIGHT_FAILED")
+    except Exception as error:
+        if isinstance(error, PreflightFailure):
+            safe = error
+        else:
+            guard = (
+                error.args[0] if type(error) is RuntimeError and error.args else None
+            )
+            safe = PreflightFailure(
+                "HOST_PRECHECK",
+                guard
+                if isinstance(guard, str) and guard in HOST_GUARDS
+                else "HOST_ERROR",
+            )
+        print("CHAIN_PREFLIGHT_FAILED stage=" + safe.stage + " code=" + safe.code)
         return 1
 
 

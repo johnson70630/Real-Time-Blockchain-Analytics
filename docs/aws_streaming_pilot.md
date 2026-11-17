@@ -1,5 +1,9 @@
 # Milestone 11.6C — first streaming pilot readiness
 
+Current status: [approved window aborted before ingestion; EC2 stopped and safe diagnostics improved offline](aws_runtime_demo_abort_result.md). The private chain preflight failed with an unknown cause. No application was started; another paid start is not approved.
+
+The earlier proposal below is preserved as checkpoint history.
+
 Current status: [owner confirmed Arbitrum; exact release and supervised-demo proposal](aws_runtime_demo_readiness.md). The network confirmation is an owner attestation; live chain/boot/ingestion checks and paid deployment approval remain pending.
 
 The earlier pending-network status below is preserved as checkpoint history.

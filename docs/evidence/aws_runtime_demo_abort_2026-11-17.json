@@ -1,0 +1,200 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-17T22:58:02.012397+00:00",
+  "milestone": "11.6C",
+  "outcome": "ABORTED_BEFORE_APPLICATION_START",
+  "owner_approved_window": true,
+  "approval_message": "approve",
+  "runtime_source_commit": "19f1d2052486de135337ff0a3339ab1e9f61525e",
+  "frozen_image_source": "ddc1861cef958d5bc718100fcb502aac8318011b",
+  "approved_artifact_sha256": {
+    "docs/aws_runtime_demo_readiness.md": "ca085cf58b0e9ab43931a84eed9825ed66816d95457625644701918118aecab1",
+    "docs/evidence/aws_runtime_release_candidate_2026-11-17.json": "7f948e94cec7f7aebaf2aa4dab4ddd8e92a60f083f17bb9cefcff4db89cd200f",
+    "scripts/check_runtime_chain.py": "36cdf29df027706eafabeac7adfd772448e19c154f41c067d139265aad067b26",
+    "docs/evidence/aws_runtime_network_readiness_2026-11-17.json": "e1b0ac256a584afbe233351edaaebba6f7df288d2a1d35e0d9602015ea1fab51"
+  },
+  "cloud_readiness": {
+    "checked_at_utc": "2026-11-17T22:39:09.227731+00:00",
+    "all_cloud_readiness_checks_passed": true,
+    "instance_state": "stopped",
+    "iam_boundary_trust_profile_and_secret_policy_match": true,
+    "images": [
+      {
+        "role": "producer",
+        "manifest_and_config_match": true,
+        "finding_inventory_unchanged": true,
+        "findings": 16,
+        "counts": {
+          "HIGH": 2,
+          "MEDIUM": 10,
+          "LOW": 3,
+          "UNDEFINED": 1
+        }
+      },
+      {
+        "role": "spark",
+        "manifest_and_config_match": true,
+        "finding_inventory_unchanged": true,
+        "findings": 16,
+        "counts": {
+          "HIGH": 2,
+          "MEDIUM": 10,
+          "LOW": 3,
+          "UNDEFINED": 1
+        }
+      },
+      {
+        "role": "kafka",
+        "manifest_and_config_match": true,
+        "finding_inventory_unchanged": true,
+        "findings": 0,
+        "counts": {}
+      }
+    ],
+    "secret_values_read": false,
+    "aws_writes": false
+  },
+  "host_installation": {
+    "mount_persisted_after_boot": true,
+    "volume_and_xfs_uuid_match": true,
+    "docker_and_compose_verified": true,
+    "no_unexpected_containers": true,
+    "cluster_metadata_safe": true,
+    "installed_frozen_host_files": 9,
+    "release_verified": true,
+    "emergency_timer_active": true,
+    "ok": true
+  },
+  "chain_preflight": {
+    "attempted": true,
+    "passed": false,
+    "observed_guest_result": {
+      "ok": false,
+      "error_type": "RuntimeError",
+      "guard": "COMMAND_FAILED"
+    },
+    "actual_failure_cause": "UNKNOWN",
+    "known_observability_defect": "Nested operator helpers discarded safe failure context and emitted only COMMAND_FAILED",
+    "secret_retrieval_success": "NOT_ESTABLISHED",
+    "endpoint_chain_id": "NOT_VERIFIED",
+    "url_or_key_received_by_assistant": false,
+    "all_three_cached_image_config_and_digest_checks_completed_before_the_chain_phase": true,
+    "automatic_retry": false
+  },
+  "application": {
+    "controller_invocations": 0,
+    "service_active_state": "inactive",
+    "spark_status_file_present": false,
+    "expected_service_containers": [],
+    "status_inventory_scope": "Only Kafka, Spark and producer services; not a full transient-container inventory",
+    "all_processes_ended_by_verified_instance_stop": true,
+    "s3_data_or_checkpoint_writes_by_this_run": false,
+    "kafka_application_storage_initialization": false,
+    "live_streaming_acceptance": "NOT_RUN",
+    "live_recovery_acceptance": "NOT_RUN"
+  },
+  "shutdown": {
+    "checked_at_utc": "2026-11-17T22:48:44.216744+00:00",
+    "instance_id": "i-0ca1671a59751acc5",
+    "state": "stopped",
+    "public_ipv4_absent": true,
+    "disk_ids_preserved": [
+      "vol-02c9fb14a9c568fb5",
+      "vol-03bd5d26947719f98"
+    ],
+    "encrypted_gp3_disks_attached": true,
+    "kafka_delete_on_termination": false,
+    "conservative_observed_runtime_seconds": 282.26,
+    "compute_plus_ipv4_estimate_usd": 0.01344,
+    "controller_invocations": 0,
+    "application_containers_started": false,
+    "s3_writes_by_this_run": false,
+    "normal_stop_verified": true,
+    "production_start_scope_consumed": true,
+    "new_start_authorized": false,
+    "actual_private_chain_failure_cause": "UNKNOWN_GENERIC_ERROR"
+  },
+  "production_changes": {
+    "one_existing_instance_started_and_normally_stopped": true,
+    "frozen_nine_host_files_and_release_and_legacy_check_installed": true,
+    "three_reviewed_images_pulled_to_existing_root_disk": true,
+    "new_aws_resources_created": false,
+    "ebs_filesystem_format_or_reset": false,
+    "disk_ids_preserved": true,
+    "terraform_backend_or_state_access": false,
+    "iam_changes": false,
+    "secret_value_edit": false,
+    "snowflake_changes": false,
+    "main_merge": false,
+    "three_reviewed_systemd_definitions_installed_and_deadline_started_manually": true
+  },
+  "offline_followup": {
+    "new_operator_sha256": "8c64cd485ca7ab2dce78c343fe4699fd27d7a9f47d59446589211f801622e114",
+    "diagnostics_are_allowlisted_stage_and_code_only": true,
+    "outer_helpers_must_parse_fixed_protocol_instead_of_discarding_it": true,
+    "actual_cause_fixed": false,
+    "updated_code_deployed": false,
+    "new_operator_tests": 25,
+    "focused_tests_passed": 96,
+    "negative_subtests_passed": 28,
+    "ruff": "PASS",
+    "deployment_operator_guard_tests_before_window": 28,
+    "exact_cached_image_local_test": "UNAVAILABLE; accepted digest/config not in local Docker store; no pull attempted",
+    "prospective_dispatch_artifacts": {
+      "preparation_only": true,
+      "aws_calls": false,
+      "probe_sha256": "8c64cd485ca7ab2dce78c343fe4699fd27d7a9f47d59446589211f801622e114",
+      "command_sha256": "0eb33f99923a9113194f4c8b4553a422dd3796e16e58a9c2846bcda8342b1359",
+      "relay_sha256": "4189191ca83053d60be66ccd521e58b4c176bbc86d7c3dc50918bd9d92a66048",
+      "preserves_legacy_installed_check": true,
+      "uses_complete_allowlisted_failure_parser": true,
+      "new_start_authorized": false
+    }
+  },
+  "proposed_next_attempt": {
+    "authorization": "NOT_APPROVED",
+    "instance_id": "i-0ca1671a59751acc5",
+    "maximum_starts": 1,
+    "maximum_controller_invocations": 1,
+    "maximum_controller_seconds": 3600,
+    "maximum_supervised_window_minutes": 150,
+    "mandatory_chain_gate_before_application": true,
+    "new_operator_path": "/run/blockchain-runtime/check_runtime_chain-v2.py",
+    "new_operator_sha256": "8c64cd485ca7ab2dce78c343fe4699fd27d7a9f47d59446589211f801622e114",
+    "preserve_legacy_installed_check_and_frozen_host_bundle": true,
+    "use_existing_release_candidate_sha256": "7f948e94cec7f7aebaf2aa4dab4ddd8e92a60f083f17bb9cefcff4db89cd200f",
+    "early_shutdown_after_positive_smoke_or_any_failed_gate": true,
+    "additional_compute_plus_ipv4_150_minute_estimate_usd": "0.4285",
+    "hard_spending_cap": false,
+    "excludes": [
+      "IAM edits",
+      "Terraform operations",
+      "secret edits",
+      "filesystem format",
+      "resource deletion",
+      "image publication",
+      "main merge"
+    ],
+    "use_updated_check_directly_with_allowlisted_protocol_parser": true,
+    "never_rerun_legacy_prepare_or_overwrite_existing_installation": true
+  },
+  "security_exception": {
+    "streaming_runs_consumed": 0,
+    "maximum_streaming_runs": 1,
+    "expiry_utc": "2026-11-24T00:00:00Z",
+    "frozen_images_changed": false,
+    "not_a_new_paid_start_approval": true
+  },
+  "milestone_complete": false,
+  "milestone_11_5d": "PAUSED",
+  "private_receipt_sha256": {
+    "owner-approval.json": "d46fd7d3d11d469e39665782cae6fb5339b259d5560d46d390b41d60a1c9ce83",
+    "operator-readiness.json": "e99803b69fd9e7a3d23009a1726853aa6c40b8b04241c37b4d82f2dce9c3e51d",
+    "cloud-readiness.json": "36087a1748d6a208ba15e12a809fc4da4725c8d50db858c492552562f8a8b432",
+    "guest-install-result.json": "935941b14d46d68d02295e70f8f12ad4d0d0636dda4ed30315e44af5f3452ee2",
+    "guest-prepare-result.json": "c2b201922f49962f277958a31e7dc57fbf77193bcbfa5b71eb39428ceded54f4",
+    "guest-status-result.json": "e1fc8c8f953aad05e9061c8e0abda801aca10de440e626d722424f81897a6cb7",
+    "final-stopped.json": "b9ade7cc5ffac16533bbf6240b860bffb9aaef989f8d51d5b0c212df52e4e45d",
+    "watch.json": "0fa12fa6126b0fca59d89516baea19a6e3bd720c29485b99a6afa0a82ff849ba"
+  }
+}
