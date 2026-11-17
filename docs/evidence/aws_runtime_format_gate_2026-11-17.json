@@ -1,0 +1,149 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-17T23:49:55.745742+00:00",
+  "milestone": "11.6C",
+  "source_commit": "c00a5095b077c9c6514c3609ab06fc2478b91ebe",
+  "owner_approved_second_window": true,
+  "live_result": {
+    "checked_at_utc": "2026-11-17T23:37:11.784089+00:00",
+    "outcome": "ABORTED_AT_ENDPOINT_FORMAT_GATE",
+    "stage": "SECRET_FORMAT",
+    "code": "INVALID_ENDPOINT",
+    "secret_retrieval_completed_before_client_format_gate": true,
+    "rpc_request_sent": false,
+    "stored_payload_vs_ec2_stdin_not_fully_isolated": true,
+    "owner_plaintext_format_check": "PENDING",
+    "controller_invocations": 0,
+    "application_started": false,
+    "s3_data_or_checkpoint_writes_by_this_run": false,
+    "automatic_retry": false,
+    "state": "stopped",
+    "public_ipv4_absent": true,
+    "encrypted_gp3_disk_ids_preserved": [
+      "vol-02c9fb14a9c568fb5",
+      "vol-03bd5d26947719f98"
+    ],
+    "kafka_delete_on_termination": false,
+    "conservative_observed_runtime_seconds": 303.25,
+    "compute_plus_ipv4_estimate_usd": 0.01444,
+    "new_start_authorized": false,
+    "secret_edit_authorized": false,
+    "watch_handoff_gap": true,
+    "detached_watch_recovered_before_secret_access": true,
+    "original_deadlines_preserved": true,
+    "offline_exact_manifest_dummy_tests": {
+      "exact_accepted_manifest_verified": true,
+      "local_reference": "blockchain-pilot-producer:offline",
+      "image_id_uses_manifest_digest_on_this_engine": true,
+      "network": "none",
+      "real_credentials_used": false,
+      "stdin_dummy_url_transport_passed": true,
+      "cases": [
+        {
+          "case": "success",
+          "passed": true
+        },
+        {
+          "case": "http401",
+          "passed": true
+        }
+      ]
+    },
+    "source_commit": "c00a5095b077c9c6514c3609ab06fc2478b91ebe",
+    "last_source_ci": 44196089997,
+    "source_ci_all_six": "SUCCESS",
+    "milestone_11_5d": "PAUSED"
+  },
+  "owner_private_clipboard_check": {
+    "reported_result": {
+      "codes": [],
+      "status": "FORMAT_PASS"
+    },
+    "copied_text_valid": true,
+    "entire_stored_plaintext_payload_confirmation": "ONLY_URL_COPIED; WHOLE STORED PAYLOAD NOT CONFIRMED",
+    "stored_secret_value_proven_invalid": false,
+    "url_or_key_returned_to_assistant": false,
+    "owner_clarification": "only url actually",
+    "do_not_infer_stored_payload_valid_from_url_field_pass": true
+  },
+  "operational_control_observation": {
+    "original_interactive_watcher_not_running_at_handoff": true,
+    "original_exit_cause": "UNKNOWN",
+    "detached_watcher_restored_before_secret_read": true,
+    "same_approved_boot_and_original_deadlines_preserved": true,
+    "no_additional_start_performed": true,
+    "session_at_actual_launch_met_three_hour_minimum": true,
+    "requested_five_minute_owner_handoff_target_missed_by_seconds": 36.73,
+    "actual_start_within_original_ten_minute_arm_interval": true
+  },
+  "offline_exact_manifest_validation": {
+    "exact_accepted_manifest_verified": true,
+    "local_reference": "blockchain-pilot-producer:offline",
+    "image_id_uses_manifest_digest_on_this_engine": true,
+    "network": "none",
+    "real_credentials_used": false,
+    "stdin_dummy_url_transport_passed": true,
+    "cases": [
+      {
+        "case": "success",
+        "passed": true
+      },
+      {
+        "case": "http401",
+        "passed": true
+      }
+    ]
+  },
+  "earlier_local_image_lookup_limitation": "Repository-digest/config-ID lookup did not find the image; archived local tag later resolved to the accepted manifest. Modern local engine Id equals manifest digest.",
+  "owner_only_checker": {
+    "path": "scripts/check_runtime_endpoint_format.py",
+    "sha256": "2789f10d599c1597fa06d002163591c0ff5d3dcb6dd3858cc01f5ed246c397a8",
+    "clipboard_action_executed_by_assistant": false,
+    "owner_confirms_before_one_clipboard_read": true,
+    "writes_or_modifies_clipboard": false,
+    "aws_or_network_calls": false,
+    "prints_endpoint_or_exception_details": false,
+    "tests_new": 18,
+    "combined_format_and_chain_tests_passed": 43,
+    "negative_subtests": 28,
+    "ruff": "PASS"
+  },
+  "private_receipt_sha256": {
+    "owner-approval.json": "1bbea3cf4a61bd1707d4ec41d59ef267880bebbe7ca545addf2a88b3b3dc6e42",
+    "cloud-readiness.json": "2b315285e5c4f0af3be083e22020311808bfd8517102e11553d73d720903aa3c",
+    "guest-diagnose-result.json": "144bf5218cf94ef9e1313db3858b40bacdcd10c5517dff0444eafff437599c63",
+    "watch-before-handoff-recovery.json": "bc37636810a8ea824e52df818901039070f469ca7e96c4881c9c36067f70e14e",
+    "watch-recovery-process.json": "a5152cd1280eadddd51910c63fa77b7d84212ca9ec334f5942beacd721d7ee81",
+    "watch.json": "f5a9c49d601ee099c40e7677a0dc6618e7656161f42b5ed8b9e17c20211cb022",
+    "format-gate-final-result.json": "23388cf9eee78f37af7ceee947a216ff3ba8fea5b4e4b9395217750237784b53"
+  },
+  "pending_actions": {
+    "additional_ec2_start_approved": false,
+    "secret_edit_approved": false,
+    "runtime_source_change_approved": false
+  },
+  "milestone_complete": false,
+  "milestone_11_5d": "PAUSED",
+  "proposed_secret_correction": {
+    "authorization": "NOT_APPROVED",
+    "account": "209479274979",
+    "region": "us-west-2",
+    "secret_arn": "arn:aws:secretsmanager:us-west-2:209479274979:secret:blockchain-runtime/11-6c/alchemy-websocket-url-d44flr",
+    "owner_console_only": true,
+    "scope": "Only if needed, replace the complete existing SecretString with the same privately validated bare WSS URL; remove wrapper/quotes/whitespace, preserve endpoint/API key",
+    "if_already_exact_bare_url": "Do not save a new version; report that fact",
+    "preserve": [
+      "ARN/name",
+      "AWS-managed encryption",
+      "rotation off",
+      "replication off",
+      "resource policy",
+      "tags",
+      "existing API key",
+      "IAM grants and boundary"
+    ],
+    "assistant_receives_value": false,
+    "ec2_start_included": false,
+    "terraform_or_iam_changes_included": false
+  }
+}

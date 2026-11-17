@@ -1,5 +1,9 @@
 # Milestone 11.6C — first streaming pilot readiness
 
+Current status: [second window stopped at the endpoint-format gate; owner-only whole-payload verification/correction review](aws_runtime_format_gate_result.md). A copied URL passed locally, but the complete stored value is not yet confirmed. No further paid start or secret edit is approved.
+
+The earlier abort status below is preserved as checkpoint history.
+
 Current status: [approved window aborted before ingestion; EC2 stopped and safe diagnostics improved offline](aws_runtime_demo_abort_result.md). The private chain preflight failed with an unknown cause. No application was started; another paid start is not approved.
 
 The earlier proposal below is preserved as checkpoint history.

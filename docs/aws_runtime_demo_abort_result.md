@@ -1,5 +1,7 @@
 # Milestone 11.6C — First runtime window aborted before ingestion
 
+Follow-up: [the approved repeat reached the endpoint-format gate and was stopped; whole-payload verification/correction is now under review](aws_runtime_format_gate_result.md). The unknown generic failure below preserves the first window's history.
+
 **The approved instance was started, the host/image checks passed, and the
 private chain preflight failed. The application was never started. EC2 was
 normally stopped and independently verified. The underlying failure is unknown.**
