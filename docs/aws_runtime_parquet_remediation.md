@@ -1,5 +1,7 @@
 # Milestone 11.6C — Complete Parquet cohort maintenance
 
+Current offline follow-up: [application image privilege hardening](aws_runtime_privilege_hardening.md). Deployment remains blocked; no exceptions or AWS changes are authorized.
+
 Reviewed 2026-11-16 UTC. **Deployment remains blocked.** This is an offline
 checkpoint, with no accepted security exceptions, ECR publication or paid
 runtime authorization. Milestone 11.5D remains paused.

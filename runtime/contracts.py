@@ -36,6 +36,9 @@ REJECTED_IMAGE_DIGESTS = frozenset({
     "sha256:4da1dc74633cfab7d585cd986c91b73250a469217e3534fa327470a4ae31bb6f",
     # f209652 Spark retained the old standalone JSON/compression dependencies.
     "sha256:5b652614cbcfec3514c6f437ab32878a9ebdd55bbc70b7f07734d59b116f5339",
+    # bb66dd6 app images retained setuid/setgid helpers unused by the pilot.
+    "sha256:9dba42d08eb745529bc88358520c1d39316c68cb7e9643a1dd6013faa11c1210",
+    "sha256:b6b9c0fb4ada3e1806356bf33fbcf0f49e69b2f8e3036247ccc14740cfb91a19",
     # 3505f95 Spark retained the earlier Parquet/Jackson shaded cohort.
     "sha256:e3137a88b38902245299c47bfc7fde1027b86870a26a2d5fb646e2f3e019a9c9",
     # 47815e9 Spark retained standalone Thrift RPC and the archived LZ4 artifact.

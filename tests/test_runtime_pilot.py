@@ -572,3 +572,11 @@ def test_old_parquet_cohort_manifest_cannot_be_released(release):
     release["spark_image"] = f"{REGISTRY}/blockchain-runtime-spark@{evidence['baseline_spark_manifest']}"
     with pytest.raises(ValueError, match="REJECTED_IMAGE_RELEASE"):
         validate_release(release)
+
+
+@pytest.mark.parametrize("role", ["producer", "spark"])
+def test_pre_privilege_hardening_images_cannot_be_released(release, role):
+    evidence = json.loads((ROOT / "docs/evidence/aws_runtime_privilege_bits_2026-11-16.json").read_text())
+    release[role + "_image"] = f"{REGISTRY}/blockchain-runtime-{role}@{evidence['baseline_manifests'][role]}"
+    with pytest.raises(ValueError, match="REJECTED_IMAGE_RELEASE"):
+        validate_release(release)

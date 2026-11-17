@@ -1,5 +1,7 @@
 # Milestone 11.6C — first streaming pilot readiness
 
+Current offline follow-up: [application image privilege hardening](aws_runtime_privilege_hardening.md). Deployment remains blocked; no exceptions or AWS changes are authorized.
+
 Current offline follow-up: [complete Parquet cohort maintenance](aws_runtime_parquet_remediation.md). Deployment remains blocked; no exceptions or AWS changes are authorized.
 
 Current offline follow-up: [LZ4 maintenance and unused Thrift removal](aws_runtime_thrift_lz4_remediation.md). Deployment remains blocked; no exceptions or AWS changes are authorized.

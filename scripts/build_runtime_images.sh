@@ -28,6 +28,28 @@ for role in producer spark kafka; do
     --label "org.opencontainers.image.title=blockchain-runtime-$role" \
     -f "deploy/runtime/Dockerfile.$role" -t "blockchain-pilot-$role:offline" - < "$context_dir/context.tar"
 done
+# Audit flattened image metadata, including private directories. These owned
+# containers are never started, receive no mounts and are removed afterwards.
+# No root inspection process or extra capability is needed.
+tar -xOf "$context_dir/context.tar" deploy/runtime/check_image_privileges.py > "$context_dir/check_image_privileges.py"
+audit_container=""
+cleanup_audit_container() {
+  if [ -n "$audit_container" ]; then
+    "${docker_local[@]}" rm "$audit_container" > /dev/null
+  fi
+}
+trap cleanup_audit_container EXIT
+for role in producer spark; do
+  candidate_container="$("${docker_local[@]}" create --pull never --platform linux/amd64 \
+    --network none --read-only --cap-drop ALL --security-opt no-new-privileges:true \
+    --entrypoint /bin/true "blockchain-pilot-$role:offline")"
+  [[ "$candidate_container" =~ ^[0-9a-f]{64}$ ]] || { echo AUDIT_CONTAINER_ID_INVALID >&2; exit 1; }
+  audit_container="$candidate_container"
+  test "$("${docker_local[@]}" inspect --format '{{json .Mounts}}' "$audit_container")" = '[]'
+  "${docker_local[@]}" export "$audit_container" | python3 "$context_dir/check_image_privileges.py"
+  cleanup_audit_container
+  audit_container=""
+done
 tar -xOf "$context_dir/context.tar" deploy/runtime/smoke_producer.py | \
   "${docker_local[@]}" run --rm -i --network none --read-only \
     --cap-drop ALL --security-opt no-new-privileges:true \

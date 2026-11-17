@@ -1,0 +1,458 @@
+{
+  "schema_version": 1,
+  "milestone": "11.6C",
+  "review_started_date_utc": "2026-11-16",
+  "evidence_recorded_at_utc": "2026-11-17T00:01:39.389846+00:00",
+  "base_commit": "bb66dd6f3cd8fbbbd966c748679999a62fce410f",
+  "baseline_ci": {
+    "run_id": 43979029114,
+    "all_six_jobs": "success"
+  },
+  "scope": "OFFLINE_APPLICATION_IMAGE_SETUID_SETGID_MODE_HARDENING",
+  "baseline_manifests": {
+    "producer": "sha256:9dba42d08eb745529bc88358520c1d39316c68cb7e9643a1dd6013faa11c1210",
+    "spark": "sha256:b6b9c0fb4ada3e1806356bf33fbcf0f49e69b2f8e3036247ccc14740cfb91a19"
+  },
+  "baseline_privileged_files": {
+    "producer": [
+      {
+        "path": "/usr/bin/chage",
+        "mode": "0o2755",
+        "uid": 0,
+        "gid": 42,
+        "size": 113848,
+        "sha256": "17fd8d11fc8da8d398ec100b11e7214b56ae72e7e52fd07acf51d2c7f3ea311c"
+      },
+      {
+        "path": "/usr/bin/chfn",
+        "mode": "0o4755",
+        "uid": 0,
+        "gid": 0,
+        "size": 70888,
+        "sha256": "2371665d023ae96aadcd86c8b20020020e23afd441ae0290bbb9ceca84bddd48"
+      },
+      {
+        "path": "/usr/bin/chsh",
+        "mode": "0o4755",
+        "uid": 0,
+        "gid": 0,
+        "size": 52936,
+        "sha256": "cbe6de7973fadde66cd19f5da00640eafdfb8a70e83bee6e2f89d0c1b0bf548e"
+      },
+      {
+        "path": "/usr/bin/expiry",
+        "mode": "0o2755",
+        "uid": 0,
+        "gid": 42,
+        "size": 31256,
+        "sha256": "c45d61bed0173cfb1e15d84d78d244f2c3c882e2864ad3577ae62dd16f89cc14"
+      },
+      {
+        "path": "/usr/bin/gpasswd",
+        "mode": "0o4755",
+        "uid": 0,
+        "gid": 0,
+        "size": 88568,
+        "sha256": "1c61e59033a52b767630dfd1ea8b91e402bb8d28319a8fc4d82301a26a94b5c8"
+      },
+      {
+        "path": "/usr/bin/mount",
+        "mode": "0o4755",
+        "uid": 0,
+        "gid": 0,
+        "size": 72072,
+        "sha256": "2f36342bd2fef42343c4fa4a2a396a7f56c7c8f4ddcbd31c43205c62e152e6d4"
+      },
+      {
+        "path": "/usr/bin/newgrp",
+        "mode": "0o4755",
+        "uid": 0,
+        "gid": 0,
+        "size": 18816,
+        "sha256": "e02de4ffdaa92a9a2a7b9014fa612ba3ce394fdb178e23f644f8fc61ad633f88"
+      },
+      {
+        "path": "/usr/bin/passwd",
+        "mode": "0o4755",
+        "uid": 0,
+        "gid": 0,
+        "size": 118168,
+        "sha256": "ba6fedb706e2375b8f2873815159baa6bfba652e611687aff5432a0e88c2902e"
+      },
+      {
+        "path": "/usr/bin/su",
+        "mode": "0o4755",
+        "uid": 0,
+        "gid": 0,
+        "size": 84360,
+        "sha256": "f90c09801a7dfb10aa3873b4dc75be2eb0290276c8d89a2aa7eab0a7118a2f27"
+      },
+      {
+        "path": "/usr/bin/umount",
+        "mode": "0o4755",
+        "uid": 0,
+        "gid": 0,
+        "size": 55688,
+        "sha256": "3f3046ef1cdc5134eb0b7ac586c6fea3bcea22aa6614830a14e274f3905b6cd5"
+      },
+      {
+        "path": "/usr/sbin/unix_chkpwd",
+        "mode": "0o2755",
+        "uid": 0,
+        "gid": 42,
+        "size": 43256,
+        "sha256": "bc46bfe74e6eb2b884982f59458c3471bb17351836647f63f1d2513c2cf2a5a1"
+      }
+    ],
+    "spark": [
+      {
+        "path": "/usr/bin/chage",
+        "mode": "0o2755",
+        "uid": 0,
+        "gid": 42,
+        "size": 113848,
+        "sha256": "17fd8d11fc8da8d398ec100b11e7214b56ae72e7e52fd07acf51d2c7f3ea311c"
+      },
+      {
+        "path": "/usr/bin/chfn",
+        "mode": "0o4755",
+        "uid": 0,
+        "gid": 0,
+        "size": 70888,
+        "sha256": "2371665d023ae96aadcd86c8b20020020e23afd441ae0290bbb9ceca84bddd48"
+      },
+      {
+        "path": "/usr/bin/chsh",
+        "mode": "0o4755",
+        "uid": 0,
+        "gid": 0,
+        "size": 52936,
+        "sha256": "cbe6de7973fadde66cd19f5da00640eafdfb8a70e83bee6e2f89d0c1b0bf548e"
+      },
+      {
+        "path": "/usr/bin/expiry",
+        "mode": "0o2755",
+        "uid": 0,
+        "gid": 42,
+        "size": 31256,
+        "sha256": "c45d61bed0173cfb1e15d84d78d244f2c3c882e2864ad3577ae62dd16f89cc14"
+      },
+      {
+        "path": "/usr/bin/gpasswd",
+        "mode": "0o4755",
+        "uid": 0,
+        "gid": 0,
+        "size": 88568,
+        "sha256": "1c61e59033a52b767630dfd1ea8b91e402bb8d28319a8fc4d82301a26a94b5c8"
+      },
+      {
+        "path": "/usr/bin/mount",
+        "mode": "0o4755",
+        "uid": 0,
+        "gid": 0,
+        "size": 72072,
+        "sha256": "2f36342bd2fef42343c4fa4a2a396a7f56c7c8f4ddcbd31c43205c62e152e6d4"
+      },
+      {
+        "path": "/usr/bin/newgrp",
+        "mode": "0o4755",
+        "uid": 0,
+        "gid": 0,
+        "size": 18816,
+        "sha256": "e02de4ffdaa92a9a2a7b9014fa612ba3ce394fdb178e23f644f8fc61ad633f88"
+      },
+      {
+        "path": "/usr/bin/passwd",
+        "mode": "0o4755",
+        "uid": 0,
+        "gid": 0,
+        "size": 118168,
+        "sha256": "ba6fedb706e2375b8f2873815159baa6bfba652e611687aff5432a0e88c2902e"
+      },
+      {
+        "path": "/usr/bin/su",
+        "mode": "0o4755",
+        "uid": 0,
+        "gid": 0,
+        "size": 84360,
+        "sha256": "f90c09801a7dfb10aa3873b4dc75be2eb0290276c8d89a2aa7eab0a7118a2f27"
+      },
+      {
+        "path": "/usr/bin/umount",
+        "mode": "0o4755",
+        "uid": 0,
+        "gid": 0,
+        "size": 55688,
+        "sha256": "3f3046ef1cdc5134eb0b7ac586c6fea3bcea22aa6614830a14e274f3905b6cd5"
+      },
+      {
+        "path": "/usr/sbin/unix_chkpwd",
+        "mode": "0o2755",
+        "uid": 0,
+        "gid": 42,
+        "size": 43256,
+        "sha256": "bc46bfe74e6eb2b884982f59458c3471bb17351836647f63f1d2513c2cf2a5a1"
+      }
+    ]
+  },
+  "baseline_export_negative_tests": [
+    {
+      "role": "producer",
+      "manifest_digest": "sha256:9dba42d08eb745529bc88358520c1d39316c68cb7e9643a1dd6013faa11c1210",
+      "final_export_audit_rejects_baseline": true,
+      "container_never_started": true,
+      "capabilities_added": [],
+      "mounts": []
+    },
+    {
+      "role": "spark",
+      "manifest_digest": "sha256:b6b9c0fb4ada3e1806356bf33fbcf0f49e69b2f8e3036247ccc14740cfb91a19",
+      "final_export_audit_rejects_baseline": true,
+      "container_never_started": true,
+      "capabilities_added": [],
+      "mounts": []
+    }
+  ],
+  "prototype_integrity": [
+    {
+      "role": "producer",
+      "manifest_digest": "sha256:25dca365e17daa2060f8fef9de64fa658d89b8c698e658fbef90835b3c4b5d2c",
+      "binary_bytes_owners_sizes_preserved": true,
+      "privilege_modes_cleared": 11,
+      "all_root_regular_file_setid_audit_passed": true
+    },
+    {
+      "role": "spark",
+      "manifest_digest": "sha256:28c00dfb9af76fe3223d31ffe1ccd520270c5ec07805e87448d6dd67ce95b25f",
+      "binary_bytes_owners_sizes_preserved": true,
+      "privilege_modes_cleared": 11,
+      "all_root_regular_file_setid_audit_passed": true
+    }
+  ],
+  "prototype_export_audits": {
+    "producer": {
+      "regular_files_and_links": 7179,
+      "setid_files": 0,
+      "container_never_started": true,
+      "mounts": [],
+      "capabilities_added": []
+    },
+    "spark": {
+      "regular_files_and_links": 6298,
+      "setid_files": 0,
+      "container_never_started": true,
+      "mounts": [],
+      "capabilities_added": []
+    }
+  },
+  "prototype_scans": [
+    {
+      "role": "producer",
+      "summary": {
+        "prototype_manifest_digest": "sha256:25dca365e17daa2060f8fef9de64fa658d89b8c698e658fbef90835b3c4b5d2c",
+        "report_sha256": "b9fceb990ec30f1f17ff91ba0b2aec44cd42d72f7719351e354b6e53484c4cca",
+        "findings_by_class": {
+          "os-pkgs": {
+            "LOW": 65,
+            "HIGH": 47,
+            "MEDIUM": 92,
+            "UNKNOWN": 5
+          },
+          "lang-pkgs": {
+            "MEDIUM": 6,
+            "LOW": 1
+          }
+        },
+        "publication_authorized": false,
+        "aws_calls_made": false
+      },
+      "comparison": {
+        "os-pkgs": {
+          "introduced_pairs": [],
+          "removed_pairs": []
+        },
+        "lang-pkgs": {
+          "introduced_pairs": [],
+          "removed_pairs": []
+        }
+      },
+      "baseline_report_sha256": "714950d4b8d543304a1dd7c3c23127eedee3c42856436b54173547d21c431173"
+    },
+    {
+      "role": "spark",
+      "summary": {
+        "prototype_manifest_digest": "sha256:28c00dfb9af76fe3223d31ffe1ccd520270c5ec07805e87448d6dd67ce95b25f",
+        "report_sha256": "bce1f1d26ef476060a126651ccd05e409ab9a79cf97030b0a0207455d9bcfb31",
+        "findings_by_class": {
+          "os-pkgs": {
+            "LOW": 65,
+            "HIGH": 47,
+            "MEDIUM": 92,
+            "UNKNOWN": 5
+          },
+          "lang-pkgs": {
+            "HIGH": 30,
+            "MEDIUM": 47,
+            "CRITICAL": 1,
+            "LOW": 3
+          }
+        },
+        "publication_authorized": false,
+        "aws_calls_made": false
+      },
+      "comparison": {
+        "os-pkgs": {
+          "introduced_pairs": [],
+          "removed_pairs": []
+        },
+        "lang-pkgs": {
+          "introduced_pairs": [],
+          "removed_pairs": []
+        }
+      },
+      "baseline_report_sha256": "7d7ae69b3b45765d495985f1e0ab2bb9229e55953a7e70889e5a03dba9756235"
+    }
+  ],
+  "vendor_os_review": {
+    "checked_at_utc": "2026-11-16T23:51:53.538830+00:00",
+    "inputs": [
+      {
+        "id": "CVE-2025-69720",
+        "url": "https://security-tracker.debian.org/tracker/CVE-2025-69720",
+        "sha256": "3542be519daaef8f60a0fd662f4a6129a238f59ef9b86155869d49cfd2b3af78",
+        "reviewed_trixie_status": "vulnerable"
+      },
+      {
+        "id": "CVE-2026-119373",
+        "url": "https://security-tracker.debian.org/tracker/CVE-2026-119373",
+        "sha256": "caa306ace78626cf4c28044f3d1053a2d7a5785ebe88d42504218e5ffa23aaee",
+        "reviewed_trixie_status": "vulnerable"
+      },
+      {
+        "id": "CVE-2026-119374",
+        "url": "https://security-tracker.debian.org/tracker/CVE-2026-119374",
+        "sha256": "08ee3a28b1be9e9dfcbad161a79731b08cc08a6b54caef90098da46bfc574cdc",
+        "reviewed_trixie_status": "vulnerable"
+      },
+      {
+        "id": "CVE-2026-119379",
+        "url": "https://security-tracker.debian.org/tracker/CVE-2026-119379",
+        "sha256": "d7171e070be82e7ea297bad3ab3d2ca5aee54a70b198c5a2bec2b762ac942679",
+        "reviewed_trixie_status": "vulnerable"
+      },
+      {
+        "id": "CVE-2026-16742",
+        "url": "https://security-tracker.debian.org/tracker/CVE-2026-16742",
+        "sha256": "c02e61ecf8255bb8874419ddb4ea555e32daf30163b919e3d88234d8d8b1c43a",
+        "reviewed_trixie_status": "vulnerable"
+      },
+      {
+        "id": "CVE-2026-54369",
+        "url": "https://security-tracker.debian.org/tracker/CVE-2026-54369",
+        "sha256": "4677cdb2b848eca7bc76f57dd54e5d01e309f438bba58d892550db432fbde5ca",
+        "reviewed_trixie_status": "vulnerable"
+      },
+      {
+        "id": "CVE-2026-76642",
+        "url": "https://security-tracker.debian.org/tracker/CVE-2026-76642",
+        "sha256": "fd40eb589f4edd1f5b2df060db1d418501f7138459069481c60471abe1efde24",
+        "reviewed_trixie_status": "vulnerable"
+      },
+      {
+        "id": "CVE-2026-78408",
+        "url": "https://security-tracker.debian.org/tracker/CVE-2026-78408",
+        "sha256": "c2ce37b05cca7f05768d22c20645c174592a837fb20423fa7f106dc4e6e0d104",
+        "reviewed_trixie_status": "vulnerable"
+      },
+      {
+        "id": "CVE-2026-78409",
+        "url": "https://security-tracker.debian.org/tracker/CVE-2026-78409",
+        "sha256": "7762ce7d10558ca03e3fcc3995b97e7a24d13ab4b1d6cdd3e4bf9ff7d357ba48",
+        "reviewed_trixie_status": "vulnerable"
+      },
+      {
+        "id": "CVE-2026-78410",
+        "url": "https://security-tracker.debian.org/tracker/CVE-2026-78410",
+        "sha256": "370b52136365d440004d915421bd2b2529393511c802bdc04f3e3a873241621b",
+        "reviewed_trixie_status": "vulnerable"
+      },
+      {
+        "id": "CVE-2026-9538",
+        "url": "https://security-tracker.debian.org/tracker/CVE-2026-9538",
+        "sha256": "f9466371b6a5bd0094c5a53028d43144ca3115918fb37ca7ae0d48eb9dc350b1",
+        "reviewed_trixie_status": "vulnerable"
+      }
+    ]
+  },
+  "application_controls": {
+    "uid_gid": "10001:10001",
+    "capabilities_added": [],
+    "capabilities_dropped": [
+      "ALL"
+    ],
+    "no_new_privileges": true,
+    "read_only_root": true,
+    "host_admin_unchanged": true
+  },
+  "audit_controls": {
+    "container_never_started": true,
+    "mounts": [],
+    "capabilities_added": [],
+    "read_only_root": true,
+    "host_files_extracted": false,
+    "metadata_only": true,
+    "code_source": "exact committed build context for checkpoint checks",
+    "owned_container_cleanup": true,
+    "scope_limits": [
+      "regular files and hardlinks in flattened image root filesystem",
+      "not runtime volumes, host OS, Linux file capabilities/xattrs or universal reachability evidence"
+    ]
+  },
+  "dependency_versions_changed": false,
+  "cve_fixes_claimed": [],
+  "accepted_exceptions": [],
+  "release_status": "BLOCKED_SDK_CRITICAL_AND_REMAINING_LIBRARY_OS_HIGH",
+  "scanner": {
+    "name": "Trivy",
+    "version": "0.76.2",
+    "binary_sha256": "7a15c426f963473a485a4f315e21f8e2c881269d500bf0de35da13a4421fa108",
+    "vulnerability_db": {
+      "Version": 2,
+      "NextUpdate": "2026-11-17T01:11:02.624122856Z",
+      "UpdatedAt": "2026-11-16T01:11:02.624123452Z",
+      "DownloadedAt": "2026-11-16T06:29:57.145978Z"
+    },
+    "java_db": {
+      "Version": 1,
+      "NextUpdate": "2026-11-19T00:57:00.601023403Z",
+      "UpdatedAt": "2026-11-16T00:57:00.601024044Z",
+      "DownloadedAt": "2026-11-16T07:24:25.109375Z"
+    },
+    "offline_same_db_comparison": true,
+    "ignore_file": "",
+    "ignore_unfixed": false,
+    "severity_filter": null
+  },
+  "publication_authorized": false,
+  "images_published": false,
+  "aws_calls_made": false,
+  "terraform_changed": false,
+  "production_infrastructure_changed": false,
+  "milestone_11_5d": "PAUSED",
+  "checkpoint_followup": "Exact committed builds, both metadata audits, recovery, identity-bound scans and all six CI jobs must be observed after commit; this is not an ECR publication receipt.",
+  "prototype_recovery": {
+    "base_commit": "bb66dd6f3cd8fbbbd966c748679999a62fce410f",
+    "source_status": "UNCOMMITTED_PROTOTYPE",
+    "synthetic_recovery_passed": true,
+    "phases": [
+      "initial",
+      "kafka_restart",
+      "checkpoint_resume",
+      "repeat_without_duplicate_rows",
+      "offset_loss_fail_closed"
+    ],
+    "project": "blockchain-privileges-prototype-92b537c368",
+    "aws_calls_made": false,
+    "publication_authorized": false
+  }
+}

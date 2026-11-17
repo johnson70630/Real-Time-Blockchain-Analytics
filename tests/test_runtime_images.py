@@ -421,3 +421,11 @@ def test_old_parquet_cohort_manifest_cannot_be_planned_as_current(inspected):
     inspected["spark"]["id"] = evidence["baseline_spark_manifest"]
     with pytest.raises(ValueError, match="REJECTED_IMAGE_RELEASE"):
         images.publication_plan(inspected, COMMIT)
+
+
+@pytest.mark.parametrize("role", ["producer", "spark"])
+def test_pre_privilege_hardening_images_cannot_be_planned_as_current(inspected, role):
+    evidence = json.loads((images.ROOT / "docs/evidence/aws_runtime_privilege_bits_2026-11-16.json").read_text())
+    inspected[role]["id"] = evidence["baseline_manifests"][role]
+    with pytest.raises(ValueError, match="REJECTED_IMAGE_RELEASE"):
+        images.publication_plan(inspected, COMMIT)

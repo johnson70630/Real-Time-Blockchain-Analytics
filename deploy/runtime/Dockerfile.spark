@@ -36,6 +36,9 @@ RUN --mount=type=bind,source=deploy/runtime/verified-jars,target=/tmp/verified-j
 COPY config /app/config
 COPY spark /app/spark
 COPY runtime /app/runtime
+# Host/EBS administration runs outside this non-root application image.
+# Keep package files/metadata intact; clear only their privilege bits.
+RUN find / -xdev -type f -perm /6000 -exec chmod a-s -- {} +
 USER 10001:10001
 # No Maven resolver or package download is invoked at runtime.
 CMD ["python", "-m", "runtime.stream"]
