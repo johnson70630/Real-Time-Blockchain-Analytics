@@ -1,5 +1,7 @@
 # Milestone 11.6C — Consolidated security decision
 
+Latest scan-only publication: [verified ECR artifacts and scan status](aws_runtime_quarantined_publication.md). Images remain quarantined; no security exception or deployment is approved.
+
 **Status: owner decision required; no exception or deployment is approved.**
 Review snapshot: 2026-11-17 UTC. Milestone 11.5D remains paused.
 

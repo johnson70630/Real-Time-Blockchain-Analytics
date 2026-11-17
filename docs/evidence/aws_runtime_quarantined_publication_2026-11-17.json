@@ -1,0 +1,752 @@
+{
+  "schema_version": 1,
+  "source_commit": "ddc1861cef958d5bc718100fcb502aac8318011b",
+  "completed_at_utc": "2026-11-17T02:04:50.544045+00:00",
+  "publication_user_approved": true,
+  "approval_scope": "EXACT_THREE_SCANONLY_UPLOADS_AND_AUTOMATIC_BASIC_SCAN_READS",
+  "approval_proposal_sha256": "443dbc1ca6ae9a2a80627045d34b1148287e76583ead922986f689b94d7b68b3",
+  "expected_operator_identity_verified": true,
+  "account": "209479274979",
+  "region": "us-west-2",
+  "preflight_ec2_state": "stopped",
+  "final_ec2_state": "stopped",
+  "registry_scanning_before": {
+    "scanType": "BASIC",
+    "rules": []
+  },
+  "registry_scanning_after": {
+    "scanType": "BASIC",
+    "rules": []
+  },
+  "repositories": [
+    {
+      "repositoryName": "blockchain-runtime-producer",
+      "repositoryArn": "arn:aws:ecr:us-west-2:209479274979:repository/blockchain-runtime-producer",
+      "imageTagMutability": "IMMUTABLE",
+      "imageScanningConfiguration": {
+        "scanOnPush": true
+      },
+      "encryptionConfiguration": {
+        "encryptionType": "AES256"
+      }
+    },
+    {
+      "repositoryName": "blockchain-runtime-spark",
+      "repositoryArn": "arn:aws:ecr:us-west-2:209479274979:repository/blockchain-runtime-spark",
+      "imageTagMutability": "IMMUTABLE",
+      "imageScanningConfiguration": {
+        "scanOnPush": true
+      },
+      "encryptionConfiguration": {
+        "encryptionType": "AES256"
+      }
+    }
+  ],
+  "tagged_artifact_retention": "Live lifecycle policies inspected: expire untagged images only",
+  "images": [
+    {
+      "role": "producer",
+      "repository": "blockchain-runtime-producer",
+      "tag": "scanonly-producer-ddc1861cef958d5bc718100fcb502aac8318011b",
+      "manifest_digest": "sha256:63d9d0f24a1cb7eb30b080e58f8a40ddd49292b89020328409e6f45319597afd",
+      "config_digest": "sha256:dde4337bc98079e92ace0969d4924ffc06e34881376ac050ee5bdafb16aefe37",
+      "target": "209479274979.dkr.ecr.us-west-2.amazonaws.com/blockchain-runtime-producer:scanonly-producer-ddc1861cef958d5bc718100fcb502aac8318011b",
+      "quarantined_digest_reference": "209479274979.dkr.ecr.us-west-2.amazonaws.com/blockchain-runtime-producer@sha256:63d9d0f24a1cb7eb30b080e58f8a40ddd49292b89020328409e6f45319597afd",
+      "manifest_hash_verified": true,
+      "registry_image_bytes": 68252271,
+      "published_at_utc": "2026-11-17T01:53:30.363208+00:00",
+      "scan_status": "COMPLETE",
+      "deployment_authorized": false,
+      "scan_severity_counts": {
+        "HIGH": 2,
+        "MEDIUM": 10,
+        "LOW": 3,
+        "UNDEFINED": 1
+      },
+      "scan_finding_count": 16,
+      "scan_all_pages_preserved": true,
+      "scan_report_sha256": "f9214dad2a13f194eda14f20edd170c4d572724b0d2bcbbe8e979247c018cb13",
+      "os_scan_has_high_or_critical": true,
+      "local_scan_counts": {
+        "os-pkgs": {
+          "LOW": 65,
+          "HIGH": 47,
+          "MEDIUM": 92,
+          "UNKNOWN": 5
+        },
+        "lang-pkgs": {
+          "MEDIUM": 6,
+          "LOW": 1
+        }
+      },
+      "local_scan_report_sha256": "5ad57dd8a05a24321ba1ddee1cc3cacd1d43d76b3d5bd6c1410b8c9c3fec5b22",
+      "scan_completed_at": "2026-11-16T17:53:39-08:00",
+      "vulnerability_source_updated_at": "2026-11-16T17:53:39-08:00",
+      "findings": [
+        {
+          "cve": "CVE-2026-97399",
+          "severity": "LOW",
+          "source_package": "glibc",
+          "package_version": "2.41-12+deb13u4",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-97399"
+        },
+        {
+          "cve": "CVE-2026-6368",
+          "severity": "LOW",
+          "source_package": "glibc",
+          "package_version": "2.41-12+deb13u4",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-6368"
+        },
+        {
+          "cve": "CVE-2026-8674",
+          "severity": "MEDIUM",
+          "source_package": "glibc",
+          "package_version": "2.41-12+deb13u4",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-8674"
+        },
+        {
+          "cve": "CVE-2026-80489",
+          "severity": "MEDIUM",
+          "source_package": "glibc",
+          "package_version": "2.41-12+deb13u4",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-80489"
+        },
+        {
+          "cve": "CVE-2026-95818",
+          "severity": "LOW",
+          "source_package": "glibc",
+          "package_version": "2.41-12+deb13u4",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-95818"
+        },
+        {
+          "cve": "CVE-2026-19499",
+          "severity": "HIGH",
+          "source_package": "glibc",
+          "package_version": "2.41-12+deb13u4",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-19499"
+        },
+        {
+          "cve": "CVE-2026-5435",
+          "severity": "HIGH",
+          "source_package": "glibc",
+          "package_version": "2.41-12+deb13u4",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-5435"
+        },
+        {
+          "cve": "CVE-2026-125709",
+          "severity": "MEDIUM",
+          "source_package": "gcc-14",
+          "package_version": "14.2.0-19",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-125709"
+        },
+        {
+          "cve": "CVE-2026-77117",
+          "severity": "MEDIUM",
+          "source_package": "glibc",
+          "package_version": "2.41-12+deb13u4",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-77117"
+        },
+        {
+          "cve": "CVE-2026-91094",
+          "severity": "UNDEFINED",
+          "source_package": "dpkg",
+          "package_version": "1.22.22",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-91094"
+        },
+        {
+          "cve": "CVE-2026-19542",
+          "severity": "MEDIUM",
+          "source_package": "glibc",
+          "package_version": "2.41-12+deb13u4",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-19542"
+        },
+        {
+          "cve": "CVE-2026-89092",
+          "severity": "MEDIUM",
+          "source_package": "glibc",
+          "package_version": "2.41-12+deb13u4",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-89092"
+        },
+        {
+          "cve": "CVE-2026-6238",
+          "severity": "MEDIUM",
+          "source_package": "glibc",
+          "package_version": "2.41-12+deb13u4",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-6238"
+        },
+        {
+          "cve": "CVE-2026-86805",
+          "severity": "MEDIUM",
+          "source_package": "glibc",
+          "package_version": "2.41-12+deb13u4",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-86805"
+        },
+        {
+          "cve": "CVE-2026-6791",
+          "severity": "MEDIUM",
+          "source_package": "glibc",
+          "package_version": "2.41-12+deb13u4",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-6791"
+        },
+        {
+          "cve": "CVE-2026-18374",
+          "severity": "MEDIUM",
+          "source_package": "glibc",
+          "package_version": "2.41-12+deb13u4",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-18374"
+        }
+      ],
+      "ecr_high_critical_not_in_local_advisory_inventory": [
+        "CVE-2026-19499",
+        "CVE-2026-5435"
+      ]
+    },
+    {
+      "role": "spark",
+      "repository": "blockchain-runtime-spark",
+      "tag": "scanonly-spark-ddc1861cef958d5bc718100fcb502aac8318011b",
+      "manifest_digest": "sha256:bb03f7d9917f2d8dc7d2fc1fc6a1df83fe876f5298e98c4163c689a1b890a134",
+      "config_digest": "sha256:971850a7f4ea66d4fa6e677b2a91eee2d6459ff63f8db2fcf917da04498b3a5c",
+      "target": "209479274979.dkr.ecr.us-west-2.amazonaws.com/blockchain-runtime-spark:scanonly-spark-ddc1861cef958d5bc718100fcb502aac8318011b",
+      "quarantined_digest_reference": "209479274979.dkr.ecr.us-west-2.amazonaws.com/blockchain-runtime-spark@sha256:bb03f7d9917f2d8dc7d2fc1fc6a1df83fe876f5298e98c4163c689a1b890a134",
+      "manifest_hash_verified": true,
+      "registry_image_bytes": 1253651530,
+      "published_at_utc": "2026-11-17T02:02:20.143797+00:00",
+      "scan_status": "COMPLETE",
+      "deployment_authorized": false,
+      "scan_severity_counts": {
+        "HIGH": 2,
+        "MEDIUM": 10,
+        "LOW": 3,
+        "UNDEFINED": 1
+      },
+      "scan_finding_count": 16,
+      "scan_all_pages_preserved": true,
+      "scan_report_sha256": "89f0857f4719d46abc74449e5183c2f0f9e1b2c957f9e4326b5db66c255dbaf8",
+      "os_scan_has_high_or_critical": true,
+      "local_scan_counts": {
+        "os-pkgs": {
+          "LOW": 65,
+          "HIGH": 47,
+          "MEDIUM": 92,
+          "UNKNOWN": 5
+        },
+        "lang-pkgs": {
+          "HIGH": 30,
+          "MEDIUM": 47,
+          "CRITICAL": 1,
+          "LOW": 3
+        }
+      },
+      "local_scan_report_sha256": "aa7293c73d41b317bea7b2e3c9e061b06741412182b2dc348777b6cc63fe438e",
+      "scan_completed_at": "2026-11-16T18:02:41-08:00",
+      "vulnerability_source_updated_at": "2026-11-16T18:02:41-08:00",
+      "findings": [
+        {
+          "cve": "CVE-2026-125709",
+          "severity": "MEDIUM",
+          "source_package": "gcc-14",
+          "package_version": "14.2.0-19",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-125709"
+        },
+        {
+          "cve": "CVE-2026-19499",
+          "severity": "HIGH",
+          "source_package": "glibc",
+          "package_version": "2.41-12+deb13u4",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-19499"
+        },
+        {
+          "cve": "CVE-2026-89092",
+          "severity": "MEDIUM",
+          "source_package": "glibc",
+          "package_version": "2.41-12+deb13u4",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-89092"
+        },
+        {
+          "cve": "CVE-2026-77117",
+          "severity": "MEDIUM",
+          "source_package": "glibc",
+          "package_version": "2.41-12+deb13u4",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-77117"
+        },
+        {
+          "cve": "CVE-2026-91094",
+          "severity": "UNDEFINED",
+          "source_package": "dpkg",
+          "package_version": "1.22.22",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-91094"
+        },
+        {
+          "cve": "CVE-2026-8674",
+          "severity": "MEDIUM",
+          "source_package": "glibc",
+          "package_version": "2.41-12+deb13u4",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-8674"
+        },
+        {
+          "cve": "CVE-2026-19542",
+          "severity": "MEDIUM",
+          "source_package": "glibc",
+          "package_version": "2.41-12+deb13u4",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-19542"
+        },
+        {
+          "cve": "CVE-2026-80489",
+          "severity": "MEDIUM",
+          "source_package": "glibc",
+          "package_version": "2.41-12+deb13u4",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-80489"
+        },
+        {
+          "cve": "CVE-2026-97399",
+          "severity": "LOW",
+          "source_package": "glibc",
+          "package_version": "2.41-12+deb13u4",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-97399"
+        },
+        {
+          "cve": "CVE-2026-5435",
+          "severity": "HIGH",
+          "source_package": "glibc",
+          "package_version": "2.41-12+deb13u4",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-5435"
+        },
+        {
+          "cve": "CVE-2026-6238",
+          "severity": "MEDIUM",
+          "source_package": "glibc",
+          "package_version": "2.41-12+deb13u4",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-6238"
+        },
+        {
+          "cve": "CVE-2026-86805",
+          "severity": "MEDIUM",
+          "source_package": "glibc",
+          "package_version": "2.41-12+deb13u4",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-86805"
+        },
+        {
+          "cve": "CVE-2026-18374",
+          "severity": "MEDIUM",
+          "source_package": "glibc",
+          "package_version": "2.41-12+deb13u4",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-18374"
+        },
+        {
+          "cve": "CVE-2026-95818",
+          "severity": "LOW",
+          "source_package": "glibc",
+          "package_version": "2.41-12+deb13u4",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-95818"
+        },
+        {
+          "cve": "CVE-2026-6368",
+          "severity": "LOW",
+          "source_package": "glibc",
+          "package_version": "2.41-12+deb13u4",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-6368"
+        },
+        {
+          "cve": "CVE-2026-6791",
+          "severity": "MEDIUM",
+          "source_package": "glibc",
+          "package_version": "2.41-12+deb13u4",
+          "uri": "https://nvd.nist.gov/vuln/detail/CVE-2026-6791"
+        }
+      ],
+      "ecr_high_critical_not_in_local_advisory_inventory": [
+        "CVE-2026-19499",
+        "CVE-2026-5435"
+      ]
+    },
+    {
+      "role": "kafka",
+      "repository": "blockchain-runtime-producer",
+      "tag": "scanonly-kafka-4.3.2-ddc1861cef958d5bc718100fcb502aac8318011b",
+      "manifest_digest": "sha256:1113a10e8a93fc12b2d310ef6f53b8f5fc95fb806a8c6edcfa6b67d17959378b",
+      "config_digest": "sha256:dfc26334a79d0510d9cffe68c012b2130309043730d6f56499dcec5fdc2386b2",
+      "target": "209479274979.dkr.ecr.us-west-2.amazonaws.com/blockchain-runtime-producer:scanonly-kafka-4.3.2-ddc1861cef958d5bc718100fcb502aac8318011b",
+      "quarantined_digest_reference": "209479274979.dkr.ecr.us-west-2.amazonaws.com/blockchain-runtime-producer@sha256:1113a10e8a93fc12b2d310ef6f53b8f5fc95fb806a8c6edcfa6b67d17959378b",
+      "manifest_hash_verified": true,
+      "registry_image_bytes": 293810832,
+      "published_at_utc": "2026-11-17T02:04:30.271566+00:00",
+      "scan_status": "COMPLETE",
+      "deployment_authorized": false,
+      "scan_severity_counts": {},
+      "scan_finding_count": 0,
+      "scan_all_pages_preserved": true,
+      "scan_report_sha256": "336acb333a73f402cea7f20223a5e7d8fca736eb8018363ee23d80b73c3cb5f1",
+      "os_scan_has_high_or_critical": false,
+      "local_scan_counts": {
+        "os-pkgs": {},
+        "lang-pkgs": {}
+      },
+      "local_scan_report_sha256": "821786eced9448be7562b81c17a482ec1f9f925ba42a77211d9f7acea5f8207a",
+      "scan_completed_at": "2026-11-16T18:04:42-08:00",
+      "vulnerability_source_updated_at": "2026-11-16T18:04:42-08:00",
+      "findings": [],
+      "ecr_high_critical_not_in_local_advisory_inventory": []
+    }
+  ],
+  "all_three_uploads_verified": true,
+  "all_automatic_scans_complete": true,
+  "manual_scan_calls": 0,
+  "temporary_registry_authentication_removed": true,
+  "registry_reported_image_bytes_sum": 1615714633,
+  "storage_estimate_usd_month_before_dedup_tax": 0.1616,
+  "pricing_source": "https://aws.amazon.com/ecr/pricing/",
+  "operator_helper_sha256": {
+    "preflight_quarantined_ecr_20261117.py": "b7adcc314c0273b6395f74345282cbc91c551dafb4b719b6088190f096d97285",
+    "publish_quarantined_ecr_20261117.py": "5860ebea49f64abf25c88b4e4af6dbe099f085a94e3d0a9c07dac374af727a71",
+    "test_quarantined_ecr_publisher_20261117.py": "97226557c65baa9b720ca8ba90d57ae72781a4bb377f3b2be6ebc11190127812"
+  },
+  "offline_operator_checks": {
+    "preflight_adversarial": 8,
+    "valid_preflight_controls": 3,
+    "publisher_adversarial": 8,
+    "all_passed": true
+  },
+  "source_validation": {
+    "focused_contract_baseline": 460,
+    "all_three_exact_images_smoke_passed": true,
+    "setid_export_audits_passed": 2,
+    "runtime_layers_identical_to_validated_recovery_baseline": true,
+    "source_ci_run": 43992698947,
+    "source_ci_six_jobs": "SUCCESS"
+  },
+  "release_gate": "BLOCKED_UNRESOLVED_LOCAL_SECURITY_FINDINGS_NO_ACCEPTED_EXCEPTIONS",
+  "deployment_authorized": false,
+  "accepted_exceptions": [],
+  "production_artifact_changes": [
+    "Three exact immutable scanonly tags/manifests/layers in two existing private ECR repositories"
+  ],
+  "ec2_start_performed": false,
+  "terraform_calls_made": false,
+  "iam_changes_made": false,
+  "secret_calls_made": false,
+  "s3_pilot_writes_made": false,
+  "snowflake_changes_made": false,
+  "main_merge_performed": false,
+  "milestone_11_5d": "PAUSED",
+  "scanner_reconciliation": {
+    "raw_severities_preserved": true,
+    "source_package_vs_binary_package_counts_not_equivalent": true,
+    "baseline_local_high_critical_advisory_count": 39,
+    "cross_scanner_high_critical_advisory_count": 41,
+    "cross_scanner_high_critical_advisory_ids": [
+      "CVE-2025-52999",
+      "CVE-2025-69720",
+      "CVE-2026-10050",
+      "CVE-2026-102554",
+      "CVE-2026-119373",
+      "CVE-2026-119374",
+      "CVE-2026-119379",
+      "CVE-2026-16742",
+      "CVE-2026-19499",
+      "CVE-2026-2332",
+      "CVE-2026-33870",
+      "CVE-2026-33871",
+      "CVE-2026-42583",
+      "CVE-2026-42584",
+      "CVE-2026-42587",
+      "CVE-2026-44249",
+      "CVE-2026-45416",
+      "CVE-2026-50010",
+      "CVE-2026-5435",
+      "CVE-2026-54369",
+      "CVE-2026-54512",
+      "CVE-2026-54513",
+      "CVE-2026-55831",
+      "CVE-2026-55833",
+      "CVE-2026-56740",
+      "CVE-2026-56741",
+      "CVE-2026-56745",
+      "CVE-2026-56819",
+      "CVE-2026-59901",
+      "CVE-2026-68494",
+      "CVE-2026-75595",
+      "CVE-2026-76642",
+      "CVE-2026-77422",
+      "CVE-2026-78408",
+      "CVE-2026-78409",
+      "CVE-2026-78410",
+      "CVE-2026-89425",
+      "CVE-2026-91776",
+      "CVE-2026-91777",
+      "CVE-2026-9538",
+      "GHSA-443w-3rq3-5m5h"
+    ],
+    "ecr_high_critical_comparisons": [
+      {
+        "role": "producer",
+        "id": "CVE-2026-19499",
+        "ecr_severity": "HIGH",
+        "ecr_source_package": "glibc",
+        "ecr_version": "2.41-12+deb13u4",
+        "local_scan_matches_all_severities": [
+          {
+            "result_class": "os-pkgs",
+            "binary_package": "libc-bin",
+            "installed_version": "2.41-12+deb13u4",
+            "severity": "MEDIUM",
+            "fixed_version": null,
+            "source": "Debian Security Tracker"
+          },
+          {
+            "result_class": "os-pkgs",
+            "binary_package": "libc6",
+            "installed_version": "2.41-12+deb13u4",
+            "severity": "MEDIUM",
+            "fixed_version": null,
+            "source": "Debian Security Tracker"
+          }
+        ],
+        "previous_high_critical_inventory_contains": false,
+        "accepted": false,
+        "deployment_gate": "BLOCKED_PENDING_REVIEW_AND_OWNER_DECISION"
+      },
+      {
+        "role": "producer",
+        "id": "CVE-2026-5435",
+        "ecr_severity": "HIGH",
+        "ecr_source_package": "glibc",
+        "ecr_version": "2.41-12+deb13u4",
+        "local_scan_matches_all_severities": [
+          {
+            "result_class": "os-pkgs",
+            "binary_package": "libc-bin",
+            "installed_version": "2.41-12+deb13u4",
+            "severity": "MEDIUM",
+            "fixed_version": null,
+            "source": "Debian Security Tracker"
+          },
+          {
+            "result_class": "os-pkgs",
+            "binary_package": "libc6",
+            "installed_version": "2.41-12+deb13u4",
+            "severity": "MEDIUM",
+            "fixed_version": null,
+            "source": "Debian Security Tracker"
+          }
+        ],
+        "previous_high_critical_inventory_contains": false,
+        "accepted": false,
+        "deployment_gate": "BLOCKED_PENDING_REVIEW_AND_OWNER_DECISION"
+      },
+      {
+        "role": "spark",
+        "id": "CVE-2026-19499",
+        "ecr_severity": "HIGH",
+        "ecr_source_package": "glibc",
+        "ecr_version": "2.41-12+deb13u4",
+        "local_scan_matches_all_severities": [
+          {
+            "result_class": "os-pkgs",
+            "binary_package": "libc-bin",
+            "installed_version": "2.41-12+deb13u4",
+            "severity": "MEDIUM",
+            "fixed_version": null,
+            "source": "Debian Security Tracker"
+          },
+          {
+            "result_class": "os-pkgs",
+            "binary_package": "libc6",
+            "installed_version": "2.41-12+deb13u4",
+            "severity": "MEDIUM",
+            "fixed_version": null,
+            "source": "Debian Security Tracker"
+          }
+        ],
+        "previous_high_critical_inventory_contains": false,
+        "accepted": false,
+        "deployment_gate": "BLOCKED_PENDING_REVIEW_AND_OWNER_DECISION"
+      },
+      {
+        "role": "spark",
+        "id": "CVE-2026-5435",
+        "ecr_severity": "HIGH",
+        "ecr_source_package": "glibc",
+        "ecr_version": "2.41-12+deb13u4",
+        "local_scan_matches_all_severities": [
+          {
+            "result_class": "os-pkgs",
+            "binary_package": "libc-bin",
+            "installed_version": "2.41-12+deb13u4",
+            "severity": "MEDIUM",
+            "fixed_version": null,
+            "source": "Debian Security Tracker"
+          },
+          {
+            "result_class": "os-pkgs",
+            "binary_package": "libc6",
+            "installed_version": "2.41-12+deb13u4",
+            "severity": "MEDIUM",
+            "fixed_version": null,
+            "source": "Debian Security Tracker"
+          }
+        ],
+        "previous_high_critical_inventory_contains": false,
+        "accepted": false,
+        "deployment_gate": "BLOCKED_PENDING_REVIEW_AND_OWNER_DECISION"
+      }
+    ],
+    "primary_sources": [
+      {
+        "name": "debian-CVE-2026-19499",
+        "url": "https://security-tracker.debian.org/tracker/CVE-2026-19499",
+        "resolved_url": "https://security-tracker.debian.org/tracker/CVE-2026-19499",
+        "sha256": "5ae203e2503db74b024563d3a6cbac974337438d5f3db69b93cbdd0ec38aecd7",
+        "bytes": 4918,
+        "retrieved": true
+      },
+      {
+        "name": "debian-CVE-2026-5435",
+        "url": "https://security-tracker.debian.org/tracker/CVE-2026-5435",
+        "resolved_url": "https://security-tracker.debian.org/tracker/CVE-2026-5435",
+        "sha256": "2361f3d31bc16c0ed30e5f79e4398e73155b117f7c2097c4208f9d756cdd0959",
+        "bytes": 4505,
+        "retrieved": true
+      },
+      {
+        "name": "GLIBC-SA-2026-0017",
+        "url": "https://sourceware.org/git/?p=glibc.git;a=blob_plain;f=advisories/GLIBC-SA-2026-0017",
+        "retrieved": false,
+        "error_category": "HTTPError"
+      },
+      {
+        "name": "GLIBC-SA-2026-0011",
+        "url": "https://sourceware.org/pipermail/libc-announce/2026/000057.html",
+        "resolved_url": "https://sourceware.org/pipermail/libc-announce/2026/000057.html",
+        "sha256": "5464a5c916dd75450eef3ef1985cf20c17f435e8f92b1a0de46232a822bf7416",
+        "bytes": 5013,
+        "retrieved": true
+      }
+    ],
+    "additional_vendor_review": [
+      {
+        "id": "CVE-2026-19499",
+        "accepted": false,
+        "installed_glibc": "2.41-12+deb13u4",
+        "debian_trixie_status": "vulnerable; no-dsa minor issue",
+        "prerequisite_summary": "Monetary formatting calls using right justification and an insufficient output buffer.",
+        "reference": "https://security-tracker.debian.org/tracker/CVE-2026-19499",
+        "uncertainty": "No full native/transitive call graph has been proven; container controls are not a patch or waiver."
+      },
+      {
+        "id": "CVE-2026-5435",
+        "accepted": false,
+        "installed_glibc": "2.41-12+deb13u4",
+        "debian_trixie_status": "vulnerable; no-dsa minor issue",
+        "prerequisite_summary": "Deprecated DNS debug printing APIs mishandle TSIG output buffer limits. Upstream distinguishes these from ordinary resolver calls.",
+        "reference": "https://sourceware.org/pipermail/libc-announce/2026/000057.html",
+        "uncertainty": "Default resolver behavior alone does not prove every native/transitive caller is safe; no exploit test or waiver."
+      }
+    ]
+  },
+  "security_exception_proposal": {
+    "schema_version": 1,
+    "scope_id": "11.6c-ddc1861-one-public-data-demo-41-advisories",
+    "owner": "johnson70630",
+    "accepted": false,
+    "deployment_authorized": false,
+    "source_commit": "ddc1861cef958d5bc718100fcb502aac8318011b",
+    "maximum_runs": 1,
+    "maximum_streaming_duration_seconds": 3600,
+    "expires_at_utc": "2026-11-24T00:00:00Z",
+    "allowed_data": "Public blockchain analytics only; no wallet signing, financial transactions or private customer data",
+    "advisory_ids": [
+      "CVE-2025-52999",
+      "CVE-2025-69720",
+      "CVE-2026-10050",
+      "CVE-2026-102554",
+      "CVE-2026-119373",
+      "CVE-2026-119374",
+      "CVE-2026-119379",
+      "CVE-2026-16742",
+      "CVE-2026-19499",
+      "CVE-2026-2332",
+      "CVE-2026-33870",
+      "CVE-2026-33871",
+      "CVE-2026-42583",
+      "CVE-2026-42584",
+      "CVE-2026-42587",
+      "CVE-2026-44249",
+      "CVE-2026-45416",
+      "CVE-2026-50010",
+      "CVE-2026-5435",
+      "CVE-2026-54369",
+      "CVE-2026-54512",
+      "CVE-2026-54513",
+      "CVE-2026-55831",
+      "CVE-2026-55833",
+      "CVE-2026-56740",
+      "CVE-2026-56741",
+      "CVE-2026-56745",
+      "CVE-2026-56819",
+      "CVE-2026-59901",
+      "CVE-2026-68494",
+      "CVE-2026-75595",
+      "CVE-2026-76642",
+      "CVE-2026-77422",
+      "CVE-2026-78408",
+      "CVE-2026-78409",
+      "CVE-2026-78410",
+      "CVE-2026-89425",
+      "CVE-2026-91776",
+      "CVE-2026-91777",
+      "CVE-2026-9538",
+      "GHSA-443w-3rq3-5m5h"
+    ],
+    "advisory_count": 41,
+    "artifact_scope": [
+      {
+        "role": "producer",
+        "quarantined_digest_reference": "209479274979.dkr.ecr.us-west-2.amazonaws.com/blockchain-runtime-producer@sha256:63d9d0f24a1cb7eb30b080e58f8a40ddd49292b89020328409e6f45319597afd",
+        "config_digest": "sha256:dde4337bc98079e92ace0969d4924ffc06e34881376ac050ee5bdafb16aefe37",
+        "local_scan_report_sha256": "5ad57dd8a05a24321ba1ddee1cc3cacd1d43d76b3d5bd6c1410b8c9c3fec5b22",
+        "ecr_scan_report_sha256": "f9214dad2a13f194eda14f20edd170c4d572724b0d2bcbbe8e979247c018cb13"
+      },
+      {
+        "role": "spark",
+        "quarantined_digest_reference": "209479274979.dkr.ecr.us-west-2.amazonaws.com/blockchain-runtime-spark@sha256:bb03f7d9917f2d8dc7d2fc1fc6a1df83fe876f5298e98c4163c689a1b890a134",
+        "config_digest": "sha256:971850a7f4ea66d4fa6e677b2a91eee2d6459ff63f8db2fcf917da04498b3a5c",
+        "local_scan_report_sha256": "aa7293c73d41b317bea7b2e3c9e061b06741412182b2dc348777b6cc63fe438e",
+        "ecr_scan_report_sha256": "89f0857f4719d46abc74449e5183c2f0f9e1b2c957f9e4326b5db66c255dbaf8"
+      },
+      {
+        "role": "kafka",
+        "quarantined_digest_reference": "209479274979.dkr.ecr.us-west-2.amazonaws.com/blockchain-runtime-producer@sha256:1113a10e8a93fc12b2d310ef6f53b8f5fc95fb806a8c6edcfa6b67d17959378b",
+        "config_digest": "sha256:dfc26334a79d0510d9cffe68c012b2130309043730d6f56499dcec5fdc2386b2",
+        "local_scan_report_sha256": "821786eced9448be7562b81c17a482ec1f9f925ba42a77211d9f7acea5f8207a",
+        "ecr_scan_report_sha256": "336acb333a73f402cea7f20223a5e7d8fca736eb8018363ee23d80b73c3cb5f1"
+      }
+    ],
+    "affected_occurrence_inventory": {
+      "baseline_file": "docs/evidence/aws_runtime_security_decision_2026-11-17.json",
+      "baseline_file_sha256": "f49eee8ed7a0e6fbad9c63791fe9e180086fb8fcdc561f771783f5f43b531791",
+      "additional_occurrences": "scanner_reconciliation.ecr_high_critical_comparisons in this file",
+      "raw_severities_retained": true
+    },
+    "required_controls_before_any_live_run": [
+      "Separate approval for paid EC2 start and exact deployment, credential and IAM/Terraform scope",
+      "Only the exact three reviewed digests; changed code, libraries, classpaths, protocols, data or findings invalidate scope",
+      "One host and exactly one Spark checkpoint writer; isolated reviewed S3 pilot prefixes",
+      "Non-root read-only application containers, zero capabilities, no-new-privileges, no public ingress, Kafka endpoint, UI, Telnet or TLS server",
+      "No custom/trust-all TLS trust manager or disabled hostname verification",
+      "Reviewed least-privilege workload IAM and owner-controlled runtime secret injection",
+      "Supervised startup, offset-based drain, final checkpoint verification, independent shutdown deadline and stop/cost checks",
+      "Preserve existing EBS filesystem, checkpoints, cloud artifacts and previous rejected releases"
+    ],
+    "residual_uncertainty": "Some native and transitive code paths remain unproven. Container controls and limited runtime do not patch vulnerabilities. The local Spark critical finding remains present.",
+    "excluded_authorizations": [
+      "EC2 start or deployment",
+      "IAM expansion or credentials/Secrets Manager changes",
+      "Authenticated production Terraform plan, apply, import or backend initialization",
+      "EBS formatting, deletion or destructive cleanup",
+      "Snowflake changes",
+      "Main merge"
+    ],
+    "scope_sha256": "5654f4f255730e9ab7838b8219d8148102c5417861e2c8db428a88d41e7c665e"
+  }
+}
