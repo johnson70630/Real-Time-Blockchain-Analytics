@@ -1,5 +1,9 @@
 # Milestone 11.6C — Exact Alchemy secret access review
 
+Current status: [boundary v2 verified and plan-only approval scope](aws_runtime_secret_boundary_result.md). The workload inline policy is unchanged. Production Terraform initialization, plan/apply and EC2 startup remain unapproved.
+
+The earlier review statements below are preserved as checkpoint history.
+
 **Offline proposal complete; IAM modification and production Terraform actions
 are not approved.** Milestone 11.5D remains paused. The prior conditional security
 exception for the three frozen `ddc1861` images remains unchanged.

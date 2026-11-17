@@ -1,5 +1,9 @@
 # Milestone 11.6C — first streaming pilot readiness
 
+Current status: [boundary v2 verified and plan-only approval scope](aws_runtime_secret_boundary_result.md). The workload inline policy is unchanged. Production Terraform initialization, plan/apply and EC2 startup remain unapproved.
+
+The earlier review statements below are preserved as checkpoint history.
+
 Current next step: [exact Alchemy secret-access review](aws_runtime_secret_access_review.md). The owner reported the approved secret created and confirmed its metadata settings. IAM changes, production Terraform actions and deployment remain unapproved.
 
 The prior acceptance/proposal notes below are preserved as checkpoint history.
