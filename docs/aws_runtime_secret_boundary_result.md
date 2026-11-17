@@ -1,5 +1,9 @@
 # Milestone 11.6C — Boundary v2 verified; runtime plan requested
 
+Current status: [saved plan and four refresh observations requiring owner acceptance](aws_runtime_secret_plan_result.md). The plan is saved, the original drift stop is preserved, and no apply or EC2 start is approved.
+
+The earlier approval-scope notes below are preserved as checkpoint history.
+
 **The approved administrator boundary update is verified. Production Terraform
 initialization/plan/apply and EC2 startup remain unapproved.** 11.5D stays paused.
 

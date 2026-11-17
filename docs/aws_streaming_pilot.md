@@ -1,5 +1,9 @@
 # Milestone 11.6C — first streaming pilot readiness
 
+Current status: [saved plan and four refresh observations requiring owner acceptance](aws_runtime_secret_plan_result.md). The plan is saved, the original drift stop is preserved, and no apply or EC2 start is approved.
+
+The earlier approval-scope notes below are preserved as checkpoint history.
+
 Current status: [boundary v2 verified and plan-only approval scope](aws_runtime_secret_boundary_result.md). The workload inline policy is unchanged. Production Terraform initialization, plan/apply and EC2 startup remain unapproved.
 
 The earlier review statements below are preserved as checkpoint history.
