@@ -1,0 +1,2589 @@
+{
+  "schema_version": 1,
+  "milestone": "11.6C",
+  "reviewed_at_utc": "2026-11-17T00:53:45.223421+00:00",
+  "baseline_source_commit": "272df839ad69e0579c6181eb95f5c48e56c2ee69",
+  "baseline_ci": {
+    "run_id": 43984277427,
+    "all_six_jobs": "success"
+  },
+  "baseline_images": [
+    {
+      "role": "producer",
+      "source_commit": "272df839ad69e0579c6181eb95f5c48e56c2ee69",
+      "manifest_digest": "sha256:510368dd54d5cf8d0bfcc619d01b745fb38634b12e9d72224d17b474608a533a",
+      "config_digest": "sha256:ce4a64411cf1fa05b23506ba548ce7de9f9576ed02d4b50221c06fb3de41dc7c",
+      "archive_manifest_binding_verified": true,
+      "findings_by_class": {
+        "os-pkgs": {
+          "LOW": 65,
+          "HIGH": 47,
+          "MEDIUM": 92,
+          "UNKNOWN": 5
+        },
+        "lang-pkgs": {
+          "MEDIUM": 6,
+          "LOW": 1
+        }
+      },
+      "report_sha256": "b65c5d5eb6f241df7e326eb0db34b319764c1396797ab914b60e25419625d593",
+      "aws_calls_made": false,
+      "images_published": false,
+      "release_gate": "BLOCKED_OS_HIGH_AND_SPARK_JVM_CRITICAL_HIGH_NO_EXCEPTIONS",
+      "all_manifest_layer_hashes_verified": true,
+      "database_refresh": true
+    },
+    {
+      "role": "spark",
+      "source_commit": "272df839ad69e0579c6181eb95f5c48e56c2ee69",
+      "manifest_digest": "sha256:52d956774b5133217bb41ed8b6577599f8813df635969296502572dcb121128b",
+      "config_digest": "sha256:51a9860e09b8ce7160c9f5d9d4287208b51458f9c6c72644db5a4da17d311d4d",
+      "archive_manifest_binding_verified": true,
+      "findings_by_class": {
+        "os-pkgs": {
+          "LOW": 65,
+          "HIGH": 47,
+          "MEDIUM": 92,
+          "UNKNOWN": 5
+        },
+        "lang-pkgs": {
+          "HIGH": 30,
+          "MEDIUM": 47,
+          "CRITICAL": 1,
+          "LOW": 3
+        }
+      },
+      "report_sha256": "cf9177f8cc4b9b6a6453f9ae9b158d56c9001a993a8edfc96322cdf15838ca62",
+      "aws_calls_made": false,
+      "images_published": false,
+      "release_gate": "BLOCKED_OS_HIGH_AND_SPARK_JVM_CRITICAL_HIGH_NO_EXCEPTIONS",
+      "all_manifest_layer_hashes_verified": true,
+      "database_refresh": true
+    },
+    {
+      "role": "kafka",
+      "source_commit": "272df839ad69e0579c6181eb95f5c48e56c2ee69",
+      "manifest_digest": "sha256:162573bb80e9548b98c3e12b87e1d0829efde2e9b73d92689a9139f3c4b65957",
+      "config_digest": "sha256:0206a020740e898ec07381f9c74415e794be2dfb222087a2945be52f21d58162",
+      "archive_manifest_binding_verified": true,
+      "findings_by_class": {
+        "os-pkgs": {},
+        "lang-pkgs": {}
+      },
+      "report_sha256": "431c251e3dcaaf886b9d9d0e3d79e836af5ee949bc8cca26e467de2e442393b3",
+      "aws_calls_made": false,
+      "images_published": false,
+      "release_gate": "BLOCKED_OS_HIGH_AND_SPARK_JVM_CRITICAL_HIGH_NO_EXCEPTIONS",
+      "all_manifest_layer_hashes_verified": true,
+      "database_refresh": true
+    }
+  ],
+  "application_input_tree_sha256": "09425c59b5a8d2b9df5eba45b785580d61d1da9478d5c1090967393bf785b21d",
+  "application_input_paths": [
+    ".dockerignore",
+    "config",
+    "producer",
+    "spark",
+    "runtime",
+    "deploy/runtime",
+    "scripts/build_runtime_images.sh"
+  ],
+  "scanner": {
+    "name": "Trivy",
+    "version": "0.76.2",
+    "binary_sha256": "7a15c426f963473a485a4f315e21f8e2c881269d500bf0de35da13a4421fa108",
+    "vulnerability_db": {
+      "Version": 2,
+      "NextUpdate": "2026-11-17T18:50:18.311537396Z",
+      "UpdatedAt": "2026-11-16T18:50:18.311537747Z",
+      "DownloadedAt": "2026-11-17T00:34:13.342118Z"
+    },
+    "java_db": {
+      "Version": 1,
+      "NextUpdate": "2026-11-19T00:57:00.601023403Z",
+      "UpdatedAt": "2026-11-16T00:57:00.601024044Z",
+      "DownloadedAt": "2026-11-17T00:35:42.995061Z"
+    },
+    "all_severities": true,
+    "include_unfixed": true,
+    "ignore_file": ""
+  },
+  "inventory_counts": {
+    "high_critical_occurrences": 125,
+    "high_critical_unique_package_version_advisory_pairs": 78,
+    "high_critical_unique_package_advisory_pairs": 76,
+    "unique_advisory_ids": 39,
+    "library_unique_package_advisory_pairs": 29,
+    "library_unique_advisory_ids": 28,
+    "os_unique_advisory_ids": 11
+  },
+  "advisories": [
+    {
+      "id": "CVE-2026-75595",
+      "severity": "CRITICAL",
+      "condition": "Inbound SNI-specific mutual TLS falls back to a permissive default context.",
+      "assessment": "The SDK source constructs client TLS; no per-SNI mutual-TLS server is configured. Scanner Critical severity is retained.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://github.com/netty/netty/security/advisories/GHSA-c4c3-7fpv-j4q5"
+      ],
+      "occurrences": [
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "io.netty:netty-handler",
+          "version": "4.1.126.Final",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.35.4.jar",
+          "advisory": "CVE-2026-75595",
+          "severity": "CRITICAL",
+          "fixed_version_reported": "4.2.17.Final, 4.1.137.Final",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2025-52999",
+      "severity": "HIGH",
+      "condition": "Deeply nested JSON reaches the old shaded parser.",
+      "assessment": "Transitive Hadoop JSON paths remain incompletely proven; the direct Spark input parser is separately patched.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://github.com/FasterXML/jackson-core/security/advisories/GHSA-h46c-h94j-95f3"
+      ],
+      "occurrences": [
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "com.fasterxml.jackson.core:jackson-core",
+          "version": "2.12.7",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.3.jar",
+          "advisory": "CVE-2025-52999",
+          "severity": "HIGH",
+          "fixed_version_reported": "2.15.0",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2025-69720",
+      "severity": "HIGH",
+      "condition": "The infocmp command processes malicious terminal-description input.",
+      "assessment": "No terminal-description input or infocmp command is part of the reviewed pipeline.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://security-tracker.debian.org/tracker/CVE-2025-69720"
+      ],
+      "occurrences": [
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "libncursesw6",
+          "version": "6.5+20250216-2",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2025-69720",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "libtinfo6",
+          "version": "6.5+20250216-2",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2025-69720",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "ncurses-base",
+          "version": "6.5+20250216-2",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2025-69720",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "ncurses-bin",
+          "version": "6.5+20250216-2",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2025-69720",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "libncursesw6",
+          "version": "6.5+20250216-2",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2025-69720",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "libtinfo6",
+          "version": "6.5+20250216-2",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2025-69720",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "ncurses-base",
+          "version": "6.5+20250216-2",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2025-69720",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "ncurses-bin",
+          "version": "6.5+20250216-2",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2025-69720",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-10050",
+      "severity": "HIGH",
+      "condition": "HTTP Digest authentication hashes collide for non-Latin credentials.",
+      "assessment": "This advisory includes client authentication; disabling the Spark UI alone is insufficient. The pilot selects S3 signing rather than Jetty HTTP Digest authentication.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://github.com/jetty/jetty.project/security/advisories/GHSA-2fvj-hgj9-j2gr"
+      ],
+      "occurrences": [
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "org.eclipse.jetty:jetty-security",
+          "version": "11.0.24",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/spark-core_2.13-4.0.1.jar",
+          "advisory": "CVE-2026-10050",
+          "severity": "HIGH",
+          "fixed_version_reported": "9.4.63, 10.0.31, 11.0.31, 12.0.36, 12.1.10",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-102554",
+      "severity": "HIGH",
+      "condition": "Untrusted Java object streams deserialize Guava collections.",
+      "assessment": "Selected Kafka input is JSON, output is Parquet, and Spark runs locally; arbitrary external Java object input is not configured.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://github.com/google/guava/security/advisories/ghsa-xxph-c9ww-hj94"
+      ],
+      "occurrences": [
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "com.google.guava:guava",
+          "version": "33.4.0-jre",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/spark-network-common_2.13-4.0.1.jar",
+          "advisory": "CVE-2026-102554",
+          "severity": "HIGH",
+          "fixed_version_reported": "33.7.2",
+          "status": "fixed"
+        },
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "com.google.guava:guava",
+          "version": "33.4.8-jre",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.3.jar",
+          "advisory": "CVE-2026-102554",
+          "severity": "HIGH",
+          "fixed_version_reported": "33.7.2",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-119373",
+      "severity": "HIGH",
+      "condition": "SQLite FTS5 processes adversarial tables and prefix queries.",
+      "assessment": "No SQLite input or FTS service is selected; the library remains installed and no package fix is claimed.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://security-tracker.debian.org/tracker/CVE-2026-119373"
+      ],
+      "occurrences": [
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "libsqlite3-0",
+          "version": "3.46.1-7+deb13u2",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-119373",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "libsqlite3-0",
+          "version": "3.46.1-7+deb13u2",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-119373",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-119374",
+      "severity": "HIGH",
+      "condition": "SQLite deletes from a malicious FTS5 index.",
+      "assessment": "The demo accepts blockchain events rather than SQLite database files; no exhaustive dependency call-path claim is made.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://security-tracker.debian.org/tracker/CVE-2026-119374"
+      ],
+      "occurrences": [
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "libsqlite3-0",
+          "version": "3.46.1-7+deb13u2",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-119374",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "libsqlite3-0",
+          "version": "3.46.1-7+deb13u2",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-119374",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-119379",
+      "severity": "HIGH",
+      "condition": "SQLite applies a crafted session changeset.",
+      "assessment": "No SQLite changeset ingestion is configured; affected library code remains installed.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://security-tracker.debian.org/tracker/CVE-2026-119379"
+      ],
+      "occurrences": [
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "libsqlite3-0",
+          "version": "3.46.1-7+deb13u2",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-119379",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "libsqlite3-0",
+          "version": "3.46.1-7+deb13u2",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-119379",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-16742",
+      "severity": "HIGH",
+      "condition": "A privileged systemd-homed service changes managed-user group membership.",
+      "assessment": "The exact installed images have neither systemd-homed nor homectl; shared source-package libraries remain reported.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://security-tracker.debian.org/tracker/CVE-2026-16742"
+      ],
+      "occurrences": [
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "libsystemd0",
+          "version": "257.13-1~deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-16742",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "libudev1",
+          "version": "257.13-1~deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-16742",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "libsystemd0",
+          "version": "257.13-1~deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-16742",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "libudev1",
+          "version": "257.13-1~deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-16742",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-2332",
+      "severity": "HIGH",
+      "condition": "An HTTP parser accepts ambiguous quoted chunk extensions.",
+      "assessment": "No Jetty HTTP service is launched by the selected workload; this is a role/configuration candidate, not removal of its parser.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://github.com/jetty/jetty.project/security/advisories/GHSA-355h-qmc2-wpwf"
+      ],
+      "occurrences": [
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "org.eclipse.jetty:jetty-http",
+          "version": "11.0.24",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/spark-core_2.13-4.0.1.jar",
+          "advisory": "CVE-2026-2332",
+          "severity": "HIGH",
+          "fixed_version_reported": "12.1.7, 12.0.33, 11.0.29, 10.0.28, 9.4.60",
+          "status": "fixed"
+        },
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "org.eclipse.jetty:jetty-http",
+          "version": "9.4.57.v20241219",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.3.jar",
+          "advisory": "CVE-2026-2332",
+          "severity": "HIGH",
+          "fixed_version_reported": "12.1.7, 12.0.33, 11.0.29, 10.0.28, 9.4.60",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-33870",
+      "severity": "HIGH",
+      "condition": "HTTP request parsers disagree about quoted chunk extensions.",
+      "assessment": "The selected SDK role is an outbound client; no SDK inbound HTTP request service is configured.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://github.com/netty/netty/security/advisories/GHSA-pwqr-wmgm-9rr8"
+      ],
+      "occurrences": [
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "io.netty:netty-codec-http",
+          "version": "4.1.126.Final",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.35.4.jar",
+          "advisory": "CVE-2026-33870",
+          "severity": "HIGH",
+          "fixed_version_reported": "4.1.132.Final, 4.2.10.Final",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-33871",
+      "severity": "HIGH",
+      "condition": "An HTTP/2 endpoint processes an unbounded continuation-frame sequence.",
+      "assessment": "Observed Hadoop HTTP-client defaults use HTTP/1.1; no HTTP/2 server is launched. Future protocol changes invalidate the assessment.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://github.com/netty/netty/security/advisories/GHSA-w9fj-cfpg-grvv"
+      ],
+      "occurrences": [
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "io.netty:netty-codec-http2",
+          "version": "4.1.126.Final",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.35.4.jar",
+          "advisory": "CVE-2026-33871",
+          "severity": "HIGH",
+          "fixed_version_reported": "4.1.132.Final, 4.2.11.Final",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-42583",
+      "severity": "HIGH",
+      "condition": "A Netty LZ4 frame decoder trusts peer-controlled allocation lengths.",
+      "assessment": "No LZ4 decoder construction was found in the inspected SDK HTTP-client source; installed codec code remains.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://github.com/netty/netty/security/advisories/GHSA-mj4r-2hfc-f8p6"
+      ],
+      "occurrences": [
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "io.netty:netty-codec",
+          "version": "4.1.126.Final",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.35.4.jar",
+          "advisory": "CVE-2026-42583",
+          "severity": "HIGH",
+          "fixed_version_reported": "4.1.133.Final",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-42584",
+      "severity": "HIGH",
+      "condition": "HTTP/1.1 pipelining combines HEAD, informational responses and unsafe reuse.",
+      "assessment": "This is a client-side advisory; outbound-only operation does not dismiss it. Pipelining prerequisites were not separately tested.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://github.com/netty/netty/security/advisories/GHSA-57rv-r2g8-2cj3"
+      ],
+      "occurrences": [
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "io.netty:netty-codec-http",
+          "version": "4.1.126.Final",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.35.4.jar",
+          "advisory": "CVE-2026-42584",
+          "severity": "HIGH",
+          "fixed_version_reported": "4.2.13.Final, 4.1.133.Final",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-42587",
+      "severity": "HIGH",
+      "condition": "Compressed HTTP content bypasses advertised allocation limits.",
+      "assessment": "No decompressor construction was found in inspected SDK client source, but complete transitive response-path absence is not proven.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://github.com/netty/netty/security/advisories/GHSA-f6hv-jmp6-3vwv"
+      ],
+      "occurrences": [
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "io.netty:netty-codec-http",
+          "version": "4.1.126.Final",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.35.4.jar",
+          "advisory": "CVE-2026-42587",
+          "severity": "HIGH",
+          "fixed_version_reported": "4.2.13.Final, 4.1.133.Final",
+          "status": "fixed"
+        },
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "io.netty:netty-codec-http2",
+          "version": "4.1.126.Final",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.35.4.jar",
+          "advisory": "CVE-2026-42587",
+          "severity": "HIGH",
+          "fixed_version_reported": "4.2.13.Final, 4.1.133.Final",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-44249",
+      "severity": "HIGH",
+      "condition": "An application relies on Netty IPv6 subnet filtering for authorization.",
+      "assessment": "No Netty subnet-filter policy is configured; required AWS ingress and container controls remain separate prerequisites.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://github.com/netty/netty/security/advisories/GHSA-3qp7-7mw8-wx86"
+      ],
+      "occurrences": [
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "io.netty:netty-handler",
+          "version": "4.1.126.Final",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.35.4.jar",
+          "advisory": "CVE-2026-44249",
+          "severity": "HIGH",
+          "fixed_version_reported": "4.2.15.Final, 4.1.135.Final",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-45416",
+      "severity": "HIGH",
+      "condition": "An inbound TLS ClientHello handler eagerly allocates peer-declared buffers.",
+      "assessment": "The inspected SDK TLS role is client-only, not an inbound SNI service.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://github.com/netty/netty/security/advisories/GHSA-x4gw-5cx5-pgmh"
+      ],
+      "occurrences": [
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "io.netty:netty-handler",
+          "version": "4.1.126.Final",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.35.4.jar",
+          "advisory": "CVE-2026-45416",
+          "severity": "HIGH",
+          "fixed_version_reported": "4.2.15.Final, 4.1.135.Final",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-50010",
+      "severity": "HIGH",
+      "condition": "A supplied plain trust manager loses endpoint-identification context.",
+      "assessment": "The installed Hadoop async-builder has no custom trust provider or trust-all flag; an explicit JDK handler has HTTPS endpoint identification. No handshake or every-provider proof is claimed.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://github.com/netty/netty/security/advisories/GHSA-c653-97m9-rcg9"
+      ],
+      "occurrences": [
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "io.netty:netty-handler",
+          "version": "4.1.126.Final",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.35.4.jar",
+          "advisory": "CVE-2026-50010",
+          "severity": "HIGH",
+          "fixed_version_reported": "4.2.15.Final, 4.1.135.Final",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-54369",
+      "severity": "HIGH",
+      "condition": "A privileged caller performs pathname-based ACL operations on mutable paths.",
+      "assessment": "The applications run non-root without capabilities, with read-only roots and no-new-privileges; host ACL administration is outside scope.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://security-tracker.debian.org/tracker/CVE-2026-54369"
+      ],
+      "occurrences": [
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "libacl1",
+          "version": "2.3.2-2+b1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-54369",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "libacl1",
+          "version": "2.3.2-2+b1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-54369",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-54512",
+      "severity": "HIGH",
+      "condition": "Polymorphic deserialization accepts attacker-chosen generic type identifiers.",
+      "assessment": "Direct pilot code does not enable polymorphic typing; absence from every transitive Hadoop mapper is not proven.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://github.com/FasterXML/jackson-databind/security/advisories/GHSA-j3rv-43j4-c7qm"
+      ],
+      "occurrences": [
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "com.fasterxml.jackson.core:jackson-databind",
+          "version": "2.12.7.1",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.3.jar",
+          "advisory": "CVE-2026-54512",
+          "severity": "HIGH",
+          "fixed_version_reported": "2.18.8, 3.1.4, 2.21.4",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-54513",
+      "severity": "HIGH",
+      "condition": "Array subtype allowlisting permits unapproved element classes.",
+      "assessment": "No such validator configuration is selected by pilot code; transitive configuration remains uncertain.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://github.com/FasterXML/jackson-databind/security/advisories/GHSA-rmj7-2vxq-3g9f"
+      ],
+      "occurrences": [
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "com.fasterxml.jackson.core:jackson-databind",
+          "version": "2.12.7.1",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.3.jar",
+          "advisory": "CVE-2026-54513",
+          "severity": "HIGH",
+          "fixed_version_reported": "2.18.8, 2.21.4, 3.1.4",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-55831",
+      "severity": "HIGH",
+      "condition": "A configured SPDY decoder accepts excessive SETTINGS entries.",
+      "assessment": "Observed HTTP-client defaults are HTTP/1.1; no SPDY handler construction was found in the inspected client source.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://github.com/netty/netty/security/advisories/GHSA-6jqx-86gh-f27w"
+      ],
+      "occurrences": [
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "io.netty:netty-codec-http",
+          "version": "4.1.126.Final",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.35.4.jar",
+          "advisory": "CVE-2026-55831",
+          "severity": "HIGH",
+          "fixed_version_reported": "4.2.16.Final, 4.1.136.Final",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-55833",
+      "severity": "HIGH",
+      "condition": "SPDY header inflation continues after size rejection.",
+      "assessment": "SPDY is not selected by the observed defaults; vulnerable codec classes remain installed.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://github.com/netty/netty/security/advisories/GHSA-mvh2-crg5-v77c"
+      ],
+      "occurrences": [
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "io.netty:netty-codec-http",
+          "version": "4.1.126.Final",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.35.4.jar",
+          "advisory": "CVE-2026-55833",
+          "severity": "HIGH",
+          "fixed_version_reported": "4.2.16.Final, 4.1.136.Final",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-56740",
+      "severity": "HIGH",
+      "condition": "A running JLine Telnet service accepts excessive environment variables.",
+      "assessment": "No Telnet service is launched; the old relocated classes remain inside Hadoop.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://github.com/jline/jline3/security/advisories/GHSA-47qp-hqvx-6r3f"
+      ],
+      "occurrences": [
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "org.jline:jline-remote-telnet",
+          "version": "3.9.0",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.3.jar",
+          "advisory": "CVE-2026-56740",
+          "severity": "HIGH",
+          "fixed_version_reported": "4.2.1, 4.0.16, 3.30.14",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-56741",
+      "severity": "HIGH",
+      "condition": "A running JLine Telnet service renders excessive terminal dimensions.",
+      "assessment": "No Telnet or interactive terminal service is launched by the selected pipeline.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://github.com/jline/jline3/security/advisories/GHSA-2r2c-cx56-8933"
+      ],
+      "occurrences": [
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "org.jline:jline-remote-telnet",
+          "version": "3.9.0",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.3.jar",
+          "advisory": "CVE-2026-56741",
+          "severity": "HIGH",
+          "fixed_version_reported": "4.2.1, 4.0.16, 3.30.14",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-56745",
+      "severity": "HIGH",
+      "condition": "SPDY-to-HTTP state handling leaks buffers on stream errors.",
+      "assessment": "No SPDY-to-HTTP service or handler is selected by the pilot configuration.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://github.com/netty/netty/security/advisories/GHSA-jppx-w49h-x2qq"
+      ],
+      "occurrences": [
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "io.netty:netty-codec-http",
+          "version": "4.1.126.Final",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.35.4.jar",
+          "advisory": "CVE-2026-56745",
+          "severity": "HIGH",
+          "fixed_version_reported": "4.2.16.Final, 4.1.136.Final",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-56819",
+      "severity": "HIGH",
+      "condition": "HTTP/2 decompression error paths leak direct buffers.",
+      "assessment": "Observed defaults use HTTP/1.1; no HTTP/2 decompressor construction was found in the inspected client source.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://github.com/netty/netty/security/advisories/GHSA-93wv-jw9v-4972"
+      ],
+      "occurrences": [
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "io.netty:netty-codec-http2",
+          "version": "4.1.126.Final",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.35.4.jar",
+          "advisory": "CVE-2026-56819",
+          "severity": "HIGH",
+          "fixed_version_reported": "4.2.16.Final, 4.1.136.Final",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-59901",
+      "severity": "HIGH",
+      "condition": "A malformed bzip2 stream reaches a Netty compression decoder.",
+      "assessment": "No bzip2 decoder construction was found in inspected client source; dynamic or future pipelines are not certified.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://github.com/netty/netty/security/advisories/GHSA-558v-64gr-wgg4"
+      ],
+      "occurrences": [
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "io.netty:netty-codec",
+          "version": "4.1.126.Final",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.35.4.jar",
+          "advisory": "CVE-2026-59901",
+          "severity": "HIGH",
+          "fixed_version_reported": "4.1.136.Final",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-68494",
+      "severity": "HIGH",
+      "condition": "An asynchronous numeric parser accumulates incomplete streamed numbers.",
+      "assessment": "Specific old-parser path is not exercised by the pilot tests; scanner-to-upstream advisory mapping retained without inventing a CVE alias.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://github.com/FasterXML/jackson-core/security/advisories/GHSA-r7wm-3cxj-wff9"
+      ],
+      "occurrences": [
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "com.fasterxml.jackson.core:jackson-core",
+          "version": "2.12.7",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.3.jar",
+          "advisory": "CVE-2026-68494",
+          "severity": "HIGH",
+          "fixed_version_reported": "2.18.8, 2.21.4",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-76642",
+      "severity": "HIGH",
+      "condition": "Privileged mount helpers run post-mount operations after helper failure.",
+      "assessment": "Setuid bits are cleared, capabilities dropped and privilege elevation blocked. Vulnerable package code is retained.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://security-tracker.debian.org/tracker/CVE-2026-76642"
+      ],
+      "occurrences": [
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "bsdutils",
+          "version": "1:2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-76642",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "libblkid1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-76642",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "liblastlog2-2",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-76642",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "libmount1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-76642",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "libsmartcols1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-76642",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "libuuid1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-76642",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "login",
+          "version": "1:4.16.0-2+really2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-76642",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "mount",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-76642",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "util-linux",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-76642",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "bsdutils",
+          "version": "1:2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-76642",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "libblkid1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-76642",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "liblastlog2-2",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-76642",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "libmount1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-76642",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "libsmartcols1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-76642",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "libuuid1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-76642",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "login",
+          "version": "1:4.16.0-2+really2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-76642",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "mount",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-76642",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "util-linux",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-76642",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-77422",
+      "severity": "HIGH",
+      "condition": "A JLine shell evaluates attacker-controlled grep patterns.",
+      "assessment": "The pipeline is not a remote interactive JLine shell and exposes no grep command service.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://github.com/jline/jline3/security/advisories/GHSA-r2xf-8xr9-62gw"
+      ],
+      "occurrences": [
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "org.jline:jline-builtins",
+          "version": "3.9.0",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.3.jar",
+          "advisory": "CVE-2026-77422",
+          "severity": "HIGH",
+          "fixed_version_reported": "4.3.1, 3.30.15",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-78408",
+      "severity": "HIGH",
+      "condition": "A privileged operator enters a hostile cgroup namespace and inherits descriptors.",
+      "assessment": "No privileged nsenter operation is selected; containers have no namespace-administration capabilities.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://security-tracker.debian.org/tracker/CVE-2026-78408"
+      ],
+      "occurrences": [
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "bsdutils",
+          "version": "1:2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78408",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "libblkid1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78408",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "liblastlog2-2",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78408",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "libmount1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78408",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "libsmartcols1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78408",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "libuuid1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78408",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "login",
+          "version": "1:4.16.0-2+really2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78408",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "mount",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78408",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "util-linux",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78408",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "bsdutils",
+          "version": "1:2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78408",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "libblkid1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78408",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "liblastlog2-2",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78408",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "libmount1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78408",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "libsmartcols1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78408",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "libuuid1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78408",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "login",
+          "version": "1:4.16.0-2+really2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78408",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "mount",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78408",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "util-linux",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78408",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-78409",
+      "severity": "HIGH",
+      "condition": "A privileged subdirectory mount resolves an attacker-controlled path.",
+      "assessment": "No container mount administration is authorized; executable privilege bits are cleared. Vendor vulnerable status is retained.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://security-tracker.debian.org/tracker/CVE-2026-78409"
+      ],
+      "occurrences": [
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "bsdutils",
+          "version": "1:2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78409",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "libblkid1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78409",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "liblastlog2-2",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78409",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "libmount1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78409",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "libsmartcols1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78409",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "libuuid1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78409",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "login",
+          "version": "1:4.16.0-2+really2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78409",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "mount",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78409",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "util-linux",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78409",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "bsdutils",
+          "version": "1:2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78409",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "libblkid1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78409",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "liblastlog2-2",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78409",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "libmount1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78409",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "libsmartcols1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78409",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "libuuid1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78409",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "login",
+          "version": "1:4.16.0-2+really2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78409",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "mount",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78409",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "util-linux",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78409",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-78410",
+      "severity": "HIGH",
+      "condition": "A privileged bind-mount operation follows mutable source paths.",
+      "assessment": "No mount privileges or setuid helpers remain in the app images. Host EBS operations remain a separate gated activity.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://security-tracker.debian.org/tracker/CVE-2026-78410"
+      ],
+      "occurrences": [
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "bsdutils",
+          "version": "1:2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78410",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "libblkid1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78410",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "liblastlog2-2",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78410",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "libmount1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78410",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "libsmartcols1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78410",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "libuuid1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78410",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "login",
+          "version": "1:4.16.0-2+really2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78410",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "mount",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78410",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "util-linux",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78410",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "bsdutils",
+          "version": "1:2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78410",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "libblkid1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78410",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "liblastlog2-2",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78410",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "libmount1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78410",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "libsmartcols1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78410",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "libuuid1",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78410",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "login",
+          "version": "1:4.16.0-2+really2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78410",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "mount",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78410",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "util-linux",
+          "version": "2.41.5-0+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-78410",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "affected"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-89425",
+      "severity": "HIGH",
+      "condition": "Malformed tokens reach a DataInput-based JSON parser.",
+      "assessment": "No adversarial parser test was run against vulnerable code; transitive path uncertainty remains.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://github.com/FasterXML/jackson-core/security/advisories/GHSA-7hhh-6rmp-j9qf"
+      ],
+      "occurrences": [
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "com.fasterxml.jackson.core:jackson-core",
+          "version": "2.12.7",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.3.jar",
+          "advisory": "CVE-2026-89425",
+          "severity": "HIGH",
+          "fixed_version_reported": "2.21.7, 2.22.3, 2.18.11",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-91776",
+      "severity": "HIGH",
+      "condition": "Unknown named type identifiers fill a fallback-deserializer cache.",
+      "assessment": "No direct annotated fallback model is selected; retained shaded code and indirect model use remain visible.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://github.com/FasterXML/jackson-databind/security/advisories/GHSA-wv8q-qhhj-9h54"
+      ],
+      "occurrences": [
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "com.fasterxml.jackson.core:jackson-databind",
+          "version": "2.12.7.1",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.3.jar",
+          "advisory": "CVE-2026-91776",
+          "severity": "HIGH",
+          "fixed_version_reported": "2.18.11, 2.21.7, 2.22.3",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-91777",
+      "severity": "HIGH",
+      "condition": "Object-identity collections resolve adversarial references in reverse order.",
+      "assessment": "No direct object-identity model is selected; all transitive JSON paths are not certified.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://github.com/FasterXML/jackson-databind/security/advisories/GHSA-cxp5-3px4-pw24"
+      ],
+      "occurrences": [
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "com.fasterxml.jackson.core:jackson-databind",
+          "version": "2.12.7.1",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/hadoop-client-runtime-3.4.3.jar",
+          "advisory": "CVE-2026-91777",
+          "severity": "HIGH",
+          "fixed_version_reported": "2.21.7, 2.18.11, 2.22.3",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-9538",
+      "severity": "HIGH",
+      "condition": "Perl Archive::Tar processes an adversarial archive entry length.",
+      "assessment": "The exact installed images cannot load Archive::Tar because its module is absent; raw source-package scanner status is preserved.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://security-tracker.debian.org/tracker/CVE-2026-9538"
+      ],
+      "occurrences": [
+        {
+          "role": "producer",
+          "class": "os-pkgs",
+          "package": "perl-base",
+          "version": "5.40.1-6+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/producer-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-9538",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "fix_deferred"
+        },
+        {
+          "role": "spark",
+          "class": "os-pkgs",
+          "package": "perl-base",
+          "version": "5.40.1-6+deb13u1",
+          "path": "/var/folders/vl/rg4x65p973s6bsvn_m85950m0000gn/T/blockchain-library-checkpoint-scans-afxl7ic2/spark-image.tar (debian 13.7)",
+          "advisory": "CVE-2026-9538",
+          "severity": "HIGH",
+          "fixed_version_reported": "",
+          "status": "fix_deferred"
+        }
+      ]
+    },
+    {
+      "id": "GHSA-443w-3rq3-5m5h",
+      "severity": "HIGH",
+      "condition": "Unvalidated input enters CloudFront signed-policy utilities.",
+      "assessment": "The workload uses S3 and does not invoke CloudFront signing utilities. The broad SDK bundle remains installed.",
+      "assessment_status": "CANDIDATE_REQUIRES_OWNER_DECISION",
+      "accepted": false,
+      "primary_sources": [
+        "https://github.com/aws/aws-sdk-java-v2/security/advisories/GHSA-443w-3rq3-5m5h"
+      ],
+      "occurrences": [
+        {
+          "role": "spark",
+          "class": "lang-pkgs",
+          "package": "software.amazon.awssdk:cloudfront",
+          "version": "2.35.4",
+          "path": "usr/local/lib/python3.12/site-packages/pyspark/jars/bundle-2.35.4.jar",
+          "advisory": "GHSA-443w-3rq3-5m5h",
+          "severity": "HIGH",
+          "fixed_version_reported": "2.41.30",
+          "status": "fixed"
+        }
+      ]
+    }
+  ],
+  "primary_advisory_inputs": [
+    {
+      "repository": "FasterXML/jackson-core",
+      "ghsa": "GHSA-h46c-h94j-95f3",
+      "url": "https://github.com/FasterXML/jackson-core/security/advisories/GHSA-h46c-h94j-95f3",
+      "api_url": "https://api.github.com/repos/FasterXML/jackson-core/security-advisories/GHSA-h46c-h94j-95f3",
+      "sha256": "6edda1a479f72ab6eb86f71690ca2dfa4fad4fd970044a3833ea3a32a286c68a",
+      "cve": "CVE-2025-52999",
+      "summary": "Potential for StackoverflowError if you parse an input file that contains very deeply nested data",
+      "retrieved": true
+    },
+    {
+      "repository": "FasterXML/jackson-core",
+      "ghsa": "GHSA-r7wm-3cxj-wff9",
+      "url": "https://github.com/FasterXML/jackson-core/security/advisories/GHSA-r7wm-3cxj-wff9",
+      "api_url": "https://api.github.com/repos/FasterXML/jackson-core/security-advisories/GHSA-r7wm-3cxj-wff9",
+      "sha256": "80f5d8e4d5fe27fe0e6ba07c144d9d51c1e2d414e41aabdd6e3568ae1ac9f6f7",
+      "cve": null,
+      "summary": "Async parser maxNumberLength bypass via chunked digit accumulation (incomplete fix for GHSA-72hv-8253-57qq)",
+      "retrieved": true
+    },
+    {
+      "repository": "FasterXML/jackson-core",
+      "ghsa": "GHSA-7hhh-6rmp-j9qf",
+      "url": "https://github.com/FasterXML/jackson-core/security/advisories/GHSA-7hhh-6rmp-j9qf",
+      "api_url": "https://api.github.com/repos/FasterXML/jackson-core/security-advisories/GHSA-7hhh-6rmp-j9qf",
+      "sha256": "b7891383e3f4a6d8e2deef85d2390d8b8b00ba8bd691b63fa15e99372fb4ed74",
+      "cve": "CVE-2026-89425",
+      "summary": "UTF8DataInputJsonParser._reportInvalidToken() missing maxErrorTokenLength limit -> unbounded StringBuilder growth (DoS)",
+      "retrieved": true
+    },
+    {
+      "repository": "FasterXML/jackson-databind",
+      "ghsa": "GHSA-j3rv-43j4-c7qm",
+      "url": "https://github.com/FasterXML/jackson-databind/security/advisories/GHSA-j3rv-43j4-c7qm",
+      "api_url": "https://api.github.com/repos/FasterXML/jackson-databind/security-advisories/GHSA-j3rv-43j4-c7qm",
+      "sha256": "cd5ba4fdf14764357a91eef64fa7eeb8966cae20c2b92579fe10f7beefbf3f20",
+      "cve": "CVE-2026-54512",
+      "summary": "PolymorphicTypeValidator bypass via generic type parameters in jackson-databind allows arbitrary class instantiation",
+      "retrieved": true
+    },
+    {
+      "repository": "FasterXML/jackson-databind",
+      "ghsa": "GHSA-rmj7-2vxq-3g9f",
+      "url": "https://github.com/FasterXML/jackson-databind/security/advisories/GHSA-rmj7-2vxq-3g9f",
+      "api_url": "https://api.github.com/repos/FasterXML/jackson-databind/security-advisories/GHSA-rmj7-2vxq-3g9f",
+      "sha256": "9b4a70e5884b99c9f5bdee73e20f64246bfc8d70f1b0a2d8a0544884bd2359d7",
+      "cve": "CVE-2026-54513",
+      "summary": "Array subtype allowlist bypass in BasicPolymorphicTypeValidator (allowIfSubTypeIsArray) in jackson-databind",
+      "retrieved": true
+    },
+    {
+      "repository": "FasterXML/jackson-databind",
+      "ghsa": "GHSA-wv8q-qhhj-9h54",
+      "url": "https://github.com/FasterXML/jackson-databind/security/advisories/GHSA-wv8q-qhhj-9h54",
+      "api_url": "https://api.github.com/repos/FasterXML/jackson-databind/security-advisories/GHSA-wv8q-qhhj-9h54",
+      "sha256": "ad0f07906a2c801b532698b4e0995d05b1613e6a4fac0a3be60a86516e7b64b5",
+      "cve": "CVE-2026-91776",
+      "summary": "jackson-databind retains every unknown raw type ID ",
+      "retrieved": true
+    },
+    {
+      "repository": "FasterXML/jackson-databind",
+      "ghsa": "GHSA-cxp5-3px4-pw24",
+      "url": "https://github.com/FasterXML/jackson-databind/security/advisories/GHSA-cxp5-3px4-pw24",
+      "api_url": "https://api.github.com/repos/FasterXML/jackson-databind/security-advisories/GHSA-cxp5-3px4-pw24",
+      "sha256": "f2760cd51af44308d16c9cc20b8ed36b2a8919d21b8e797900ec5403dc8e6bb6",
+      "cve": "CVE-2026-91777",
+      "summary": "jackson-databind quadratic forward-reference completion ",
+      "retrieved": true
+    },
+    {
+      "repository": "google/guava",
+      "ghsa": "GHSA-xxph-c9ww-hj94",
+      "url": "https://github.com/google/guava/security/advisories/GHSA-xxph-c9ww-hj94",
+      "api_url": "https://api.github.com/repos/google/guava/security-advisories/GHSA-xxph-c9ww-hj94",
+      "sha256": "762db09fdb7afd65b838c3b0d02d295469dcc323fe6c4184b47d2af50534d8cc",
+      "cve": "CVE-2026-102554",
+      "summary": "CompactHashMap/CompactHashSet/MapMakerInternalMap deserialization triggers uncontrolled memory allocation",
+      "retrieved": true
+    },
+    {
+      "repository": "netty/netty",
+      "ghsa": "GHSA-mj4r-2hfc-f8p6",
+      "url": "https://github.com/netty/netty/security/advisories/GHSA-mj4r-2hfc-f8p6",
+      "api_url": "https://api.github.com/repos/netty/netty/security-advisories/GHSA-mj4r-2hfc-f8p6",
+      "sha256": "91d345b60e96f35c22ab5abf894734367564a1b8a6af55b673a9fe03f69b26c9",
+      "cve": "CVE-2026-42583",
+      "summary": "Lz4FrameDecoder resource exhaustion ",
+      "retrieved": true
+    },
+    {
+      "repository": "netty/netty",
+      "ghsa": "GHSA-558v-64gr-wgg4",
+      "url": "https://github.com/netty/netty/security/advisories/GHSA-558v-64gr-wgg4",
+      "api_url": "https://api.github.com/repos/netty/netty/security-advisories/GHSA-558v-64gr-wgg4",
+      "sha256": "8fd6ed87bf0ec8449706743e23ea11d59f835b8552ca02a376f080b39a9f4538",
+      "cve": "CVE-2026-59901",
+      "summary": "[Bzip2Decoder] Infinite Loop in RLE State Machine Leads to Event-Loop Thread Hang",
+      "retrieved": true
+    },
+    {
+      "repository": "netty/netty",
+      "ghsa": "GHSA-pwqr-wmgm-9rr8",
+      "url": "https://github.com/netty/netty/security/advisories/GHSA-pwqr-wmgm-9rr8",
+      "api_url": "https://api.github.com/repos/netty/netty/security-advisories/GHSA-pwqr-wmgm-9rr8",
+      "sha256": "f3cb3d241249ace31db3dacfeab1f86df13cd237a003f1a4d0ae08bb217d844d",
+      "cve": "CVE-2026-33870",
+      "summary": "RFC violation: HTTP Request Smuggling primitive via Chunked Extension Quoted-String Parsing",
+      "retrieved": true
+    },
+    {
+      "repository": "netty/netty",
+      "ghsa": "GHSA-57rv-r2g8-2cj3",
+      "url": "https://github.com/netty/netty/security/advisories/GHSA-57rv-r2g8-2cj3",
+      "api_url": "https://api.github.com/repos/netty/netty/security-advisories/GHSA-57rv-r2g8-2cj3",
+      "sha256": "734dd45f6d8b9d00d59fe67a81fd3c3c5815a4c91bdff81fcd93076ef956285a",
+      "cve": "CVE-2026-42584",
+      "summary": "HttpClientCodec response desynchronization",
+      "retrieved": true
+    },
+    {
+      "repository": "netty/netty",
+      "ghsa": "GHSA-f6hv-jmp6-3vwv",
+      "url": "https://github.com/netty/netty/security/advisories/GHSA-f6hv-jmp6-3vwv",
+      "api_url": "https://api.github.com/repos/netty/netty/security-advisories/GHSA-f6hv-jmp6-3vwv",
+      "sha256": "7023767a8d46b50a9ee85d19e64f8af8296ac149a68d16889ea5d42b7ce752c8",
+      "cve": "CVE-2026-42587",
+      "summary": "HttpContentDecompressor maxAllocation bypass via Content-Encoding: br/zstd/snappy enables decompression bomb DoS",
+      "retrieved": true
+    },
+    {
+      "repository": "netty/netty",
+      "ghsa": "GHSA-6jqx-86gh-f27w",
+      "url": "https://github.com/netty/netty/security/advisories/GHSA-6jqx-86gh-f27w",
+      "api_url": "https://api.github.com/repos/netty/netty/security-advisories/GHSA-6jqx-86gh-f27w",
+      "sha256": "7f98cffbda9ea62b522bab598bb03f7d786e735173dbe882835cf8bd393bc193",
+      "cve": "CVE-2026-55831",
+      "summary": "Netty SPDY SETTINGS frame count materializes unbounded settings map",
+      "retrieved": true
+    },
+    {
+      "repository": "netty/netty",
+      "ghsa": "GHSA-mvh2-crg5-v77c",
+      "url": "https://github.com/netty/netty/security/advisories/GHSA-mvh2-crg5-v77c",
+      "api_url": "https://api.github.com/repos/netty/netty/security-advisories/GHSA-mvh2-crg5-v77c",
+      "sha256": "b7492ae54f4f08e6910e73ebb012290baf417e3ab26c378093361a27d86f7b13",
+      "cve": "CVE-2026-55833",
+      "summary": "Netty SPDY zlib header block continues decoded expansion after maxHeaderSize truncation",
+      "retrieved": true
+    },
+    {
+      "repository": "netty/netty",
+      "ghsa": "GHSA-jppx-w49h-x2qq",
+      "url": "https://github.com/netty/netty/security/advisories/GHSA-jppx-w49h-x2qq",
+      "api_url": "https://api.github.com/repos/netty/netty/security-advisories/GHSA-jppx-w49h-x2qq",
+      "sha256": "6b042cd8020445132ecd4f6ea434f2b7983d9cce9e54b9afd8328961bf71068a",
+      "cve": "CVE-2026-56745",
+      "summary": "[SpdyHttpDecoder] ByteBuf Reference Leak on RST_STREAM Leads to Native Memory Exhaustion",
+      "retrieved": true
+    },
+    {
+      "repository": "netty/netty",
+      "ghsa": "GHSA-w9fj-cfpg-grvv",
+      "url": "https://github.com/netty/netty/security/advisories/GHSA-w9fj-cfpg-grvv",
+      "api_url": "https://api.github.com/repos/netty/netty/security-advisories/GHSA-w9fj-cfpg-grvv",
+      "sha256": "af83f69bae8a25cfb4406dcac967c98b84a54ad4808d840a798e9d6c6b91e14b",
+      "cve": "CVE-2026-33871",
+      "summary": "HTTP/2 CONTINUATION Frame Flood Denial of Service",
+      "retrieved": true
+    },
+    {
+      "repository": "netty/netty",
+      "ghsa": "GHSA-93wv-jw9v-4972",
+      "url": "https://github.com/netty/netty/security/advisories/GHSA-93wv-jw9v-4972",
+      "api_url": "https://api.github.com/repos/netty/netty/security-advisories/GHSA-93wv-jw9v-4972",
+      "sha256": "d1e74e213c51affa0c76364371bc9cfd4dc668b05268e0f775947aed9ca57264",
+      "cve": "CVE-2026-56819",
+      "summary": "HTTP/2 decompression leaks ByteBuf reference count when the decompressor channel is already closed (Direct memory leak / OOM DoS)",
+      "retrieved": true
+    },
+    {
+      "repository": "netty/netty",
+      "ghsa": "GHSA-c4c3-7fpv-j4q5",
+      "url": "https://github.com/netty/netty/security/advisories/GHSA-c4c3-7fpv-j4q5",
+      "api_url": "https://api.github.com/repos/netty/netty/security-advisories/GHSA-c4c3-7fpv-j4q5",
+      "sha256": "1c1562388f6acce836d421bbd75a9195a357f76b1feedb6de5f9dc3e3afee063",
+      "cve": "CVE-2026-75595",
+      "summary": "SNI Routing Bypass via Fragmented TLS ClientHello Causing Fallback to Default SslContext",
+      "retrieved": true
+    },
+    {
+      "repository": "netty/netty",
+      "ghsa": "GHSA-3qp7-7mw8-wx86",
+      "url": "https://github.com/netty/netty/security/advisories/GHSA-3qp7-7mw8-wx86",
+      "api_url": "https://api.github.com/repos/netty/netty/security-advisories/GHSA-3qp7-7mw8-wx86",
+      "sha256": "5b2afcaf7363b72e2878f2fcbfa0ccc8ec58ac8847efd2d9b8cfdc1eac6dd47f",
+      "cve": "CVE-2026-44249",
+      "summary": "IPv6 Subnet Filter Bypass via Incorrect Comparator Masking",
+      "retrieved": true
+    },
+    {
+      "repository": "netty/netty",
+      "ghsa": "GHSA-x4gw-5cx5-pgmh",
+      "url": "https://github.com/netty/netty/security/advisories/GHSA-x4gw-5cx5-pgmh",
+      "api_url": "https://api.github.com/repos/netty/netty/security-advisories/GHSA-x4gw-5cx5-pgmh",
+      "sha256": "d2964d788cb69b3f2e2f684ae69382f36c7d6fd74a51968d0fc435e702f08d7b",
+      "cve": "CVE-2026-45416",
+      "summary": "SNI handler pre-allocates up to 16 MiB from nine attacker bytes",
+      "retrieved": true
+    },
+    {
+      "repository": "netty/netty",
+      "ghsa": "GHSA-c653-97m9-rcg9",
+      "url": "https://github.com/netty/netty/security/advisories/GHSA-c653-97m9-rcg9",
+      "api_url": "https://api.github.com/repos/netty/netty/security-advisories/GHSA-c653-97m9-rcg9",
+      "sha256": "917bdbd6a45ca4c13eb9b9e1c43a72feacdaad02c850f5f1e08d852961d38592",
+      "cve": "CVE-2026-50010",
+      "summary": "Wrapping plain trust manager silently disables hostname verification",
+      "retrieved": true
+    },
+    {
+      "repository": "jetty/jetty.project",
+      "ghsa": "GHSA-355h-qmc2-wpwf",
+      "url": "https://github.com/jetty/jetty.project/security/advisories/GHSA-355h-qmc2-wpwf",
+      "api_url": "https://api.github.com/repos/jetty/jetty.project/security-advisories/GHSA-355h-qmc2-wpwf",
+      "sha256": "67ed2483c4ee7b14c0ff1c4c838c205830cec74e978fe9b83f73864e943aa858",
+      "cve": "CVE-2026-2332",
+      "summary": "HTTP Request Smuggling via Chunked Extension Quoted-String Parsing",
+      "retrieved": true
+    },
+    {
+      "repository": "jetty/jetty.project",
+      "ghsa": "GHSA-2fvj-hgj9-j2gr",
+      "url": "https://github.com/jetty/jetty.project/security/advisories/GHSA-2fvj-hgj9-j2gr",
+      "api_url": "https://api.github.com/repos/jetty/jetty.project/security-advisories/GHSA-2fvj-hgj9-j2gr",
+      "sha256": "014b7a91e5552ff9731000bd26a9e1ec6116e1637849d5f4d80988a5ddce2782",
+      "cve": "CVE-2026-10050",
+      "summary": "Eclipse Jetty Digest Authentication: ISO-8859-1 lossy encoding allows authentication bypass via character substitution (CWE-173)",
+      "retrieved": true
+    },
+    {
+      "repository": "jline/jline3",
+      "ghsa": "GHSA-r2xf-8xr9-62gw",
+      "url": "https://github.com/jline/jline3/security/advisories/GHSA-r2xf-8xr9-62gw",
+      "api_url": "https://api.github.com/repos/jline/jline3/security-advisories/GHSA-r2xf-8xr9-62gw",
+      "sha256": "13d3fefc8a4b583a28a38835c3bf901f064946acb6d8b8f332f35afa208e0897",
+      "cve": "CVE-2026-77422",
+      "summary": "ReDoS in Built-in grep Command Amplified by Automatic `.*` Wrapping",
+      "retrieved": true
+    },
+    {
+      "repository": "jline/jline3",
+      "ghsa": "GHSA-47qp-hqvx-6r3f",
+      "url": "https://github.com/jline/jline3/security/advisories/GHSA-47qp-hqvx-6r3f",
+      "api_url": "https://api.github.com/repos/jline/jline3/security-advisories/GHSA-47qp-hqvx-6r3f",
+      "sha256": "c6afbfd896b822976c1592fab62b9ea01dca4973f08aa16349fa56827697014d",
+      "cve": "CVE-2026-56740",
+      "summary": "Unauthenticated Remote Memory Exhaustion via Unbounded Telnet NEW-ENVIRON Variables",
+      "retrieved": true
+    },
+    {
+      "repository": "jline/jline3",
+      "ghsa": "GHSA-2r2c-cx56-8933",
+      "url": "https://github.com/jline/jline3/security/advisories/GHSA-2r2c-cx56-8933",
+      "api_url": "https://api.github.com/repos/jline/jline3/security-advisories/GHSA-2r2c-cx56-8933",
+      "sha256": "993b51b45b88acdcc4bff53a5d176112e3488423aa59a9186f056b6bea88508d",
+      "cve": "CVE-2026-56741",
+      "summary": "Unauthenticated Remote DoS via Unbounded Telnet NAWS Terminal Geometry",
+      "retrieved": true
+    },
+    {
+      "repository": "aws/aws-sdk-java-v2",
+      "ghsa": "GHSA-443w-3rq3-5m5h",
+      "url": "https://github.com/aws/aws-sdk-java-v2/security/advisories/GHSA-443w-3rq3-5m5h",
+      "api_url": "https://api.github.com/repos/aws/aws-sdk-java-v2/security-advisories/GHSA-443w-3rq3-5m5h",
+      "sha256": "10c8ef296f43b9cbbfb61b4209b936ca18d36d0f68c42d727d36c46d1c5a894e",
+      "cve": null,
+      "summary": "Defense in depth enhancement for CloudFront signing utility in AWS SDK for Java v2",
+      "retrieved": true
+    }
+  ],
+  "os_vendor_inputs": {
+    "checked_at_utc": "2026-11-16T23:51:53.538830+00:00",
+    "inputs": [
+      {
+        "id": "CVE-2025-69720",
+        "url": "https://security-tracker.debian.org/tracker/CVE-2025-69720",
+        "sha256": "3542be519daaef8f60a0fd662f4a6129a238f59ef9b86155869d49cfd2b3af78",
+        "reviewed_trixie_status": "vulnerable"
+      },
+      {
+        "id": "CVE-2026-119373",
+        "url": "https://security-tracker.debian.org/tracker/CVE-2026-119373",
+        "sha256": "caa306ace78626cf4c28044f3d1053a2d7a5785ebe88d42504218e5ffa23aaee",
+        "reviewed_trixie_status": "vulnerable"
+      },
+      {
+        "id": "CVE-2026-119374",
+        "url": "https://security-tracker.debian.org/tracker/CVE-2026-119374",
+        "sha256": "08ee3a28b1be9e9dfcbad161a79731b08cc08a6b54caef90098da46bfc574cdc",
+        "reviewed_trixie_status": "vulnerable"
+      },
+      {
+        "id": "CVE-2026-119379",
+        "url": "https://security-tracker.debian.org/tracker/CVE-2026-119379",
+        "sha256": "d7171e070be82e7ea297bad3ab3d2ca5aee54a70b198c5a2bec2b762ac942679",
+        "reviewed_trixie_status": "vulnerable"
+      },
+      {
+        "id": "CVE-2026-16742",
+        "url": "https://security-tracker.debian.org/tracker/CVE-2026-16742",
+        "sha256": "c02e61ecf8255bb8874419ddb4ea555e32daf30163b919e3d88234d8d8b1c43a",
+        "reviewed_trixie_status": "vulnerable"
+      },
+      {
+        "id": "CVE-2026-54369",
+        "url": "https://security-tracker.debian.org/tracker/CVE-2026-54369",
+        "sha256": "4677cdb2b848eca7bc76f57dd54e5d01e309f438bba58d892550db432fbde5ca",
+        "reviewed_trixie_status": "vulnerable"
+      },
+      {
+        "id": "CVE-2026-76642",
+        "url": "https://security-tracker.debian.org/tracker/CVE-2026-76642",
+        "sha256": "fd40eb589f4edd1f5b2df060db1d418501f7138459069481c60471abe1efde24",
+        "reviewed_trixie_status": "vulnerable"
+      },
+      {
+        "id": "CVE-2026-78408",
+        "url": "https://security-tracker.debian.org/tracker/CVE-2026-78408",
+        "sha256": "c2ce37b05cca7f05768d22c20645c174592a837fb20423fa7f106dc4e6e0d104",
+        "reviewed_trixie_status": "vulnerable"
+      },
+      {
+        "id": "CVE-2026-78409",
+        "url": "https://security-tracker.debian.org/tracker/CVE-2026-78409",
+        "sha256": "7762ce7d10558ca03e3fcc3995b97e7a24d13ab4b1d6cdd3e4bf9ff7d357ba48",
+        "reviewed_trixie_status": "vulnerable"
+      },
+      {
+        "id": "CVE-2026-78410",
+        "url": "https://security-tracker.debian.org/tracker/CVE-2026-78410",
+        "sha256": "370b52136365d440004d915421bd2b2529393511c802bdc04f3e3a873241621b",
+        "reviewed_trixie_status": "vulnerable"
+      },
+      {
+        "id": "CVE-2026-9538",
+        "url": "https://security-tracker.debian.org/tracker/CVE-2026-9538",
+        "sha256": "f9466371b6a5bd0094c5a53028d43144ca3115918fb37ca7ae0d48eb9dc350b1",
+        "reviewed_trixie_status": "vulnerable"
+      }
+    ]
+  },
+  "vendor_cohort_recheck": [
+    {
+      "url": "https://repo.maven.apache.org/maven2/org/apache/hadoop/hadoop-aws/maven-metadata.xml",
+      "sha256": "bbdb66b26e50cc4cf986fc70ebb57121198491090097de4c528263b223acbe87",
+      "latest": "3.5.0"
+    },
+    {
+      "url": "https://repo.maven.apache.org/maven2/software/amazon/awssdk/bundle/maven-metadata.xml",
+      "sha256": "295ec1df20da45f687c9b60efad23ef976013a611e36ed595512b0c244913bf3",
+      "latest": "2.59.2"
+    },
+    {
+      "url": "https://repo.maven.apache.org/maven2/org/apache/hadoop/hadoop-project/3.5.0/hadoop-project-3.5.0.pom",
+      "sha256": "592faadca05d91d7339323b02494d39955a8f08909ecbe893518debbf58453d7",
+      "properties": {
+        "aws-java-sdk-v2.version": "2.35.4"
+      }
+    },
+    {
+      "url": "https://repo.maven.apache.org/maven2/software/amazon/awssdk/aws-sdk-java-pom/2.59.1/aws-sdk-java-pom-2.59.1.pom",
+      "sha256": "38f964c59aae3b768943aecabf36616dee7fa57384e1fc5bdf0e457dd790eed1",
+      "properties": {
+        "netty.version": "4.1.138.Final",
+        "jackson.version": "2.21.8"
+      }
+    },
+    {
+      "url": "https://repo.maven.apache.org/maven2/software/amazon/awssdk/aws-sdk-java-pom/2.59.2/aws-sdk-java-pom-2.59.2.pom",
+      "sha256": "4717d17b7cd80886cbf7f110a53c7551fcc9310fee159d1bdf218fdf700e9636",
+      "properties": {
+        "netty.version": "4.1.138.Final",
+        "jackson.version": "2.21.8"
+      }
+    }
+  ],
+  "public_source_archives": [
+    {
+      "url": "https://repo.maven.apache.org/maven2/software/amazon/awssdk/netty-nio-client/2.35.4/netty-nio-client-2.35.4-sources.jar",
+      "sha512": "9e26391a00dd6b395bb0aa3c512c8b68786cbd75707ea15f60492185d3013b75a18057751ad20dfda8e8ec024856f65cfec593f54d59b517d2722b821f2a9f5b",
+      "source": "software/amazon/awssdk/http/nio/netty/internal/SslContextProvider.java",
+      "source_sha256": "a7674575b5e45e0862b0d781011f2de5a227c84b61e2b433965850f818ebd8cb"
+    },
+    {
+      "url": "https://repo.maven.apache.org/maven2/org/apache/hadoop/hadoop-aws/3.4.3/hadoop-aws-3.4.3-sources.jar",
+      "sha512": "559358d1d50876a3fea6473c720bb6a618041b6b5b2f00bafd76bbc4402615019197a7ced9fe639f1d2769b3ab7faa54c35f209f4bf149d24afc69f183d2380c",
+      "source": "org/apache/hadoop/fs/s3a/DefaultS3ClientFactory.java",
+      "source_sha256": "3262fd0b67932915d008312ad5f7ddd9fb8e1966070e6df2084bde33ce8de287"
+    }
+  ],
+  "additional_source_files": [
+    {
+      "name": "NettyNioAsyncHttpClient.java",
+      "sha256": "ffc7f133469fa9740af10037c064c4e3fd9b1ea390d7f743d6284de650ee9e33"
+    },
+    {
+      "name": "NettyConfiguration.java",
+      "sha256": "fa970d6498d0602f7a7586b479a5dfbf7b405f21e727db49d5990737649e2445"
+    },
+    {
+      "name": "NettyUtils.java",
+      "sha256": "dd51f5bae60b538a2f250fc8c1b1c32bc6b5964901502090e1cdeedf7a406207"
+    },
+    {
+      "name": "AWSClientConfig.java",
+      "sha256": "afb02bff48f7d008db582468b4f501df09b8c492d98dc65cf6f7957ca38b1b5b"
+    }
+  ],
+  "installed_tls_configuration": {
+    "catalog": "in-memory",
+    "class_origins_verified": 51,
+    "diagnostic_sdk_handler_hostname_algorithm": "HTTPS",
+    "diagnostic_tls_client_mode": true,
+    "diagnostic_tls_provider": "JDK",
+    "hadoop_async_builder_custom_trust_manager": false,
+    "hadoop_async_builder_trust_all": false,
+    "jdk_default_managers_are_extended": true,
+    "jdk_default_trust_manager_classes": [
+      "sun.security.ssl.X509TrustManagerImpl"
+    ],
+    "master": "local[2]",
+    "observed_http_protocol": "HTTP1_1",
+    "observed_protocol_negotiation": "ASSUME_PROTOCOL",
+    "request_methods_called": false,
+    "s3a_stream": "classic",
+    "scope_limit": "Actual installed Hadoop async-builder defaults and an explicit JDK diagnostic context; not all transitive paths, live S3, every TLS provider or a certificate handshake.",
+    "tls_handshake_performed": false,
+    "ui_web_url": null,
+    "source_commit": "272df839ad69e0579c6181eb95f5c48e56c2ee69",
+    "manifest_digest": "sha256:52d956774b5133217bb41ed8b6577599f8813df635969296502572dcb121128b",
+    "aws_calls_made": false
+  },
+  "installed_os_configuration": [
+    {
+      "uid": 10001,
+      "process_controls": {
+        "CapEff": "0000000000000000",
+        "CapBnd": "0000000000000000",
+        "NoNewPrivs": "1"
+      },
+      "systemd_homed_present": false,
+      "homectl_present": false,
+      "perl_archive_tar_module_present": false,
+      "sqlite_version": "3.46.1",
+      "sqlite_fts5_compiled": true,
+      "sqlite_session_compiled": true,
+      "infocmp_present": true,
+      "selected_executable_modes": {
+        "mount": "0o755",
+        "umount": "0o755",
+        "su": "0o755",
+        "nsenter": "0o755"
+      },
+      "network": "none",
+      "aws_calls_made": false,
+      "exploit_payloads_executed": false,
+      "role": "producer",
+      "manifest_digest": "sha256:510368dd54d5cf8d0bfcc619d01b745fb38634b12e9d72224d17b474608a533a",
+      "source_commit": "272df839ad69e0579c6181eb95f5c48e56c2ee69"
+    },
+    {
+      "uid": 10001,
+      "process_controls": {
+        "CapEff": "0000000000000000",
+        "CapBnd": "0000000000000000",
+        "NoNewPrivs": "1"
+      },
+      "systemd_homed_present": false,
+      "homectl_present": false,
+      "perl_archive_tar_module_present": false,
+      "sqlite_version": "3.46.1",
+      "sqlite_fts5_compiled": true,
+      "sqlite_session_compiled": true,
+      "infocmp_present": true,
+      "selected_executable_modes": {
+        "mount": "0o755",
+        "umount": "0o755",
+        "su": "0o755",
+        "nsenter": "0o755"
+      },
+      "network": "none",
+      "aws_calls_made": false,
+      "exploit_payloads_executed": false,
+      "role": "spark",
+      "manifest_digest": "sha256:52d956774b5133217bb41ed8b6577599f8813df635969296502572dcb121128b",
+      "source_commit": "272df839ad69e0579c6181eb95f5c48e56c2ee69"
+    }
+  ],
+  "advisory_mapping_notes": [
+    {
+      "scanner_id": "CVE-2026-68494",
+      "linked_upstream_ghsa": "GHSA-r7wm-3cxj-wff9",
+      "upstream_cve_field": null,
+      "disposition": "Keep scanner ID and severity; this reference link is not proof of an alias or grounds for suppression."
+    }
+  ],
+  "limits": [
+    "No live S3 authorization or handshake was tested.",
+    "Source searches and configuration observations do not prove every transitive path unreachable.",
+    "No package severity or scanner result is suppressed.",
+    "Exact final approval scope must be rebound after the documentation checkpoint; baseline image IDs are not a deployment authorization."
+  ],
+  "proposed_decision": {
+    "owner": "johnson70630",
+    "maximum_runtime_seconds": 3600,
+    "maximum_runs": 1,
+    "expires_at_utc": "2026-11-24T00:00:00Z",
+    "accepted": false,
+    "conditional_on_unchanged_digest_workload_controls_and_live_preflight": true,
+    "does_not_authorize": [
+      "ECR publishing",
+      "AWS resource changes",
+      "EC2 start",
+      "IAM expansion",
+      "secret creation or credential deployment",
+      "Snowflake changes",
+      "Terraform init/plan/apply/import",
+      "main merge"
+    ]
+  },
+  "accepted_exceptions": [],
+  "release_status": "BLOCKED_OWNER_DECISION_AND_DEPLOYMENT_GATES",
+  "aws_calls_made": false,
+  "images_published": false,
+  "production_infrastructure_changed": false,
+  "milestone_11_5d": "PAUSED",
+  "rejected_base_alternative": {
+    "status": "REJECTED_BEFORE_APPLICATION_ADOPTION",
+    "scope": "Minimal official Bookworm Python 3.12.16 image with public OS upgrades and Spark-required OS libraries; not a full application benchmark.",
+    "summary": {
+      "pinned_reference": "python:3.12-slim-bookworm@sha256:935c3c5b12357a7e10caa9c1e6ca5692344d97cf229832ef584be2cec9fc03df",
+      "index_digest": "sha256:935c3c5b12357a7e10caa9c1e6ca5692344d97cf229832ef584be2cec9fc03df",
+      "amd64_manifest_digest": "sha256:0f086103b026048cc50cb5da25ec435c023c5241a83fc44daea593377abc61c4",
+      "config_digest": "sha256:313cf8f190a1abab00472c1f0c950c10486c22114bcd8aef2a8198fb587a6d18",
+      "selected_environment": {
+        "LANG": "C.UTF-8",
+        "PYTHON_VERSION": "3.12.16"
+      },
+      "compressed_layer_bytes": 45269504,
+      "findings_by_class": {
+        "os-pkgs": {
+          "LOW": 108,
+          "HIGH": 99,
+          "MEDIUM": 142,
+          "UNKNOWN": 5,
+          "CRITICAL": 2
+        },
+        "lang-pkgs": {
+          "MEDIUM": 5,
+          "LOW": 1
+        }
+      },
+      "aws_calls_made": false,
+      "report_sha256": "ab3e40925e2fecdfa1f6b7dd6722110f8a5e7375c5fd20b577674c477722323e"
+    },
+    "critical_findings": [
+      {
+        "VulnerabilityID": "CVE-2025-7458",
+        "PkgName": "libsqlite3-0",
+        "InstalledVersion": "3.40.1-2+deb12u2",
+        "FixedVersion": null
+      },
+      {
+        "VulnerabilityID": "CVE-2023-45853",
+        "PkgName": "zlib1g",
+        "InstalledVersion": "1:1.2.13.dfsg-1",
+        "FixedVersion": null
+      }
+    ],
+    "reason": "OS scan regresses to 2 Critical / 99 High; selected Trixie app image remains 0 Critical / 47 High.",
+    "support_reference": "https://www.debian.org/releases/bookworm/",
+    "selected_runtime_changed": false
+  }
+}

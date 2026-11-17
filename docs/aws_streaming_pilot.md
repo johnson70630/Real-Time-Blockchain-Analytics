@@ -1,5 +1,7 @@
 # Milestone 11.6C — first streaming pilot readiness
 
+Current consolidated review: [security decision and remaining approval gates](aws_runtime_security_decision.md). Owner decision is pending; no exceptions, publication or AWS action are approved.
+
 Current offline follow-up: [application image privilege hardening](aws_runtime_privilege_hardening.md). Deployment remains blocked; no exceptions or AWS changes are authorized.
 
 Current offline follow-up: [complete Parquet cohort maintenance](aws_runtime_parquet_remediation.md). Deployment remains blocked; no exceptions or AWS changes are authorized.
