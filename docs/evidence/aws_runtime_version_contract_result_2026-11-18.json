@@ -1,0 +1,192 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-18T07:19:58.987674+00:00",
+  "milestone": "11.6C",
+  "source_commit": "725e823e6ae82f7d2fe7005ce47cbd0f80eeb89c",
+  "source_ci": {
+    "run": 44254298690,
+    "all_six_success": true
+  },
+  "result": "EXACT_CURRENT_VERSION_VERIFIED; STORED_SECRETSTRING_FORMAT_CONTRACT_MISMATCH",
+  "instance_id": "i-0ca1671a59751acc5",
+  "region": "us-west-2",
+  "approved_scope": "One diagnostic-only boot; one pinned secret read; immediate normal stop; no pipeline or secret edit",
+  "launch_at_utc": "2026-11-18T07:12:38+00:00",
+  "normal_stop_requested_at_utc": "2026-11-18T07:15:35.250615+00:00",
+  "stopped_observed_at_utc": "2026-11-18T07:16:03.670452+00:00",
+  "observed_runtime_seconds_upper_bound": 205.670452,
+  "final_readback": {
+    "checked_at_utc": "2026-11-18T07:17:17.649146+00:00",
+    "instance_id": "i-0ca1671a59751acc5",
+    "state": "stopped",
+    "public_ipv4_absent": true,
+    "disk_ids": [
+      "vol-03bd5d26947719f98",
+      "vol-02c9fb14a9c568fb5"
+    ],
+    "both_original_encrypted_gp3_disks_preserved": true,
+    "kafka_delete_on_termination": false
+  },
+  "late_handoff": {
+    "checked_at_utc": "2026-11-18T07:13:59.500703+00:00",
+    "launch_epoch": 1794985958.0,
+    "console_handoff_cutoff_epoch": 1794985699.997719,
+    "seconds_after_handoff_cutoff": 258.00228095054626,
+    "inside_original_ten_minute_arming_interval": true,
+    "snapshot_refresh_required_before_secret_read": true,
+    "read_only_refresh_source_sha256": "5a44f6bc3c04eb9c56d59e6a1c2c112ac5d223504fba5eb53b441a29ae3eb460",
+    "approved_deployment_scripts_changed": false,
+    "approved_shutdown_deadlines_changed": false
+  },
+  "running_state_rechecks_before_secret_read": {
+    "running_preflight": {
+      "checked_at_utc": "2026-11-18T07:14:42.981194+00:00",
+      "state": "running",
+      "running_preflight_passed": true,
+      "exact_disks_profile_imdsv2_standard_credits_no_ingress_and_stop_behavior_match": true,
+      "private_document_sha256": "a09eb89d2c2d9e879f60d89372405996c72aae040909b78607d98560db443d33",
+      "read_only": true,
+      "secret_values_read": false
+    },
+    "running_cloud_readiness": {
+      "checked_at_utc": "2026-11-18T07:14:11.601826+00:00",
+      "all_cloud_readiness_checks_passed": true,
+      "instance_state": "running",
+      "iam_boundary_trust_profile_and_secret_policy_match": true,
+      "images": [
+        {
+          "role": "producer",
+          "manifest_and_config_match": true,
+          "finding_inventory_unchanged": true,
+          "findings": 16,
+          "counts": {
+            "HIGH": 2,
+            "MEDIUM": 10,
+            "LOW": 3,
+            "UNDEFINED": 1
+          }
+        },
+        {
+          "role": "spark",
+          "manifest_and_config_match": true,
+          "finding_inventory_unchanged": true,
+          "findings": 16,
+          "counts": {
+            "HIGH": 2,
+            "MEDIUM": 10,
+            "LOW": 3,
+            "UNDEFINED": 1
+          }
+        },
+        {
+          "role": "kafka",
+          "manifest_and_config_match": true,
+          "finding_inventory_unchanged": true,
+          "findings": 0,
+          "counts": {}
+        }
+      ],
+      "secret_values_read": false,
+      "aws_writes": false
+    }
+  },
+  "diagnostic": {
+    "ok": false,
+    "diagnostic_completed": true,
+    "contract": {
+      "aws_cli_version": "2.38.0",
+      "expected_version_id": "12d38103-a68c-4226-b20a-3095cbb3de78",
+      "format_codes": [
+        "JSON_OR_QUOTES",
+        "SCHEME_NOT_WSS",
+        "HOSTNAME_MISMATCH",
+        "PATH_MISMATCH"
+      ],
+      "format_status": "FORMAT_FAIL",
+      "identity_codes": [],
+      "python_version": [
+        3,
+        9,
+        25
+      ],
+      "response_identity_matches": true,
+      "status": "CONTRACT_FAIL"
+    },
+    "pre_chain_controls": {
+      "short_timer_verified": true,
+      "guest_shutdown_epoch": 1794988058,
+      "current_boot_verified": true,
+      "existing_installation_verified": true
+    }
+  },
+  "exact_arn_name_version_and_current_stage_verified": true,
+  "stored_secret_string_present_and_not_binary": true,
+  "entire_value_is_not_a_bare_expected_wss_url": true,
+  "exact_wrapper_shape_or_field_name": "NOT_OBSERVED; no value disclosed",
+  "explanation_of_prior_owner_ui_actions": "NOT_ESTABLISHED; local PASS only proves copied string",
+  "provider_authentication_or_key_validity": "NOT_TESTED",
+  "secret_reads": 1,
+  "controller_invocations": 0,
+  "rpc_requests": 0,
+  "pipeline_s3_writes": 0,
+  "no_automatic_retry": true,
+  "old_approval_consumed": true,
+  "new_paid_start_authorized": false,
+  "secret_edit_authorized": false,
+  "private_receipt_sha256": {
+    "owner-approval.json": "5c0ea4ae9c2770b6d35a7dd547182a1e9998d21b11daa6017383cfaf2d06ccc7",
+    "authorization.json": "5b326d58b1a8487b916a581e5f65e58a4727a3802803f9628214de55423e92d9",
+    "preflight.json": "b1391f2eafc413b23f1720d577c2990728a91ee6b9550c91120124cba10c49a2",
+    "cloud-readiness.json": "46db066b6ec45e62115a905929e220d7e2ac0d9ddada54e54ec3312f5c64e3f3",
+    "watch-process.json": "fa02de04032c07f55cb54c596f44ca067c0677abe0e07b3cd06a08955472d971",
+    "console-start-handoff.json": "b4d9a2d7bb5dffb2b0a82e5d3fcd90a0541cad3bc8102cdc77731b5b4cef1949",
+    "watch.json": "90109f7407343632ad645716e51ce0d2b5d736693ce43c577f22d8d0612302ce",
+    "late-console-start-review.json": "20dbd4f4d6a9c8808c1a97340fc7c3d2439a53cfd6e472911bfc2d5fab195a6a",
+    "running-preflight.json": "eb0932e1438ec6027267e4fd289ac62feae5a5384f702c127ec812d0fadcccc5",
+    "running-cloud-readiness.json": "4d7accbe5cb49085124809d903bb719906107b6432fa63a2949ed536a7d60fae",
+    "guest-upload-result.json": "74eecd44733fda4541663e6a50e8ecb677037a1d639fbab5cc5654b5eb1fccbb",
+    "secret-contract-intent.json": "c16be73a3ee5fc017a0666cfcdf7544b2681ac89a35313e8d29a8d00d342a5ea",
+    "guest-diagnose-result.json": "ee53f06a1e4baa9fce4b012796199310eb2ca6e5893e54477afb80dee0f8c4c2",
+    "final-cloud-confirmation.json": "9561416152555f147d86359545fe781071e9e903bd55db88732b801afda0a9a5"
+  },
+  "validation": {
+    "focused_tests_passed": 104,
+    "negative_subtests_passed": 36,
+    "last_full_runtime_suite_passed": 588,
+    "private_operator_cases_passed": 15,
+    "prior_unsigned_real_cli_loopback_cases_passed": 7
+  },
+  "cost_estimate": {
+    "recorded_compute_ipv4_hour_usd": "0.1714",
+    "observed_interval_compute_ipv4_usd": "0.009792198742444444444444444444",
+    "not_invoice_or_hard_cap": true,
+    "retained_resources_and_other_usage_extra": true
+  },
+  "proposed_owner_correction": {
+    "owner_only": true,
+    "secret_arn": "arn:aws:secretsmanager:us-west-2:209479274979:secret:blockchain-runtime/11-6c/alchemy-websocket-url-d44flr",
+    "old_current_version": "12d38103-a68c-4226-b20a-3095cbb3de78",
+    "max_value_saves": 1,
+    "preserve_existing_valid_url_and_api_key": true,
+    "new_complete_secret_string": "Bare existing Arbitrum WSS URL; no JSON wrapper, field name, quotes or whitespace",
+    "aws_automatic_new_version_and_current_label_movement": true,
+    "old_version_preserved": true,
+    "preserve_secret_arn_tags_encryption_rotation_replication_and_policy": true,
+    "no_manual_label_movement": true,
+    "new_current_version_id_must_differ": true,
+    "no_ec2_start": true,
+    "no_iam_or_terraform_changes": true,
+    "no_new_secret_resource_or_key_rotation": true,
+    "approval": "NOT_APPROVED"
+  },
+  "proposal_api_source": "https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_PutSecretValue.html",
+  "new_aws_resources_created": false,
+  "terraform_actions": false,
+  "iam_changes": false,
+  "secret_edits_this_attempt": false,
+  "ebs_format_or_delete": false,
+  "snowflake_changes": false,
+  "main_merge": false,
+  "milestone_complete": false,
+  "milestone_11_5d": "PAUSED"
+}

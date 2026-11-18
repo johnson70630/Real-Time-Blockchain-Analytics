@@ -1,5 +1,7 @@
 # Milestone 11.6C — Version-pinned diagnostic prepared offline
 
+Current result: [exact current version has a stored-value format mismatch; diagnostic stopped and owner-only correction proposed](aws_runtime_version_contract_result.md). EC2 is stopped. No new start or secret edit is approved; earlier statements below preserve checkpoint history.
+
 **The owner supplied current-version metadata. EC2 is stopped.** A new diagnostic
 is implemented and tested offline; no live secret read, edit or paid start occurred.
 This is a diagnostic-only proposal. It cannot authorize or start streaming.
