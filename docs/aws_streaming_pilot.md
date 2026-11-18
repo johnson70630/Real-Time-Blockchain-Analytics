@@ -1,5 +1,9 @@
 # Milestone 11.6C — first streaming pilot readiness
 
+Current status: [owner reports whole-payload correction complete; shorter 45-minute pilot prepared for approval](aws_runtime_short_window_review.md). EC2 is stopped; live retrieval/chain/ingestion remain unverified and no new start is approved.
+
+The earlier format-gate status below is preserved as checkpoint history.
+
 Current status: [second window stopped at the endpoint-format gate; owner-only whole-payload verification/correction review](aws_runtime_format_gate_result.md). A copied URL passed locally, but the complete stored value is not yet confirmed. No further paid start or secret edit is approved.
 
 The earlier abort status below is preserved as checkpoint history.

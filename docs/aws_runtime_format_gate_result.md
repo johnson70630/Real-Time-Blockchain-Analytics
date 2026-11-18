@@ -1,5 +1,7 @@
 # Milestone 11.6C — Endpoint-format gate isolated; owner-only correction proposed
 
+Follow-up: [owner reports saving the approved correction and whole-payload FORMAT_PASS; shorter pilot scope prepared](aws_runtime_short_window_review.md). The pending correction statements below preserve the original review history.
+
 **The second approved window ended with EC2 stopped and no application startup.
 The diagnostic reached `SECRET_FORMAT / INVALID_ENDPOINT` before an RPC request.
 The owner validated a copied URL, then clarified that only the URL was copied.

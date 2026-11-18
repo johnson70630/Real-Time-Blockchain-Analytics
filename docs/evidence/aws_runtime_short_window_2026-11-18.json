@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-18T00:34:58.359521+00:00",
+  "milestone": "11.6C",
+  "owner_secret_correction": {
+    "approval_message": "approve",
+    "approved_proposal_sha256": "d8d6be6d1bcb212efa475f6f2fbc19df6cefbf19eb28c0fb840aab9641265a3e",
+    "owner_completion_message": "Saved; FORMAT_PASS for whole payload",
+    "result": "OWNER_ATTESTED_SAVED_AND_WHOLE_PAYLOAD_FORMAT_PASS",
+    "same_existing_secret_arn": "arn:aws:secretsmanager:us-west-2:209479274979:secret:blockchain-runtime/11-6c/alchemy-websocket-url-d44flr",
+    "url_or_key_received_by_assistant": false,
+    "secret_version_metadata_independently_read": false,
+    "live_retrieval_and_rpc_after_save": "NOT_TESTED",
+    "private_approval_receipt_sha256": "877e48b5959c868dbf3da150c252eeaf75c57870b935fe5f180a68829a9ae063"
+  },
+  "read_only_instance_confirmation": {
+    "checked_at_utc": "2026-11-18T00:29:47.692131+00:00",
+    "state": "stopped",
+    "public_ipv4_absent": true,
+    "owner_secret_save_message": "Saved; FORMAT_PASS for whole payload",
+    "whole_payload_format": "OWNER_ATTESTED_PASS",
+    "secret_value_received_by_assistant": false,
+    "independent_live_retrieval_or_rpc_check": false,
+    "new_start_authorized": false
+  },
+  "proposed_short_window": {
+    "authorization": "NOT_APPROVED",
+    "account": "209479274979",
+    "region": "us-west-2",
+    "instance_id": "i-0ca1671a59751acc5",
+    "kafka_volume_id": "vol-02c9fb14a9c568fb5",
+    "root_volume_id": "vol-03bd5d26947719f98",
+    "maximum_starts": 1,
+    "maximum_controller_invocations": 1,
+    "window_seconds": 2700,
+    "preflight_seconds": 900,
+    "normal_stop_due_seconds": 1800,
+    "guest_shutdown_seconds": 2100,
+    "target_stopped_seconds": 2400,
+    "minimum_session_remaining_seconds": 5400,
+    "timer_unit": "blockchain-pilot-window-deadline",
+    "transient_guest_unit_only": true,
+    "timer_persistent_across_boot": false,
+    "all_deadlines_tied_to_actual_ec2_launch": true,
+    "release_controller_backup_limit_seconds": 3600,
+    "operator_requests_early_stop_after_smoke": true,
+    "frozen_release_unchanged": true,
+    "new_aws_resources": false,
+    "terraform_scope": "NONE",
+    "iam_or_secret_edit_scope": "NONE"
+  },
+  "frozen_release": {
+    "path": "docs/evidence/aws_runtime_release_candidate_2026-11-17.json",
+    "sha256": "7f948e94cec7f7aebaf2aa4dab4ddd8e92a60f083f17bb9cefcff4db89cd200f",
+    "producer_image": "209479274979.dkr.ecr.us-west-2.amazonaws.com/blockchain-runtime-producer@sha256:63d9d0f24a1cb7eb30b080e58f8a40ddd49292b89020328409e6f45319597afd",
+    "spark_image": "209479274979.dkr.ecr.us-west-2.amazonaws.com/blockchain-runtime-spark@sha256:bb03f7d9917f2d8dc7d2fc1fc6a1df83fe876f5298e98c4163c689a1b890a134",
+    "kafka_image": "209479274979.dkr.ecr.us-west-2.amazonaws.com/blockchain-runtime-producer@sha256:1113a10e8a93fc12b2d310ef6f53b8f5fc95fb806a8c6edcfa6b67d17959378b",
+    "pilot_prefix": "blockchain-analytics/pilot/runtime/11-6c-v1",
+    "host_bundle_sha256": "669a806f2370cc33c43296b769b9e8eddb39d939eaeb624591f637782242a627"
+  },
+  "offline_timing_policy": {
+    "path": "scripts/runtime_demo_window_policy.py",
+    "sha256": "8870450ddad8767e7d050fccd618403f4229b22feefd5a40ce2ba79000fc9f12",
+    "policy_tests_passed": 15,
+    "combined_policy_and_format_tests_passed": 58,
+    "negative_subtests": 28,
+    "ruff": "PASS",
+    "prepared_adapters": {
+      "prepared_only": true,
+      "aws_calls": false,
+      "policy_sha256": "8870450ddad8767e7d050fccd618403f4229b22feefd5a40ce2ba79000fc9f12",
+      "artifact_sha256": {
+        "blockchain_demo_window_45_20261118.py": "79b625d1c8223066f981e14e95d032ea4bc94c466d0b3fb98d9c85e9bc716c87",
+        "blockchain_demo_cloud_readiness_45_20261118.py": "452e0aca62931f2422748b23b00f1966c15bf55fa71235276fa40b715927bef7",
+        "blockchain_diagnostic_short.template": "fd239eb3c6197b8e61808775d44bf7c62deb174200bf18695ee68508ab34f0ca",
+        "blockchain_demo_ssm_relay_short_20261118.py": "4d44db1ce7a6bfd55b833cd95e84ee91a3f580e8f112cb5fb748aff468a493d1",
+        "blockchain_launch_short_watch_20261118.py": "859262536bc5696d4ac4802c9696cab8e82d9a393bda02297c8850ce8d7665b2"
+      },
+      "one_runtime_parameter": "Exact approved boot launch epoch from EC2 metadata",
+      "new_start_authorized": false,
+      "static_adapter_checks": "PASS",
+      "detached_launcher_executed": false
+    },
+    "executed_on_ec2": false
+  },
+  "public_price_refresh": {
+    "retrieved_at_utc": "2026-11-18T00:30:54.428774+00:00",
+    "source_method": "Unauthenticated AWS Price List CSV reads of exact rate identities",
+    "rates": [
+      {
+        "name": "t3_xlarge_linux_hour",
+        "sku": "3ZD39ECB23FRWNNP",
+        "rate_code": "3ZD39ECB23FRWNNP.JRTCKXETXF.6YS6EN2CT7",
+        "usd_per_unit": "0.1664000000",
+        "billing_unit": "Hrs",
+        "effective_date": "2026-11-01",
+        "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/us-west-2/index.csv"
+      },
+      {
+        "name": "public_ipv4_hour",
+        "sku": "NBHXEKTE88TJDDQF",
+        "rate_code": "NBHXEKTE88TJDDQF.JRTCKXETXF.6YS6EN2CT7",
+        "usd_per_unit": "0.0050000000",
+        "billing_unit": "Hrs",
+        "effective_date": "2026-11-17",
+        "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonVPC/current/us-west-2/index.csv"
+      }
+    ]
+  },
+  "cost_estimate": {
+    "compute_plus_ipv4_hour_usd": "0.1714000000",
+    "compute_plus_ipv4_45_minutes_usd": "0.128550000000",
+    "hard_bill_cap": false,
+    "other_usage_retention_and_taxes_additional": true
+  },
+  "approvals": {
+    "new_paid_start": false,
+    "ssm_secret_retrieval_and_conditional_streaming": false,
+    "transient_guest_shutdown_timer": false,
+    "normal_stop_in_new_window": false,
+    "secret_correction_completed_by_owner": true,
+    "additional_secret_edit": false,
+    "iam_change": false,
+    "terraform_action": false,
+    "ebs_format_or_deletion": false,
+    "main_merge": false
+  },
+  "security_exception": {
+    "existing_exact_image_one_run_scope_unchanged": true,
+    "streaming_runs_performed": 0,
+    "expiry_utc": "2026-11-24T00:00:00Z",
+    "new_findings_or_changed_workload_stop_execution": true
+  },
+  "production_changes_this_step": "Owner-reported, previously approved format-only update of the existing secret. Assistant made read-only metadata calls and offline preparations only. No EC2 start.",
+  "milestone_complete": false,
+  "milestone_11_5d": "PAUSED"
+}
