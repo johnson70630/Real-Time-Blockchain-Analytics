@@ -1,5 +1,7 @@
 # Milestone 11.6C — Revised input diagnostic and conditional pilot review
 
+Current result: [host rejected the retrieved payload before the validation container; EC2 stopped](aws_runtime_host_format_result.md). Owner-only saved-value verification is pending. No further start or secret edit is authorized; statements below preserve checkpoint history.
+
 **Prepared for a new approval; EC2 is stopped.** The last paid start was consumed
 and stopped before streaming. This review proposes one new supervised 45-minute
 window using the revised host-versus-stdin diagnostic, with conditional streaming

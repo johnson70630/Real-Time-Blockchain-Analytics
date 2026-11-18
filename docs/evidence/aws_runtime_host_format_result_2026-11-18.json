@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-18T05:46:21.597464+00:00",
+  "milestone": "11.6C",
+  "source_commit": "5e1d7796a7cf946ff88edd701569db39291c45c5",
+  "source_ci": {
+    "run": 44214730587,
+    "all_six_success": true
+  },
+  "operator_sha256": "e4dd9034677e4f507d097dfc79b19b0c551b5110a31570648930a537f6bf9bb2",
+  "result": "HOST_FORMAT_GATE_REJECTED_BEFORE_VALIDATOR_CONTAINER_OR_RPC",
+  "instance_id": "i-0ca1671a59751acc5",
+  "region": "us-west-2",
+  "approval": {
+    "owner_message": "approve",
+    "maximum_window_minutes": 45,
+    "paid_starts_consumed": 1,
+    "additional_start_authorized": false,
+    "secret_edit_authorized": false
+  },
+  "launch_at_utc": "2026-11-18T05:43:12+00:00",
+  "normal_stop_requested_at_utc": "2026-11-18T05:44:27.819749+00:00",
+  "stopped_observed_at_utc": "2026-11-18T05:44:53.428955+00:00",
+  "observed_runtime_seconds_upper_bound": 101.428955,
+  "final_readback": {
+    "checked_at_utc": "2026-11-18T05:44:54.564468+00:00",
+    "instance_id": "i-0ca1671a59751acc5",
+    "state": "stopped",
+    "public_ipv4_absent": true,
+    "volumes": [
+      "vol-03bd5d26947719f98",
+      "vol-02c9fb14a9c568fb5"
+    ]
+  },
+  "diagnostic": {
+    "ok": false,
+    "stage": "SECRET_FORMAT",
+    "code": "INVALID_ENDPOINT",
+    "provider_output_printed": false,
+    "pre_chain_controls": {
+      "short_timer_verified": true,
+      "guest_shutdown_epoch": 1794982692,
+      "current_boot_verified": true,
+      "existing_installation_verified": true,
+      "pilot_prefix_initially_empty": true,
+      "three_cached_images_verified": true
+    }
+  },
+  "secrets_manager_cli_succeeded": true,
+  "host_validation_failed": true,
+  "validator_container_invoked": false,
+  "alchemy_rpc_attempted": false,
+  "controller_invocations": 0,
+  "streaming_runs_consumed": 0,
+  "pipeline_s3_writes": 0,
+  "pilot_prefix_initially_empty": true,
+  "docker_image_inspection_performed": true,
+  "specific_format_component": "NOT_IDENTIFIED_BY_SAFE_GENERIC_HOST_CODE",
+  "owner_mac_whole_payload_recheck": "REQUESTED_PENDING_OWNER_RESULT",
+  "prior_whole_payload_PASS": "OWNER_ATTESTED; not reproduced against the AWS-retrieved value",
+  "secret_value_or_hash_seen_by_assistant": false,
+  "private_receipt_sha256": {
+    "owner-approval.json": "72870e6af92025bdb4c496bf4acee45384be510f45b46029f6b8d66377d75824",
+    "authorization.json": "0724dcd416bccc791d477c20f90f391cc6097a198337074db9b990172ad2268a",
+    "session-metadata.json": "04e09ed55458a827bafae800e4e8ed423e0dd29c44bd76d672cc4e8d944f457e",
+    "preflight.json": "9659cfde5af08bc4ae14883838eff851f8becb124e332af01f0cee95a418a3e4",
+    "cloud-readiness.json": "2a7b427e375b5d0adf50362a74e6afd76f202d5d0302873cb948f509e9b573fa",
+    "watch-process.json": "d23292f3e82767d0a9a919df9e4da9f999e6c564cdd4de04f7dcdcb9d2e6c95c",
+    "watch.json": "7485e250beeea87a7ef160af1bf9230888a9353a3d45f0767135a8652cccb5db",
+    "guest-upload-result.json": "74eecd44733fda4541663e6a50e8ecb677037a1d639fbab5cc5654b5eb1fccbb",
+    "guest-diagnose-result.json": "d7486957a52fbe880223f76f431824cc780296fbdf3027d399236ee9c3096588",
+    "stop-readback.json": "683d60850121bfdd4465b83ab064a8301a005f707d41da2075a4591e9a2fedaf",
+    "console-start-handoff.json": "72421d9aa060f291c8daf12eebe63ba109fa3f0cb3271d60df98ff06b6833987"
+  },
+  "validation": {
+    "focused_tests_passed": 64,
+    "negative_subtests_passed": 36,
+    "source_unchanged_from_reviewed_operator": true,
+    "last_full_runtime_suite_passed": 548
+  },
+  "cost_estimate": {
+    "basis": "Previously recorded public compute/IPv4 rates, not a new lookup or invoice",
+    "hour_usd": "0.1714",
+    "observed_interval_compute_ipv4_usd": "0.004829145246388888888888888889",
+    "retained_resources_and_other_usage_extra": true
+  },
+  "new_aws_resources": false,
+  "terraform_actions": false,
+  "iam_changes": false,
+  "secret_edits": false,
+  "ebs_format_or_delete": false,
+  "snowflake_changes": false,
+  "main_merge": false,
+  "milestone_complete": false,
+  "milestone_11_5d": "PAUSED"
+}

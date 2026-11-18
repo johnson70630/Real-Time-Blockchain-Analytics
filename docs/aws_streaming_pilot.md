@@ -1,5 +1,7 @@
 # Milestone 11.6C — first streaming pilot readiness
 
+Current result: [host rejected the retrieved payload before the validation container; EC2 stopped](aws_runtime_host_format_result.md). Owner-only saved-value verification is pending. No further start or secret edit is authorized; statements below preserve checkpoint history.
+
 Current follow-up: [revised input diagnostic and conditional 45-minute pilot prepared for a new approval](aws_runtime_transport_review.md). EC2 remains stopped; no new paid start is authorized. Earlier statements below preserve checkpoint history.
 
 Current status: [approved short pilot stopped at the format gate; host-versus-stdin diagnostic improved offline](aws_runtime_short_window_result.md). EC2 is stopped; streaming never started and another paid start is not authorized.
