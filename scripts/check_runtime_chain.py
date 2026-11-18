@@ -168,7 +168,13 @@ class PreflightFailure(RuntimeError):
             if isinstance(stage, str)
             and stage
             in CLIENT_STAGES
-            | {"HOST_PRECHECK", "IMAGE_IDENTITY", "SECRET_RETRIEVAL", "CONTAINER"}
+            | {
+                "HOST_PRECHECK",
+                "IMAGE_IDENTITY",
+                "SECRET_RETRIEVAL",
+                "INPUT_TRANSPORT",
+                "CONTAINER",
+            }
             else "HOST_PRECHECK"
         )
         self.code = (
@@ -212,6 +218,22 @@ def clean_env():
         "NO_PROXY": "169.254.169.254,localhost,127.0.0.1",
         "DOCKER_CONFIG": "/run/blockchain-runtime/docker",
     }
+
+
+def validate_secret_payload(payload):
+    """Validate the retrieved value before Docker, using the exact client rules.
+
+    Do not strip, unwrap nested JSON, repair or include the value in errors.
+    Compiling CLIENT under a different module name cannot invoke its main.
+    """
+    try:
+        value = json.loads(payload)
+        namespace = {"__name__": "host_endpoint_validation"}
+        exec(compile(CLIENT, "reviewed_endpoint_client", "exec"), namespace)
+        namespace["validate_endpoint"](value)
+    except (ValueError, TypeError):
+        raise PreflightFailure("SECRET_FORMAT", "INVALID_ENDPOINT") from None
+    return value
 
 
 def run(args, *, data=None, timeout=30, stage="HOST_PRECHECK"):
@@ -306,38 +328,43 @@ def execute(release_path):
         ],
         stage="SECRET_RETRIEVAL",
     )
-    value = json.loads(payload)
-    if not isinstance(value, str) or not 1 <= len(value) <= 4096:
-        raise RuntimeError("SECRET_FORMAT_INVALID")
-    output = run(
-        [
-            tools["docker"],
-            "run",
-            "--rm",
-            "--pull=never",
-            "--network=bridge",
-            "--user=10001:10001",
-            "--read-only",
-            "--cap-drop=ALL",
-            "--security-opt=no-new-privileges:true",
-            "--ulimit",
-            "core=0",
-            "--pids-limit=64",
-            "--memory=256m",
-            "--cpus=0.25",
-            "--log-driver=none",
-            "--tmpfs",
-            "/tmp:rw,nosuid,nodev,noexec,size=32m",
-            "--interactive",
-            "--entrypoint=python",
-            IMAGE,
-            "-c",
-            CLIENT,
-        ],
-        data=value,
-        timeout=45,
-        stage="CONTAINER",
-    )
+    value = validate_secret_payload(payload)
+    try:
+        output = run(
+            [
+                tools["docker"],
+                "run",
+                "--rm",
+                "--pull=never",
+                "--network=bridge",
+                "--user=10001:10001",
+                "--read-only",
+                "--cap-drop=ALL",
+                "--security-opt=no-new-privileges:true",
+                "--ulimit",
+                "core=0",
+                "--pids-limit=64",
+                "--memory=256m",
+                "--cpus=0.25",
+                "--log-driver=none",
+                "--tmpfs",
+                "/tmp:rw,nosuid,nodev,noexec,size=32m",
+                "--interactive",
+                "--entrypoint=python",
+                IMAGE,
+                "-c",
+                CLIENT,
+            ],
+            data=value,
+            timeout=45,
+            stage="CONTAINER",
+        )
+    except PreflightFailure as error:
+        if error.stage == "SECRET_FORMAT":
+            # The exact value passed host validation; rejection now happened
+            # after stdin handoff. This does not prove the stored value is bad.
+            raise PreflightFailure("INPUT_TRANSPORT", error.code) from None
+        raise
     if output.strip() != "ARBITRUM_CHAIN_ID_VERIFIED":
         raise RuntimeError("CHAIN_PREFLIGHT_FAILED")
     print("ARBITRUM_CHAIN_ID_VERIFIED")

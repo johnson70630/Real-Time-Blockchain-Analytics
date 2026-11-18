@@ -1,5 +1,7 @@
 # Milestone 11.6C — Whole-payload correction confirmed; 45-minute pilot proposed
 
+Follow-up: [approved short window executed and stopped before RPC/streaming](aws_runtime_short_window_result.md). Approval and pending statements below preserve the original proposal history.
+
 **The owner reports saving the approved format correction and getting
 `FORMAT_PASS` for the entire stored Plaintext payload. EC2 is stopped.
 A new start, secret retrieval and streaming attempt are not approved yet.**

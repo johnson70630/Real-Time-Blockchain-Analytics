@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-18T01:06:25.315142+00:00",
+  "milestone": "11.6C",
+  "source_commit": "4b13bb1d5b189a4eff9675b106501c7f771595d4",
+  "result": "ABORTED_BEFORE_RPC_AND_STREAMING",
+  "account": "209479274979",
+  "region": "us-west-2",
+  "instance_id": "i-0ca1671a59751acc5",
+  "approval": {
+    "owner_message": "approve",
+    "window_minutes": 45,
+    "same_approval_rearmed_after_unstarted_handoff": true,
+    "paid_starts_consumed": 1,
+    "additional_start_authorized": false,
+    "secret_edit_authorized": false
+  },
+  "launch_at_utc": "2026-11-18T01:02:39+00:00",
+  "normal_stop_requested_at_utc": "2026-11-18T01:03:46.671758+00:00",
+  "stopped_observed_at_utc": "2026-11-18T01:04:12.799100+00:00",
+  "observed_runtime_seconds_upper_bound": 93.7991,
+  "final_readback": {
+    "checked_at_utc": "2026-11-18T01:04:21.794195+00:00",
+    "instance_id": "i-0ca1671a59751acc5",
+    "state": "stopped",
+    "public_ipv4_present": false,
+    "volumes": [
+      "vol-03bd5d26947719f98",
+      "vol-02c9fb14a9c568fb5"
+    ]
+  },
+  "readiness": {
+    "instance_disks_ingress_cpu_stop_document_passed": true,
+    "workload_iam_and_accepted_image_inventory_unchanged": true,
+    "guest_prechecks_before_chain_reached": true,
+    "short_timer_shutdown_epoch": 1794965859,
+    "short_timer_verification_evidence": "Sequential diagnostic code verified active and exact next-elapse epoch before chain checker; failed reply does not retain standalone timer receipt",
+    "pilot_prefix_initially_empty": true,
+    "cached_image_identities_checked": true
+  },
+  "chain_diagnostic": {
+    "ok": false,
+    "stage": "SECRET_FORMAT",
+    "code": "INVALID_ENDPOINT",
+    "provider_output_printed": false
+  },
+  "rpc_attempted": false,
+  "controller_invocations": 0,
+  "streaming_runs_consumed": 0,
+  "pipeline_s3_writes": 0,
+  "secret_value_seen_or_logged_by_assistant": false,
+  "secret_retrieval_success": true,
+  "stored_payload_vs_stdin_cause": "NOT_ISOLATED_BY_EXECUTED_CHECK",
+  "no_automatic_retry": true,
+  "private_receipt_sha256": {
+    "owner-approval.json": "f7f05aedb396e23fbba2999698b7bc24829ab1c522eab6f8557098d71db27db2",
+    "authorization.json": "dd8acab37c386a6e093b1fd3a04813e4d448fddcc3a07d64746724e16b1f4d2a",
+    "preflight.json": "9b51fa1f1b726acbb32687190c4d36041ab6504dbad6bab32b51067070cfe6f9",
+    "cloud-readiness.json": "e6666ec137eeedf3cb28f26fb5db9a6f7d80b9c5b8e3ad3728a85cbce8d14a6d",
+    "watch-process.json": "2a1a76d1906290137921f721ac5d15243b0e7f1cf9b8940df2ce63a6a9d00e64",
+    "watch.json": "50f261b5e220982632b9610951f58602cd53d4bb01003f40c66eabf3a5eef078",
+    "guest-upload-result.json": "74eecd44733fda4541663e6a50e8ecb677037a1d639fbab5cc5654b5eb1fccbb",
+    "guest-diagnose-result.json": "144bf5218cf94ef9e1313db3858b40bacdcd10c5517dff0444eafff437599c63",
+    "stop-readback.json": "95045c2af759e3d6592dc8495e5d6f2bd64a27b207f56774d946aea5f4cff955",
+    "console-start-handoff.json": "c2e38b262402c82aa08c3332f0991f4984f2bc8c48afdd4e1b87a3b6345da091"
+  },
+  "offline_follow_up": {
+    "script": "scripts/check_runtime_chain.py",
+    "sha256": "e4dd9034677e4f507d097dfc79b19b0c551b5110a31570648930a537f6bf9bb2",
+    "client_source_unchanged": true,
+    "host_validates_exact_client_rules_before_docker": true,
+    "container_format_failure_after_host_pass_stage": "INPUT_TRANSPORT",
+    "tests_passed": 64,
+    "negative_subtests_passed": 36,
+    "ruff": "PASS",
+    "deployed": false,
+    "local_exact_image_retest": "NOT_RUN: local mutable offline tag no longer resolves to the accepted manifest; no image pull/rebuild performed",
+    "all_runtime_tests_passed": 548,
+    "existing_deprecation_warnings": 1,
+    "frozen_nine_host_files_match": true
+  },
+  "cost_estimate": {
+    "recorded_compute_plus_ipv4_hour_usd": "0.1714",
+    "observed_runtime_compute_plus_ipv4_usd": "0.004465879372222222222222222222",
+    "not_invoice_or_hard_cap": true,
+    "retained_resources_and_other_usage_additional": true
+  },
+  "new_aws_resources": false,
+  "terraform_actions": false,
+  "iam_changes": false,
+  "secret_edits": false,
+  "ebs_format_or_deletion": false,
+  "snowflake_changes": false,
+  "main_merge": false,
+  "milestone_complete": false,
+  "milestone_11_5d": "PAUSED"
+}

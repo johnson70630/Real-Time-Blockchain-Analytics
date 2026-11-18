@@ -20,6 +20,110 @@ exec(compile(p.CLIENT, "chain-client", "exec"), client)
 
 
 class Checks(unittest.TestCase):
+    @contextlib.contextmanager
+    def host_environment(self):
+        with (
+            patch.object(p.os, "geteuid", return_value=0),
+            patch.object(p, "instance_id", return_value=p.INSTANCE),
+            patch.object(p.resource, "setrlimit"),
+            patch.object(
+                p.Path, "read_text", return_value="Filename Type Size Used Priority\n"
+            ),
+            patch.object(
+                p.shutil, "which", side_effect=lambda name, **_: "/usr/bin/" + name
+            ),
+        ):
+            yield
+
+    def test_retrieved_bare_url_is_preserved_exactly(self):
+        value = "wss://arb-mainnet.g.alchemy.com/v2/fake"
+        self.assertEqual(p.validate_secret_payload(json.dumps(value)), value)
+
+    def test_invalid_retrieved_payload_never_reaches_docker_or_prints_value(self):
+        endpoint = "wss://arb-mainnet.g.alchemy.com/v2/fake"
+        values = [
+            "",
+            None,
+            {},
+            json.dumps({"ALCHEMY_WEBSOCKET_URL": endpoint}),
+            json.dumps(endpoint),
+            endpoint + "\n",
+            " " + endpoint,
+            "wss://eth-mainnet.g.alchemy.com/v2/fake",
+        ]
+        for value in values:
+            with self.subTest(case=type(value).__name__):
+                calls = []
+
+                def fake_run(args, **kwargs):
+                    calls.append(args)
+                    return ["amd64\n", json.dumps(value)][len(calls) - 1]
+
+                output = io.StringIO()
+                with (
+                    self.host_environment(),
+                    patch.object(p, "run", side_effect=fake_run),
+                    contextlib.redirect_stdout(output),
+                ):
+                    with self.assertRaises(p.PreflightFailure) as raised:
+                        p.execute(
+                            "docs/evidence/aws_runtime_release_candidate_2026-11-17.json"
+                        )
+                self.assertEqual(
+                    str(raised.exception), "SECRET_FORMAT INVALID_ENDPOINT"
+                )
+                self.assertEqual(len(calls), 2)
+                self.assertEqual(output.getvalue(), "")
+
+    def test_malformed_cli_json_does_not_expose_response(self):
+        with self.assertRaises(p.PreflightFailure) as raised:
+            p.validate_secret_payload("private-placeholder")
+        self.assertEqual(str(raised.exception), "SECRET_FORMAT INVALID_ENDPOINT")
+        self.assertIsNone(raised.exception.__cause__)
+        self.assertTrue(raised.exception.__suppress_context__)
+
+    def test_container_format_failure_after_host_pass_is_transport_stage(self):
+        endpoint = "wss://arb-mainnet.g.alchemy.com/v2/fake"
+        with (
+            self.host_environment(),
+            patch.object(
+                p,
+                "run",
+                side_effect=[
+                    "amd64\n",
+                    json.dumps(endpoint),
+                    p.PreflightFailure("SECRET_FORMAT", "INVALID_ENDPOINT"),
+                ],
+            ),
+        ):
+            with self.assertRaises(p.PreflightFailure) as raised:
+                p.execute("docs/evidence/aws_runtime_release_candidate_2026-11-17.json")
+        self.assertEqual(str(raised.exception), "INPUT_TRANSPORT INVALID_ENDPOINT")
+
+    def test_host_pass_does_not_relabel_rpc_failure(self):
+        with (
+            self.host_environment(),
+            patch.object(
+                p,
+                "run",
+                side_effect=[
+                    "amd64\n",
+                    json.dumps("wss://arb-mainnet.g.alchemy.com/v2/fake"),
+                    p.PreflightFailure("RPC_CONNECT", "HTTP_401"),
+                ],
+            ),
+        ):
+            with self.assertRaises(p.PreflightFailure) as raised:
+                p.execute("docs/evidence/aws_runtime_release_candidate_2026-11-17.json")
+        self.assertEqual(str(raised.exception), "RPC_CONNECT HTTP_401")
+
+    def test_transport_stage_can_cross_outer_safe_diagnostic_parser(self):
+        failure = p.parse_failure(
+            "CHAIN_PREFLIGHT_FAILED stage=INPUT_TRANSPORT code=INVALID_ENDPOINT\n"
+        )
+        self.assertIsNotNone(failure)
+        self.assertEqual(str(failure), "INPUT_TRANSPORT INVALID_ENDPOINT")
+
     def test_client_roundtrip_keeps_endpoint_out_of_output(self):
         endpoint = "wss://arb-mainnet.g.alchemy.com/v2/fake"
         connection = Mock()

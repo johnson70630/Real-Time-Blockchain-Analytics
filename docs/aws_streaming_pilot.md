@@ -1,5 +1,9 @@
 # Milestone 11.6C — first streaming pilot readiness
 
+Current status: [approved short pilot stopped at the format gate; host-versus-stdin diagnostic improved offline](aws_runtime_short_window_result.md). EC2 is stopped; streaming never started and another paid start is not authorized.
+
+The earlier preparation status below is preserved as checkpoint history.
+
 Current status: [owner reports whole-payload correction complete; shorter 45-minute pilot prepared for approval](aws_runtime_short_window_review.md). EC2 is stopped; live retrieval/chain/ingestion remain unverified and no new start is approved.
 
 The earlier format-gate status below is preserved as checkpoint history.
