@@ -1,5 +1,7 @@
 # Milestone 11.6C — Short pilot stopped at the format gate
 
+Current follow-up: [revised input diagnostic and conditional 45-minute pilot prepared for a new approval](aws_runtime_transport_review.md). EC2 remains stopped; no new paid start is authorized. Earlier statements below preserve checkpoint history.
+
 **EC2 is stopped, with no public IPv4. The private validator returned
 `SECRET_FORMAT / INVALID_ENDPOINT` before RPC or application startup.**
 The owner-reported whole-payload PASS remains an attestation; this attempt did

@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-18T01:17:26.418324+00:00",
+  "milestone": "11.6C",
+  "status": "PREPARED_PENDING_NEW_APPROVAL",
+  "reviewed_operator_source_commit": "db456099fd15e22f052ecd631becae8a7c98437d",
+  "operator_script": "scripts/check_runtime_chain.py",
+  "operator_sha256": "e4dd9034677e4f507d097dfc79b19b0c551b5110a31570648930a537f6bf9bb2",
+  "previous_ci": {
+    "run": 44213308369,
+    "all_six_jobs_success": true
+  },
+  "stopped_readback": {
+    "checked_at_utc": "2026-11-18T01:16:29.884164+00:00",
+    "identity_matches_expected_account_and_deployer": true,
+    "instance_id": "i-0ca1671a59751acc5",
+    "state": "stopped",
+    "public_ipv4_absent": true,
+    "volumes": [
+      "vol-03bd5d26947719f98",
+      "vol-02c9fb14a9c568fb5"
+    ],
+    "private_ssm_document_sha256": "a09eb89d2c2d9e879f60d89372405996c72aae040909b78607d98560db443d33",
+    "minimum_session_remaining_seconds": 5400,
+    "aws_mutations": false,
+    "secret_values_read": false
+  },
+  "stopped_readback_sha256": "ca1c56aaacf4c02a19527eb4793a2cb86ecc83182e49fe1ea946b899f2072d26",
+  "prepared_adapters": {
+    "prepared_at_utc": "2026-11-18T01:15:39.307495+00:00",
+    "prepared_only": true,
+    "aws_calls": false,
+    "operator_source_sha256": "e4dd9034677e4f507d097dfc79b19b0c551b5110a31570648930a537f6bf9bb2",
+    "artifact_sha256": {
+      "blockchain_demo_window_45_20261118.py": "79b625d1c8223066f981e14e95d032ea4bc94c466d0b3fb98d9c85e9bc716c87",
+      "blockchain_demo_cloud_readiness_45_20261118.py": "452e0aca62931f2422748b23b00f1966c15bf55fa71235276fa40b715927bef7",
+      "blockchain_diagnostic_transport.template": "7310f7ed6f0d507f68c261eb43f54ba5debddd9391547023d2b43d5bb23979dc",
+      "blockchain_demo_ssm_relay_transport_20261118.py": "af88ff295de2615c1e358aa07c8b5f83547d33f011c74998d8316526adb4b6f5",
+      "blockchain_launch_short_watch_20261118.py": "859262536bc5696d4ac4802c9696cab8e82d9a393bda02297c8850ce8d7665b2"
+    },
+    "one_runtime_parameter": "Exact approved boot launch epoch from EC2 metadata",
+    "new_start_authorized": false,
+    "detached_launcher_executed": false,
+    "pre_chain_receipt_retained_on_probe_failure": true,
+    "fresh_source_and_private_hash_checks_before_each_ssm_action": true,
+    "offline_contract_tests": {
+      "passed": 14,
+      "test_file_sha256": "69987b701948ca49b80b433bd98e88621032fb2f7ee251dfdbcf27385be25539",
+      "tests_used_real_credentials": false,
+      "tests_made_aws_or_network_calls": false
+    }
+  },
+  "proposed_scope": {
+    "account": "209479274979",
+    "region": "us-west-2",
+    "instance_id": "i-0ca1671a59751acc5",
+    "maximum_new_starts": 1,
+    "window_seconds": 2700,
+    "preflight_abort_seconds": 900,
+    "normal_stop_due_seconds": 1800,
+    "guest_shutdown_seconds": 2100,
+    "target_stopped_seconds": 2400,
+    "minimum_session_remaining_seconds": 5400,
+    "secret_arn": "arn:aws:secretsmanager:us-west-2:209479274979:secret:blockchain-runtime/11-6c/alchemy-websocket-url-d44flr",
+    "chain_id_required": 42161,
+    "maximum_controller_invocations": 1,
+    "controller_backup_limit_seconds": 3600,
+    "conditional_streaming_only_after_all_gates": true,
+    "s3_bucket": "johnson-blockchain-analytics-prod",
+    "pilot_prefix": "blockchain-analytics/pilot/runtime/11-6c-v1",
+    "bronze_suffix": "bronze/swaps/",
+    "checkpoint_suffix": "checkpoints/swaps_bronze/",
+    "log_group": "/blockchain/runtime/containers",
+    "unchanged_release_candidate_sha256": "7f948e94cec7f7aebaf2aa4dab4ddd8e92a60f083f17bb9cefcff4db89cd200f",
+    "existing_kafka_volume_id": "vol-02c9fb14a9c568fb5",
+    "existing_root_volume_id": "vol-03bd5d26947719f98",
+    "existing_kafka_filesystem_uuid": "da1454d8-1bea-41a3-89d7-87bd570a47bd",
+    "no_automatic_retry": true,
+    "probe_secret_retrieval_attempts": 1,
+    "existing_controller_secret_retrieval_only_after_successful_gates": true
+  },
+  "images": {
+    "path": "docs/evidence/aws_runtime_release_candidate_2026-11-17.json",
+    "sha256": "7f948e94cec7f7aebaf2aa4dab4ddd8e92a60f083f17bb9cefcff4db89cd200f",
+    "producer_image": "209479274979.dkr.ecr.us-west-2.amazonaws.com/blockchain-runtime-producer@sha256:63d9d0f24a1cb7eb30b080e58f8a40ddd49292b89020328409e6f45319597afd",
+    "spark_image": "209479274979.dkr.ecr.us-west-2.amazonaws.com/blockchain-runtime-spark@sha256:bb03f7d9917f2d8dc7d2fc1fc6a1df83fe876f5298e98c4163c689a1b890a134",
+    "kafka_image": "209479274979.dkr.ecr.us-west-2.amazonaws.com/blockchain-runtime-producer@sha256:1113a10e8a93fc12b2d310ef6f53b8f5fc95fb806a8c6edcfa6b67d17959378b",
+    "pilot_prefix": "blockchain-analytics/pilot/runtime/11-6c-v1",
+    "host_bundle_sha256": "669a806f2370cc33c43296b769b9e8eddb39d939eaeb624591f637782242a627"
+  },
+  "cost_estimate": {
+    "basis": "Previously verified public AWS prices from 2026-11-18 00:30 UTC, not a new price lookup",
+    "compute_plus_ipv4_hour_usd": "0.1714",
+    "full_45_minute_compute_plus_ipv4_usd": "0.12855",
+    "hard_bill_cap": false,
+    "retention_requests_logs_transfer_taxes_and_provider_charges_additional": true
+  },
+  "security_acceptance": {
+    "reviewed_scope_sha256": "5654f4f255730e9ab7838b8219d8148102c5417861e2c8db428a88d41e7c665e",
+    "expires_at_utc": "2026-11-24T00:00:00Z",
+    "streaming_runs_consumed": 0,
+    "fresh_iam_and_image_finding_comparison_required_before_start": true
+  },
+  "approval": {
+    "new_paid_start": false,
+    "guest_timer_and_ssm": false,
+    "workload_secret_read_and_rpc": false,
+    "conditional_streaming_s3_and_logs": false,
+    "normal_stop": false,
+    "secret_edit": false,
+    "new_aws_resources": false,
+    "iam_change": false,
+    "terraform_plan_apply_import_or_backend": false,
+    "ebs_format_or_delete": false,
+    "snowflake_change": false,
+    "main_merge": false
+  },
+  "production_infrastructure_changed_this_preparation": false,
+  "milestone_complete": false,
+  "milestone_11_5d": "PAUSED"
+}
