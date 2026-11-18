@@ -1,5 +1,8 @@
 # Milestone 11.6C — Existing secret accepted; one-read window stopped
 
+Next review: [controlled chain-ID and streaming deployment prepared offline](aws_runtime_controlled_streaming_review.md).
+The completed one-read approval is not reused for deployment or streaming.
+
 **CONTRACT_PASS. The existing secret is a JSON object; the corrected reader
 accepts it without any edit. EC2 is independently confirmed stopped.**
 No Alchemy RPC, application deployment, controller or streaming container ran.

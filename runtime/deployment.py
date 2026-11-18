@@ -186,10 +186,11 @@ Environment=PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 PYTHONPATH={root}
 ExecStart=/usr/bin/python3 -m runtime.host run {root}/release.json
 KillSignal=SIGTERM
 KillMode=process
-TimeoutStopSec=420
+TimeoutStopSec=480
 Restart=no
 UMask=0077
 LimitCORE=0
+ExecStopPost=/usr/bin/sleep 45
 ExecStopPost=/usr/bin/systemctl --no-block poweroff
 """
 

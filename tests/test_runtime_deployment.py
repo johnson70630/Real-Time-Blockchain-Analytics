@@ -156,11 +156,12 @@ def test_unit_is_transient_manual_and_uses_candidate_with_graceful_stop(tmp_path
     body = d.unit_text()
     assert "[Install]" not in body
     assert f"WorkingDirectory={d.BASE / d.SOURCE_COMMIT}" in body
-    assert "KillSignal=SIGTERM\nKillMode=process\nTimeoutStopSec=420" in body
+    assert "KillSignal=SIGTERM\nKillMode=process\nTimeoutStopSec=480" in body
     assert "Restart=no" in body
     assert "PYTHONDONTWRITEBYTECODE=1" in body
     assert "ALCHEMY" not in body
     assert "ExecStopPost=/usr/bin/systemctl --no-block poweroff" in body
+    assert "ExecStopPost=/usr/bin/sleep 45\nExecStopPost=/usr/bin/systemctl" in body
     d.stage_unit(tmp_path)
     original = (tmp_path / d.UNIT).stat().st_mtime_ns
     d.stage_unit(tmp_path)

@@ -1,5 +1,8 @@
 # Milestone 11.6C — first streaming pilot readiness
 
+Next live-scope review: [controlled Arbitrum streaming window](aws_runtime_controlled_streaming_review.md).
+The versioned operator is prepared offline; a new paid/install/write approval is required.
+
 Latest result: [reader compatibility passed with the existing unchanged secret; EC2 stopped](aws_runtime_reader_probe_result.md).
 The one-read approval is consumed. Streaming/candidate deployment still need new review and approval.
 
