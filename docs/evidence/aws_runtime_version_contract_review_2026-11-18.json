@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-18T06:48:11.598635+00:00",
+  "milestone": "11.6C",
+  "status": "OFFLINE_READY_PENDING_NEW_DIAGNOSTIC_ONLY_APPROVAL",
+  "source_checkpoint_before_work": "ebbab764bfd492cdd1098f4705cde94476832570",
+  "owner_version_metadata": {
+    "recorded_at_utc": "2026-11-18T06:38:33.839789+00:00",
+    "version_id": "12d38103-a68c-4226-b20a-3095cbb3de78",
+    "creation_time_displayed": "November 17, 2026 at 03:02:41",
+    "display_timezone": "NOT_PROVIDED",
+    "stage": "AWSCURRENT_OWNER_ATTESTED_IN_RESPONSE_TO_REQUEST",
+    "is_version_owner_saved": "NOT_EXPLICITLY_CONFIRMED",
+    "independent_aws_metadata_read": false,
+    "secret_value_received": false,
+    "additional_start_or_secret_edit_authorized": false
+  },
+  "owner_version_receipt_sha256": "d8f6af0f8d93f39ceed08e2c19fb203c6ddca303586191ec65858b04f91103f0",
+  "independently_verified_current_version": false,
+  "old_host_response_version": "NOT_RETAINED",
+  "old_host_format_failure_explained": false,
+  "new_script": "scripts/check_runtime_secret_contract.py",
+  "new_script_sha256": "3e4dc530e62ea2de5bcf122e51fa94e4d6756a98d95d4aa4862f1799c4878135",
+  "frozen_helper_sha256": {
+    "check_runtime_chain.py": "e4dd9034677e4f507d097dfc79b19b0c551b5110a31570648930a537f6bf9bb2",
+    "check_runtime_endpoint_format.py": "2789f10d599c1597fa06d002163591c0ff5d3dcb6dd3858cc01f5ed246c397a8"
+  },
+  "request_contract": {
+    "secret_id": "arn:aws:secretsmanager:us-west-2:209479274979:secret:blockchain-runtime/11-6c/alchemy-websocket-url-d44flr",
+    "version_id": "12d38103-a68c-4226-b20a-3095cbb3de78",
+    "version_stage": "AWSCURRENT",
+    "response": "Full JSON in process memory; only fixed metadata and constant codes reported",
+    "max_attempts": 1,
+    "write_or_label_change": false,
+    "api_source": "https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html"
+  },
+  "prepared_private_adapters": {
+    "prepared_at_utc": "2026-11-18T06:43:14.908961+00:00",
+    "prepared_only": true,
+    "live_executed": false,
+    "artifact_sha256": {
+      "blockchain_demo_window_45_20261118.py": "79b625d1c8223066f981e14e95d032ea4bc94c466d0b3fb98d9c85e9bc716c87",
+      "blockchain_demo_cloud_readiness_45_20261118.py": "452e0aca62931f2422748b23b00f1966c15bf55fa71235276fa40b715927bef7",
+      "blockchain_launch_short_watch_20261118.py": "859262536bc5696d4ac4802c9696cab8e82d9a393bda02297c8850ce8d7665b2",
+      "blockchain_secret_contract.template": "9c7fecd0f57347ffa19ca69ac9b3de1266a5bb80d18b53dedb284edf335fd587",
+      "blockchain_secret_contract_relay_20261118.py": "da8a25938c70415a880a429f61a715d97fef33031e87df69c9e7394a179e8692"
+    },
+    "script_sha256": {
+      "check_runtime_chain.py": "e4dd9034677e4f507d097dfc79b19b0c551b5110a31570648930a537f6bf9bb2",
+      "check_runtime_endpoint_format.py": "2789f10d599c1597fa06d002163591c0ff5d3dcb6dd3858cc01f5ed246c397a8",
+      "check_runtime_secret_contract.py": "3e4dc530e62ea2de5bcf122e51fa94e4d6756a98d95d4aa4862f1799c4878135"
+    },
+    "pipeline_actions_allowed": false,
+    "rpc_actions_allowed": false,
+    "new_start_approved": false
+  },
+  "validation": {
+    "new_unit_tests_passed": 40,
+    "focused_tests_passed": 104,
+    "all_runtime_tests_passed": 588,
+    "negative_subtests_passed": 36,
+    "existing_deprecation_warnings": 1,
+    "private_operator_cases_passed": 15,
+    "private_operator_test_sha256": "e9abc69709f5b5c10bfd751cf45dd9d9f60a3dc8b29120d403dc09063d34acae",
+    "real_cli_loopback_cases": {
+      "passed": 7,
+      "cases": [
+        {
+          "case": "matching",
+          "expected_result_verified": true
+        },
+        {
+          "case": "object_wrapper",
+          "expected_result_verified": true
+        },
+        {
+          "case": "quoted_string",
+          "expected_result_verified": true
+        },
+        {
+          "case": "wrong_version",
+          "expected_result_verified": true
+        },
+        {
+          "case": "wrong_stage",
+          "expected_result_verified": true
+        },
+        {
+          "case": "binary_only",
+          "expected_result_verified": true
+        },
+        {
+          "case": "wrong_arn",
+          "expected_result_verified": true
+        }
+      ],
+      "unsigned_loopback_only": true,
+      "real_credentials_used": false,
+      "real_secret_used": false,
+      "production_aws_calls": 0,
+      "actual_live_cause_identified": false
+    },
+    "real_cli_loopback_result_sha256": "dbebc4071f0bce3d24099708b48de9c7bc161a1438e13c8e9003d464072b6f64",
+    "real_cli_loopback_test_sha256": "bcf9d7fc85e5ccb3eacf57179283c92784b9406003c1149ff152b3c3741c0cc1",
+    "ruff": "PASS"
+  },
+  "stopped_readback": {
+    "checked_at_utc": "2026-11-18T06:47:12.646228+00:00",
+    "instance_id": "i-0ca1671a59751acc5",
+    "state": "stopped",
+    "public_ipv4_absent": true,
+    "disk_ids": [
+      "vol-03bd5d26947719f98",
+      "vol-02c9fb14a9c568fb5"
+    ],
+    "aws_mutations": false,
+    "secret_values_read": false
+  },
+  "proposed_new_scope": {
+    "purpose": "secret-contract-only",
+    "account": "209479274979",
+    "region": "us-west-2",
+    "instance_id": "i-0ca1671a59751acc5",
+    "new_starts": 1,
+    "supervision_seconds": 2700,
+    "no_application_stop_request_seconds": 900,
+    "guest_backup_poweroff_seconds": 2100,
+    "target_stopped_seconds": 2400,
+    "minimum_session_remaining_seconds": 5400,
+    "maximum_controller_invocations": 0,
+    "secret_retrieval_attempts": 1,
+    "stop_immediately_after_diagnostic": true,
+    "local_authorization_purpose_required": "secret-contract-only",
+    "console_start_only": true,
+    "new_transient_guest_timer": true,
+    "one_new_private_ssm_session": true,
+    "expected_duration_minutes": [
+      2,
+      5
+    ],
+    "no_wss_rpc": true,
+    "no_container_execution": true,
+    "no_s3_writes": true,
+    "no_app_log_streams": true,
+    "no_secret_edit_or_stage_change": true
+  },
+  "expected_terraform_scope": "NONE: no backend initialization, plan, apply or import",
+  "new_aws_resources": false,
+  "new_iam_permissions": false,
+  "ebs_format_or_delete": false,
+  "new_credentials": false,
+  "snowflake_changes": false,
+  "main_merge": false,
+  "cost_estimate": {
+    "source": "Previously recorded 2026-11-18 public compute/IPv4 prices; not a new lookup or invoice",
+    "hour_usd": "0.1714",
+    "five_minutes_compute_ipv4_usd": "0.0142833333",
+    "fifteen_minutes_compute_ipv4_usd": "0.04285",
+    "full_45_minute_supervision_compute_ipv4_usd": "0.12855",
+    "not_hard_cap": true,
+    "retained_resources_and_other_usage_additional": true
+  },
+  "approval": {
+    "new_paid_start": false,
+    "new_guest_timer_and_ssm_diagnostic": false,
+    "one_pinned_secret_read": false,
+    "normal_stop_for_new_boot": false,
+    "pipeline_start": false,
+    "secret_edit": false
+  },
+  "production_changed_during_preparation": false,
+  "milestone_complete": false,
+  "milestone_11_5d": "PAUSED"
+}

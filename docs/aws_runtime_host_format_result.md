@@ -1,5 +1,7 @@
 # Milestone 11.6C — Retrieved payload rejected on the host; EC2 stopped
 
+Current follow-up: [owner version metadata recorded; pinned diagnostic prepared offline](aws_runtime_version_contract_review.md). EC2 is stopped; a new diagnostic-only approval is pending. Earlier statements below preserve checkpoint history.
+
 **The revised diagnostic isolated the failure before the validation container
 or any Alchemy RPC request. EC2 is stopped, with both disks preserved.**
 This paid start is consumed. No retry, additional start or secret edit is authorized.

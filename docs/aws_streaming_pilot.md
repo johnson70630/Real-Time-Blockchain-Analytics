@@ -1,5 +1,7 @@
 # Milestone 11.6C — first streaming pilot readiness
 
+Current follow-up: [owner version metadata recorded; pinned diagnostic prepared offline](aws_runtime_version_contract_review.md). EC2 is stopped; a new diagnostic-only approval is pending. Earlier statements below preserve checkpoint history.
+
 Current result: [host rejected the retrieved payload before the validation container; EC2 stopped](aws_runtime_host_format_result.md). Owner-only saved-value verification is pending. No further start or secret edit is authorized; statements below preserve checkpoint history.
 
 Current follow-up: [revised input diagnostic and conditional 45-minute pilot prepared for a new approval](aws_runtime_transport_review.md). EC2 remains stopped; no new paid start is authorized. Earlier statements below preserve checkpoint history.
