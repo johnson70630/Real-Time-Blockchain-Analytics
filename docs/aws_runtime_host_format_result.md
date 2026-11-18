@@ -54,6 +54,13 @@ previously passed all 548 runtime tests and six CI jobs; its exact SHA remains
 The prepared adapters previously passed 14 offline contract cases. The live failed
 reply now retains the pre-chain controls, proving that receipt path works on failure.
 
+Five additional loopback-only cases used the real local AWS CLI 2.35.2 with
+unsigned requests, credential/config files disabled and dummy data. The exact
+`--query SecretString --output json` path preserved a bare URL and rejected JSON
+object/quoted wrappers, a trailing newline and a binary-only response. No production
+AWS call or real secret was used. This does not reproduce the live cause or prove
+that the guest CLI behaves identically; its exact version was not retained.
+
 Review source/private evidence hashes, frozen-file equivalence, links, secret scan
 and whitespace; create the develop checkpoint and observe its CI. Tests make no
 real secret/clipboard reads. No live Kafka/Spark recovery was attempted.
@@ -71,8 +78,10 @@ for the exact images remains unused for streaming and expires 2026-11-24 00:00 U
 
 Executed source `5e1d7796a7cf946ff88edd701569db39291c45c5` passed all six jobs in
 [CI 44214730587](https://github.com/johnson70630/Real-Time-Blockchain-Analytics/actions/runs/44214730587).
-Checkpoint this documentation-only result on develop and record the new CI in
-conversation. Main and unrelated untracked duplicates remain untouched.
+The initial result checkpoint `0f2c7df` passed all six jobs in
+[CI 44246610578](https://github.com/johnson70630/Real-Time-Blockchain-Analytics/actions/runs/44246610578).
+Checkpoint the owner-attestation/loopback follow-up on develop and observe its CI.
+Main and unrelated untracked duplicates remain untouched.
 
 ## G. Cost implications
 
@@ -84,26 +93,38 @@ Retained EBS/ECR/secret charges continue while the instance is stopped.
 
 ## H. Remaining blocker
 
-The specific retrieved-value format issue is still unknown. The owner must
-privately compare the complete current saved payload from the exact secret in
-Oregon against the existing Mac checker. The assistant requested only the
-checker's JSON status/codes, with EC2 stopped and no secret edit. That result is
-pending; no assistant clipboard read is permitted. Live chain ID, ingestion,
-checkpoint/data correctness, application logging, drain and recovery remain open.
+The specific retrieved-value format issue is still unknown. The owner completed
+the requested private check and returned `{"codes": [], "status": "FORMAT_PASS"}`.
+This is recorded as an attestation; the value, exact selected ARN/version and
+clipboard contents were not independently read. It does not explain the host-side
+rejection, so no secret edit, rotation or additional paid boot is justified yet.
+Live chain ID, ingestion, checkpoint/data correctness, application logging, drain
+and recovery remain open.
 
 ## I. Next step, rollback and cleanup
 
-Use the owner Console access to select `blockchain-runtime/11-6c/alchemy-websocket-url`
-with ARN ending `-d44flr`, Retrieve secret value → Plaintext, and copy the entire
-value while the owner-run checker waits. Do not copy only a field from Key/value,
-paste the value into chat/terminal, or edit/save anything yet. Return only status
-and codes. This check needs no EC2 runtime or additional AWS permission.
+The copied-value format check is complete; do not ask the owner to repeat it.
+The next missing information is the version ID, creation time and stage labels
+for `AWSCURRENT` on the exact existing secret in Oregon, plus whether it is the
+version the owner saved. Request only that metadata, never a value or screenshot.
+Do not move a staging label or edit anything. This needs no EC2 runtime or IAM
+expansion. The current-version metadata result is pending.
+
+When no version is specified, GetSecretValue uses `AWSCURRENT`; SecretString and
+SecretBinary are separate response fields. These API semantics identify a useful
+comparison, not the cause of this incident. See the primary
+[AWS GetSecretValue reference](https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html).
+The executed query discarded version/field metadata, so the host's returned
+version cannot be reconstructed from the retained safe result. A future revised
+probe would need one scoped retrieval that verifies response identity/version
+and emits only metadata and specific constant format codes; it is not deployed
+or approved here. Do not authorize another boot just to repeat the generic check.
 
 Keep EC2 stopped and preserve EBS, Kafka identity, checkpoints and earlier evidence.
 No application rollback is needed because streaming did not start. Any proposed
-secret correction needs its exact review and approval; another paid boot is not
-the next default action. No force stop, restart, offset reset, deletion or Terraform
-replay is included. This stop did not delete retained, billable resources.
+secret correction needs its exact review and approval. No force stop, restart,
+offset reset, deletion or Terraform replay is included. This stop did not delete
+retained, billable resources.
 
 ## J. Whether production infrastructure changed
 
