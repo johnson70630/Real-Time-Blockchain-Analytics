@@ -82,9 +82,13 @@ secret selection, network destination or S3/checkpoint scope is broadened.
 
 Work began on develop at `50ef275`, whose six jobs passed in
 [CI 44258299317](https://github.com/johnson70630/Real-Time-Blockchain-Analytics/actions/runs/44258299317).
-Create a validated source checkpoint, build its separate offline artifact, and
-record candidate evidence in a documentation checkpoint. Push develop and observe
-CI. Main and unrelated untracked duplicate files stay unchanged.
+Source checkpoint: `ae678174072b2484e2c095593f3363adf822904e`. Its separate
+nine-file candidate was built from immutable Git blobs and verified without
+extraction/installation. Candidate SHA-256:
+`568d0fc889ca7139aefa651d6d5dccea90ac2bc2106130d8d6451e736b3c9143`.
+The old archive is preserved; exactly two host files differ and seven match.
+This documentation follow-up records the artifact without changing its source.
+Push develop and observe CI. Main and unrelated duplicates stay unchanged.
 
 ## G. Cost implications
 
