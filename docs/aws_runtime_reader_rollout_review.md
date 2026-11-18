@@ -1,5 +1,8 @@
 # Milestone 11.6C — Reader rollout tooling and one-read compatibility proposal
 
+Result: [one-read compatibility passed; existing secret unchanged, EC2 stopped](aws_runtime_reader_probe_result.md).
+The approved start/read scope is consumed. Proposal statements below preserve history.
+
 **Offline checkpoint. Keep the existing AWS secret unchanged. No live action is
 authorized by this report.** The next proposed AWS action is one format check,
 followed by normal stop. A successful format check does not authorize streaming.

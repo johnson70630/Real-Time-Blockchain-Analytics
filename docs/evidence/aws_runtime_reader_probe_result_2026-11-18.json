@@ -1,0 +1,135 @@
+{
+  "approval": {
+    "active_authorization": false,
+    "manual_starts_consumed": 1,
+    "max_controller_invocations": 0,
+    "new_start_authorized": false,
+    "owner_message": "next",
+    "scope": "one-read compatibility check, temporary SSM files and timer, one manual EC2 start and normal stop",
+    "secret_edits_authorized": false
+  },
+  "authentication_or_chain_id_verified": false,
+  "candidate_deployed": false,
+  "cloud_validation": {
+    "running_iam_images_current_boot_match": true,
+    "running_preflight": true,
+    "ssm_document_canonical_sha256": "a09eb89d2c2d9e879f60d89372405996c72aae040909b78607d98560db443d33",
+    "ssm_document_version": "1",
+    "stopped_preflight": true
+  },
+  "cost": {
+    "actual_bill_queried": false,
+    "conservative_elapsed_seconds": 219.737,
+    "estimated_ec2_plus_ipv4_usd": 0.010462,
+    "excludes_retained_storage_requests_tax_other_charges": true,
+    "previously_recorded_ec2_plus_ipv4_usd_per_hour": 0.1714
+  },
+  "guest_controls": {
+    "containers_present": false,
+    "current_boot_verified": true,
+    "guest_shutdown_epoch": 1795045195,
+    "kafka_mount_verified": true,
+    "launch_epoch_seconds": 1795043095.0,
+    "legacy_files_verified": 11,
+    "ok": true,
+    "short_timer_verified": true
+  },
+  "iam_changes": 0,
+  "independent_stopped_readback": {
+    "both_original_encrypted_gp3_volumes_attached": true,
+    "candidate_service_installed": false,
+    "checked_at_utc": "2026-11-18T23:08:34.736584+00:00",
+    "container_starts": 0,
+    "elapsed_to_independent_stopped_observation_seconds": 219.737,
+    "instance_id": "i-0ca1671a59751acc5",
+    "kafka_delete_on_termination": false,
+    "launch_at_utc": "2026-11-18T23:04:55+00:00",
+    "no_public_ipv4": true,
+    "pipeline_s3_writes": 0,
+    "provider_rpc_calls": 0,
+    "secret_reads_attempted": 1,
+    "secret_writes": 0,
+    "ssm_relay_exit_code": 0,
+    "state": "stopped",
+    "volume_ids": [
+      "vol-02c9fb14a9c568fb5",
+      "vol-03bd5d26947719f98"
+    ]
+  },
+  "instance_id": "i-0ca1671a59751acc5",
+  "launch_at_utc": "2026-11-18T23:04:55+00:00",
+  "milestone": "11.6C",
+  "milestone_11_5D": "PAUSED",
+  "negative_subtests_at_source_checkpoint": 36,
+  "new_resources_provisioned": 0,
+  "normal_stop_response": {
+    "checked_at_utc": "2026-11-18T23:08:04.624735+00:00",
+    "force": false,
+    "hibernate": false,
+    "skip_os_shutdown": false,
+    "state": "stopping"
+  },
+  "pipeline_s3_writes": 0,
+  "private_operator_sha256": {
+    "blockchain_reader_probe_check_20261118.template": "3054a778db5b3a4a97a35a1a03f0498d61b7a62dda4f986992e5fab169b605fd",
+    "blockchain_reader_probe_controls_20261118.template": "99cab1f2e93c1607c43212d2bc668bc12cdaac624f3c11342ed8b41d1ac94899",
+    "blockchain_reader_probe_relay_20261118.py": "353564b79aafc935f6d460d25b8210a7340e48e6da4907cca751dc1c0de229c5",
+    "probe-command.sh": "cb62fdb9a47b6f50ce6460ae4338675260cff52154f349d355ee15e0ac16d626",
+    "probe.tar": "473d98f42ea37eee3b2c531317ea8137233ff958478a2aca359d4eb2c8a49216",
+    "upload-command.sh": "bed98472158960a22da4bb90877fc953788355874b9a3f44d23affd92228e617"
+  },
+  "probe_archive_sha256": "473d98f42ea37eee3b2c531317ea8137233ff958478a2aca359d4eb2c8a49216",
+  "recorded_at_utc": "2026-11-18T23:12:17.135758+00:00",
+  "region": "us-west-2",
+  "repo_artifact_sha256": {
+    "runtime/contracts.py": "15529edf70a4f92ea8d1f574252f0dbaed2d019aa03a8e9d7818c6c2e830eadd",
+    "scripts/check_runtime_chain.py": "6aa8611bc872a5c9d0e5b204715390b5d45a16f06ff79b9690496acb5b4507d0",
+    "scripts/check_runtime_cloud_readiness.py": "0fafda5c7300ab76a8325ca9be880ef0f85fa4aa4e8f8e0907905b46476bb948",
+    "scripts/check_runtime_endpoint_format.py": "2789f10d599c1597fa06d002163591c0ff5d3dcb6dd3858cc01f5ed246c397a8",
+    "scripts/check_runtime_secret_contract.py": "6dff8c3693226fb3859477c74a50c1d5cc4ef7a8983840af853385d2b3588c7c",
+    "scripts/prepare_runtime_reader_probe.py": "cd040c6e10904d369bd5f37b03bfb8ecb8dff2369ec682a4bcda0712605945d0",
+    "scripts/runtime_demo_window_policy.py": "d04793db4edcc9b5b1f1b971f7a5213e0f31ca6bdd959d0df872e4bd8d275d2b",
+    "scripts/runtime_pilot_window.py": "5f5ad74a241cd992c34da93afdc94a92f32d7fc31f705a2cdb26e1e8be870df2"
+  },
+  "result": {
+    "container_starts": 0,
+    "contract": {
+      "aws_cli_version": "2.38.0",
+      "expected_version_id": "12d38103-a68c-4226-b20a-3095cbb3de78",
+      "format_codes": [],
+      "format_status": "FORMAT_PASS",
+      "identity_codes": [],
+      "python_version": [
+        3,
+        9,
+        25
+      ],
+      "raw_format_codes": [
+        "JSON_OR_QUOTES",
+        "SCHEME_NOT_WSS",
+        "HOSTNAME_MISMATCH",
+        "PATH_MISMATCH"
+      ],
+      "raw_format_status": "FORMAT_FAIL",
+      "response_identity_matches": true,
+      "secret_representation": "JSON_OBJECT",
+      "status": "CONTRACT_PASS"
+    },
+    "diagnostic_completed": true,
+    "ok": true,
+    "provider_rpc_calls": 0,
+    "secret_writes": 0
+  },
+  "runtime_tests_at_source_checkpoint": 701,
+  "schema_version": 1,
+  "secret_values_stored_or_disclosed": false,
+  "source_ci_all_six_jobs": "success",
+  "source_ci_run_id": 44402339848,
+  "source_commit": "c42a240afa0dbf1da394ab239aa0aa23c61e07c9",
+  "start_admission": "ACCEPTED",
+  "start_cutoff_epoch_seconds": 1795043120.426355,
+  "status": "ONE_READ_COMPATIBILITY_PASS_STOPPED",
+  "streaming_exception_runs_consumed": 0,
+  "terraform_actions": 0,
+  "watch_completed_at_utc": "2026-11-18T23:08:38.313477+00:00"
+}

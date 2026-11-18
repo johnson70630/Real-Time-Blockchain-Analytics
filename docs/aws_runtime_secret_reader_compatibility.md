@@ -1,5 +1,8 @@
 # Milestone 11.6C — Keep the secret unchanged; fix the reader offline
 
+Live follow-up: [existing JSON object decoded successfully; one-read window stopped](aws_runtime_reader_probe_result.md).
+No secret edit was needed. The later candidate deployment and streaming gates remain separate.
+
 Follow-up: [versioned rollout tooling and one-read compatibility proposal](aws_runtime_reader_rollout_review.md).
 
 **The secret-edit path is on hold. The reader is fixed and tested offline.**
