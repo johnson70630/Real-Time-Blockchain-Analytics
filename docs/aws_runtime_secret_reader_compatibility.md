@@ -1,5 +1,7 @@
 # Milestone 11.6C — Keep the secret unchanged; fix the reader offline
 
+Follow-up: [versioned rollout tooling and one-read compatibility proposal](aws_runtime_reader_rollout_review.md).
+
 **The secret-edit path is on hold. The reader is fixed and tested offline.**
 No cloud secret read/write, EC2 start or deployment occurred during this work.
 The owner objected to repeated edits. The old approval is preserved as history,

@@ -1,0 +1,72 @@
+{
+  "aws_api_calls": 0,
+  "credential_refreshes": 0,
+  "file_sha256": {
+    "runtime/deployment.py": "1de46715d3f96a85c2e3fbd88e43e282e330f18b67a53ed26e1b0917f54ec3e3",
+    "scripts/check_runtime_cloud_readiness.py": "0fafda5c7300ab76a8325ca9be880ef0f85fa4aa4e8f8e0907905b46476bb948",
+    "scripts/prepare_runtime_reader_probe.py": "cd040c6e10904d369bd5f37b03bfb8ecb8dff2369ec682a4bcda0712605945d0",
+    "scripts/runtime_demo_window_policy.py": "d04793db4edcc9b5b1f1b971f7a5213e0f31ca6bdd959d0df872e4bd8d275d2b",
+    "scripts/runtime_pilot_window.py": "5f5ad74a241cd992c34da93afdc94a92f32d7fc31f705a2cdb26e1e8be870df2",
+    "tests/test_runtime_demo_window_policy.py": "3f18f18cbecb288036e945f9c498464153d7c9e76426ebaa14cd890003eafc8f",
+    "tests/test_runtime_deployment.py": "547c647d1caab3c8155974a2cd103b392acd107b65a222f09eab382b52762e58",
+    "tests/test_runtime_pilot_window.py": "9dcd6c496f2445c09e9f3c73b0227e310b8643e79ef1b483e5ee51f472f46ddd",
+    "tests/test_runtime_reader_probe_package.py": "560e0d89e89a58c06803db25f35e755c798a0eed53d1b9eb65d19c351def4445"
+  },
+  "known_warning": "websockets.legacy deprecation",
+  "milestone": "11.6C",
+  "milestone_11_5D": "PAUSED",
+  "negative_subtests": 36,
+  "offline_validation": {
+    "aws_calls": 0,
+    "candidate_unit_sha256": "3af3d9e45dbc02848965aafab5db3209da2c8e6ae78a72e8f945997f4e7fb816",
+    "host_candidate_verified": {
+      "files": 9,
+      "git_commit": "ae678174072b2484e2c095593f3363adf822904e",
+      "sha256": "568d0fc889ca7139aefa651d6d5dccea90ac2bc2106130d8d6451e736b3c9143"
+    },
+    "legacy_archive_sha256": "669a806f2370cc33c43296b769b9e8eddb39d939eaeb624591f637782242a627",
+    "offline_only": true,
+    "secret_values_read": 0
+  },
+  "previous_ci": {
+    "all_six_jobs": "success",
+    "run_id": 44390224777
+  },
+  "production_changes": false,
+  "proposed_compatibility_window": {
+    "candidate_service_install": false,
+    "container_starts": 0,
+    "guest_shutdown_minutes": 35,
+    "instance_id": "i-0ca1671a59751acc5",
+    "keep_secret_unchanged": true,
+    "max_controller_invocations": 0,
+    "maximum_secret_reads": 1,
+    "new_aws_resources": 0,
+    "normal_stop_due_minutes": 30,
+    "observation_grace_seconds": 30,
+    "owner_approved": false,
+    "pipeline_s3_writes": 0,
+    "provider_rpc_calls": 0,
+    "purpose": "reader-compatible-pilot",
+    "secret_version_id": "12d38103-a68c-4226-b20a-3095cbb3de78",
+    "setup_abort_minutes": 15,
+    "start_cutoff_seconds": 300,
+    "target_stopped_minutes": 40,
+    "window_minutes": 45
+  },
+  "python_39_ast_parse": true,
+  "recorded_at_utc": "2026-11-18T21:30:01.376335+00:00",
+  "remaining_blockers": [
+    "new live approval",
+    "fresh private MFA after approval",
+    "fresh cloud preflight",
+    "actual pinned-payload compatibility result",
+    "separate later candidate deployment and streaming scope"
+  ],
+  "runtime_tests": 701,
+  "schema_version": 1,
+  "secret_values_read": 0,
+  "secret_values_written": 0,
+  "source_head_before_work": "227c63982430b0b7cf8966341895b9e3ba48f003",
+  "status": "OFFLINE_REVIEWED_PENDING_NEW_LIVE_APPROVAL"
+}

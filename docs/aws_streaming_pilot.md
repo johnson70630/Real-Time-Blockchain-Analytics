@@ -1,5 +1,7 @@
 # Milestone 11.6C — first streaming pilot readiness
 
+Current rollout: [offline tooling and one-read compatibility proposal](aws_runtime_reader_rollout_review.md). Keep the existing secret unchanged. The next proposed scope is one pinned metadata-only check, followed by normal stop; new approval is required.
+
 Current direction: [keep the secret unchanged; reader compatibility fixed offline](aws_runtime_secret_reader_compatibility.md). The prior secret-edit proposal is on hold. No new secret edit, deployment or EC2 start is authorized; earlier statements below preserve history.
 
 Current result: [exact current version has a stored-value format mismatch; diagnostic stopped and owner-only correction proposed](aws_runtime_version_contract_result.md). EC2 is stopped. No new start or secret edit is approved; earlier statements below preserve checkpoint history.

@@ -69,3 +69,31 @@ def test_future_launch_cannot_reset_elapsed_time():
 def test_truthy_application_string_is_not_confirmation():
     with pytest.raises(ValueError, match="APPLICATION_STATE_MUST_BE_BOOLEAN"):
         policy.stop_due(LAUNCH, LAUNCH + 900, "true")
+
+
+@pytest.mark.parametrize(
+    "elapsed,expected",
+    [
+        (299, "WAITING_START"),
+        (300, "WAITING_VISIBILITY"),
+        (329, "WAITING_VISIBILITY"),
+        (330, "EXPIRED"),
+    ],
+)
+def test_unobserved_start_cutoff_and_visibility_grace(elapsed, expected):
+    assert policy.start_admission(LAUNCH, LAUNCH + elapsed) == expected
+
+
+def test_visibility_grace_does_not_extend_permission_to_start():
+    assert policy.start_admission(LAUNCH, LAUNCH + 315, LAUNCH + 299) == "ACCEPTED"
+    assert policy.start_admission(LAUNCH, LAUNCH + 315, LAUNCH + 300) == "LATE_START"
+    assert policy.start_admission(LAUNCH, LAUNCH + 558, LAUNCH + 558) == "LATE_START"
+
+
+@pytest.mark.parametrize(
+    "now,boot",
+    [(LAUNCH - 1, None), (LAUNCH + 20, LAUNCH - 1), (LAUNCH + 20, LAUNCH + 21)],
+)
+def test_clock_and_boot_changes_cannot_reset_admission(now, boot):
+    with pytest.raises(ValueError):
+        policy.start_admission(LAUNCH, now, boot)
