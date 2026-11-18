@@ -1,5 +1,7 @@
 # Milestone 11.6C — Exact stored-version format mismatch confirmed; EC2 stopped
 
+Current direction: [keep the secret unchanged; reader compatibility fixed offline](aws_runtime_secret_reader_compatibility.md). The prior secret-edit proposal is on hold. No new secret edit, deployment or EC2 start is authorized; earlier statements below preserve history.
+
 **AWS returned the exact requested current version. Its stored SecretString
 begins with JSON or a quote and fails the bare WSS URL contract. EC2 is stopped.**
 No value was disclosed. No pipeline or Alchemy request ran. The next proposed

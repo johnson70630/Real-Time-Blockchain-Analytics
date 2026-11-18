@@ -23,7 +23,7 @@ EXPECTED_SECRET = "arn:aws:secretsmanager:us-west-2:209479274979:secret:blockcha
 EXPECTED_NAME = "blockchain-runtime/11-6c/alchemy-websocket-url"
 RELEASE_PATH = Path("/opt/blockchain-runtime/release.json")
 DEPENDENCIES = {
-    "check_runtime_chain.py": "e4dd9034677e4f507d097dfc79b19b0c551b5110a31570648930a537f6bf9bb2",
+    "check_runtime_chain.py": "6aa8611bc872a5c9d0e5b204715390b5d45a16f06ff79b9690496acb5b4507d0",
     "check_runtime_endpoint_format.py": "2789f10d599c1597fa06d002163591c0ff5d3dcb6dd3858cc01f5ed246c397a8",
 }
 FORMAT_CODES = {
@@ -74,6 +74,7 @@ def dependencies():
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         modules.append(module)
+    modules[0].secret_contract()  # Verify the shared reader before any live read.
     return tuple(modules)
 
 
@@ -85,6 +86,9 @@ def assess_response(payload):
         "identity_codes": [],
         "format_status": "NOT_CHECKED",
         "format_codes": [],
+        "raw_format_status": "NOT_CHECKED",
+        "raw_format_codes": [],
+        "secret_representation": "NOT_CHECKED",
     }
     if not isinstance(payload, str) or len(payload) > 524288:
         result["identity_codes"] = ["INVALID_RESPONSE_SIZE_OR_TYPE"]
@@ -112,16 +116,27 @@ def assess_response(payload):
     result["response_identity_matches"] = all(checks.values())
     if not result["response_identity_matches"]:
         return result
-    _, owner_checker = dependencies()
-    format_report = owner_checker.assess(response["SecretString"])
-    codes = format_report["codes"]
+    chain, owner_checker = dependencies()
+    raw_report = owner_checker.assess(response["SecretString"])
+    codes = raw_report["codes"]
     if not isinstance(codes, list) or any(
         not isinstance(x, str) or x not in FORMAT_CODES for x in codes
     ):
         raise DiagnosticFailure("HOST_ERROR")
-    result["format_codes"] = codes
-    result["format_status"] = "FORMAT_FAIL" if codes else "FORMAT_PASS"
-    result["status"] = "CONTRACT_FAIL" if codes else "CONTRACT_PASS"
+    result["raw_format_codes"] = codes
+    result["raw_format_status"] = "FORMAT_FAIL" if codes else "FORMAT_PASS"
+    try:
+        resolved = chain.resolve_secret_value(response["SecretString"])
+    except chain.PreflightFailure as error:
+        if error.stage != "SECRET_FORMAT":
+            raise DiagnosticFailure("DEPENDENCY_CHANGED") from None
+        result["format_status"] = "FORMAT_FAIL"
+        result["format_codes"] = [error.code]
+        return result
+    result["secret_representation"] = resolved.representation
+    result["format_codes"] = owner_checker.assess(resolved.url)["codes"]
+    result["format_status"] = "FORMAT_FAIL" if result["format_codes"] else "FORMAT_PASS"
+    result["status"] = "CONTRACT_FAIL" if result["format_codes"] else "CONTRACT_PASS"
     return result
 
 

@@ -41,6 +41,9 @@ def test_exact_version_and_format_pass_without_any_external_action():
         "format_status": "FORMAT_PASS",
         "format_codes": [],
         "response_identity_matches": True,
+        "raw_format_status": "FORMAT_PASS",
+        "raw_format_codes": [],
+        "secret_representation": "BARE_URL",
     }
     assert FAKE not in json.dumps(report)
 
@@ -83,16 +86,15 @@ def test_binary_only_response_never_decodes_or_prints_binary():
 @pytest.mark.parametrize(
     ("value", "code"),
     [
-        ("", "EMPTY_INPUT"),
-        (json.dumps({"ALCHEMY_WEBSOCKET_URL": FAKE}), "JSON_OR_QUOTES"),
-        (json.dumps(FAKE), "JSON_OR_QUOTES"),
-        (FAKE + "\n", "WHITESPACE_PRESENT"),
-        (FAKE.replace("wss:", "https:"), "SCHEME_NOT_WSS"),
-        (FAKE.replace("arb-mainnet", "eth-mainnet"), "HOSTNAME_MISMATCH"),
-        (FAKE + "?private-placeholder", "QUERY_OR_FRAGMENT_PRESENT"),
-        (FAKE + "/private-placeholder", "PATH_MISMATCH"),
-        (FAKE.replace(".com/", ".com:80/"), "PORT_NOT_443"),
-        (FAKE.replace("://", "://["), "MALFORMED_URL"),
+        ("", "SECRET_PAYLOAD_EMPTY_OR_TOO_LARGE"),
+        (json.dumps({"wrong_field": FAKE}), "SECRET_JSON_SHAPE_UNSUPPORTED"),
+        (FAKE + "\n", "INVALID_ENDPOINT"),
+        (FAKE.replace("wss:", "https:"), "INVALID_ENDPOINT"),
+        (FAKE.replace("arb-mainnet", "eth-mainnet"), "INVALID_ENDPOINT"),
+        (FAKE + "?private-placeholder", "INVALID_ENDPOINT"),
+        (FAKE + "/private-placeholder", "INVALID_ENDPOINT"),
+        (FAKE.replace(".com/", ".com:80/"), "INVALID_ENDPOINT"),
+        (FAKE.replace("://", "://["), "INVALID_ENDPOINT"),
     ],
 )
 def test_format_codes_are_specific_and_never_contain_value(value, code):
@@ -100,9 +102,24 @@ def test_format_codes_are_specific_and_never_contain_value(value, code):
     assert report["response_identity_matches"] is True
     assert report["status"] == "CONTRACT_FAIL"
     assert code in report["format_codes"]
-    assert set(report["format_codes"]) <= p.FORMAT_CODES
+    chain, _ = p.dependencies()
+    assert set(report["format_codes"]) <= chain.SECRET_CODES
     assert "private-placeholder" not in json.dumps(report)
     assert "alchemy.com" not in json.dumps(report)
+
+
+@pytest.mark.parametrize(
+    "stored", [json.dumps(FAKE), json.dumps({"ALCHEMY_WEBSOCKET_URL": FAKE})]
+)
+def test_supported_json_payload_passes_with_raw_format_observation_preserved(stored):
+    report = p.assess_response(response(SecretString=stored))
+    assert report["status"] == "CONTRACT_PASS"
+    assert report["raw_format_status"] == "FORMAT_FAIL"
+    assert "JSON_OR_QUOTES" in report["raw_format_codes"]
+    assert report["format_status"] == "FORMAT_PASS"
+    assert report["format_codes"] == []
+    assert report["secret_representation"] in {"JSON_STRING", "JSON_OBJECT"}
+    assert FAKE not in json.dumps(report)
 
 
 @pytest.mark.parametrize(

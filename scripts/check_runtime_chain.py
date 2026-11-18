@@ -11,11 +11,21 @@ import subprocess
 import sys
 import urllib.request
 from pathlib import Path
+from types import ModuleType
 
 RELEASE_SHA = "7f948e94cec7f7aebaf2aa4dab4ddd8e92a60f083f17bb9cefcff4db89cd200f"
 INSTANCE = "i-0ca1671a59751acc5"
 IMAGE = "209479274979.dkr.ecr.us-west-2.amazonaws.com/blockchain-runtime-producer@sha256:63d9d0f24a1cb7eb30b080e58f8a40ddd49292b89020328409e6f45319597afd"
 SECRET = "arn:aws:secretsmanager:us-west-2:209479274979:secret:blockchain-runtime/11-6c/alchemy-websocket-url-d44flr"
+SECRET_CONTRACT_SHA = "15529edf70a4f92ea8d1f574252f0dbaed2d019aa03a8e9d7818c6c2e830eadd"
+SECRET_CODES = {
+    "SECRET_PAYLOAD_NOT_STRING",
+    "SECRET_PAYLOAD_EMPTY_OR_TOO_LARGE",
+    "SECRET_JSON_INVALID",
+    "SECRET_JSON_DUPLICATE_FIELD",
+    "SECRET_JSON_SHAPE_UNSUPPORTED",
+    "INVALID_ENDPOINT",
+}
 CLIENT = r"""
 import json
 import sys
@@ -152,6 +162,8 @@ HOST_GUARDS = {
     "REVIEWED_AMD64_IMAGE_REQUIRED",
     "SECRET_FORMAT_INVALID",
     "CHAIN_PREFLIGHT_FAILED",
+    "READER_CONTRACT_SOURCE_UNAVAILABLE",
+    "READER_CONTRACT_SOURCE_CHANGED",
 }
 HOST_CODES = {"HOST_ERROR", "HOST_COMMAND_FAILED", "AWS_CLI_FAILED", "CONTAINER_FAILED"}
 HOST_CODES |= {
@@ -180,7 +192,8 @@ class PreflightFailure(RuntimeError):
         self.code = (
             code
             if isinstance(code, str)
-            and code in CLIENT_CODES | AWS_CODES | HOST_CODES | HOST_GUARDS
+            and code
+            in CLIENT_CODES | AWS_CODES | HOST_CODES | HOST_GUARDS | SECRET_CODES
             else "HOST_ERROR"
         )
         super().__init__(self.stage + " " + self.code)
@@ -220,20 +233,49 @@ def clean_env():
     }
 
 
-def validate_secret_payload(payload):
-    """Validate the retrieved value before Docker, using the exact client rules.
+def secret_contract():
+    """Load the reviewed shared source, including standalone tmpfs staging.
 
-    Do not strip, unwrap nested JSON, repair or include the value in errors.
-    Compiling CLIENT under a different module name cannot invoke its main.
+    No search of installed packages or stale bytecode can select another reader.
     """
+    path = Path(__file__).resolve().parents[1] / "runtime/contracts.py"
+    if not path.is_file():
+        path = Path(__file__).with_name("contracts.py")
+    try:
+        source = path.read_bytes()
+    except OSError:
+        raise PreflightFailure(
+            "HOST_PRECHECK", "READER_CONTRACT_SOURCE_UNAVAILABLE"
+        ) from None
+    if hashlib.sha256(source).hexdigest() != SECRET_CONTRACT_SHA:
+        raise PreflightFailure("HOST_PRECHECK", "READER_CONTRACT_SOURCE_CHANGED")
+    module = ModuleType("reviewed_secret_contract")
+    module.__file__ = str(path)
+    exec(compile(source, str(path), "exec"), module.__dict__)
+    return module
+
+
+def resolve_secret_value(value):
+    contract = secret_contract()
+    try:
+        return contract.resolve_secret_string(value)
+    except ValueError as error:
+        code = error.args[0] if error.args else None
+        raise PreflightFailure(
+            "SECRET_FORMAT",
+            code
+            if isinstance(code, str) and code in SECRET_CODES
+            else "INVALID_ENDPOINT",
+        ) from None
+
+
+def validate_secret_payload(payload):
+    """Decode the CLI JSON layer, then the declared SecretString representation."""
     try:
         value = json.loads(payload)
-        namespace = {"__name__": "host_endpoint_validation"}
-        exec(compile(CLIENT, "reviewed_endpoint_client", "exec"), namespace)
-        namespace["validate_endpoint"](value)
     except (ValueError, TypeError):
         raise PreflightFailure("SECRET_FORMAT", "INVALID_ENDPOINT") from None
-    return value
+    return resolve_secret_value(value).url
 
 
 def run(args, *, data=None, timeout=30, stage="HOST_PRECHECK"):
@@ -287,6 +329,7 @@ def instance_id():
 
 def execute(release_path):
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
+    secret_contract()  # Verify parser integrity before retrieving any value.
     body = Path(release_path).read_bytes()
     if hashlib.sha256(body).hexdigest() != RELEASE_SHA:
         raise RuntimeError("UNREVIEWED_RELEASE")

@@ -42,11 +42,11 @@ class Checks(unittest.TestCase):
     def test_invalid_retrieved_payload_never_reaches_docker_or_prints_value(self):
         endpoint = "wss://arb-mainnet.g.alchemy.com/v2/fake"
         values = [
-            "",
-            None,
-            {},
-            json.dumps({"ALCHEMY_WEBSOCKET_URL": endpoint}),
-            json.dumps(endpoint),
+            json.dumps({"wrong_field": endpoint}),
+            json.dumps(
+                {"ALCHEMY_WEBSOCKET_URL": endpoint, "extra": "private-placeholder"}
+            ),
+            json.dumps([endpoint]),
             endpoint + "\n",
             " " + endpoint,
             "wss://eth-mainnet.g.alchemy.com/v2/fake",
@@ -69,11 +69,34 @@ class Checks(unittest.TestCase):
                         p.execute(
                             "docs/evidence/aws_runtime_release_candidate_2026-11-17.json"
                         )
-                self.assertEqual(
-                    str(raised.exception), "SECRET_FORMAT INVALID_ENDPOINT"
-                )
+                self.assertEqual(raised.exception.stage, "SECRET_FORMAT")
+                self.assertIn(raised.exception.code, p.SECRET_CODES)
                 self.assertEqual(len(calls), 2)
                 self.assertEqual(output.getvalue(), "")
+
+    def test_json_secret_reaches_client_only_as_decoded_url(self):
+        endpoint = "wss://arb-mainnet.g.alchemy.com/v2/fake"
+        for stored in [
+            json.dumps(endpoint),
+            json.dumps({"ALCHEMY_WEBSOCKET_URL": endpoint}),
+        ]:
+            with (
+                self.subTest(representation=stored[0]),
+                self.host_environment(),
+                patch.object(
+                    p,
+                    "run",
+                    side_effect=[
+                        "amd64\n",
+                        json.dumps(stored),
+                        "ARBITRUM_CHAIN_ID_VERIFIED\n",
+                    ],
+                ) as run,
+                contextlib.redirect_stdout(io.StringIO()),
+            ):
+                p.execute("docs/evidence/aws_runtime_release_candidate_2026-11-17.json")
+                self.assertEqual(run.call_args.kwargs["data"], endpoint)
+                self.assertNotIn(stored, run.call_args.args[0])
 
     def test_malformed_cli_json_does_not_expose_response(self):
         with self.assertRaises(p.PreflightFailure) as raised:

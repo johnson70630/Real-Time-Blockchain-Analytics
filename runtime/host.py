@@ -23,6 +23,7 @@ from runtime.contracts import (
     REGION,
     REGISTRY,
     RUN,
+    resolve_secret_string,
     validate_release,
     writer_lock,
 )
@@ -196,13 +197,7 @@ class Pilot:
                 "json",
             ],
         )
-        value = json.loads(payload).get("SecretString")
-        if (
-            not isinstance(value, str)
-            or not value.startswith("wss://")
-            or "\n" in value
-        ):
-            raise ValueError("SECRET_MUST_CONTAIN_ONLY_WSS_URL")
+        value = resolve_secret_string(json.loads(payload).get("SecretString")).url
         secret = RUN / "secrets/alchemy_websocket_url"
         # Refuse stale paths/symlinks. The controller removes its own tmpfs
         # files on shutdown; an interrupted run requires operator inspection.

@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import json
 import re
 from contextlib import contextmanager
 from pathlib import Path
+from urllib.parse import urlsplit
 
 REGION = "us-west-2"
 BUCKET = "johnson-blockchain-analytics-prod"
@@ -13,6 +15,95 @@ TOPIC = "pilot_uniswap_v3_events"
 MOUNT = Path("/var/lib/blockchain-runtime/kafka")
 RUN = Path("/run/blockchain-runtime")
 REGISTRY = "209479274979.dkr.ecr.us-west-2.amazonaws.com"
+SECRET_FIELD = "ALCHEMY_WEBSOCKET_URL"
+SECRET_ERROR_CODES = frozenset(
+    {
+        "SECRET_PAYLOAD_NOT_STRING",
+        "SECRET_PAYLOAD_EMPTY_OR_TOO_LARGE",
+        "SECRET_JSON_INVALID",
+        "SECRET_JSON_DUPLICATE_FIELD",
+        "SECRET_JSON_SHAPE_UNSUPPORTED",
+        "INVALID_ENDPOINT",
+    }
+)
+
+
+class SecretPayloadError(ValueError):
+    """Only fixed codes, never input or JSON parser error details."""
+
+
+class ResolvedSecret:
+    __slots__ = ("url", "representation")
+
+    def __init__(self, url: str, representation: str):
+        self.url = url
+        self.representation = representation
+
+    def __repr__(self):
+        return f"ResolvedSecret(representation={self.representation!r})"
+
+
+def _secret_object(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise SecretPayloadError("SECRET_JSON_DUPLICATE_FIELD")
+        result[key] = value
+    return result
+
+
+def resolve_secret_string(value) -> ResolvedSecret:
+    """Decode one explicit envelope; preserve the endpoint and its API key.
+
+    This function performs no I/O. Structural JSON whitespace is allowed, but
+    endpoint whitespace, recursive decoding and ambiguous objects are rejected.
+    """
+    if not isinstance(value, str):
+        raise SecretPayloadError("SECRET_PAYLOAD_NOT_STRING")
+    if not 1 <= len(value) <= 65536:
+        raise SecretPayloadError("SECRET_PAYLOAD_EMPTY_OR_TOO_LARGE")
+    representation = "BARE_URL"
+    endpoint = value
+    if value.lstrip().startswith(('"', "{", "[")):
+        try:
+            decoded = json.loads(value, object_pairs_hook=_secret_object)
+        except SecretPayloadError:
+            raise
+        except (ValueError, RecursionError):
+            raise SecretPayloadError("SECRET_JSON_INVALID") from None
+        if isinstance(decoded, str):
+            endpoint, representation = decoded, "JSON_STRING"
+        elif isinstance(decoded, dict) and set(decoded) == {SECRET_FIELD}:
+            endpoint, representation = decoded[SECRET_FIELD], "JSON_OBJECT"
+        else:
+            raise SecretPayloadError("SECRET_JSON_SHAPE_UNSUPPORTED")
+    if (
+        not isinstance(endpoint, str)
+        or not 1 <= len(endpoint) <= 4096
+        or any(c.isspace() or ord(c) < 32 or ord(c) == 127 for c in endpoint)
+    ):
+        raise SecretPayloadError("INVALID_ENDPOINT")
+    try:
+        parsed = urlsplit(endpoint)
+        valid = (
+            parsed.scheme == "wss"
+            and parsed.hostname == "arb-mainnet.g.alchemy.com"
+            and parsed.username is None
+            and parsed.password is None
+            and parsed.port in (None, 443)
+            and not parsed.query
+            and not parsed.fragment
+            and parsed.path.startswith("/v2/")
+            and len(parsed.path) > 4
+            and "/" not in parsed.path[4:]
+        )
+    except ValueError:
+        raise SecretPayloadError("INVALID_ENDPOINT") from None
+    if not valid:
+        raise SecretPayloadError("INVALID_ENDPOINT")
+    return ResolvedSecret(endpoint, representation)
+
+
 # The 2026-11-16 reviews rejected these exact manifests. Keep the rejection
 # even after replacing local build tags; a different digest still needs review.
 REJECTED_IMAGE_DIGESTS = frozenset({

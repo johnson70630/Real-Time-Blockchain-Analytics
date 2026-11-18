@@ -225,6 +225,74 @@ def test_secret_payload_is_not_a_docker_environment_variable(release, monkeypatc
     assert env["COMPOSE_DISABLE_ENV_FILE"] == "1"
 
 
+@pytest.mark.parametrize("representation", ["raw", "json_string", "json_object"])
+def test_host_injection_decodes_secret_without_changing_its_value(
+    release, monkeypatch, tmp_path, representation
+):
+    endpoint = "wss://arb-mainnet.g.alchemy.com/v2/fake"
+    stored = {
+        "raw": endpoint,
+        "json_string": json.dumps(endpoint),
+        "json_object": json.dumps({"ALCHEMY_WEBSOCKET_URL": endpoint}),
+    }[representation]
+    run = tmp_path / "run"
+    mount = tmp_path / "kafka"
+    mount.mkdir()
+    monkeypatch.setattr(host, "RUN", run)
+    monkeypatch.setattr(host, "MOUNT", mount)
+    monkeypatch.setattr(host.os, "chown", lambda *_: None)
+    pilot = host.Pilot(release)
+    calls = []
+
+    def execute(args, **kwargs):
+        calls.append((args, kwargs))
+        if "get-secret-value" in args:
+            return json.dumps({"SecretString": stored})
+        if "get-login-password" in args:
+            return "offline-password"
+        if "inspect" in args:
+            return "amd64"
+        return ""
+
+    monkeypatch.setattr(pilot, "execute", execute)
+    monkeypatch.setattr(pilot, "compose", lambda *_args, **_kwargs: None)
+    pilot.prepare()
+    secret = run / "secrets/alchemy_websocket_url"
+    assert secret.read_text() == endpoint
+    assert secret.stat().st_mode & 0o777 == 0o400
+    assert not any(endpoint in str(args) for args, _ in calls)
+    assert "ALCHEMY_WEBSOCKET_URL" not in pilot.env
+    assert sum("get-secret-value" in args for args, _ in calls) == 1
+
+
+def test_host_rejects_ambiguous_secret_before_registry_or_container_actions(
+    release, monkeypatch, tmp_path
+):
+    run, mount = tmp_path / "run", tmp_path / "kafka"
+    mount.mkdir()
+    monkeypatch.setattr(host, "RUN", run)
+    monkeypatch.setattr(host, "MOUNT", mount)
+    monkeypatch.setattr(host.os, "chown", lambda *_: None)
+    pilot = host.Pilot(release)
+    calls = []
+
+    def execute(args, **_kwargs):
+        calls.append(args)
+        assert "get-secret-value" in args
+        return json.dumps(
+            {"SecretString": json.dumps({"unknown": "private-placeholder"})}
+        )
+
+    monkeypatch.setattr(pilot, "execute", execute)
+    monkeypatch.setattr(
+        pilot, "compose", lambda *_a, **_k: pytest.fail("NO_CONTAINERS")
+    )
+    with pytest.raises(ValueError, match="^SECRET_JSON_SHAPE_UNSUPPORTED$"):
+        pilot.prepare()
+    assert len(calls) == 1
+    assert not (run / "secrets/alchemy_websocket_url").exists()
+
+
 def test_cli_errors_never_expose_captured_payload(monkeypatch):
     monkeypatch.setattr(
         subprocess,
