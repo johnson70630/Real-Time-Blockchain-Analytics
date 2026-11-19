@@ -69,7 +69,9 @@ def safe_binary(path):
     _require(
         resolved.is_file() and os.access(resolved, os.X_OK), "INSPECTION_BINARY_UNSAFE"
     )
-    return str(path)
+    # Execute the verified target, not a caller-visible symlink that could be
+    # replaced after this check. All parents of this target were checked above.
+    return str(resolved)
 
 
 class AwsCliMetadataClient:

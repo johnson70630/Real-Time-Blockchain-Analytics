@@ -57,7 +57,7 @@ Streamlit are unchanged. Unrelated duplicate files are preserved.
 
 ## D. Tests and validation
 
-**61 focused cases, 927 runtime tests and 36 negative subtests pass** (one existing
+**62 focused cases, 928 runtime tests and 36 negative subtests pass** (one existing
 websockets deprecation warning).
 
 Focused tests exercise exact approvals, immutable package/source hashes,
@@ -113,6 +113,8 @@ writer lock, reserves exclusive intents and never starts containers. Known
 stopped containers are allowed; Compose restart policies remain `no`, and the
 accepted candidate unit was manual/transient rather than enabled on boot.
 
+The CLI invokes the verified, root-owned absolute executable target rather than
+a replaceable symlink; a regression test covers this distinction.
 The AWS CLI subprocess has a clean environment, no inherited profile/static
 credentials/custom endpoints/proxies, private bounded output files, timeouts,
 file-size/core limits and one attempt. It obtains the existing instance role

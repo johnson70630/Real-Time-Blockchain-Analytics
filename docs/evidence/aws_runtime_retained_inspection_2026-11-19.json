@@ -87,6 +87,12 @@
     "pending_until_separate_approval": true
   },
   "paid_ec2_starts": 0,
+  "post_checkpoint_hardening": {
+    "change": "Invoke verified root-owned resolved executable target instead of replaceable symlink",
+    "new_approval_granted": false,
+    "new_cloud_calls": 0,
+    "prior_source_commit": "0ac6fb47170fd929345fe0d1eacd52330f6f7bd0"
+  },
   "production_infrastructure_changed": false,
   "production_inspection_executed": false,
   "production_recovery_executed": false,
@@ -131,13 +137,13 @@
   "source_sha256": {
     "deploy/runtime/compose.test.yaml": "a151cfe71c587043b568c161f706d0672c6fac7430aca4a7d779ddc9ab467adb",
     "runtime/inspection.py": "34def61f75ede1bdbb4fd9ebe4ff53143234d9a6fd9c877a8204a5c1e82ee60c",
-    "runtime/inspection_transport.py": "18dbf1c05cdfcb593fe81d69d3ef2d65a0c69df16578e720c273ba7aa8ec5d02",
+    "runtime/inspection_transport.py": "fb58c7258eace0f01cd77bb3b83dd00478a494504344914be9b5364255252213",
     "scripts/prepare_runtime_inspection.py": "4b2350a1d5740873c57fe227311548f39f4d1a99eba61f20ab40f24e59368631",
     "scripts/runtime_inspection_relay.py": "cc81c99504939e08164e6493bcc7395f576065fdb07191dafa3f23dc424db9b5",
     "scripts/runtime_inspection_window.py": "206f21319236aff20aad0856ca616ff847f8b0a9f7cef81fcd83eac6189bd717",
     "scripts/test_runtime_integration.sh": "e623fd594f5e71b05c01bfc2ab243a07731b7963c58973e2714adfae18e48eb6",
     "tests/integration/inspection_disk.py": "ab158dd994de193d0f65738ce8c467d67f30a3bfac7b9abc6381a0cd59bf5715",
-    "tests/test_runtime_inspection.py": "57584d9d85c5c9c1ea66dfa87954cf50c6003d5cd18799d2548ea9e96d2ef939"
+    "tests/test_runtime_inspection.py": "b79e0ba858a2d3f96358f65b4b338cf65ea22287b0daa027aec90220dc8e0a52"
   },
   "ssm_sessions": 0,
   "starting_develop_commit": "c895ab1d0c127c9d9dfa28136bc0a86bb4ecf854",
@@ -164,8 +170,8 @@
       }
     ],
     "prior_private_attempts_preserved": true,
-    "private_log_sha256": "96e675604566d66190deba0001f5e2b6946a533d2f6bfbf277a6c03618577b64",
-    "project": "blockchain-disk-5c24x6id",
+    "private_log_sha256": "29381f083994280af18bf092933cdf8a8dd23217931b9e81552ae04ca6cc7668",
+    "project": "blockchain-disk-78xpyr5c",
     "readiness": "bounded real Kafka DescribeCluster protocol response",
     "real_broker_to_stopped_disk_uuid_match": true,
     "remaining_owned_resources": {
@@ -175,7 +181,7 @@
     },
     "source_sha256": {
       "deploy/runtime/compose.test.yaml": "a151cfe71c587043b568c161f706d0672c6fac7430aca4a7d779ddc9ab467adb",
-      "runtime/inspection_transport.py": "18dbf1c05cdfcb593fe81d69d3ef2d65a0c69df16578e720c273ba7aa8ec5d02",
+      "runtime/inspection_transport.py": "fb58c7258eace0f01cd77bb3b83dd00478a494504344914be9b5364255252213",
       "tests/integration/inspection_disk.py": "ab158dd994de193d0f65738ce8c467d67f30a3bfac7b9abc6381a0cd59bf5715"
     },
     "spark_image_used_only_as_python_probe": true,
@@ -186,15 +192,16 @@
   "unrelated_untracked_duplicates_preserved": 67,
   "validation": {
     "existing_websockets_deprecation_warning": true,
-    "focused_cases_passed": 61,
+    "focused_cases_passed": 62,
     "installed_local_cli_v2_and_ssm_plugin_1_2_896_0": "PASS_OFFLINE_VERSION_ONLY",
     "links": "PASS",
     "negative_subtests_passed": 36,
     "python39_syntax": "PASS",
     "ruff": "PASS",
-    "runtime_tests_passed": 927,
+    "runtime_tests_passed": 928,
     "secret_scan": "PASS",
     "shell_syntax": "PASS",
+    "verified_binary_target_invoked_regression": "PASS",
     "whitespace": "PASS"
   }
 }

@@ -160,6 +160,13 @@ def test_disk_symlink_is_not_followed(disk):
         transport.retained_disk_identity(disk, ins.CLUSTER)
 
 
+def test_cli_executes_verified_system_target_instead_of_replaceable_link(tmp_path):
+    target = Path("/usr/bin/python3").resolve(strict=True)
+    link = tmp_path / "aws-link"
+    link.symlink_to(target)
+    assert transport.safe_binary(link) == str(target)
+
+
 @pytest.fixture
 def client(tmp_path, monkeypatch):
     scratch = tmp_path / "scratch"
