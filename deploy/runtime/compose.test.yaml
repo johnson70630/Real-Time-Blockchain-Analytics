@@ -45,6 +45,24 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
+  inspection-disk-test:
+    image: blockchain-pilot-spark:offline
+    platform: linux/amd64
+    init: true
+    user: "0:0"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    network_mode: none
+    mem_limit: 256m
+    environment:
+      AWS_EC2_METADATA_DISABLED: "true"
+      PYTHONPATH: /app
+    volumes:
+      - test-kafka:/kafka:ro
+      - test-spark:/test-data:ro
+      - ../../tests/integration/inspection_disk.py:/test.py:ro
+    entrypoint: [python, /test.py]
 volumes:
   test-kafka:
   test-spark:

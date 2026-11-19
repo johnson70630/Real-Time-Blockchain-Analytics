@@ -1,5 +1,8 @@
 # 11.6C follow-up — Metadata collector and offline recovery operator
 
+Next offline checkpoint: [inspection-only transport and guarded package readiness](aws_runtime_retained_inspection_review.md).
+This collector/operator result remains historical; no new live run is authorized.
+
 **Implemented and tested offline. No AWS call, paid start or deployment is included.**
 The first AWS pilot remains accepted; its single-run exception remains consumed.
 Milestone 11.5D stays paused.

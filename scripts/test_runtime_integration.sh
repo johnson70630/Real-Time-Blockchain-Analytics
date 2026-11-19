@@ -6,7 +6,8 @@ trap '"${compose[@]}" down --volumes' EXIT
 "${compose[@]}" up -d --wait --wait-timeout 180 kafka
 "${compose[@]}" run --rm spark-test initial
 "${compose[@]}" run --rm spark-test snapshot
-"${compose[@]}" restart kafka
+"${compose[@]}" stop kafka
+"${compose[@]}" run --rm --no-deps inspection-disk-test
 "${compose[@]}" up -d --wait --wait-timeout 180 kafka
 "${compose[@]}" run --rm spark-test resume
 "${compose[@]}" run --rm spark-test snapshot
