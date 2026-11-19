@@ -1,5 +1,7 @@
 # Milestone 11.6C — first streaming pilot readiness
 
+Current follow-up: [offline recovery checks and security compatibility recheck](aws_runtime_recovery_preparation.md). The first pilot remains accepted; this follow-up makes no AWS calls and grants no additional run.
+
 Latest result: [first AWS streaming pilot accepted; graceful drain verified; EC2 stopped](aws_runtime_streaming_pilot_result.md).
 The existing secret was unchanged. A 45-row committed Parquet sample passed;
 the final verified drained checkpoint was batch 13. The one-run security exception

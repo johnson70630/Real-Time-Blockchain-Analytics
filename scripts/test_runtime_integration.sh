@@ -5,8 +5,11 @@ compose=(docker compose -f deploy/runtime/compose.test.yaml)
 trap '"${compose[@]}" down --volumes' EXIT
 "${compose[@]}" up -d --wait --wait-timeout 180 kafka
 "${compose[@]}" run --rm spark-test initial
+"${compose[@]}" run --rm spark-test snapshot
 "${compose[@]}" restart kafka
 "${compose[@]}" up -d --wait --wait-timeout 180 kafka
 "${compose[@]}" run --rm spark-test resume
+"${compose[@]}" run --rm spark-test snapshot
 "${compose[@]}" run --rm spark-test repeat
+"${compose[@]}" run --rm spark-test identity-loss
 "${compose[@]}" run --rm spark-test loss

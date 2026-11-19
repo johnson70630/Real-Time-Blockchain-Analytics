@@ -1,5 +1,7 @@
 # Milestone 11.6C — First AWS streaming pilot accepted and stopped
 
+Next offline preparation: [recovery identity/offset checks and security recheck](aws_runtime_recovery_preparation.md). This completed pilot result is preserved; no new live run is authorized.
+
 **Alchemy → producer → Kafka → Spark → isolated S3 Bronze/checkpoints passed the
 first controlled AWS pilot.** The existing secret was unchanged. EC2 is stopped;
 the single-demonstration security exception is consumed. No further launch is

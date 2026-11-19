@@ -1,5 +1,7 @@
 # Milestone 11.6C — Quarantined replacement image publication
 
+Current follow-up: [post-pilot security recheck and offline recovery preparation](aws_runtime_recovery_preparation.md). The published images were used for one accepted pilot; its exception is consumed. No new publication or deployment is authorized. Earlier snapshots below are preserved.
+
 Current status: [conditional one-run security acceptance and next secret proposal](aws_runtime_pilot_security_acceptance.md). The owner accepted the exact 41-advisory scope; secret creation, IAM changes, EC2 start and deployment remain separately gated.
 
 The content below is preserved checkpoint history. Approval flags and status statements reflect the time of each original snapshot.

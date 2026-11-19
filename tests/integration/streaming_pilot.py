@@ -6,7 +6,7 @@ import sys
 import time
 from pathlib import Path
 
-from confluent_kafka import Producer
+from confluent_kafka import Producer, TopicCollection
 from confluent_kafka.admin import AdminClient, NewTopic
 from pyspark.errors import StreamingQueryException
 from pyspark.sql import SparkSession
@@ -19,11 +19,63 @@ from runtime.stream import (
     write_status,
 )
 from spark import write_swaps_bronze
+from runtime.recovery import RecoveryBlocked, assess_recovery
 
 BOOTSTRAP = "kafka:9092"
 TOPIC = "synthetic-pilot-events"
 OUTPUT = "/test-data/bronze"
 CHECKPOINT = "/test-data/checkpoint"
+BASELINE = Path("/test-data/recovery-baseline.json")
+
+
+def recovery_snapshot(admin):
+    """Synthetic local volumes only; called with no Spark/producer process running."""
+    commits = [
+        int(p.name) for p in Path(CHECKPOINT, "commits").iterdir() if p.name.isdigit()
+    ]
+    batch = max(commits)
+    sink_batches = [
+        int(p.name.removesuffix(".compact"))
+        for p in Path(OUTPUT, "_spark_metadata").iterdir()
+        if p.name.removesuffix(".compact").isdigit()
+    ]
+    offset_lines = Path(CHECKPOINT, "offsets", str(batch)).read_text().splitlines()
+    assert offset_lines[0] == "v1"
+    topic = admin.describe_topics(TopicCollection([TOPIC]), request_timeout=15)[
+        TOPIC
+    ].result(20)
+    from confluent_kafka import Consumer, TopicPartition
+
+    consumer = Consumer(
+        {"bootstrap.servers": BOOTSTRAP, "group.id": "offline-recovery-probe"}
+    )
+    try:
+        low, high = consumer.get_watermark_offsets(
+            TopicPartition(TOPIC, 0), timeout=15, cached=False
+        )
+    finally:
+        consumer.close()
+    return {
+        "schema_version": 1,
+        "scope": {
+            "storage_identity": "synthetic-compose-volumes:test-kafka:test-spark",
+            "cluster_id": admin.list_topics(timeout=15).cluster_id,
+            "topic": TOPIC,
+            "topic_id": str(topic.topic_id),
+            "output": OUTPUT,
+            "checkpoint": CHECKPOINT,
+            "query_id": json.loads(Path(CHECKPOINT, "metadata").read_text())["id"],
+        },
+        "checkpoint_batch": batch,
+        "sink_batch": max(sink_batches),
+        "checkpoint_end_offsets": json.loads(offset_lines[-1])[TOPIC],
+        "kafka_begin_offsets": {"0": low},
+        "kafka_end_offsets": {"0": high},
+        "checkpoint_metadata_exists": True,
+        "checkpoint_commit_exists": True,
+        "sink_metadata_exists": True,
+        "writer_active": False,
+    }
 
 
 def publish(start, count):
@@ -59,7 +111,18 @@ def publish(start, count):
 
 def main():
     phase = sys.argv[1]
+    assert phase in {"initial", "snapshot", "resume", "repeat", "identity-loss", "loss"}
     admin = AdminClient({"bootstrap.servers": BOOTSTRAP})
+    if phase == "snapshot":
+        BASELINE.write_text(json.dumps(recovery_snapshot(admin)))
+        print("OFFLINE_RECOVERY_BASELINE_CAPTURED", flush=True)
+        return
+    if phase in {"resume", "repeat"}:
+        result = assess_recovery(
+            json.loads(BASELINE.read_text()), recovery_snapshot(admin)
+        )
+        assert result["cloud_start_authorized"] is False
+        print("OFFLINE_RECOVERY_IDENTITY_AND_OFFSETS_VERIFIED", flush=True)
     if phase == "initial":
         for future in admin.create_topics(
             [NewTopic(TOPIC, num_partitions=1, replication_factor=1)]
@@ -71,7 +134,7 @@ def main():
             "Kafka logs did not survive restart"
         )
         publish(3, 2)
-    elif phase == "loss":
+    elif phase in {"loss", "identity-loss"}:
         for future in admin.delete_topics([TOPIC]).values():
             future.result(30)
         for _ in range(30):
@@ -82,6 +145,23 @@ def main():
             [NewTopic(TOPIC, num_partitions=1, replication_factor=1)]
         ).values():
             future.result(30)
+        if phase == "identity-loss":
+            baseline = json.loads(BASELINE.read_text())
+            publish(100, baseline["kafka_end_offsets"]["0"])
+            observed = recovery_snapshot(admin)
+            # Equal offsets alone cannot detect this destructive topic replacement.
+            assert observed["kafka_end_offsets"] == baseline["kafka_end_offsets"]
+            assert observed["scope"]["topic_id"] != baseline["scope"]["topic_id"]
+            try:
+                assess_recovery(baseline, observed)
+            except RecoveryBlocked as error:
+                assert str(error) == "RECOVERY_IDENTITY_CHANGED"
+                print(
+                    "RECREATED_TOPIC_WITH_IDENTICAL_OFFSETS_REJECTED_BEFORE_SPARK",
+                    flush=True,
+                )
+                return
+            raise AssertionError("Recreated topic was accepted")
         publish(9, 1)
 
     spark = (

@@ -1,0 +1,192 @@
+{
+  "aws_api_calls": 0,
+  "baseline_evidence_sha256": {
+    "docs/evidence/aws_runtime_security_acceptance_2026-11-17.json": "5b014661fcb00c723edb22aa49ed86a7f8b9a5ea553197a35ab4f9216e83a75c",
+    "docs/evidence/aws_runtime_security_consumption_2026-11-19.json": "641f43e22f7085569e1beead65b7d1e903654dbfc17355669538ffceeb69728f",
+    "docs/evidence/aws_runtime_streaming_pilot_result_2026-11-19.json": "3918b8e1409962dabe9b2029089f6eaf5f167211dbde34f319b98c5b43707bd9"
+  },
+  "checker_wired_into_live_operator": false,
+  "cloud_start_authorized": false,
+  "compatibility_decision": {
+    "all_41_advisories_reassessed": false,
+    "dependency_pins_changed": false,
+    "hadoop_350_aws_sdk_v2": "2.35.4",
+    "hadoop_release_metadata": "3.5.0",
+    "new_image_scan_performed": false,
+    "private_hadoop_rebuild_started": false,
+    "sdk_release_metadata": "2.59.4",
+    "sdk_substitution_tested": false
+  },
+  "debian_recheck": {
+    "advisories": {
+      "CVE-2026-19499": "vulnerable",
+      "CVE-2026-5435": "vulnerable"
+    },
+    "other_distribution_fixes_not_adopted": true,
+    "package": "glibc",
+    "release": "trixie",
+    "version": "2.41-12+deb13u4"
+  },
+  "deployment_authorized": false,
+  "ec2_starts": 0,
+  "ecr_publications_or_scan_requests": 0,
+  "first_cloud_pilot_accepted": true,
+  "iam_changes": 0,
+  "live_metadata_collector_implemented": false,
+  "local_integration": {
+    "cloud_or_chain_provider_used": false,
+    "existing_image_tags_overwritten": false,
+    "format_diagnosis": "librdkafka UUID standard Base64 plus/slash differs from URL-safe minus/underscore; canonical bytes compared without mutating snapshots",
+    "image_revision": "ddc1861cef958d5bc718100fcb502aac8318011b",
+    "independent_owned_resource_cleanup_verified": true,
+    "initial_failed_format_check_preserved": true,
+    "module_mounted_read_only": true,
+    "new_images_built_or_pulled": false,
+    "original_lower_offset_loss_test_passed": true,
+    "owned_synthetic_cleanup_exit_code": 0,
+    "phase_results": [
+      {
+        "exit_code": 0,
+        "phase": "kafka-initial"
+      },
+      {
+        "exit_code": 0,
+        "phase": "initial"
+      },
+      {
+        "exit_code": 0,
+        "phase": "snapshot"
+      },
+      {
+        "exit_code": 0,
+        "phase": "broker-restart"
+      },
+      {
+        "exit_code": 0,
+        "phase": "kafka-ready"
+      },
+      {
+        "exit_code": 0,
+        "phase": "resume"
+      },
+      {
+        "exit_code": 0,
+        "phase": "snapshot"
+      },
+      {
+        "exit_code": 0,
+        "phase": "repeat"
+      },
+      {
+        "exit_code": 0,
+        "phase": "identity-loss"
+      },
+      {
+        "exit_code": 0,
+        "phase": "loss"
+      }
+    ],
+    "private_log_sha256": "aff90bc36740fe79d330bfbd3652a29000ceb54303c0a6f3389784caeecbe2f7",
+    "recreated_topic_with_identical_numeric_offsets_rejected_before_spark": true,
+    "source_sha256": {
+      "runtime/recovery.py": "06b6404b120a231b3b0428668aea5837f293b5f6fc1bb45f7391b824b32a756d",
+      "scripts/test_runtime_integration.sh": "35e39663a42f8df0f699371d1fb9aec319e9e152a8feefd851ddae7e622c6b38",
+      "tests/integration/streaming_pilot.py": "04c94a6e7aaff092c867ae4c3c5b5708069d8ed52887c0db5ea5ed8ce6fcfa50"
+    },
+    "status": "PASS",
+    "synthetic_row_counts": {
+      "initial": 3,
+      "repeat": 5,
+      "resume": 5
+    },
+    "test_image_ids": {
+      "kafka": "sha256:c72cc3772461da038139e0b07879f35f5829fa7559f50e2c6a252959e099ab76",
+      "spark": "sha256:d9233ef1c293b051db1a129a67d570b22912571ba2d06c615ebeb1801883851c"
+    }
+  },
+  "main_merged": false,
+  "milestone_11_5D": "PAUSED",
+  "missing_production_baseline_inputs": [
+    "original_topic_uuid",
+    "spark_query_id",
+    "exact_final_committed_offset_map"
+  ],
+  "new_security_exception_accepted": false,
+  "production_cleanup_authorized": false,
+  "production_data_accessed": false,
+  "production_infrastructure_changed": false,
+  "production_recovery_baseline_complete": false,
+  "production_recovery_executed": false,
+  "production_s3_writes": 0,
+  "recorded_at_utc": "2026-11-19T02:00:10.990550+00:00",
+  "schema_version": 1,
+  "scope": "11.6C_POST_PILOT_OFFLINE_RECOVERY_AND_LIMITED_SECURITY_RECHECK",
+  "secret_reads_or_edits": 0,
+  "security_exception_consumed": true,
+  "starting_develop_commit": "6ab949ecc0d7d67650cfd86f6050f3daa42bd7ef",
+  "terraform_production_actions": 0,
+  "unrelated_untracked_duplicates_preserved": 67,
+  "upstream_public_source_rechecks": [
+    {
+      "bytes": 2107,
+      "checked_at_utc": "2026-11-19T01:53:53.854754+00:00",
+      "last_updated": "20260401210929",
+      "latest": "3.5.0",
+      "name": "hadoop-versions",
+      "release": "3.5.0",
+      "sha256": "bbdb66b26e50cc4cf986fc70ebb57121198491090097de4c528263b223acbe87",
+      "status": "FETCHED",
+      "url": "https://repo.maven.apache.org/maven2/org/apache/hadoop/hadoop-aws/maven-metadata.xml"
+    },
+    {
+      "bytes": 62477,
+      "checked_at_utc": "2026-11-19T01:53:54.353765+00:00",
+      "last_updated": "20261118224448",
+      "latest": "2.59.4",
+      "name": "sdk-versions",
+      "release": "2.59.4",
+      "sha256": "6da2e412de86d0db9ea7ce43a97ccc1aba7d40697be84a886a641d47e738f2ae",
+      "status": "FETCHED",
+      "url": "https://repo.maven.apache.org/maven2/software/amazon/awssdk/bundle/maven-metadata.xml"
+    },
+    {
+      "aws_sdk_v2_version": "2.35.4",
+      "bytes": 102607,
+      "checked_at_utc": "2026-11-19T01:53:54.554779+00:00",
+      "name": "hadoop-350-project",
+      "sha256": "592faadca05d91d7339323b02494d39955a8f08909ecbe893518debbf58453d7",
+      "status": "FETCHED",
+      "url": "https://raw.githubusercontent.com/apache/hadoop/rel/release-3.5.0/hadoop-project/pom.xml"
+    },
+    {
+      "bytes": 4918,
+      "checked_at_utc": "2026-11-19T01:53:55.122132+00:00",
+      "name": "glibc-monetary",
+      "sha256": "5ae203e2503db74b024563d3a6cbac974337438d5f3db69b93cbdd0ec38aecd7",
+      "status": "FETCHED",
+      "url": "https://security-tracker.debian.org/tracker/CVE-2026-19499"
+    },
+    {
+      "bytes": 4505,
+      "checked_at_utc": "2026-11-19T01:53:55.386793+00:00",
+      "name": "glibc-dns-printing",
+      "sha256": "2361f3d31bc16c0ed30e5f79e4398e73155b117f7c2097c4208f9d756cdd0959",
+      "status": "FETCHED",
+      "url": "https://security-tracker.debian.org/tracker/CVE-2026-5435"
+    }
+  ],
+  "validation": {
+    "README_and_image_pins_and_consumed_gate_preserved": true,
+    "document_links": "PASS",
+    "existing_websockets_deprecation_warning": true,
+    "focused_recovery_cases": 47,
+    "negative_subtests_passed": 36,
+    "python_3_9_syntax": "PASS",
+    "ruff": "PASS",
+    "runtime_tests_passed": 824,
+    "shell_syntax": "PASS",
+    "source_and_historical_evidence_hashes": "PASS",
+    "tracked_and_explicit_new_file_secret_scan": "PASS",
+    "whitespace": "PASS"
+  }
+}

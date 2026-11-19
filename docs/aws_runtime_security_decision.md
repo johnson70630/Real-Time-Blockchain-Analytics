@@ -1,5 +1,7 @@
 # Milestone 11.6C — Consolidated security decision
 
+Current follow-up: [post-pilot compatibility recheck and offline recovery preparation](aws_runtime_recovery_preparation.md). The first streaming pilot passed, the one-run exception is consumed, and no dependency pin or exception is changed here. Earlier decisions below remain historical.
+
 Current status: [conditional one-run security acceptance and next secret proposal](aws_runtime_pilot_security_acceptance.md). The owner accepted the exact 41-advisory scope; secret creation, IAM changes, EC2 start and deployment remain separately gated.
 
 The content below is preserved checkpoint history. Approval flags and status statements reflect the time of each original snapshot.
