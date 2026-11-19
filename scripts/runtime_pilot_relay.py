@@ -23,6 +23,7 @@ import time
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
 from runtime.pilot_acceptance import validate_sample  # noqa: E402
+from runtime.pilot_security import require_unused_acceptance  # noqa: E402
 
 spec = importlib.util.spec_from_file_location(
     "approved_window", REPO / "scripts/runtime_pilot_window.py"
@@ -125,6 +126,7 @@ def verify(root, directory):
         and a.get("keep_secret_unchanged") is True,
         "STREAMING_SCOPE_APPROVAL_REQUIRED",
     )
+    require_unused_acceptance(REPO)
     w.require(
         subprocess.check_output(
             ["git", "rev-parse", "HEAD"], cwd=REPO, text=True

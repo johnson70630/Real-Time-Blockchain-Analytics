@@ -1,5 +1,9 @@
 # Milestone 11.6C — Controls reply unverified; EC2 stopped; terminal parser fixed
 
+Follow-up: [replacement window passed streaming and graceful drain; EC2 stopped](aws_runtime_streaming_pilot_result.md).
+The aborted window below remains historical evidence. Its replacement completed
+one separately approved start and consumed the single-demonstration exception.
+
 **The first streaming window stopped before installation or image validation.**
 My terminal parser rejected a normal nested-terminal line ending. The guest
 controls reply was not verified, so no later gate was entered. The parser is now

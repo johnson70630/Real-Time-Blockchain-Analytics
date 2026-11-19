@@ -1,0 +1,21 @@
+{
+  "acceptance_record_path": "docs/evidence/aws_runtime_security_acceptance_2026-11-17.json",
+  "acceptance_record_sha256": "5b014661fcb00c723edb22aa49ed86a7f8b9a5ea553197a35ab4f9216e83a75c",
+  "another_live_run_requires_new_security_decision_and_production_approval": true,
+  "controller_attempts": 1,
+  "demonstration_windows_consumed": 1,
+  "final_state": "stopped",
+  "instance_id": "i-0ca1671a59751acc5",
+  "launch_at_utc": "2026-11-19T01:17:03+00:00",
+  "maximum_demonstration_windows": 1,
+  "new_start_authorized": false,
+  "operator_archive_sha256": "62cd07b38cddd94f8c213b33cb773dacecad33be8ad512697b10a222e8821e27",
+  "recorded_at_utc": "2026-11-19T01:29:06.756716+00:00",
+  "reviewed_scope_sha256": "5654f4f255730e9ab7838b8219d8148102c5417861e2c8db428a88d41e7c665e",
+  "schema_version": 1,
+  "source_commit": "575ca232d98da158a70b292aa48a3ab09e825577",
+  "status": "SINGLE_DEMONSTRATION_EXCEPTION_CONSUMED",
+  "stopped_readback_at_utc": "2026-11-19T01:25:28.861434+00:00",
+  "streaming_runs_performed": 1,
+  "validation_container_executed": true
+}

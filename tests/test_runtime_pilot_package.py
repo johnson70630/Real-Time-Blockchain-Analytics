@@ -61,6 +61,9 @@ def inputs(tmp_path, monkeypatch):
         return (ROOT / args[2].split(":", 1)[1]).read_bytes()
 
     monkeypatch.setattr(bundle, "_git", git)
+    # Exercise packaging for a hypothetical unused successor decision. The real
+    # repository decision is consumed and is tested independently below.
+    monkeypatch.setattr(p, "require_unused_acceptance", lambda repo: None)
     return candidate, legacy, release
 
 
@@ -122,3 +125,12 @@ def test_existing_output_is_not_overwritten(inputs, tmp_path):
     with pytest.raises(FileExistsError):
         p.build(ROOT, *inputs, tmp_path / "one")
     assert (tmp_path / "one/proposal.json").read_bytes() == before
+
+
+def test_consumed_real_decision_blocks_before_output(inputs, tmp_path, monkeypatch):
+    from runtime.pilot_security import require_unused_acceptance
+
+    monkeypatch.setattr(p, "require_unused_acceptance", require_unused_acceptance)
+    with pytest.raises(RuntimeError, match="SECURITY_EXCEPTION_ALREADY_CONSUMED"):
+        p.build(ROOT, *inputs, tmp_path / "blocked")
+    assert not (tmp_path / "blocked").exists()

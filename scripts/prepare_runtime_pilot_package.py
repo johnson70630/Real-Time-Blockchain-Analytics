@@ -15,6 +15,7 @@ import tarfile
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from runtime import bundle, deployment as d, pilot_operator as op  # noqa: E402
+from runtime.pilot_security import require_unused_acceptance  # noqa: E402
 
 
 def constant(data, name):
@@ -37,6 +38,7 @@ def assemble(repo, candidate, legacy, release):
         "TRACKED_SOURCE_CHANGED",
     )
     commit = bundle._git(repo, "rev-parse", "HEAD").decode().strip()
+    require_unused_acceptance(repo)
     _, candidate_bytes, release_bytes = d._inputs(candidate, release)
     with Path(legacy).open("rb") as handle:
         legacy_bytes = handle.read(bundle.MAX_BUNDLE_BYTES + 1)

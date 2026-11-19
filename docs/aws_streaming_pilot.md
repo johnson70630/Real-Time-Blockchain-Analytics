@@ -1,5 +1,13 @@
 # Milestone 11.6C — first streaming pilot readiness
 
+Latest result: [first AWS streaming pilot accepted; graceful drain verified; EC2 stopped](aws_runtime_streaming_pilot_result.md).
+The existing secret was unchanged. A 45-row committed Parquet sample passed;
+the final verified drained checkpoint was batch 13. The one-run security exception
+is consumed and another cloud start is blocked pending a new security decision
+and explicit production approval. Milestone 11.5D remains paused.
+
+The earlier reports and proposal statuses below are preserved as checkpoint history.
+
 Latest result: [controlled window stopped before installation; terminal framing fixed offline](aws_runtime_controlled_streaming_abort_result.md).
 Secret unchanged; no validation/streaming container ran. The paid-start approval is consumed.
 

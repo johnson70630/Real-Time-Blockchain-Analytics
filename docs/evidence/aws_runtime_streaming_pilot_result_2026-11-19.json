@@ -1,0 +1,208 @@
+{
+  "active_authorization": false,
+  "bounded_public_parquet_sample": {
+    "all_chain_labels_arbitrum": true,
+    "artifact_bytes": 81314,
+    "artifact_count": 2,
+    "checkpoint_commit_exists": true,
+    "committed_batch": 0,
+    "committed_offset_range_complete": true,
+    "compact_metadata": false,
+    "duplicate_kafka_offsets": 0,
+    "duplicate_transaction_log_identities": 0,
+    "end_offsets": {
+      "0": 45
+    },
+    "ok": true,
+    "parquet_read_verified": true,
+    "rows": 45,
+    "start_offsets": {
+      "0": 0
+    }
+  },
+  "cloudwatch": {
+    "all_four_roles_observed": true,
+    "aws_mutations_performed": false,
+    "checked_at_utc": "2026-11-19T01:25:32.701851+00:00",
+    "cloudwatch_spark_drain_marker_verified": true,
+    "log_group": "/blockchain/runtime/containers",
+    "raw_log_messages_in_public_evidence": false,
+    "streams": [
+      {
+        "current_window_events_observed": true,
+        "events_observed": 1000,
+        "log_stream_exists": true,
+        "raw_messages_disclosed": false,
+        "role": "kafka",
+        "spark_drain_marker": false
+      },
+      {
+        "current_window_events_observed": true,
+        "events_observed": 17,
+        "log_stream_exists": true,
+        "raw_messages_disclosed": false,
+        "role": "producer",
+        "spark_drain_marker": false
+      },
+      {
+        "current_window_events_observed": true,
+        "events_observed": 29,
+        "log_stream_exists": true,
+        "raw_messages_disclosed": false,
+        "role": "spark",
+        "spark_drain_marker": true
+      },
+      {
+        "current_window_events_observed": true,
+        "events_observed": 2,
+        "log_stream_exists": true,
+        "raw_messages_disclosed": false,
+        "role": "topic-init",
+        "spark_drain_marker": false
+      }
+    ]
+  },
+  "controller_attempts": 1,
+  "controls": {
+    "application_stop_epoch": 1795052223,
+    "controls_verified": true,
+    "guest_shutdown_epoch": 1795053123,
+    "ok": true
+  },
+  "cost": {
+    "actual_bill_queried": false,
+    "conservative_elapsed_seconds": 505.861,
+    "estimated_ec2_plus_ipv4_usd": 0.024085,
+    "excludes_storage_api_logs_tax_other_charges": true,
+    "historical_ec2_plus_ipv4_usd_per_hour": 0.1714
+  },
+  "credentials_or_secret_values_disclosed": false,
+  "executed_source_ci_all_six_jobs": "success",
+  "executed_source_ci_run_id": 44433049046,
+  "executed_source_commit": "575ca232d98da158a70b292aa48a3ab09e825577",
+  "final_journal_markers": {
+    "blocked_marker": false,
+    "graceful_stop_verified_marker": true,
+    "ok": true,
+    "pilot_started_marker": true
+  },
+  "final_status": {
+    "containers": [
+      {
+        "exit_code": 143,
+        "healthy": false,
+        "oom_killed": false,
+        "running": false,
+        "service": "kafka"
+      },
+      {
+        "exit_code": 0,
+        "healthy": false,
+        "oom_killed": false,
+        "running": false,
+        "service": "producer"
+      },
+      {
+        "exit_code": 0,
+        "healthy": false,
+        "oom_killed": false,
+        "running": false,
+        "service": "spark"
+      }
+    ],
+    "ok": true,
+    "stream": {
+      "batchId": 13,
+      "drained": true,
+      "heartbeat_age_seconds": 18.6,
+      "numInputRows": 14,
+      "verifiedCheckpointBatchId": 13
+    },
+    "unit": {
+      "ActiveState": "deactivating",
+      "ExecMainCode": "1",
+      "ExecMainStatus": "0",
+      "Result": "success",
+      "SubState": "stop-post"
+    }
+  },
+  "iam_changes": 0,
+  "independent_stopped_readback": {
+    "candidate_installed": true,
+    "chain_id": 42161,
+    "checked_at_utc": "2026-11-19T01:25:28.861434+00:00",
+    "controller_attempts": 1,
+    "elapsed_to_independent_stopped_observation_seconds": 505.861,
+    "graceful_drain_verified": true,
+    "iam_changes": 0,
+    "instance_id": "i-0ca1671a59751acc5",
+    "kafka_delete_on_termination": false,
+    "launch_at_utc": "2026-11-19T01:17:03+00:00",
+    "no_public_ipv4": true,
+    "original_encrypted_gp3_disks_attached": [
+      "vol-02c9fb14a9c568fb5",
+      "vol-03bd5d26947719f98"
+    ],
+    "secret_edits": 0,
+    "ssm_relay_exit_code": 0,
+    "state": "stopped",
+    "terraform_actions": 0
+  },
+  "installation": {
+    "bundle_sha256": "568d0fc889ca7139aefa651d6d5dccea90ac2bc2106130d8d6451e736b3c9143",
+    "candidate_root": "/opt/blockchain-runtime-candidates/ae678174072b2484e2c095593f3363adf822904e",
+    "existing_candidate_reused": false,
+    "installed_files_verified": 9,
+    "ok": true,
+    "pilot_started": false,
+    "release_sha256": "7f948e94cec7f7aebaf2aa4dab4ddd8e92a60f083f17bb9cefcff4db89cd200f",
+    "source_commit": "ae678174072b2484e2c095593f3363adf822904e",
+    "unit_sha256": "ed2a64e4edf3782f967adb84f81a16392fcad84ad86d24ab6539234ff7f59976"
+  },
+  "live_recovery_restart_performed": false,
+  "manual_starts_consumed": 1,
+  "milestone": "11.6C",
+  "milestone_11_5D": "PAUSED",
+  "new_infrastructure_provisioned": false,
+  "new_start_authorized": false,
+  "normal_stop_response": {
+    "checked_at_utc": "2026-11-19T01:23:20.934175+00:00",
+    "normal_stop_requested": true,
+    "state": "stopping"
+  },
+  "operator_archive_sha256": "62cd07b38cddd94f8c213b33cb773dacecad33be8ad512697b10a222e8821e27",
+  "preflight": {
+    "chain_id": 42161,
+    "launch_epoch_seconds": 1795051023.0,
+    "ok": true,
+    "pilot_prefix_initially_empty": true,
+    "private_chain_check_passed": true,
+    "three_image_identities_verified": true
+  },
+  "raw_rows_or_log_messages_disclosed_to_chat": false,
+  "raw_rows_or_log_messages_in_public_evidence": false,
+  "recorded_at_utc": "2026-11-19T01:29:06.757101+00:00",
+  "result_checkpoint_offline_validation": {
+    "acceptance_hash_binding": "PASS",
+    "consumed_exception_blocks_packaging_before_output": true,
+    "consumed_exception_blocks_readiness_and_relay_before_sdk": true,
+    "existing_websockets_deprecation_warning": true,
+    "local_document_links": "PASS",
+    "negative_subtests_passed": 36,
+    "public_private_receipt_comparison": "PASS",
+    "python_3_9_syntax": "PASS",
+    "ruff": "PASS",
+    "runtime_tests_passed": 777,
+    "tracked_and_explicit_new_file_secret_scan": "PASS",
+    "unrelated_untracked_duplicates_preserved": 67,
+    "whitespace": "PASS"
+  },
+  "runtime_and_pilot_data_changed": true,
+  "schema_version": 1,
+  "secret_edits": 0,
+  "security_exception_consumed": true,
+  "snowflake_dbt_streamlit_changed": false,
+  "status": "FIRST_CONTROLLED_AWS_STREAMING_PILOT_ACCEPTED_STOPPED",
+  "terraform_production_actions": 0,
+  "watch_completed_at_utc": "2026-11-19T01:23:50.766950+00:00"
+}

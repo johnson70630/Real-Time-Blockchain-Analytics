@@ -1,5 +1,10 @@
 # Milestone 11.6C — Controlled Arbitrum streaming window, offline deployment review
 
+Latest result: [replacement window accepted; EC2 stopped](aws_runtime_streaming_pilot_result.md).
+The corrected reader passed live controls, installation, chain verification,
+streaming and graceful-drain acceptance. This scope is completed; the single-run
+security exception is consumed. Earlier proposals below are historical.
+
 Result: [controls reply unverified; EC2 stopped and local terminal parser fixed](aws_runtime_controlled_streaming_abort_result.md).
 The single paid start was consumed without installation, image validation or streaming.
 The proposal below is historical; another start requires a new approval.

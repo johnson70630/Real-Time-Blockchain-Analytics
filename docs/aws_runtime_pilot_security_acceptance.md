@@ -1,5 +1,11 @@
 # Milestone 11.6C — Conditional security acceptance and secret proposal
 
+Current status: **CONSUMED** by the [accepted first streaming pilot](aws_runtime_streaming_pilot_result.md).
+The [hash-bound consumption ledger](evidence/aws_runtime_security_consumption_2026-11-19.json)
+records one demonstration and one controller attempt; another start is not approved.
+Packaging, readiness and relay gates reject reuse before execution. The original
+acceptance JSON and the proposal statements below remain historical snapshots.
+
 Current next step: [exact Alchemy secret-access review](aws_runtime_secret_access_review.md). The owner reported the approved secret created and confirmed its metadata settings. IAM changes, production Terraform actions and deployment remain unapproved.
 
 The prior acceptance/proposal notes below are preserved as checkpoint history.

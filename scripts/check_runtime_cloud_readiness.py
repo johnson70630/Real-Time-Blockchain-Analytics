@@ -8,8 +8,12 @@ import json
 import logging
 from pathlib import Path
 import subprocess
+import sys
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from runtime.pilot_security import require_unused_acceptance  # noqa: E402
+
 spec = importlib.util.spec_from_file_location(
     "window", str(Path(__file__).with_name("runtime_pilot_window.py"))
 )
@@ -51,6 +55,7 @@ def check_findings(live, baseline):
 
 
 def validate_local():
+    require_unused_acceptance(ROOT)
     root = Path(w.MARKER.read_text().strip())
     receipt = json.loads((root / "owner-approval.json").read_text())
     w.require(
