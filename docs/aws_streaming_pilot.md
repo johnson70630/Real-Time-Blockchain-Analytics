@@ -1,5 +1,7 @@
 # Milestone 11.6C — first streaming pilot readiness
 
+Current follow-up: [metadata collector and offline recovery operator](aws_runtime_recovery_operator_review.md). Production execution remains blocked; the earlier preparation and approval snapshots below are preserved.
+
 Current follow-up: [offline recovery checks and security compatibility recheck](aws_runtime_recovery_preparation.md). The first pilot remains accepted; this follow-up makes no AWS calls and grants no additional run.
 
 Latest result: [first AWS streaming pilot accepted; graceful drain verified; EC2 stopped](aws_runtime_streaming_pilot_result.md).

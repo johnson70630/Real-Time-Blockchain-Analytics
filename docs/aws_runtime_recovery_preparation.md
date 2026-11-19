@@ -1,5 +1,7 @@
 # 11.6C follow-up — Offline recovery preparation and security recheck
 
+Current follow-up: [metadata collector and offline recovery operator](aws_runtime_recovery_operator_review.md). Production execution remains blocked; the earlier preparation and approval snapshots below are preserved.
+
 **The first cloud streaming pilot remains complete. This follow-up prepares
 recovery checks offline; it does not authorize or perform another AWS run.**
 The one-run exception remains consumed and milestone 11.5D remains paused.

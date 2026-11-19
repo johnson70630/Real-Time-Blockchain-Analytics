@@ -1,0 +1,117 @@
+{
+  "account": "209479274979",
+  "approvals": {
+    "aws_api_execution": false,
+    "deployment": false,
+    "ebs_formatting": false,
+    "ec2_start": false,
+    "iam_changes": false,
+    "image_publication": false,
+    "main_merge": false,
+    "new_security_exception": false,
+    "paid_runtime": false,
+    "production_data_cleanup": false,
+    "secret_edit": false,
+    "secret_read": false,
+    "terraform_plan_apply_import": false
+  },
+  "blockers": [
+    "trusted production baseline incomplete",
+    "previous exception consumed; new exact security decision/artifact review required",
+    "no production transport/executor/package issued",
+    "physical identity/current boot/permissions and absolute shutdown controls not yet verified for a new window",
+    "Kafka probe and S3 client placement/dependencies must be reviewed; no implicit host package installation"
+  ],
+  "cost": {
+    "actual_bill_queried": false,
+    "excludes_storage_requests_logs_provider_tax": true,
+    "fresh_pricing_verified": false,
+    "historical_ec2_plus_ipv4_usd_per_hour": 0.1714,
+    "illustrative_45_minute_usd": 0.12855,
+    "spending_cap_or_authorization": false
+  },
+  "historical_artifacts_not_newly_approved": [
+    {
+      "digest_reference": "209479274979.dkr.ecr.us-west-2.amazonaws.com/blockchain-runtime-producer@sha256:63d9d0f24a1cb7eb30b080e58f8a40ddd49292b89020328409e6f45319597afd",
+      "role": "producer"
+    },
+    {
+      "digest_reference": "209479274979.dkr.ecr.us-west-2.amazonaws.com/blockchain-runtime-spark@sha256:bb03f7d9917f2d8dc7d2fc1fc6a1df83fe876f5298e98c4163c689a1b890a134",
+      "role": "spark"
+    },
+    {
+      "digest_reference": "209479274979.dkr.ecr.us-west-2.amazonaws.com/blockchain-runtime-producer@sha256:1113a10e8a93fc12b2d310ef6f53b8f5fc95fb806a8c6edcfa6b67d17959378b",
+      "role": "kafka"
+    }
+  ],
+  "live_execution_adapter_available": false,
+  "metadata_read_allowlist": [
+    "checkpoint metadata",
+    "checkpoint commits/<batch>",
+    "checkpoint offsets/<batch>",
+    "Bronze _spark_metadata/<batch>[.compact]",
+    "Kafka cluster/topic identity and partition-0 watermarks"
+  ],
+  "milestone": "11.6C follow-up",
+  "milestone_11_5D": "PAUSED",
+  "new_security_decision": null,
+  "owner_approved": false,
+  "production_baseline": {
+    "approved": false,
+    "baseline_sha256": null,
+    "final_committed_offset_map": null,
+    "last_verified_checkpoint_batch": 13,
+    "spark_query_id": null,
+    "topic_uuid": null
+  },
+  "production_operator_archive_sha256": null,
+  "proposed_deadlines_minutes_after_actual_launch": {
+    "application_stop": 20,
+    "external_normal_stop": 30,
+    "guest_poweroff": 35,
+    "outer_supervision": 45,
+    "target_stopped": 40
+  },
+  "purpose": "Future inspection and recovery of the existing isolated AWS streaming pilot",
+  "region": "us-west-2",
+  "resources": {
+    "bronze_prefix": "blockchain-analytics/pilot/runtime/11-6c-v1/bronze/swaps/",
+    "checkpoint_prefix": "blockchain-analytics/pilot/runtime/11-6c-v1/checkpoints/swaps_bronze/",
+    "cloudwatch_group": "/blockchain/runtime/containers",
+    "existing_unchanged_secret_arn": "arn:aws:secretsmanager:us-west-2:209479274979:secret:blockchain-runtime/11-6c/alchemy-websocket-url-d44flr",
+    "instance_id": "i-0ca1671a59751acc5",
+    "instance_profile": "blockchain-runtime-ec2",
+    "instance_type": "t3.xlarge",
+    "kafka_volume": {
+      "delete_on_termination": false,
+      "encrypted": true,
+      "filesystem": "xfs",
+      "filesystem_uuid": "da1454d8-1bea-41a3-89d7-87bd570a47bd",
+      "id": "vol-02c9fb14a9c568fb5",
+      "initialize_or_format": false,
+      "mount": "/var/lib/blockchain-runtime/kafka",
+      "size_gib": 100,
+      "type": "gp3"
+    },
+    "root_volume": {
+      "encrypted": true,
+      "id": "vol-03bd5d26947719f98",
+      "size_gib": 30,
+      "type": "gp3"
+    },
+    "s3_bucket": "johnson-blockchain-analytics-prod",
+    "ssm_document": "blockchain-runtime-demo-shell",
+    "topic": "pilot_uniswap_v3_events"
+  },
+  "rollback": "Normal stop and preservation of all disks, Kafka identity/logs, Bronze/checkpoints, originals and evidence. No reset/delete/format.",
+  "schema_version": 1,
+  "status": "BLOCKED_REVIEW_ONLY_NOT_EXECUTABLE",
+  "terraform": {
+    "apply_scope": [],
+    "authenticated_plan_scope": [],
+    "backend_initialization_authorized": false,
+    "changes": [],
+    "platform_state": "production/platform/terraform.tfstate",
+    "runtime_state": "production/runtime/terraform.tfstate"
+  }
+}

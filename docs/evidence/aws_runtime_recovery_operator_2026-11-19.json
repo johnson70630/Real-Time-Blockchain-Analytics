@@ -1,0 +1,149 @@
+{
+  "aws_api_calls": 0,
+  "cloud_start_authorized": false,
+  "collection_limits": {
+    "collection_observation_seconds": 30,
+    "listing_entries": 1000,
+    "metadata_files_selected": 4,
+    "metadata_object_bytes": 1048576,
+    "parquet_reads": false,
+    "sdk_client_created_on_import": false,
+    "total_read_bytes": 8388608
+  },
+  "deployment_authorized": false,
+  "ebs_actions": 0,
+  "execution_controls": {
+    "baseline_hash_required": true,
+    "blocking_callback_deadline_requires_outer_supervisor": true,
+    "cleanup_after_partial_start_or_expiry": true,
+    "exclusive_run_intent": true,
+    "preview_grants_no_authority": true,
+    "production_topic_rejected": true,
+    "s3_execution_rejected": true,
+    "single_writer_lock": true,
+    "synthetic_source_only": true
+  },
+  "historical_evidence_sha256": {
+    "docs/evidence/aws_runtime_recovery_preparation_2026-11-19.json": "1329c497199f05af58a0d6de58ef35a7aac4e2434294e658296bcb0479803b74",
+    "docs/evidence/aws_runtime_security_acceptance_2026-11-17.json": "5b014661fcb00c723edb22aa49ed86a7f8b9a5ea553197a35ab4f9216e83a75c",
+    "docs/evidence/aws_runtime_security_consumption_2026-11-19.json": "641f43e22f7085569e1beead65b7d1e903654dbfc17355669538ffceeb69728f",
+    "docs/evidence/aws_runtime_streaming_pilot_result_2026-11-19.json": "3918b8e1409962dabe9b2029089f6eaf5f167211dbde34f319b98c5b43707bd9"
+  },
+  "iam_changes": 0,
+  "implementation": {
+    "explicit_internal_kafka_probe": true,
+    "injected_s3_read_only_adapter": true,
+    "local_metadata_adapter": true,
+    "metadata_collector": true,
+    "production_executable_package_issued": false,
+    "production_execution_adapter": false,
+    "production_ssm_transport": false,
+    "single_use_synthetic_operator": true,
+    "snapshot_preview": true
+  },
+  "local_integration": {
+    "existing_images_used_with_read_only_modules": true,
+    "final_parser_hardening_rerun_passed": true,
+    "first_failed_idle_repeat_preserved": true,
+    "first_failed_repeat_exact_cause_proven": false,
+    "idle_progress_fix": "Bounded wait for actual progress matching broker offsets before existing commit-verified drain",
+    "independent_owned_resource_cleanup_verified": true,
+    "lower_offset_loss_rejected": true,
+    "new_images_pulled_built_published": false,
+    "owned_cleanup_exit_code": 0,
+    "phase_results": [
+      {
+        "exit_code": 0,
+        "phase": "kafka-initial"
+      },
+      {
+        "exit_code": 0,
+        "phase": "initial"
+      },
+      {
+        "exit_code": 0,
+        "phase": "snapshot"
+      },
+      {
+        "exit_code": 0,
+        "phase": "broker-restart"
+      },
+      {
+        "exit_code": 0,
+        "phase": "kafka-ready"
+      },
+      {
+        "exit_code": 0,
+        "phase": "resume"
+      },
+      {
+        "exit_code": 0,
+        "phase": "snapshot"
+      },
+      {
+        "exit_code": 0,
+        "phase": "repeat"
+      },
+      {
+        "exit_code": 0,
+        "phase": "identity-loss"
+      },
+      {
+        "exit_code": 0,
+        "phase": "loss"
+      }
+    ],
+    "private_log_sha256": "ec8a49662a82c5d34c5f538c04aea2a1d796178ad867b62d075192beb0745457",
+    "real_collector_and_operator_exercised": true,
+    "source_sha256": {
+      "runtime/recovery.py": "06b6404b120a231b3b0428668aea5837f293b5f6fc1bb45f7391b824b32a756d",
+      "runtime/recovery_metadata.py": "9e7f9b9e4cf3d8abeb70bfb6f0eee3c9a9f40ba0e5fecba3992fca71f9a833bd",
+      "runtime/recovery_operator.py": "9f486ad40696a74bed891523b7a45a9a81ea30b187ca79a99099b54b55bcc97a",
+      "scripts/test_runtime_integration.sh": "35e39663a42f8df0f699371d1fb9aec319e9e152a8feefd851ddae7e622c6b38",
+      "tests/integration/streaming_pilot.py": "03b07f634935af2250dcb26cccb7aee8df2b688d0257c8fe5f38e99c389dc084"
+    },
+    "status": "PASS",
+    "synthetic_row_counts": {
+      "initial": 3,
+      "repeat": 5,
+      "resume": 5
+    },
+    "test_project": "blockchain-recovery-4r19amee",
+    "topic_recreated_with_same_offsets_rejected_before_spark": true
+  },
+  "main_merged": false,
+  "milestone_11_5D": "PAUSED",
+  "new_aws_resources": [],
+  "new_security_exception_accepted": false,
+  "paid_ec2_starts": 0,
+  "production_infrastructure_changed": false,
+  "production_recovery_executed": false,
+  "production_s3_writes": 0,
+  "production_terraform_actions": 0,
+  "proposal_path": "docs/proposals/runtime-recovery-inspection.proposed.json",
+  "proposal_sha256": "0f6944601dc327262490fd8ec5f768c6e0663428239857e5144c7cd58eb608f9",
+  "recorded_at_utc": "2026-11-19T05:57:04.765646+00:00",
+  "schema_version": 1,
+  "scope": "11.6C_OFFLINE_METADATA_COLLECTOR_AND_RECOVERY_OPERATOR",
+  "secret_reads_or_edits": 0,
+  "security_exception_consumed": true,
+  "ssm_commands": 0,
+  "starting_develop_commit": "ec8872d625c95d2c493356f99921c9d9c066b57d",
+  "trusted_production_baseline_complete": false,
+  "unrelated_untracked_duplicates_preserved": 67,
+  "validation": {
+    "README_and_frozen_runtime_and_dependency_pins_unchanged": true,
+    "document_links": "PASS",
+    "existing_websockets_deprecation_warning": true,
+    "focused_cases_passed": 42,
+    "negative_subtests_passed": 36,
+    "proposal_all_cloud_authorizations_false": true,
+    "python39_syntax": "PASS",
+    "ruff": "PASS",
+    "runtime_tests_passed": 866,
+    "shell_syntax": "PASS",
+    "source_and_historical_evidence_hashes": "PASS",
+    "tracked_and_explicit_new_file_secret_scan": "PASS",
+    "whitespace": "PASS"
+  }
+}
