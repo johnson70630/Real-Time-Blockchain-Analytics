@@ -1,5 +1,9 @@
 # Milestone 11.6C — Controlled Arbitrum streaming window, offline deployment review
 
+Result: [controls reply unverified; EC2 stopped and local terminal parser fixed](aws_runtime_controlled_streaming_abort_result.md).
+The single paid start was consumed without installation, image validation or streaming.
+The proposal below is historical; another start requires a new approval.
+
 **Offline preparation. This is a new live scope, not the completed one-read
 approval. No EC2 start or deployment occurred during this work.** Keep the
 existing secret unchanged. [The format gate already passed](aws_runtime_reader_probe_result.md).

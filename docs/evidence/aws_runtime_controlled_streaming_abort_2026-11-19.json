@@ -1,0 +1,84 @@
+{
+  "actions": {
+    "candidate_install_attempted": false,
+    "controller_attempted": false,
+    "controls_command_sent": true,
+    "controls_reply_verified": false,
+    "image_validation_attempted": false,
+    "pipeline_s3_writes": 0,
+    "provider_rpc_calls": 0,
+    "quarantined_image_executions": 0,
+    "secret_edits": 0,
+    "secret_retrieval_attempted": false,
+    "upload_reported_success": true
+  },
+  "active_authorization": false,
+  "approval_consumed": true,
+  "changed_source_sha256": {
+    "scripts/runtime_pilot_relay.py": "821ef9de7d02036bda3fb751eec9a1f4734bebbb835eb5244a1d726395381612",
+    "tests/test_runtime_pilot_relay.py": "ba1f5dbff450744aadfafe14520cf42f6247c473dfa5bfeca7231fc5f5aca1b2"
+  },
+  "cost": {
+    "actual_bill_queried": false,
+    "conservative_seconds": 470.935,
+    "estimated_ec2_plus_ipv4_usd": 0.022422,
+    "excludes_retained_storage_api_tax_other_charges": true,
+    "historical_ec2_plus_ipv4_usd_per_hour": 0.1714
+  },
+  "executed_archive_sha256": "54c7ca95cc90f96dc67952f2548712ce6e28639cacf790686d69f66f44b4095f",
+  "executed_source_ci_all_six_jobs": "success",
+  "executed_source_ci_run_id": 44425204117,
+  "executed_source_commit": "02308589c62ce538f33583f7d6633271a6e4f6b2",
+  "guest_payload_files_verified_at_build": 20,
+  "iam_changes": 0,
+  "independent_stopped_readback": {
+    "candidate_install_attempted": false,
+    "checked_at_utc": "2026-11-19T00:44:10.934689+00:00",
+    "controller_attempted": false,
+    "elapsed_to_independent_stopped_observation_seconds": 470.935,
+    "image_validation_attempted": false,
+    "instance_id": "i-0ca1671a59751acc5",
+    "launch_at_utc": "2026-11-19T00:36:20+00:00",
+    "no_public_ipv4": true,
+    "original_encrypted_gp3_disks_attached": [
+      "vol-02c9fb14a9c568fb5",
+      "vol-03bd5d26947719f98"
+    ],
+    "pipeline_s3_writes": 0,
+    "relay_exit_code": 1,
+    "secret_retrieval_attempted": false,
+    "state": "stopped",
+    "stop_reason": "LOCAL_TERMINAL_REPLY_FRAMING_TIMEOUT"
+  },
+  "launch_at_utc": "2026-11-19T00:36:20+00:00",
+  "manual_starts_consumed": 1,
+  "milestone": "11.6C",
+  "milestone_11_5D": "PAUSED",
+  "negative_subtests": 36,
+  "new_infrastructure_resources": 0,
+  "new_start_authorized": false,
+  "normal_stop_completed_response_at_utc": "2026-11-19T00:43:37.367857+00:00",
+  "offline_entrypoint_check": {
+    "cloud_calls": 0,
+    "entrypoint_exit_code": 1,
+    "nonroot_test_only": true,
+    "operator_entrypoint_emitted_safe_json": true,
+    "system_python_version": "Python 3.9.6"
+  },
+  "recorded_at_utc": "2026-11-19T00:51:44.369875+00:00",
+  "runtime_tests": 749,
+  "schema_version": 1,
+  "start_admission": "ACCEPTED",
+  "status": "ABORTED_CONTROLS_REPLY_UNVERIFIED_STOPPED_PARSER_FIXED_OFFLINE",
+  "streaming_security_exception_runs_consumed": 0,
+  "terraform_production_actions": 0,
+  "transport_findings": {
+    "fixed_parser_accepts_cr_lf_sequences": true,
+    "guest_controls_outcome_unknown": true,
+    "original_regex_rejected_crcrlf": true,
+    "raw_transcript_retained_or_disclosed": false,
+    "real_pty_onlcr_reproduced_crcrlf": true,
+    "safe_transport_error_codes_added": true
+  },
+  "watch_completed_at_utc": "2026-11-19T00:44:02.357800+00:00"
+}

@@ -1,5 +1,8 @@
 # Milestone 11.6C — first streaming pilot readiness
 
+Latest result: [controlled window stopped before installation; terminal framing fixed offline](aws_runtime_controlled_streaming_abort_result.md).
+Secret unchanged; no validation/streaming container ran. The paid-start approval is consumed.
+
 Next live-scope review: [controlled Arbitrum streaming window](aws_runtime_controlled_streaming_review.md).
 The versioned operator is prepared offline; a new paid/install/write approval is required.
 

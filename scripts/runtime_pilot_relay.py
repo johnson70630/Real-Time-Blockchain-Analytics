@@ -39,6 +39,25 @@ ACTIONS = {
     "journal",
     "stop",
 }
+JSON_REPLY_PATTERN = rb'(\{"[^\r\n]+\})[\r\n]+'
+
+
+class TerminalFailure(RuntimeError):
+    """Only fixed transport codes; never include terminal bytes or exception text."""
+
+    def __init__(self, code):
+        self.code = (
+            code
+            if code
+            in {
+                "SSM_TERMINAL_ENDED",
+                "TERMINAL_OUTPUT_LIMIT",
+                "SSM_REPLY_TIMEOUT",
+                "INVALID_JSON_REPLY",
+            }
+            else "INVALID_JSON_REPLY"
+        )
+        super().__init__(self.code)
 
 
 def controller_confirmed(status, journal):
@@ -185,14 +204,29 @@ def read_until(fd, pattern, timeout, limit):
         try:
             data = os.read(fd, 65536)
         except OSError:
-            raise RuntimeError("SSM_TERMINAL_ENDED") from None
-        w.require(bool(data), "SSM_TERMINAL_ENDED")
+            raise TerminalFailure("SSM_TERMINAL_ENDED") from None
+        if not data:
+            raise TerminalFailure("SSM_TERMINAL_ENDED")
         buffer += data
-        w.require(len(buffer) <= limit, "TERMINAL_OUTPUT_LIMIT")
+        if len(buffer) > limit:
+            raise TerminalFailure("TERMINAL_OUTPUT_LIMIT")
         found = re.search(pattern, buffer)
         if found:
             return found
-    raise RuntimeError("SSM_REPLY_TIMEOUT")
+    raise TerminalFailure("SSM_REPLY_TIMEOUT")
+
+
+def read_json_reply(fd, timeout, limit):
+    # Both the remote shell PTY and the local plugin PTY may apply ONLCR.
+    # CRCRLF is therefore normal transport framing, not malformed JSON.
+    match = read_until(fd, JSON_REPLY_PATTERN, timeout, limit)
+    try:
+        value = json.loads(match.group(1))
+    except (ValueError, UnicodeError):
+        raise TerminalFailure("INVALID_JSON_REPLY") from None
+    if not isinstance(value, dict) or type(value.get("ok")) is not bool:
+        raise TerminalFailure("INVALID_JSON_REPLY")
+    return value
 
 
 def send(fd, command):
@@ -299,13 +333,11 @@ def main():
                 read_until(fd, rb"PILOT_OPERATOR_FILES_STAGED", 120, 2 * 1024 * 1024)
                 result = {"ok": True, "upload_verified": True}
             else:
-                match = read_until(
+                result = read_json_reply(
                     fd,
-                    rb'(\{"[^\r\n]+\})\r?\n',
                     930 if action == "prepare" else 300,
                     100 * 1024 * 1024 if action == "sample" else 2 * 1024 * 1024,
                 )
-                result = json.loads(match.group(1))
                 if action == "sample" and result.get("ok") is True:
                     try:
                         result = validate_sample(result)
@@ -362,6 +394,19 @@ def main():
 if __name__ == "__main__":
     try:
         main()
+    except TerminalFailure as error:
+        print(
+            json.dumps(
+                {
+                    "STOP": "PILOT_RELAY_ENDED",
+                    "category": "TerminalFailure",
+                    "code": error.code,
+                    "details_suppressed": True,
+                }
+            ),
+            flush=True,
+        )
+        raise SystemExit(1)
     except Exception as error:
         print(
             json.dumps(
